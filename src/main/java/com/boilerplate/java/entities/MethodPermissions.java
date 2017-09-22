@@ -10,11 +10,6 @@ import com.boilerplate.java.collections.BoilerplateList;
 public class MethodPermissions {
 	
 	/**
-	 * This is the method forward turing
-	 */
-	MethodForwardingTuringMachine methodForwardTuring = new MethodForwardingTuringMachine();
-
-	/**
 	 * Gets the id of the permission
 	 * @return The id of the permission
 	 */
@@ -22,21 +17,6 @@ public class MethodPermissions {
 		return id;
 	}
 
-	/**
-	 * This method gets the method forward turing
-	 * @return The methodForwardTuring
-	 */
-	public MethodForwardingTuringMachine getMethodForwardTuring() {
-		return methodForwardTuring;
-	}
-
-	/**
-	 * This method sets the method forward turing
-	 * @param methodForwardTuring
-	 */
-	public void setMethodForwardTuring(MethodForwardingTuringMachine methodForwardTuring) {
-		this.methodForwardTuring = methodForwardTuring;
-	}
 
 	/**
 	 * Sets the id of the permission
