@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.boilerplate.configurations.ConfigurationManager;
-import com.boilerplate.configurations.IConfiguratonManager;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ClientSideDiagnostic;
 import com.boilerplate.java.entities.Ping;
