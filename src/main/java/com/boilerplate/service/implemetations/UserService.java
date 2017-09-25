@@ -44,7 +44,6 @@ import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.MethodState;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
