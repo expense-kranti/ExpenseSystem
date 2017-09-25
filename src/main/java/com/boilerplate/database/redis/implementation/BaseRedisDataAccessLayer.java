@@ -5,27 +5,19 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.collections.BoilerplateSet;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.GenericListEncapsulationEntity;
-import com.boilerplate.java.entities.MethodForwardingTuringMachine;
 import com.boilerplate.java.entities.MethodPermissions;
-import com.boilerplate.java.entities.MethodState;
 import com.boilerplate.java.entities.Role;
 
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import scala.annotation.varargs;
 
 public class BaseRedisDataAccessLayer{
 
@@ -45,21 +37,6 @@ public class BaseRedisDataAccessLayer{
 	 * The properties
 	 */
 	Properties properties  = null;
-	
-	/**
-	 * SalesForce Production Base Url
-	 */
-	public static final String SalesForceProductionBaseUrl = "https://clearmydues.my.salesforce.com";
-	
-	/**
-	 * SalesForce Development Base Url
-	 */
-	public static final String SalesForceDevelopmentBaseUrl = "https://clearmydues--Developmen.cs31.my.salesforce.com";
-	
-	/**
-	 * SalesForce UAT Base Url
-	 */
-	public static final String SalesForceTestBaseUrl = "https://clearmydues--Developmen.cs31.my.salesforce.com";
 	
 	
 	private static JedisPool pool = null;
@@ -384,10 +361,6 @@ public class BaseRedisDataAccessLayer{
 		BoilerplateMap<String, MethodPermissions> methodPermissionMap = new BoilerplateMap<>();
 		
 		MethodPermissions methodPermission = null;
-		MethodForwardingTuringMachine methodForwardTuringMachine = null ;
-		
-	
-
 		
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public com.boilerplate.java.entities.Ping com.boilerplate.java.controllers.HealthController.ping()");
@@ -398,10 +371,6 @@ public class BaseRedisDataAccessLayer{
 		methodPermission.setPublishMethod("POST");
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
-		methodForwardTuringMachine = new MethodForwardingTuringMachine();
-		methodForwardTuringMachine.setIsStateCheck(false);
-		methodForwardTuringMachine.setIsGenericErrorUpdate(false);
-		methodPermission.setMethodForwardTuring(methodForwardTuringMachine);
 		methodPermission.setPublishBusinessSubject("CHECK_SERVER_STATUS");
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		
@@ -415,41 +384,7 @@ public class BaseRedisDataAccessLayer{
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishBusinessSubject("USER_LOGIN");
-		methodForwardTuringMachine = new MethodForwardingTuringMachine();
-		BoilerplateSet<MethodState> userLoginInputStateSet = new BoilerplateSet<>();
-		userLoginInputStateSet.add(MethodState.Registered);
-		userLoginInputStateSet.add(MethodState.Validated);
-		userLoginInputStateSet.add(MethodState.ExperianAttempt);
-		userLoginInputStateSet.add(MethodState.ExperianError);
-		userLoginInputStateSet.add(MethodState.AuthQuestions);
-		userLoginInputStateSet.add(MethodState.KYCPending);
-		userLoginInputStateSet.add(MethodState.KyCSubmitted);
-		userLoginInputStateSet.add(MethodState.ReportGenerated);
-		userLoginInputStateSet.add(MethodState.NegotiationInProgress);
-		userLoginInputStateSet.add(MethodState.NegotiationCompleted);
-		userLoginInputStateSet.add(MethodState.Paying);
-		userLoginInputStateSet.add(MethodState.CompletedPayment);
-		methodForwardTuringMachine.setInputStateSet(userLoginInputStateSet);
-		methodForwardTuringMachine.setUserNextStateCheck(false);
-		BoilerplateSet<MethodState> userLoginUserNextStateSet = new BoilerplateSet<>();
-		userLoginUserNextStateSet.add(MethodState.Validated);
-		userLoginUserNextStateSet.add(MethodState.ExperianAttempt);
-		userLoginUserNextStateSet.add(MethodState.ExperianError);
-		userLoginUserNextStateSet.add(MethodState.AuthQuestions);
-		userLoginUserNextStateSet.add(MethodState.KYCPending);
-		userLoginUserNextStateSet.add(MethodState.KyCSubmitted);
-		userLoginUserNextStateSet.add(MethodState.ReportGenerated);
-		userLoginUserNextStateSet.add(MethodState.NegotiationInProgress);
-		userLoginUserNextStateSet.add(MethodState.NegotiationCompleted);
-		userLoginUserNextStateSet.add(MethodState.Paying);
-		userLoginUserNextStateSet.add(MethodState.CompletedPayment);
-		methodForwardTuringMachine.setUserNextStateSet(userLoginUserNextStateSet);
-		methodForwardTuringMachine.setIsStateCheck(false);
-		methodForwardTuringMachine.setIsGenericErrorUpdate(false);
-		methodForwardTuringMachine.setIsGenericSuccessUpdate(true);
-		methodForwardTuringMachine.setSuccessState(MethodState.Validated);
-		methodForwardTuringMachine.setMethodState(MethodState.Login);
-		methodPermission.setMethodForwardTuring(methodForwardTuringMachine);
+
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		
 		methodPermission = new MethodPermissions();
@@ -461,10 +396,6 @@ public class BaseRedisDataAccessLayer{
 		methodPermission.setPublishMethod("POST");
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
-		methodForwardTuringMachine = new MethodForwardingTuringMachine();
-		methodForwardTuringMachine.setIsStateCheck(false);
-		methodForwardTuringMachine.setIsGenericErrorUpdate(false);
-		methodPermission.setMethodForwardTuring(methodForwardTuringMachine);
 		methodPermission.setPublishBusinessSubject("GET_CURRENTLY_LOGGED_IN_USER");
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 
@@ -480,26 +411,7 @@ public class BaseRedisDataAccessLayer{
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate("{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"externalSystemId\": \"@externalSystemId\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"experianRequestEmailKey\": \"@experianRequestEmailKey\",\"userState\": \"@userState\",\"ownerId\": \"@ownerId\",\"source\": \"@source\",\"subSource\": \"@subSource\",\"dsaId\": \"@dsaId\",\"referalSource\": \"@referalSource\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER");
-		methodForwardTuringMachine = new MethodForwardingTuringMachine();
-		methodForwardTuringMachine.setSuccessState(MethodState.Registered);
-		methodForwardTuringMachine.setMethodState(MethodState.CreateUser);
-		methodForwardTuringMachine.setIsStateCheck(false);
-		methodForwardTuringMachine.setIsGenericErrorUpdate(false);
-		methodForwardTuringMachine.setIsGenericSuccessUpdate(true);
-		methodPermission.setMethodForwardTuring(methodForwardTuringMachine);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
-		
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 
 	}
