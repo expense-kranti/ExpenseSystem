@@ -2,6 +2,11 @@ package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
+/**
+ * This class is provide the information reading the assessment
+ * @author shiva
+ *
+ */
 public class AssessmentEntity extends BaseEntity {
 
 	/**

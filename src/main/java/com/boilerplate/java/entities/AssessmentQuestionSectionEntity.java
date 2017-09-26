@@ -2,17 +2,23 @@ package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
-public class AssessmentQuestionEntity extends BaseEntity {
+/**
+ * This class is provide the information reading the assessment question section
+ * 
+ * @author shiva
+ *
+ */
+public class AssessmentQuestionSectionEntity extends BaseEntity {
 
 	/**
 	 * This is the section id
 	 */
-	private String sectionId;
+	private AssessmentSectionEntity sectionId;
 
 	/**
 	 * This is the question id
 	 */
-	private String questionId;
+	private QuestionEntity questionId;
 
 	/**
 	 * This is the order id
@@ -20,11 +26,16 @@ public class AssessmentQuestionEntity extends BaseEntity {
 	private String orderId;
 
 	/**
+	 * This is the question score
+	 */
+	private String questionScore;
+
+	/**
 	 * This method is used to get the section id
 	 * 
 	 * @return the sectionId
 	 */
-	public String getSectionId() {
+	public AssessmentSectionEntity getSectionId() {
 		return sectionId;
 	}
 
@@ -34,7 +45,7 @@ public class AssessmentQuestionEntity extends BaseEntity {
 	 * @param sectionId
 	 *            the sectionId to set
 	 */
-	public void setSectionId(String sectionId) {
+	public void setSectionId(AssessmentSectionEntity sectionId) {
 		this.sectionId = sectionId;
 	}
 
@@ -43,7 +54,7 @@ public class AssessmentQuestionEntity extends BaseEntity {
 	 * 
 	 * @return the questionId
 	 */
-	public String getQuestionId() {
+	public QuestionEntity getQuestionId() {
 		return questionId;
 	}
 
@@ -53,7 +64,7 @@ public class AssessmentQuestionEntity extends BaseEntity {
 	 * @param questionId
 	 *            the questionId to set
 	 */
-	public void setQuestionId(String questionId) {
+	public void setQuestionId(QuestionEntity questionId) {
 		this.questionId = questionId;
 	}
 
@@ -101,6 +112,25 @@ public class AssessmentQuestionEntity extends BaseEntity {
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * This method is used to get the question score
+	 * 
+	 * @return the questionScore
+	 */
+	public String getQuestionScore() {
+		return questionScore;
+	}
+
+	/**
+	 * This method is used to set the question score
+	 * 
+	 * @param questionScore
+	 *            the questionScore to set
+	 */
+	public void setQuestionScore(String questionScore) {
+		this.questionScore = questionScore;
 	}
 
 }

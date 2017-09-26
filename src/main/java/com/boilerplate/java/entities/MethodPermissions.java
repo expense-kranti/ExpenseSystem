@@ -1,7 +1,5 @@
 package com.boilerplate.java.entities;
 
-import com.boilerplate.java.collections.BoilerplateList;
-
 /**
  * This class provides details of who can execute a given method
  * @author gaurav.verma.icloud

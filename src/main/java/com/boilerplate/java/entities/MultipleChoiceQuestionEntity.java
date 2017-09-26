@@ -2,7 +2,12 @@ package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
-public class MCQQuestionTypeEntity extends BaseEntity{
+/**
+ * This class is provide the data regarding Multiple Choice Question
+ * @author shiva
+ *
+ */
+public class MultipleChoiceQuestionEntity extends BaseEntity{
 
 	/**
 	 * This is the question type text

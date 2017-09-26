@@ -2,12 +2,17 @@ package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
-public class MCQQuestionOptionEntity extends BaseEntity{
+/**
+ * This class is provide the data regarding Multiple Choice Question option
+ * @author shiva
+ *
+ */
+public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
 
 	/**
 	 * This is the question id
 	 */
-	private String questionId;
+	private MultipleChoiceQuestionEntity questionId;
 	
 	/**
 	 * This is the order id
@@ -29,7 +34,7 @@ public class MCQQuestionOptionEntity extends BaseEntity{
 	 * This method is used to get the question id
 	 * @return the questionId
 	 */
-	public String getQuestionId() {
+	public MultipleChoiceQuestionEntity getQuestionId() {
 		return questionId;
 	}
 
@@ -37,7 +42,7 @@ public class MCQQuestionOptionEntity extends BaseEntity{
 	 * This method is used to set the question id
 	 * @param questionId the questionId to set
 	 */
-	public void setQuestionId(String questionId) {
+	public void setQuestionId(MultipleChoiceQuestionEntity questionId) {
 		this.questionId = questionId;
 	}
 
