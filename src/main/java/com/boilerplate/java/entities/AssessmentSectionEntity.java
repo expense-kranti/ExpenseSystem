@@ -2,12 +2,17 @@ package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
+/**
+ * This class is provide the information reading the assessment section
+ * @author shiva
+ *
+ */
 public class AssessmentSectionEntity extends BaseEntity {
 
 	/**
 	 * This is the assessment id
 	 */
-	private String assessmentId;
+	private AssessmentEntity assessmentId;
 
 	/**
 	 * This is the section name
@@ -24,7 +29,7 @@ public class AssessmentSectionEntity extends BaseEntity {
 	 * 
 	 * @return the assessmentId
 	 */
-	public String getAssessmentId() {
+	public AssessmentEntity getAssessmentId() {
 		return assessmentId;
 	}
 
@@ -34,7 +39,7 @@ public class AssessmentSectionEntity extends BaseEntity {
 	 * @param assessmentId
 	 *            the assessmentId to set
 	 */
-	public void setAssessmentId(String assessmentId) {
+	public void setAssessmentId(AssessmentEntity assessmentId) {
 		this.assessmentId = assessmentId;
 	}
 
