@@ -413,7 +413,7 @@ public class BaseRedisDataAccessLayer{
 		methodPermission.setPublishBusinessSubject("CREATE_USER");
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		
-
+		// method permission for assessment attempt 
 	}
 
 
