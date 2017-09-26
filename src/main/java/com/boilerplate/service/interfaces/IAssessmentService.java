@@ -1,5 +1,7 @@
 package com.boilerplate.service.interfaces;
 
+import java.util.List;
+
 import com.boilerplate.java.entities.AssessmentEntity;
 
 public interface IAssessmentService {
@@ -9,5 +11,5 @@ public interface IAssessmentService {
 	 * @param assessmentEntity this parameter contains the assessment id
 	 * @return the assessment data
 	 */
-	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity);
+	public List<AssessmentEntity> getAssessment(AssessmentEntity assessmentEntity);
 }

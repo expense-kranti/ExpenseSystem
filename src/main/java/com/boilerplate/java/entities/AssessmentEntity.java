@@ -1,9 +1,14 @@
 package com.boilerplate.java.entities;
 
+import java.util.List;
+
+import javax.persistence.JoinColumn;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
  * This class is provide the information reading the assessment
+ * 
  * @author shiva
  *
  */
@@ -18,6 +23,12 @@ public class AssessmentEntity extends BaseEntity {
 	 * This is the max score of assessment
 	 */
 	private String maxScore;
+
+	/**
+	 * This is the section for the assessment
+	 */
+	@JoinColumn(name = "id", insertable=false, updatable=false)
+	private List<AssessmentSectionEntity> sections;
 
 	/**
 	 * This method is used to get the assessment name
@@ -82,6 +93,25 @@ public class AssessmentEntity extends BaseEntity {
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * This method is used to get the sections
+	 * 
+	 * @return the sections
+	 */
+	public List<AssessmentSectionEntity> getSections() {
+		return sections;
+	}
+
+	/**
+	 * This method is used to set the sections
+	 * 
+	 * @param sections
+	 *            the sections to set
+	 */
+	public void setSections(List<AssessmentSectionEntity> sections) {
+		this.sections = sections;
 	}
 
 }

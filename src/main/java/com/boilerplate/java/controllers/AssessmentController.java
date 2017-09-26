@@ -1,5 +1,7 @@
 package com.boilerplate.java.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +39,7 @@ public class AssessmentController extends BaseController {
 	 */
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessment", method = RequestMethod.POST)
-	public @ResponseBody AssessmentEntity authenticate(@RequestBody AssessmentEntity assessmentEntity)
+	public @ResponseBody List<AssessmentEntity> authenticate(@RequestBody AssessmentEntity assessmentEntity)
 			throws Exception {
 				return assessmentService.getAssessment(assessmentEntity);
 	}

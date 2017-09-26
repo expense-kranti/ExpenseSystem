@@ -15,8 +15,5 @@
 		<many-to-one name="sectionId"
 			class="com.boilerplate.java.entities.AssessmentSectionEntity" column="id"
 			unique="true" not-null="true" cascade="all" />
-		<many-to-one name="questionId"
-			class="com.boilerplate.java.entities.QuestionEntity" column="id"
-			unique="true" not-null="true" cascade="all" />
 	</class>
 </hibernate-mapping>

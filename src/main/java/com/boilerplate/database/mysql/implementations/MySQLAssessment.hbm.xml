@@ -11,5 +11,8 @@
 		<property name="maxScore" column="MaxScore"/>		
 		<property name="creationDate" column="CreationDate"/>
 		<property name="updationDate" column="UpdationDate" />
+		<one-to-many name="sections"
+			class="com.boilerplate.java.entities.AssessmentSectionEntity" column="assessmentId"
+			unique="true" not-null="true" cascade="all" />
 	</class>
 </hibernate-mapping>

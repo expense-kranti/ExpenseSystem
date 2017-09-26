@@ -414,6 +414,14 @@ public class BaseRedisDataAccessLayer{
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		
 		// method permission for assessment attempt 
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.authenticate(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.authenticate(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
+		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
 
@@ -571,6 +579,7 @@ public class BaseRedisDataAccessLayer{
 		// Admin credentials
 		vAllEAll.put("AdminId", "admin");
 		vAllEAll.put("AdminPassword", "password");
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT", "From AssessmentEntity assessment where assessment.id = :Id ");
 		// Owner Allocation QUEUE NAme
 
 		return vAllEAll;
