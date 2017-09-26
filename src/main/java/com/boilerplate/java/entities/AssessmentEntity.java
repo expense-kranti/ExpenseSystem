@@ -1,9 +1,9 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
-
-import javax.persistence.JoinColumn;
-
+import java.util.Set;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
@@ -12,7 +12,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class AssessmentEntity extends BaseEntity {
+public class AssessmentEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the assessment name
@@ -25,9 +25,8 @@ public class AssessmentEntity extends BaseEntity {
 	private String maxScore;
 
 	/**
-	 * This is the section for the assessment
+	 * This is the sections for the assessment
 	 */
-	@JoinColumn(name = "id", insertable=false, updatable=false)
 	private List<AssessmentSectionEntity> sections;
 
 	/**

@@ -12,8 +12,9 @@
 		<property name="questionScore" column="QuestionScore" />
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
-		<many-to-one name="sectionId"
-			class="com.boilerplate.java.entities.AssessmentSectionEntity" column="id"
-			unique="true" not-null="true" cascade="all" />
+		<many-to-one name="question" lazy="false"
+			class="com.boilerplate.java.entities.QuestionEntity" fetch="select">
+			<column name="questionId" not-null="true" />
+		</many-to-one>
 	</class>
 </hibernate-mapping>

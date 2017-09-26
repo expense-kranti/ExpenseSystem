@@ -12,8 +12,13 @@
 		<property name="orderId" column="OrderId" />
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
-		<many-to-one name="assessmentId"
-			class="com.boilerplate.java.entities.AssessmentEntity" column="id"
-			unique="true" not-null="true" cascade="all" />
+		<bag name="questions" table="AssessmentQuestionSection" inverse="true"
+			lazy="false" fetch="join">
+			<key>
+				<column name="SectionId" not-null="true" />
+			</key>
+			<one-to-many
+				class="com.boilerplate.java.entities.AssessmentQuestionSectionEntity" />
+		</bag>
 	</class>
 </hibernate-mapping>

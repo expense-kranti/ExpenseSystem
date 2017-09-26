@@ -1,5 +1,7 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
@@ -8,17 +10,17 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class AssessmentQuestionSectionEntity extends BaseEntity {
+public class AssessmentQuestionSectionEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This is the section id
 	 */
-	private AssessmentSectionEntity sectionId;
+	private AssessmentSectionEntity section;
 
 	/**
 	 * This is the question id
 	 */
-	private QuestionEntity questionId;
+	private QuestionEntity question;
 
 	/**
 	 * This is the order id
@@ -36,7 +38,7 @@ public class AssessmentQuestionSectionEntity extends BaseEntity {
 	 * @return the sectionId
 	 */
 	public AssessmentSectionEntity getSectionId() {
-		return sectionId;
+		return section;
 	}
 
 	/**
@@ -45,28 +47,28 @@ public class AssessmentQuestionSectionEntity extends BaseEntity {
 	 * @param sectionId
 	 *            the sectionId to set
 	 */
-	public void setSectionId(AssessmentSectionEntity sectionId) {
-		this.sectionId = sectionId;
+	public void setSectionId(AssessmentSectionEntity section) {
+		this.section = section;
 	}
 
 	/**
 	 * This method is used to get the question id
 	 * 
 	 * @return the questionId
-	 */
+	 *//*
 	public QuestionEntity getQuestionId() {
-		return questionId;
+		return question;
 	}
 
-	/**
+	*//**
 	 * This method is used to set the question id
 	 * 
 	 * @param questionId
 	 *            the questionId to set
-	 */
-	public void setQuestionId(QuestionEntity questionId) {
-		this.questionId = questionId;
-	}
+	 *//*
+	public void setQuestionId(QuestionEntity question) {
+		this.question = question;
+	}*/
 
 	/**
 	 * This method is used to get the order id
@@ -131,6 +133,20 @@ public class AssessmentQuestionSectionEntity extends BaseEntity {
 	 */
 	public void setQuestionScore(String questionScore) {
 		this.questionScore = questionScore;
+	}
+
+	/**
+	 * @return the question
+	 */
+	public QuestionEntity getQuestion() {
+		return question;
+	}
+
+	/**
+	 * @param question the question to set
+	 */
+	public void setQuestion(QuestionEntity question) {
+		this.question = question;
 	}
 
 }

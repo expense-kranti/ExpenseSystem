@@ -1,38 +1,39 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
  * This is provide the question related information
+ * 
  * @author shiva
  *
  */
-public class QuestionEntity extends BaseEntity{
-	
+public class QuestionEntity extends BaseEntity implements Serializable {
+
 	/**
 	 * This is the question type
 	 */
-	private QuestionTypeEntity type;
-	
-	/**
-	 * This is the question type id
-	 */
-	private String questionTypeId;
-	
+	private QuestionTypeEntity questionType;
+
 	/**
 	 * This method is used to get the question type
-	 * @return the type
+	 * 
+	 * @return the questionType
 	 */
-	public QuestionTypeEntity getType() {
-		return type;
+	public QuestionTypeEntity getQuestionType() {
+		return questionType;
 	}
 
 	/**
 	 * This method is used to set the question type
-	 * @param type the type to set
+	 * 
+	 * @param questionType
+	 *            the questionType to set
 	 */
-	public void setType(QuestionTypeEntity type) {
-		this.type = type;
+	public void setQuestionType(QuestionTypeEntity questionType) {
+		this.questionType = questionType;
 	}
 
 	/**
@@ -60,21 +61,5 @@ public class QuestionEntity extends BaseEntity{
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/**
-	 * This method is used to get the question type id
-	 * @return the questionTypeId
-	 */
-	public String getQuestionTypeId() {
-		return questionTypeId;
-	}
-
-	/**
-	 * This method is used to set the question type id
-	 * @param questionTypeId the questionTypeId to set
-	 */
-	public void setQuestionTypeId(String questionTypeId) {
-		this.questionTypeId = questionTypeId;
 	}
 }

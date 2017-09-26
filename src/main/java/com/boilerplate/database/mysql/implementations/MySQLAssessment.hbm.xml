@@ -3,16 +3,21 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-<class name="com.boilerplate.java.entities.AssessmentEntity" table="Assessment">
+	<class name="com.boilerplate.java.entities.AssessmentEntity"
+		table="Assessment">
 		<id name="id" column="Id">
-			<generator class="identity"/>		
+			<generator class="identity" />
 		</id>
-		<property name="name" column="Name"/>		
-		<property name="maxScore" column="MaxScore"/>		
-		<property name="creationDate" column="CreationDate"/>
+		<property name="name" column="Name" />
+		<property name="maxScore" column="MaxScore" />
+		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
-		<one-to-many name="sections"
-			class="com.boilerplate.java.entities.AssessmentSectionEntity" column="assessmentId"
-			unique="true" not-null="true" cascade="all" />
+		<bag name="sections" table="AssessmentSection" 
+				inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="AssessmentId" not-null="true" />
+            </key>
+            <one-to-many class="com.boilerplate.java.entities.AssessmentSectionEntity" />
+        </bag>
 	</class>
 </hibernate-mapping>

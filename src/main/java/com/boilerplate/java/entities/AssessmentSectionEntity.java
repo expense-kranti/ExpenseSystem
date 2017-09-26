@@ -1,18 +1,22 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+import java.util.List;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
  * This class is provide the information reading the assessment section
+ * 
  * @author shiva
  *
  */
-public class AssessmentSectionEntity extends BaseEntity {
+public class AssessmentSectionEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the assessment id
 	 */
-	private AssessmentEntity assessmentId;
+	private AssessmentEntity assessment;
 
 	/**
 	 * This is the section name
@@ -25,22 +29,27 @@ public class AssessmentSectionEntity extends BaseEntity {
 	private String orderId;
 
 	/**
-	 * This method is used to get the assessment id
-	 * 
-	 * @return the assessmentId
+	 * This is the sections for the assessment
 	 */
-	public AssessmentEntity getAssessmentId() {
-		return assessmentId;
+	private List<AssessmentQuestionSectionEntity> questions;
+
+	/**
+	 * This method is used to get the assessment
+	 * 
+	 * @return the assessment
+	 */
+	public AssessmentEntity getAssessment() {
+		return assessment;
 	}
 
 	/**
-	 * This method is used to set the assessment id
+	 * This method is used to set the assessment
 	 * 
-	 * @param assessmentId
-	 *            the assessmentId to set
+	 * @param assessment
+	 *            the assessment to set
 	 */
-	public void setAssessmentId(AssessmentEntity assessmentId) {
-		this.assessmentId = assessmentId;
+	public void setAssessment(AssessmentEntity assessment) {
+		this.assessment = assessment;
 	}
 
 	/**
@@ -108,4 +117,22 @@ public class AssessmentSectionEntity extends BaseEntity {
 		return null;
 	}
 
+	/**
+	 * This is method is used to get the questions
+	 * 
+	 * @return the questions
+	 */
+	public List<AssessmentQuestionSectionEntity> getQuestions() {
+		return questions;
+	}
+
+	/**
+	 * This is method is used to set the questions
+	 * 
+	 * @param questions
+	 *            the questions to set
+	 */
+	public void setQuestions(List<AssessmentQuestionSectionEntity> questions) {
+		this.questions = questions;
+	}
 }
