@@ -28,7 +28,7 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 
 	@Override
 	public void saveAssessment(AssessmentEntity assessmentEntity) {
-		super.set(Assessment+assessmentEntity.getAttemptId(), assessmentEntity);
+		super.set(Assessment+assessmentEntity.getAttemptId(), assessmentEntity.clone());
 		
 	}
 

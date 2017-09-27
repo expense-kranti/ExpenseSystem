@@ -1,5 +1,7 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
@@ -8,7 +10,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class QuestionTypeEntity extends BaseEntity {
+public class QuestionTypeEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the question type name

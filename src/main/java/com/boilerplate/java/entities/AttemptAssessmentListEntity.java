@@ -12,14 +12,14 @@ public class AttemptAssessmentListEntity extends BaseEntity implements Serializa
 	/**
 	 * @return the attemptAssessmentList
 	 */
-	public BoilerplateList<AssessmentEntity> getAttemptAssessmentList() {
+	public BoilerplateList<AssessmentEntity> getAssessmentList() {
 		return assessmentList;
 	}
 
 	/**
 	 * @param attemptAssessmentList the attemptAssessmentList to set
 	 */
-	public void setAttemptAssessmentList(BoilerplateList<AssessmentEntity> assessmentList) {
+	public void setAssessmentList(BoilerplateList<AssessmentEntity> assessmentList) {
 		this.assessmentList = assessmentList;
 	}
 

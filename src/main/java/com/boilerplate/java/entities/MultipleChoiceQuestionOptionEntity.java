@@ -1,5 +1,7 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
@@ -8,7 +10,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class MultipleChoiceQuestionOptionEntity extends BaseEntity {
+public class MultipleChoiceQuestionOptionEntity extends BaseEntity implements Serializable,IQuestionEntity {
 
 	/**
 	 * This is the question id
