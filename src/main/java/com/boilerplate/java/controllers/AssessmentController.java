@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.java.entities.AssessmentEntity;
+import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -38,9 +41,22 @@ public class AssessmentController extends BaseController {
 	 * @throws UnauthorizedException
 	 */
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/assessment", method = RequestMethod.POST)
+	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.POST)
 	public @ResponseBody List<AssessmentEntity> authenticate(@RequestBody AssessmentEntity assessmentEntity)
 			throws Exception {
 				return assessmentService.getAssessment(assessmentEntity);
 	}
+	
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/assessment", method = RequestMethod.GET)
+	public @ResponseBody List<AssessmentEntity> getAssesment()throws Exception {
+				return assessmentService.getAssessment();
+	}
+	
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.GET)
+	public @ResponseBody AttemptAssessmentListEntity getAssessmentAttempt()throws NotFoundException{
+				return assessmentService.getAssessmentAttempt();
+	}
+	
 }

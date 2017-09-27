@@ -112,5 +112,21 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	public void setSections(List<AssessmentSectionEntity> sections) {
 		this.sections = sections;
 	}
+	
+	private String attemptId;
+	
+	/**
+	 * @return the attemptId
+	 */
+	public String getAttemptId() {
+		return attemptId;
+	}
 
+	/**
+	 * @param attemptId the attemptId to set
+	 */
+	public void setAttemptId(String attemptId) {
+		this.attemptId = attemptId;
+	}
+	
 }

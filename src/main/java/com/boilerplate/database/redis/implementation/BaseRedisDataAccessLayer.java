@@ -421,6 +421,20 @@ public class BaseRedisDataAccessLayer{
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesment()");
+		methodPermission.setMethodName("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesment()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -580,6 +594,7 @@ public class BaseRedisDataAccessLayer{
 		vAllEAll.put("AdminId", "admin");
 		vAllEAll.put("AdminPassword", "password");
 		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT", "From AssessmentEntity assessment where assessment.id = :Id ");
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment");
 		// Owner Allocation QUEUE NAme
 
 		return vAllEAll;
