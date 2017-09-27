@@ -1,7 +1,10 @@
 package com.boilerplate.service.interfaces;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
+import java.util.List;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.AssessmentEntity;
+import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 
 /**
  * This class has the services for assessment related operations
@@ -23,4 +26,8 @@ public interface IAssessmentService {
 	 *             the assessment data
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException;
+
+	public List<AssessmentEntity> getAssessment();
+
+	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException;
 }

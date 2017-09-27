@@ -1,6 +1,7 @@
 package com.boilerplate.database.interfaces;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
+import java.util.List;
 import com.boilerplate.java.entities.AssessmentEntity;
 
 /**
@@ -24,4 +25,6 @@ public interface IAssessment {
 	 *             the assessment data regarding the assessment id
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException;
+
+	public List<AssessmentEntity> getAssessment(); 
 }

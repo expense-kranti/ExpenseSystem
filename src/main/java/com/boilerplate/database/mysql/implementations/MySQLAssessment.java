@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AssessmentSectionEntity;
@@ -52,6 +53,8 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 * question from configurations
 	 */
 	private static String sqlQueryGetMultipleChoiceQuestion = "SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION";
+	
+	private static String sqlQueryGetAssessmenList = "SQL_QUERY_GET_ASSESSMENT_LIST";
 
 	/**
 	 * @see IAssessment.getAssessment
@@ -145,6 +148,28 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 					+ "This is the SQL query ~ " + sqlQuery + "~" + ex.toString(), null);
 		}
 		return requestedDataList.get(0);
+	}
+
+	@Override
+	public List<AssessmentEntity> getAssessment() {
+		String sqlQuery = configurationManager.get(sqlQueryGetAssessmenList);
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		List<Map<String, Object>> requestedDataList = new ArrayList<>();
+		List<AssessmentEntity> assessmentEntityList = new ArrayList<>();
+		try {
+			// Declare the new list to hold the result of SQl query
+			requestedDataList = super.executeSelectNative(sqlQuery, queryParameterMap);
+			int i = 0;
+			while (i < requestedDataList.size()) {
+				AssessmentEntity assessmentEntity = Base.fromMap(requestedDataList.get(i), AssessmentEntity.class);
+				assessmentEntityList.add(assessmentEntity);
+				i++;
+			}
+			
+		} catch (Exception ex) {
+			throw ex;
+		}
+		return assessmentEntityList;
 	}
 
 }

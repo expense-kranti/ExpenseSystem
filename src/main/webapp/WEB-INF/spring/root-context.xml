@@ -230,11 +230,16 @@
 
 	<bean id="assessmentService" class="com.boilerplate.service.implemetations.AssesmentService">
 		<property name="assessment" ref="assessment"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
 	</bean>
 
 	<bean id="assessment"
 		class="com.boilerplate.database.mysql.implementations.MySQLAssessment">
 		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+	
+	<bean id="redisAssessment"
+		class="com.boilerplate.database.redis.implementation.RedisAssessment">
 	</bean>
 
 </beans>
