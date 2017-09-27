@@ -125,4 +125,10 @@ public class AssesmentService implements IAssessmentService {
 		return attemptAssessmentListEntity;
 	}
 
+	@Override
+	public void saveAssesment(AssessmentEntity assessmentEntity) {
+		redisAssessment.saveAssessment(assessmentEntity);
+		
+	}
+
 }

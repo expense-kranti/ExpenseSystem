@@ -30,4 +30,6 @@ public interface IAssessmentService {
 	public List<AssessmentEntity> getAssessment();
 
 	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException;
+
+	public void saveAssesment(AssessmentEntity assessmentEntity);
 }
