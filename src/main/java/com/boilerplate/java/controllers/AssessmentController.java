@@ -27,7 +27,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Api(description = "This api has controllers for operate assessment", value = "Assessment API's", basePath = "/assessment")
 @Controller
 public class AssessmentController extends BaseController {
-	
+
 	/**
 	 * This is the instance of the assessment service
 	 */
@@ -35,16 +35,23 @@ public class AssessmentController extends BaseController {
 	IAssessmentService assessmentService;
 
 	/**
+	 * This method is used to get the assessment details regarding the
+	 * assessment id
 	 * 
 	 * @param assessmentEntity
-	 * @return
-	 * @throws UnauthorizedException
+	 *            this parameter contains the assessment details like assessment
+	 *            id
+	 * @return the assessment data
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to get
+	 *             the assessment data
 	 */
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.POST)
-	public @ResponseBody List<AssessmentEntity> authenticate(@RequestBody AssessmentEntity assessmentEntity)
+	public @ResponseBody AssessmentEntity authenticate(@RequestBody AssessmentEntity assessmentEntity)
 			throws Exception {
-				return assessmentService.getAssessment(assessmentEntity);
+		// Get the assessment data
+		return assessmentService.getAssessment(assessmentEntity);
 	}
 	
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })

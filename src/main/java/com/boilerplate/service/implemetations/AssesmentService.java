@@ -1,21 +1,25 @@
 package com.boilerplate.service.implemetations;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.boilerplate.database.interfaces.IAssessment;
+import com.boilerplate.exceptions.rest.BadRequestException;
+import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
+/**
+ * This class implements the IAssessment service class
+ * 
+ * @author shiva
+ *
+ */
 public class AssesmentService implements IAssessmentService {
 
 	/**
-	 * This gets the method permissions
+	 * this is the new instance of assessment class of data layer
 	 */
 	@Autowired
 	IAssessment assessment;
@@ -41,11 +45,12 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
+	 * @throws BadRequestException 
 	 * @see IAssessmentService.getAssessment
 	 */
 	@Override
-	public List<AssessmentEntity> getAssessment(
-			AssessmentEntity assessmentEntity) {
+	public AssessmentEntity getAssessment(
+			AssessmentEntity assessmentEntity) throws BadRequestException {
 		/**
 		 * TODO get current user attemp
 		 * if null create  AttemptAssessmentListEntity with current assessment and create your xml and save into redis
@@ -53,9 +58,8 @@ public class AssesmentService implements IAssessmentService {
 		 * if exist then return xml from redis
 		 * if not exist then create your xml and return it
 		 */
-		List<AssessmentEntity> assessmentData = assessment
-				.getAssessment(assessmentEntity);
-		return assessmentData;
+		// Get the assessment data from data base
+		return assessment.getAssessment(assessmentEntity);
 	}
 
 	@Override
@@ -65,13 +69,10 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	@Override
-	public AttemptAssessmentListEntity getAssessmentAttempt()
-			throws NotFoundException {
-		AttemptAssessmentListEntity attemptAssessmentListEntity = redisAssessment
-				.getAssessmentAttempt();
+	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException {
+		AttemptAssessmentListEntity attemptAssessmentListEntity = redisAssessment.getAssessmentAttempt();
 		if (attemptAssessmentListEntity == null)
-			throw new NotFoundException("AttemptAssessmentListEntity",
-					"No attempt was found for this user.", null);
+			throw new NotFoundException("AttemptAssessmentListEntity", "No attempt was found for this user.", null);
 		return attemptAssessmentListEntity;
 	}
 

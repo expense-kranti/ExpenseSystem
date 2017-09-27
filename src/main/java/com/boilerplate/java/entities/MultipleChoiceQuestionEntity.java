@@ -1,21 +1,35 @@
 package com.boilerplate.java.entities;
 
+import java.util.List;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
  * This class is provide the data regarding Multiple Choice Question
+ * 
  * @author shiva
  *
  */
-public class MultipleChoiceQuestionEntity extends BaseEntity{
+public class MultipleChoiceQuestionEntity extends BaseEntity {
 
 	/**
 	 * This is the question type text
 	 */
 	private String text;
-	
+
+	/**
+	 * This is the options
+	 */
+	private List<MultipleChoiceQuestionOptionEntity> options;
+
+	/**
+	 * This is the question id.
+	 */
+	private String questionId;
+
 	/**
 	 * This method is used to get the text
+	 * 
 	 * @return the text
 	 */
 	public String getText() {
@@ -24,7 +38,9 @@ public class MultipleChoiceQuestionEntity extends BaseEntity{
 
 	/**
 	 * This method is used to set the text
-	 * @param text the text to set
+	 * 
+	 * @param text
+	 *            the text to set
 	 */
 	public void setText(String text) {
 		this.text = text;
@@ -55,5 +71,43 @@ public class MultipleChoiceQuestionEntity extends BaseEntity{
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * This method is used to get the options
+	 * 
+	 * @return the options
+	 */
+	public List<MultipleChoiceQuestionOptionEntity> getOptions() {
+		return options;
+	}
+
+	/**
+	 * This method is used to set the options
+	 * 
+	 * @param options
+	 *            the options to set
+	 */
+	public void setOptions(List<MultipleChoiceQuestionOptionEntity> options) {
+		this.options = options;
+	}
+
+	/**
+	 * This method is used to get the question id
+	 * 
+	 * @return the questionId
+	 */
+	public String getQuestionId() {
+		return questionId;
+	}
+
+	/**
+	 * This method is used to set the question id
+	 * 
+	 * @param questionId
+	 *            the questionId to set
+	 */
+	public void setQuestionId(String questionId) {
+		this.questionId = questionId;
 	}
 }

@@ -4,50 +4,54 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
  * This class is provide the data regarding Multiple Choice Question option
+ * 
  * @author shiva
  *
  */
-public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
+public class MultipleChoiceQuestionOptionEntity extends BaseEntity {
 
 	/**
 	 * This is the question id
 	 */
-	private MultipleChoiceQuestionEntity questionId;
-	
+	private MultipleChoiceQuestionEntity mutipleChoiceQuestionId;
+
 	/**
 	 * This is the order id
 	 */
 	private String orderId;
-	
+
 	/**
 	 * This is the text of option
 	 */
 	private String text;
-	
+
 	/**
 	 * This is the flag for option shows is the option is correct or not
 	 */
 	private Boolean isCorrect;
-	
-	
+
 	/**
 	 * This method is used to get the question id
+	 * 
 	 * @return the questionId
 	 */
-	public MultipleChoiceQuestionEntity getQuestionId() {
-		return questionId;
+	public MultipleChoiceQuestionEntity getMutipleChoiceQuestionId() {
+		return mutipleChoiceQuestionId;
 	}
 
 	/**
 	 * This method is used to set the question id
-	 * @param questionId the questionId to set
+	 * 
+	 * @param questionId
+	 *            the questionId to set
 	 */
-	public void setQuestionId(MultipleChoiceQuestionEntity questionId) {
-		this.questionId = questionId;
+	public void setMutipleChoiceQuestionId(MultipleChoiceQuestionEntity mutipleChoiceQuestionId) {
+		this.mutipleChoiceQuestionId = mutipleChoiceQuestionId;
 	}
 
 	/**
 	 * This method is used to get the order id
+	 * 
 	 * @return the orderId
 	 */
 	public String getOrderId() {
@@ -56,7 +60,9 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
 
 	/**
 	 * This method is used to set the order id
-	 * @param orderId the orderId to set
+	 * 
+	 * @param orderId
+	 *            the orderId to set
 	 */
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
@@ -64,6 +70,7 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
 
 	/**
 	 * This method is used to get the text
+	 * 
 	 * @return the text
 	 */
 	public String getText() {
@@ -72,7 +79,9 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
 
 	/**
 	 * This method is used to set the text
-	 * @param text the text to set
+	 * 
+	 * @param text
+	 *            the text to set
 	 */
 	public void setText(String text) {
 		this.text = text;
@@ -80,6 +89,7 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
 
 	/**
 	 * This method is used to get the question is correct or not
+	 * 
 	 * @return the isCorrect
 	 */
 	public Boolean getIsCorrect() {
@@ -88,7 +98,9 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity{
 
 	/**
 	 * This method is used to set the question is correct or not
-	 * @param isCorrect the isCorrect to set
+	 * 
+	 * @param isCorrect
+	 *            the isCorrect to set
 	 */
 	public void setIsCorrect(Boolean isCorrect) {
 		this.isCorrect = isCorrect;

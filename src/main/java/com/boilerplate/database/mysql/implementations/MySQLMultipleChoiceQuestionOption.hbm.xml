@@ -3,7 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity"
+	<class
+		name="com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity"
 		table="MultipleChoiceQuestionOption">
 		<id name="id" column="Id">
 			<generator class="identity" />
@@ -13,8 +14,5 @@
 		<property name="isCorrect" column="IsCorrect" />
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
-		<many-to-one name="questionId"
-			class="com.boilerplate.java.entities.MultipleChoiceQuestionEntity" column="id"
-			unique="true" not-null="true" cascade="all" />
 	</class>
 </hibernate-mapping>

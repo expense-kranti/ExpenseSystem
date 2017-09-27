@@ -3,12 +3,22 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.boilerplate.java.entities.MultipleChoiceQuestionEntity" table="MultipleChoiceQuestion">
+	<class name="com.boilerplate.java.entities.MultipleChoiceQuestionEntity"
+		table="MultipleChoiceQuestion">
 		<id name="id" column="Id">
 			<generator class="identity" />
 		</id>
 		<property name="text" column="Text" />
+		<property name="questionId" column="QuestionId" />
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
+		<bag name="options" table="MultipleChoiceQuestionOption" inverse="true"
+			lazy="false" fetch="select">
+			<key>
+				<column name="MultipleChoiceQuestionId" not-null="true" />
+			</key>
+			<one-to-many
+				class="com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity" />
+		</bag>
 	</class>
 </hibernate-mapping>
