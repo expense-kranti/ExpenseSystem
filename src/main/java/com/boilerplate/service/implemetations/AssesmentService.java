@@ -51,7 +51,6 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
-	 * @throws BadRequestException
 	 * @see IAssessmentService.getAssessment
 	 */
 	@Override
@@ -66,30 +65,29 @@ public class AssesmentService implements IAssessmentService {
 
 		try {
 			AttemptAssessmentListEntity attemptAssessmentList = this.getAssessmentAttempt();
-
-			if (attemptAssessmentList.getAttemptAssessmentList().stream()
+			if (attemptAssessmentList.getAssessmentList().stream()
 					.anyMatch(assessment -> ((BaseEntity) assessment).getId() == assessmentEntity.getId())) {
 				// TODO get assessment xml from redis
 			} else {
 				// TODO save the assessment xml to data base
 				// Get the assessment data regarding assessment id
 				AssessmentEntity newAssessment = assessment.getAssessment(assessmentEntity);
-				this.saveAssessmentAttempt(assessmentEntity, attemptAssessmentList);
+				this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessmentList);
 			}
-
 		} catch (NotFoundException ex) {
 			// Declare new instance of attempt assessment list
 			AttemptAssessmentListEntity attemptAssessment = new AttemptAssessmentListEntity();
 			// Set the user id to list
 			attemptAssessment.setUserId(RequestThreadLocal.getSession().getUserId());
-			this.saveAssessmentAttempt(assessmentEntity, attemptAssessment);
+			this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessment);
 		}
 		// Get the assessment data from data base
 		return assessment.getAssessment(assessmentEntity);
 	}
 
 	/**
-	 * This method is used to save the assessment attempt data to redis
+	 * This method is used to save the assessment attempt data to redis with
+	 * append the list of assessment
 	 * 
 	 * @param assessmentEntity
 	 *            this parameter contains the information about the assessment
@@ -97,14 +95,20 @@ public class AssesmentService implements IAssessmentService {
 	 *            this parameter contains the information about the assessment
 	 *            attempt by user
 	 */
-	private void saveAssessmentAttempt(AssessmentEntity assessmentEntity,
+	private void saveAssessmentAttemptWithAppendAssessmentDetail(AssessmentEntity assessmentEntity,
 			AttemptAssessmentListEntity attemptAssessment) {
 		// Declare new list of assessment
 		BoilerplateList<AssessmentEntity> assessmentList = new BoilerplateList<>();
+		// Check is size of assessment list is greater than zero then set list to
+		// attempt assessment list
+		if (attemptAssessment.getAssessmentList().size() > 0) {
+			// Declare new list of assessment
+			assessmentList = attemptAssessment.getAssessmentList();
+		}
 		// Add new assessment to list
 		assessmentList.add(new AssessmentEntity(assessmentEntity.getId(), AssessmentStatus.Inprogress));
-		// Set the assessemnt list to attemp assessment list entity
-		attemptAssessment.setAttemptAssessmentList(assessmentList);
+		// Set the assessment list
+		attemptAssessment.setAssessmentList(assessmentList);
 		// Save the assessment details
 		redisAssessment.saveAssessmentAttempt(attemptAssessment);
 	}
