@@ -102,7 +102,8 @@ public class AssesmentService implements IAssessmentService {
 		// Declare new list of assessment
 		BoilerplateList<AssessmentEntity> assessmentList = new BoilerplateList<>();
 		// Add new assessment to list
-		assessmentList.add(new AssessmentEntity(assessmentEntity.getId(), AssessmentStatus.Inprogress));
+		assessmentList.add(new AssessmentEntity(assessmentEntity.getId(), 
+								AssessmentStatus.Inprogress));
 		// Set the assessemnt list to attemp assessment list entity
 		attemptAssessment.setAttemptAssessmentList(assessmentList);
 		// Save the assessment details
