@@ -128,7 +128,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 *             throw this exception in case of any error while trying to get
 	 *             the multiple choice question regarding question id
 	 */
-	private MultipleChoiceQuestionEntity getMultipleChoiceQuestionAndOptions(String questionId)
+	private <T> T getMultipleChoiceQuestionAndOptions(String questionId)
 			throws BadRequestException {
 		// Get the SQL query to process the request
 		String sqlQuery = configurationManager.get(sqlQueryGetMultipleChoiceQuestion);
@@ -147,7 +147,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			throw new BadRequestException("AssessmentEntity", "While trying to get multiple choice question ~ "
 					+ "This is the SQL query ~ " + sqlQuery + "~" + ex.toString(), null);
 		}
-		return requestedDataList.get(0);
+		return (T) requestedDataList.get(0);
 	}
 
 	@Override

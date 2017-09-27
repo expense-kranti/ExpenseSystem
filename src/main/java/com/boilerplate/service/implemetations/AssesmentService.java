@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
@@ -21,6 +22,8 @@ import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
 import com.boilerplate.java.entities.QuestionType;
 import com.boilerplate.service.interfaces.IAssessmentService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -71,34 +74,32 @@ public class AssesmentService implements IAssessmentService {
 				// Get assessment data from redis
 				assessmentData = redisAssessment.getAssessment(assessmentEntity);
 			} else {
-				// Save the assessment data to redis
-				this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessmentList);
 				// Get the assessment data regarding assessment id
 				assessmentData = assessment.getAssessment(assessmentEntity);
 				// Set attempt id
 				assessmentData.setAttemptId(RequestThreadLocal.getSession().getUserId() + assessmentData.getId());
 				// Save assessment data to redis
 				redisAssessment.saveAssessment(assessmentData);
+				// Save the attempt assessment data to redis
+				this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessmentList);
 			}
 		} catch (NotFoundException ex) {
 			// Declare new instance of attempt assessment list
 			AttemptAssessmentListEntity attemptAssessment = new AttemptAssessmentListEntity();
 			// Set the user id to list
 			attemptAssessment.setUserId(RequestThreadLocal.getSession().getUserId());
-			// Save the assessment data to redis
-			this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessment);
 			// Get the assessment data regarding assessment id
 			assessmentData = assessment.getAssessment(assessmentEntity);
 			// Set attempt id
 			assessmentData.setAttemptId(RequestThreadLocal.getSession().getUserId() + assessmentData.getId());
 			// Save assessment data to redis
 			redisAssessment.saveAssessment(assessmentData);
+			// Save the attempt assessment data to redis
+			this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessment);
 		}
 		// Get the assessment data from data base
 		return assessmentData;
 	}
-
-	
 
 	/**
 	 * This method is used to check is assessment is exist in a list or not if
