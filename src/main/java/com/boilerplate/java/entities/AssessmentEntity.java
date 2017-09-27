@@ -35,6 +35,20 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	private AssessmentStatus status;
 
 	/**
+	 * This method is used to construct this class and set id and status
+	 * 
+	 * @param id
+	 *            this parameter define the id of assessment
+	 * @param status
+	 *            this parameter define the assessment status
+	 */
+	public AssessmentEntity(String id, AssessmentStatus status) {
+		//Set id
+		super.setId(id);
+		this.status = status;
+	}
+
+	/**
 	 * This method is used to get the assessment name
 	 * 
 	 * @return the name

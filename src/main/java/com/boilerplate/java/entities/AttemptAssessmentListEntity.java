@@ -40,4 +40,20 @@ public class AttemptAssessmentListEntity extends BaseEntity implements Serializa
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	private String userId;
 }

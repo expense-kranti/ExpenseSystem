@@ -7,5 +7,7 @@ import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 public interface IRedisAssessment {
 
 	public AttemptAssessmentListEntity getAssessmentAttempt();
+	
+	public void saveAssessmentAttempt(AttemptAssessmentListEntity attemptAssessmentListEntity);
 
 }
