@@ -1,5 +1,6 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
@@ -10,7 +11,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class MultipleChoiceQuestionEntity extends BaseEntity {
+public class MultipleChoiceQuestionEntity extends BaseEntity implements Serializable ,IQuestionEntity{
 
 	/**
 	 * This is the question type text

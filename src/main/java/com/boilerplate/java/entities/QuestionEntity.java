@@ -21,7 +21,7 @@ public class QuestionEntity<T> extends BaseEntity implements Serializable {
 	/**
 	 * This is the question text
 	 */
-	private T questionText;
+	private T questionData;
 
 	/**
 	 * This is the answer of question by user
@@ -29,22 +29,22 @@ public class QuestionEntity<T> extends BaseEntity implements Serializable {
 	private String answer;
 
 	/**
-	 * This method is used to get the question text
+	 * This method is used to get the question data
 	 * 
-	 * @return the questionText
+	 * @return the questionData
 	 */
-	public T getQuestionText() {
-		return questionText;
+	public T getQuestionData() {
+		return questionData;
 	}
 
 	/**
 	 * This method is used to set the question text
 	 * 
-	 * @param questionText
-	 *            the questionText to set
+	 * @param questionData
+	 *            the questionData to set
 	 */
-	public void setQuestionText(T questionText) {
-		this.questionText = questionText;
+	public void setQuestionData(T questionData) {
+		this.questionData = questionData;
 	}
 
 	/**
