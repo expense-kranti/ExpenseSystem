@@ -63,8 +63,9 @@ public class AssesmentService implements IAssessmentService {
 	@Override
 	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException {
 		AttemptAssessmentListEntity attemptAssessmentListEntity = redisAssessment.getAssessmentAttempt();
-		if (attemptAssessmentListEntity == null)
+		if (attemptAssessmentListEntity == null) {
 			throw new NotFoundException("AttemptAssessmentListEntity", "No attempt was found for this user.", null);
+		}
 		return attemptAssessmentListEntity;
 	}
 

@@ -30,6 +30,11 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	private List<AssessmentSectionEntity> sections;
 
 	/**
+	 * This is the assessment status
+	 */
+	private AssessmentStatus status;
+
+	/**
 	 * This method is used to get the assessment name
 	 * 
 	 * @return the name
@@ -112,9 +117,9 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	public void setSections(List<AssessmentSectionEntity> sections) {
 		this.sections = sections;
 	}
-	
+
 	private String attemptId;
-	
+
 	/**
 	 * @return the attemptId
 	 */
@@ -123,10 +128,30 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * @param attemptId the attemptId to set
+	 * @param attemptId
+	 *            the attemptId to set
 	 */
 	public void setAttemptId(String attemptId) {
 		this.attemptId = attemptId;
 	}
-	
+
+	/**
+	 * This method is used to get the assessment status
+	 * 
+	 * @return the status
+	 */
+	public AssessmentStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * This method is used to set the assessment status
+	 * 
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(AssessmentStatus status) {
+		this.status = status;
+	}
+
 }

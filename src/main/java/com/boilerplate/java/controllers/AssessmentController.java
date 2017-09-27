@@ -48,22 +48,21 @@ public class AssessmentController extends BaseController {
 	 */
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessment", method = RequestMethod.POST)
-	public @ResponseBody AssessmentEntity authenticate(@RequestBody AssessmentEntity assessmentEntity)
+	public @ResponseBody AssessmentEntity getAssessment(@RequestBody AssessmentEntity assessmentEntity)
 			throws Exception {
 		// Get the assessment data
 		return assessmentService.getAssessment(assessmentEntity);
 	}
-	
+
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessment", method = RequestMethod.GET)
-	public @ResponseBody List<AssessmentEntity> getAssesment()throws Exception {
-				return assessmentService.getAssessment();
+	public @ResponseBody List<AssessmentEntity> getAssesment() throws Exception {
+		return assessmentService.getAssessment();
 	}
-	
+
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.GET)
-	public @ResponseBody AttemptAssessmentListEntity getAssessmentAttempt()throws NotFoundException{
-				return assessmentService.getAssessmentAttempt();
+	public @ResponseBody AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException {
+		return assessmentService.getAssessmentAttempt();
 	}
-	
 }
