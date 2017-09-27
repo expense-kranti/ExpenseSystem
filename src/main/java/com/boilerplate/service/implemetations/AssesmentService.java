@@ -46,6 +46,13 @@ public class AssesmentService implements IAssessmentService {
 	@Override
 	public List<AssessmentEntity> getAssessment(
 			AssessmentEntity assessmentEntity) {
+		/**
+		 * TODO get current user attemp
+		 * if null create  AttemptAssessmentListEntity with current assessment and create your xml and save into redis
+		 * if not null then check your assessment is exist or not
+		 * if exist then return xml from redis
+		 * if not exist then create your xml and return it
+		 */
 		List<AssessmentEntity> assessmentData = assessment
 				.getAssessment(assessmentEntity);
 		return assessmentData;
