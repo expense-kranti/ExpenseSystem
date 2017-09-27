@@ -58,19 +58,20 @@ public  abstract class BaseEntity extends Base implements Serializable{
 	/**
 	 * The creation date of the entity.
 	 */
-	@JsonIgnore
+	
 	private Date creationDate;
 	
 
 	/**
 	 * The updation date of the entity.
 	 */
-	@JsonIgnore
+	
 	private Date updationDate;
 	
 	/**
 	 * This is the update date in string;
 	 */
+	@JsonIgnore
 	private String stringUpdateDate;
 	
 	/**
@@ -108,6 +109,7 @@ public  abstract class BaseEntity extends Base implements Serializable{
 	/**
 	 * This is the create date in string;
 	 */
+	@JsonIgnore
 	private String stringCreationDate;
 	
 	/**

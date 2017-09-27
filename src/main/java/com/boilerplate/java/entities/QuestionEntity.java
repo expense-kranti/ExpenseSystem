@@ -8,14 +8,44 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * This is provide the question related information
  * 
  * @author shiva
+ * @param <T>
  *
  */
-public class QuestionEntity extends BaseEntity implements Serializable {
+public class QuestionEntity<T> extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the question type
 	 */
 	private QuestionTypeEntity questionType;
+
+	/**
+	 * This is the question text
+	 */
+	private T questionText;
+
+	/**
+	 * This is the answer of question by user
+	 */
+	private String answer;
+
+	/**
+	 * This method is used to get the question text
+	 * 
+	 * @return the questionText
+	 */
+	public T getQuestionText() {
+		return questionText;
+	}
+
+	/**
+	 * This method is used to set the question text
+	 * 
+	 * @param questionText
+	 *            the questionText to set
+	 */
+	public void setQuestionText(T questionText) {
+		this.questionText = questionText;
+	}
 
 	/**
 	 * This method is used to get the question type
@@ -61,5 +91,24 @@ public class QuestionEntity extends BaseEntity implements Serializable {
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * This method is used to get the answer
+	 * 
+	 * @return the answer
+	 */
+	public String getAnswer() {
+		return answer;
+	}
+
+	/**
+	 * This method is used to set the answer
+	 * 
+	 * @param answer
+	 *            the answer to set
+	 */
+	public void setAnswer(String answer) {
+		this.answer = answer;
 	}
 }
