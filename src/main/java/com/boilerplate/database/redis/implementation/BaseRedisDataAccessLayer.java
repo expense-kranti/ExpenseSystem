@@ -651,6 +651,7 @@ public class BaseRedisDataAccessLayer {
 		// Storing seed content
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
+		contentMap.put("WELCOME_MESSAGE_SMS", "Welcome @FirstName your password is @Password");
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
 
