@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -166,6 +167,13 @@ public class AssesmentService implements IAssessmentService {
 			throw new NotFoundException("AttemptAssessmentListEntity", "No attempt was found for this user.", null);
 		}
 		return attemptAssessmentListEntity;
+	}
+
+	@Override
+	public void saveAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException {
+		assessmentEntity.validate();
+		redisAssessment.saveAssessment(assessmentEntity);
+		
 	}
 
 }
