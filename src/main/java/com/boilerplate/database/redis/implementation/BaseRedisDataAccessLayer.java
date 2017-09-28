@@ -455,6 +455,15 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
+		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 

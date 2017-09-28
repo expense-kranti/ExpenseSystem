@@ -10,7 +10,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class MultipleChoiceQuestionOptionEntity extends BaseEntity implements Serializable,IQuestionEntity {
+public class MultipleChoiceQuestionOptionEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the question id

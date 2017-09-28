@@ -98,8 +98,9 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		if(this.attemptId==null)
+			throw new ValidationFailedException("AssessmentEntity", "Attempt id is null/Empty", null);
+		return true;
 	}
 
 	/**

@@ -3,6 +3,7 @@ package com.boilerplate.service.interfaces;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import java.util.List;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 
@@ -31,5 +32,5 @@ public interface IAssessmentService {
 
 	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException;
 
-	public void saveAssesment(AssessmentEntity assessmentEntity);
+	public void saveAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException;
 }
