@@ -9,6 +9,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * 
  * @author shiva
  * @param <T>
+ * @param <T>
  *
  */
 public class QuestionEntity<T> extends BaseEntity implements Serializable {
@@ -21,7 +22,7 @@ public class QuestionEntity<T> extends BaseEntity implements Serializable {
 	/**
 	 * This is the question text
 	 */
-	private T questionData;
+	private MultipleChoiceQuestionEntity questionData;
 
 	/**
 	 * This is the answer of question by user
@@ -33,7 +34,7 @@ public class QuestionEntity<T> extends BaseEntity implements Serializable {
 	 * 
 	 * @return the questionData
 	 */
-	public T getQuestionData() {
+	public MultipleChoiceQuestionEntity getQuestionData() {
 		return questionData;
 	}
 
@@ -43,7 +44,7 @@ public class QuestionEntity<T> extends BaseEntity implements Serializable {
 	 * @param questionData
 	 *            the questionData to set
 	 */
-	public void setQuestionData(T questionData) {
+	public void setQuestionData(MultipleChoiceQuestionEntity questionData) {
 		this.questionData = questionData;
 	}
 
