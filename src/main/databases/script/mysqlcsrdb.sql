@@ -28,6 +28,7 @@ CREATE TABLE `Assessment` (
   `MaxScore` varchar(128) DEFAULT NULL,
   `CreationDate` datetime NOT NULL,
   `UpdationDate` datetime DEFAULT NULL,
+  `IsActive` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +39,7 @@ CREATE TABLE `Assessment` (
 
 LOCK TABLES `Assessment` WRITE;
 /*!40000 ALTER TABLE `Assessment` DISABLE KEYS */;
-INSERT INTO `Assessment` VALUES (1,'Assesment1','10','2017-09-26 12:15:28','2017-09-26 12:15:28');
+INSERT INTO `Assessment` VALUES (1,'Assesment1','10','2017-09-26 12:15:28','2017-09-26 12:15:28',1);
 /*!40000 ALTER TABLE `Assessment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,7 +118,10 @@ CREATE TABLE `MultipleChoiceQuestion` (
   `Text` longtext NOT NULL,
   `CreationDate` datetime NOT NULL,
   `UpdationDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`Id`)
+  `QuestionId` bigint(20) NOT NULL,
+  PRIMARY KEY (`Id`),
+  KEY `Question_Id` (`QuestionId`),
+  CONSTRAINT `Question_Id` FOREIGN KEY (`QuestionId`) REFERENCES `Question` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -127,7 +131,7 @@ CREATE TABLE `MultipleChoiceQuestion` (
 
 LOCK TABLES `MultipleChoiceQuestion` WRITE;
 /*!40000 ALTER TABLE `MultipleChoiceQuestion` DISABLE KEYS */;
-INSERT INTO `MultipleChoiceQuestion` VALUES (1,'What is your gender?','2017-09-26 11:43:42','2017-09-26 11:43:42'),(2,'What is your name?','2017-09-26 11:43:51','2017-09-26 11:43:51'),(3,'What is your dob?','2017-09-26 11:43:56','2017-09-26 11:43:56'),(4,'What is your test name?','2017-09-26 11:45:32','2017-09-26 11:45:32');
+INSERT INTO `MultipleChoiceQuestion` VALUES (1,'What is your gender?','2017-09-26 11:43:42','2017-09-26 11:43:42',1),(2,'What is your name?','2017-09-26 11:43:51','2017-09-26 11:43:51',2),(3,'What is your dob?','2017-09-26 11:43:56','2017-09-26 11:43:56',3),(4,'What is your test name?','2017-09-26 11:45:32','2017-09-26 11:45:32',4);
 /*!40000 ALTER TABLE `MultipleChoiceQuestion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -174,7 +178,6 @@ CREATE TABLE `Question` (
   `Type` bigint(20) NOT NULL,
   `CreationDate` datetime NOT NULL,
   `UpdationDate` datetime DEFAULT NULL,
-  `QuestionTypeId` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `QuestionType` (`Type`),
   CONSTRAINT `QuestionType` FOREIGN KEY (`Type`) REFERENCES `QuestionType` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -187,7 +190,7 @@ CREATE TABLE `Question` (
 
 LOCK TABLES `Question` WRITE;
 /*!40000 ALTER TABLE `Question` DISABLE KEYS */;
-INSERT INTO `Question` VALUES (1,1,'2017-09-26 12:03:57','2017-09-26 12:03:57',1),(2,1,'2017-09-26 12:04:03','2017-09-26 12:04:03',2),(3,1,'2017-09-26 12:04:06','2017-09-26 12:04:06',3),(4,1,'2017-09-26 12:04:10','2017-09-26 12:04:10',4);
+INSERT INTO `Question` VALUES (1,1,'2017-09-26 12:03:57','2017-09-26 12:03:57'),(2,1,'2017-09-26 12:04:03','2017-09-26 12:04:03'),(3,1,'2017-09-26 12:04:06','2017-09-26 12:04:06'),(4,1,'2017-09-26 12:04:10','2017-09-26 12:04:10');
 /*!40000 ALTER TABLE `Question` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,4 +229,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-26 12:27:08
+-- Dump completed on 2017-09-28 14:05:29
