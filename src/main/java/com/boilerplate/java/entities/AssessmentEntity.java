@@ -35,6 +35,11 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	private AssessmentStatus status;
 
 	/**
+	 * This is the status of assessment define is assessment is active or not
+	 */
+	private boolean active;
+
+	/**
 	 * This method is used to construct this class and set id and status
 	 * 
 	 * @param id
@@ -98,7 +103,7 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		if(this.attemptId==null)
+		if (this.attemptId == null)
 			throw new ValidationFailedException("AssessmentEntity", "Attempt id is null/Empty", null);
 		return true;
 	}
@@ -174,6 +179,20 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	 */
 	public void setStatus(AssessmentStatus status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

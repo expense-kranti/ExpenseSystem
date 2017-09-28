@@ -54,6 +54,9 @@ public class AssesmentService implements IAssessmentService {
 	 */
 	@Override
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException {
+		// Set assessment active status to true because we want to get only
+		// active assessment
+		assessmentEntity.setActive(true);
 		AssessmentEntity assessmentData = new AssessmentEntity();
 		try {
 			AttemptAssessmentListEntity attemptAssessmentList = this.getAssessmentAttempt();

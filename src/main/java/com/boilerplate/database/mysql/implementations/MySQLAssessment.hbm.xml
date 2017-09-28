@@ -12,12 +12,13 @@
 		<property name="maxScore" column="MaxScore" />
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
-		<bag name="sections" table="AssessmentSection" 
-				inverse="true" lazy="false" fetch="select">
-            <key>
-                <column name="AssessmentId" not-null="true" />
-            </key>
-            <one-to-many class="com.boilerplate.java.entities.AssessmentSectionEntity" />
-        </bag>
+		<property name="active" column="IsActive" />
+		<bag name="sections" table="AssessmentSection" inverse="true"
+			lazy="false" fetch="select">
+			<key>
+				<column name="AssessmentId" not-null="true" />
+			</key>
+			<one-to-many class="com.boilerplate.java.entities.AssessmentSectionEntity" />
+		</bag>
 	</class>
 </hibernate-mapping>

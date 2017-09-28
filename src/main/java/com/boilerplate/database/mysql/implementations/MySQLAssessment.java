@@ -72,6 +72,8 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// Put the id into query parameter
 		queryParameterMap.put("Id", assessmentEntity.getId());
+		// Put the active status into query parameter
+		queryParameterMap.put("Active", assessmentEntity.getActive());
 		// This variable is used to hold the query response data
 		List<AssessmentEntity> requestedDataList = new ArrayList<>();
 		try {
