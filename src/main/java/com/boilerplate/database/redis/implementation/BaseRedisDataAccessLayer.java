@@ -436,15 +436,15 @@ public class BaseRedisDataAccessLayer {
 		// method permission for assessment attempt
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.authenticate(com.boilerplate.java.entities.AssessmentEntity)");
+				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.authenticate(com.boilerplate.java.entities.AssessmentEntity)");
+				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesment()");
-		methodPermission.setMethodName("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesment()");
+		methodPermission.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
+		methodPermission.setMethodName("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
@@ -459,6 +459,13 @@ public class BaseRedisDataAccessLayer {
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
@@ -644,6 +651,7 @@ public class BaseRedisDataAccessLayer {
 		// Storing seed content
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
+		contentMap.put("WELCOME_MESSAGE_SMS", "Welcome @FirstName your password is @Password");
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
 

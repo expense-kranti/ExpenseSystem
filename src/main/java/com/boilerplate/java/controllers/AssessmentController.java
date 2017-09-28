@@ -48,7 +48,7 @@ public class AssessmentController extends BaseController {
 	 */
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.POST)
-	public @ResponseBody AssessmentEntity getAssessment(@RequestBody AssessmentEntity assessmentEntity)
+	public @ResponseBody AssessmentEntity attemptAssessment(@RequestBody AssessmentEntity assessmentEntity)
 			throws Exception {
 		// Get the assessment data
 		return assessmentService.getAssessment(assessmentEntity);

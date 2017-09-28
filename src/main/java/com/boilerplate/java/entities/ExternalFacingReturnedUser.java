@@ -39,11 +39,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser implements Se
 		super.setUserStatus(user.getUserStatus());
 		super.setMiddleName(user.getMiddleName());
 		super.setReferalSource(user.getReferalSource());
-		super.setDsaId(user.getDsaId());
 		super.setLocation(user.getLocation());
-		super.setExperianNewUserId(user.getExperianNewUserId());
-		super.setApproved(user.getApproved());
-		super.setDisableForReport(user.getDisableForReport());
 			
 	}
 	/**
@@ -88,13 +84,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser implements Se
 	 */
 	@ApiModelProperty(value="This organization id of the user")
 	private String organizationId;
-	
-	/**
-	
-	
-	
-	
-	
+
 	/**
 	 * This is the otpList
 	 */

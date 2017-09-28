@@ -52,16 +52,7 @@ public class SendRegistrationSMSObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		ExternalFacingUser externalFacingUser = (ExternalFacingUser)asyncWorkItem.getPayload();
-		if (externalFacingUser.getDsaId() !=null){
-			this.sendSMS(externalFacingUser.getFirstName(), externalFacingUser.getPassword(), getDsaPhoneNumber(externalFacingUser.getDsaId()));
-		}else{
-			this.sendSMS(externalFacingUser.getFirstName(), externalFacingUser.getPassword(), externalFacingUser.getPhoneNumber());
-			if(!(externalFacingUser.getAuthenticationProvider().equalsIgnoreCase(configurationManager.get("DSAAuthenticationProvider")))){
-				this.sendCMDWelcomeSMS(externalFacingUser.getPhoneNumber());
-			}
-			
-		}
-		
+		this.sendSMS(externalFacingUser.getFirstName(), externalFacingUser.getPassword(), externalFacingUser.getPhoneNumber());	
 	}
 	
 
@@ -85,37 +76,8 @@ public class SendRegistrationSMSObserver implements IAsyncWorkObserver {
 		url = url.replace("@sender", configurationManager.get("SMS_SENDER"));
 		url = url.replace("@message",URLEncoder.encode(message));
 		String response=null;
-		if(!Boolean.valueOf(configurationManager.get("Db_Migrate"))){
-			HttpResponse smsGatewayResponse= HttpUtility.makeHttpRequest(url, null, null, null, "GET");
-		}
+		HttpResponse smsGatewayResponse= HttpUtility.makeHttpRequest(url, null, null, null, "GET");
 		
-	}
-	/**
-	 * This method send the cmd welcome message to user.
-	 * @param phoneNumber The user phone number
-	 * @throws IOException
-	 */
-	public void sendCMDWelcomeSMS(String phoneNumber) throws IOException{
-		String url = configurationManager.get("SMS_ROOT_URL")+configurationManager.get("SMS_URL");
-		url = url.replace("@apiKey", configurationManager.get("SMS_API_KEY"));
-		url = url.replace("@sender", configurationManager.get("SMS_SENDER"));
-		url = url.replace("@to", phoneNumber);
-		String message = contentService.getContent("WELCOME_USER_CMD_MSG");
-		url = url.replace("@sender", configurationManager.get("SMS_SENDER"));
-		url = url.replace("@message",URLEncoder.encode(message));
-		String response=null;
-		if(!Boolean.valueOf(configurationManager.get("Db_Migrate"))){
-			HttpResponse smsGatewayResponse= HttpUtility.makeHttpRequest(url, null, null, null, "GET");
-		}
-	}
-	
-	/**
-	 * This method gets the DSA phone Number
-	 * @param dsaId The dsaId of DSA
-	 * @return The DSA Phone Number
-	 */
-	private String getDsaPhoneNumber(String dsaId){
-		String[] keySplitArray = dsaId.split(":");
-		return keySplitArray[1];
+		
 	}
 }

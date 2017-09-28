@@ -242,14 +242,6 @@ public class UserService implements IUserService {
 
 		// call the database to save the user
 		externalFacingUser = (ExternalFacingUser) userDataAccess.create(externalFacingUser).transformToExternal();
-		// Check for is DSA ROle
-		if (externalFacingUser.getAuthenticationProvider()
-				.equalsIgnoreCase(this.configurationManager.get("DSAAuthenticationProvider"))) {
-			ExternalFacingReturnedUser user = new ExternalFacingReturnedUser(externalFacingUser);
-			BoilerplateList<Role> rolesList = new BoilerplateList<>();
-			rolesList.add(new Role("DSA", "DSA", "DSA of the system", true, false));
-			this.userRole.grantUserRole(user, rolesList);
-		}
 
 		// publish the created user
 		ExternalFacingUser externalFacingUserClone = null;
@@ -263,7 +255,6 @@ public class UserService implements IUserService {
 			try {
 				sendRegistrationSMSObserver.sendSMS(externalFacingUserClone.getFirstName(),
 						externalFacingUserClone.getPassword(), externalFacingUserClone.getPhoneNumber());
-				sendRegistrationSMSObserver.sendCMDWelcomeSMS(externalFacingUserClone.getPhoneNumber());
 			} catch (Exception exSms) {
 				// if an exception takes place here we cant do much hence just log it and move
 				// forward
