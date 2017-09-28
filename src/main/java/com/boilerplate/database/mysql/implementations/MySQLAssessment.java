@@ -43,17 +43,21 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	}
 
 	/**
-	 * This variable provide the key for SQL query for get the assessment from
-	 * configurations
+	 * This variable provide the key for SQL query for configurations this SQL
+	 * query is used to get the assessment from configurations
 	 */
 	private static String sqlQueryGetAssessment = "SQL_QUERY_GET_ASSESSMENT";
 
 	/**
-	 * This variable provide the key for SQL query for get the multiple choice
-	 * question from configurations
+	 * This variable provide the key for SQL query for configurations this SQL
+	 * query is used to get the multiple choice question
 	 */
 	private static String sqlQueryGetMultipleChoiceQuestion = "SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION";
-	
+
+	/**
+	 * This variable provide the key for SQL query for configurations this SQL
+	 * query is used to get list of assessment
+	 */
 	private static String sqlQueryGetAssessmenList = "SQL_QUERY_GET_ASSESSMENT_LIST";
 
 	/**
@@ -71,7 +75,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		// This variable is used to hold the query response data
 		List<AssessmentEntity> requestedDataList = new ArrayList<>();
 		try {
-			//Execute query
+			// Execute query
 			requestedDataList = super.executeSelect(sqlQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Throw this exception in case of any error while trying to get the
@@ -85,11 +89,14 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	}
 
 	/**
-	 * This method is used to get the question first check the type of question
+	 * This method is used to get the question, first check the type of question
 	 * and then according to type get the questions from the data base.
 	 * 
 	 * @param assessmentEntity
-	 *            this parameter contains the assessment details
+	 *            this parameter contains the assessment data which we need to
+	 *            save to data store ,assessment data like assessment id,
+	 *            assessment section,assessment question,assessment question
+	 *            type etc.
 	 * @return the assessment entity which is now contain the questions also
 	 * @throws BadRequestException
 	 *             throw this exception in case of any error while trying to get
@@ -120,17 +127,17 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 
 	/**
 	 * This method is used to get the multiple choice question and options
-	 * regarding the questionId
+	 * regarding the questionId from the data base
 	 * 
-	 * @param id
+	 * @param questionId
 	 *            this parameter contains the question id
 	 * @throws BadRequestException
 	 *             throw this exception in case of any error while trying to get
 	 *             the multiple choice question regarding question id
 	 */
-	private <T> T getMultipleChoiceQuestionAndOptions(String questionId)
-			throws BadRequestException {
-		// Get the SQL query to process the request
+	private <T> T getMultipleChoiceQuestionAndOptions(String questionId) throws BadRequestException {
+		// Get the SQL query from configurations for get the multiple choice
+		// question
 		String sqlQuery = configurationManager.get(sqlQueryGetMultipleChoiceQuestion);
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
@@ -140,7 +147,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		// This variable is used to hold the query response
 		List<MultipleChoiceQuestionEntity> requestedDataList = new ArrayList<>();
 		try {
-			//Execute query
+			// Execute query
 			requestedDataList = super.executeSelect(sqlQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Throw exception
@@ -150,23 +157,37 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		return (T) requestedDataList.get(0);
 	}
 
+	/**
+	 * @see IAssessment.getAssessments
+	 */
 	@Override
-	public List<AssessmentEntity> getAssessment() {
+	public List<AssessmentEntity> getAssessments() {
+		// Get the SQL query from configurations for get the list of assessment
 		String sqlQuery = configurationManager.get(sqlQueryGetAssessmenList);
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// This variable is used to hold the query response
 		List<Map<String, Object>> requestedDataList = new ArrayList<>();
+		// This variable is used to hold the list of assessment entity converted
+		// from map
 		List<AssessmentEntity> assessmentEntityList = new ArrayList<>();
 		try {
-			// Declare the new list to hold the result of SQl query
+			// Execute query
 			requestedDataList = super.executeSelectNative(sqlQuery, queryParameterMap);
 			int i = 0;
+			// While loop to convert each map into entity
 			while (i < requestedDataList.size()) {
+				// Convert map into entity
 				AssessmentEntity assessmentEntity = Base.fromMap(requestedDataList.get(i), AssessmentEntity.class);
+				// Add to list
 				assessmentEntityList.add(assessmentEntity);
 				i++;
 			}
-			
+
 		} catch (Exception ex) {
+			// Throw this exception in case of any error while trying to convert
+			// the list of map to list of entity
 			throw ex;
 		}
 		return assessmentEntityList;

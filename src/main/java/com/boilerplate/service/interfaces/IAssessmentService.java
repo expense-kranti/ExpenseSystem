@@ -16,57 +16,65 @@ import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 public interface IAssessmentService {
 
 	/**
-	 * This method is used to get the assessment data regarding the assessment
-	 * id
+	 * This method is used to get the assessment data regarding the assessment id
+	 * from the data store
 	 * 
 	 * @param assessmentEntity
-	 *            this parameter contains the assessment id
-	 * @return the assessment data
-	 * @throws BadRequestException
+	 *            this parameter contains the assessment details like assessment
+	 *            id
+	 * @return the assessment data like assessment id, assessment
+	 *         section,assessment questions etc.
+	 * @throws Exception
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessment data
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException;
 
 	/**
-	 * This method is used to get the assessments
+	 * This method is used to get the all assessment which is exist in our system.
 	 * 
-	 * @return the list of assessment
+	 * @return the list of all assessment exist in system and available for user
 	 */
 	public List<AssessmentEntity> getAssessments();
 
 	/**
-	 * This method is used to get the details about the user attempt assessments
+	 * This method is used to get the user attempted assessment details means
+	 * all those assessment which is attempted by user in past
 	 * 
-	 * @return the attempt assessment details
+	 * @return the user attempted assessment details means all those assessment
+	 *         which was attempt by user in past
 	 * @throws NotFoundException
-	 *             throw this exception in case of there is no attempt
-	 *             assessment found for the current user
+	 *             throw this exception if user has never attempt any assessment
+	 *             before
 	 */
 	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException;
 
 	/**
-	 * This method is used to save the assessment data
+	 * This method is used to save the assessment data to data store ,assessment
+	 * data like assessment id, assessment section,assessment questions etc.
 	 * 
 	 * @param assessmentEntity
-	 *            this parameter contains the assessment data which is we need
-	 *            to save to data store
-	 * @throws ValidationFailedException
-	 *             throw this exception in case of any validation fail regarding
-	 *             the assessment data
+	 *            this parameter contains the assessment data which we need to
+	 *            save to data store ,assessment data like assessment id,
+	 *            assessment section,assessment questions etc.
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to
+	 *             save the assessment data to data store
 	 */
 	public void saveAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException;
 
 	/**
 	 * This method is used to save the assessment data to data store after
-	 * change the assessment status to submit.
+	 * change the assessment status to submit, assessment data like assessment
+	 * id, assessment section,assessment questions etc.
 	 * 
 	 * @param assessmentEntity
-	 *            this parameter contains the assessment data which is we need
-	 *            to save to data store
-	 * @throws ValidationFailedException
-	 *             throw this exception in case of any validation fail regarding
-	 *             the assessment data
+	 *            this parameter contains the assessment data which we need to
+	 *            save to data store and has information like assessment id,
+	 *            assessment section,assessment questions etc.
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to
+	 *             save the assessment data to data store
 	 */
 	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException;
 }

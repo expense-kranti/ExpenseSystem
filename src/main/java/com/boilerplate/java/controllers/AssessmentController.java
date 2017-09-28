@@ -35,11 +35,13 @@ public class AssessmentController extends BaseController {
 
 	/**
 	 * This API is used to get the assessment data regarding the assessment id
+	 * from the data store
 	 * 
 	 * @param assessmentEntity
 	 *            this parameter contains the assessment details like assessment
 	 *            id
-	 * @return the assessment data
+	 * @return the assessment data like assessment id,
+	 *            assessment section,assessment questions etc.
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessment data
@@ -53,9 +55,9 @@ public class AssessmentController extends BaseController {
 	}
 
 	/**
-	 * This API is used to get the assessments
+	 * This API is used to get the all assessment which is exist in our system.
 	 * 
-	 * @return the assessments
+	 * @return the list of all assessment exist in system and available for user
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessments
@@ -68,12 +70,14 @@ public class AssessmentController extends BaseController {
 	}
 
 	/**
-	 * This API is used to get the user assessment attempt details
+	 * This API is used to get the user attempted assessment details means all
+	 * those assessment which is attempted by user in past
 	 * 
-	 * @return the user assessment attempt details
+	 * @return the user attempted assessment details means all those assessment
+	 *         which was attempt by user in past
 	 * @throws NotFoundException
-	 *             throw this exception if there is no user assessment attempt
-	 *             found
+	 *             throw this exception if user has never attempt any assessment
+	 *             before
 	 */
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.GET)
@@ -83,11 +87,13 @@ public class AssessmentController extends BaseController {
 	}
 
 	/**
-	 * This API is used to save the assessment data to data store
+	 * This API is used to save the assessment data to data store ,assessment
+	 * data like assessment id, assessment section,assessment questions etc.
 	 * 
 	 * @param assessmentEntity
 	 *            this parameter contains the assessment data which we need to
-	 *            save to data store
+	 *            save to data store ,assessment data like assessment id,
+	 *            assessment section,assessment questions etc.
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
@@ -100,12 +106,14 @@ public class AssessmentController extends BaseController {
 	}
 
 	/**
-	 * This API is used to save the assessment data to data store after change the
-	 * assessment status to submit.
+	 * This API is used to save the assessment data to data store after change
+	 * the assessment status to submit, assessment data like assessment id,
+	 * assessment section,assessment questions etc.
 	 * 
 	 * @param assessmentEntity
 	 *            this parameter contains the assessment data which we need to
-	 *            save to data store
+	 *            save to data store and has information like assessment id,
+	 *            assessment section,assessment questions etc.
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store

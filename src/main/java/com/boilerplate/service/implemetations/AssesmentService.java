@@ -95,24 +95,23 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
-	 * This method is used to check is assessment is exist in a list or not if
-	 * exist return true else false
+	 * This method is used to check the list of assessment contains the new
+	 * assessment id or not if exist then return true else false.
 	 * 
 	 * @param attemptAssessmentList
-	 *            this parameter contains the list of assessment list
+	 *            this parameter contains the list of assessment
 	 * @param assessmentEntity
-	 *            this parameter define the new assessment data this method
-	 *            check this assessment is already exist or not
+	 *            this parameter define the new assessment
 	 * @return true if assessment exist else return false
 	 */
 	private boolean isAssessmentExist(AttemptAssessmentListEntity attemptAssessmentList,
-			AssessmentEntity assessmentEntity) {
+			AssessmentEntity newAssessment) {
 		// Get the assessment list
 		List<AssessmentEntity> assessmentList = attemptAssessmentList.getAssessmentList();
 		// Run for loop to check is exist or not
 		for (AssessmentEntity assessment : assessmentList) {
 			// Check is assessment id equal to or not
-			if ((assessment.getId()).equals(assessmentEntity.getId())) {
+			if ((assessment.getId()).equals(newAssessment.getId())) {
 				return true;
 			}
 		}
@@ -120,11 +119,15 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
-	 * This method is used to save the assessment attempt data to redis with
-	 * append the list of assessment
+	 * This method is used to save the attempt assessment data to data store
+	 * first append the new assessment details to it to existing list of
+	 * assessment, assessment details like assessment id, assessment
+	 * section,assessment questions etc.
 	 * 
 	 * @param assessmentEntity
-	 *            this parameter contains the information about the assessment
+	 *            this parameter contains the assessment data which we need to
+	 *            save to data store ,assessment data like assessment id,
+	 *            assessment section,assessment questions etc.
 	 * @param attemptAssessment
 	 *            this parameter contains the information about the assessment
 	 *            attempt by user
@@ -151,7 +154,7 @@ public class AssesmentService implements IAssessmentService {
 	 */
 	@Override
 	public List<AssessmentEntity> getAssessments() {
-		List<AssessmentEntity> assessmentList = assessment.getAssessment();
+		List<AssessmentEntity> assessmentList = assessment.getAssessments();
 		return assessmentList;
 	}
 
