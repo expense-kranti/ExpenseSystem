@@ -19,6 +19,7 @@ public class QuestionEntity<T> extends BaseEntity implements Serializable {
 	 */
 	private QuestionTypeEntity questionType;
 
+	// TODO need to discuss with GV
 	/**
 	 * This is the question text
 	 */
