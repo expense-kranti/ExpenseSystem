@@ -30,7 +30,7 @@ CREATE TABLE `Assessment` (
   `UpdationDate` datetime DEFAULT NULL,
   `IsActive` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `Assessment` (
 
 LOCK TABLES `Assessment` WRITE;
 /*!40000 ALTER TABLE `Assessment` DISABLE KEYS */;
-INSERT INTO `Assessment` VALUES (1,'Assesment1','10','2017-09-26 12:15:28','2017-09-26 12:15:28',1);
+INSERT INTO `Assessment` VALUES (1,'Assesment1','10','2017-09-26 12:15:28','2017-09-26 12:15:28',1),(2,'Assessment2','10','2017-09-26 12:15:28','2017-09-26 12:15:28',NULL);
 /*!40000 ALTER TABLE `Assessment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +63,7 @@ CREATE TABLE `AssessmentQuestionSection` (
   KEY `QuestionId` (`QuestionId`),
   CONSTRAINT `QuestionId` FOREIGN KEY (`QuestionId`) REFERENCES `Question` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `SectionId` FOREIGN KEY (`SectionId`) REFERENCES `AssessmentSection` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `AssessmentQuestionSection` (
 
 LOCK TABLES `AssessmentQuestionSection` WRITE;
 /*!40000 ALTER TABLE `AssessmentQuestionSection` DISABLE KEYS */;
-INSERT INTO `AssessmentQuestionSection` VALUES (1,1,1,'2','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(2,1,2,'2','2','2017-09-26 12:25:29','2017-09-26 12:25:29'),(3,2,3,'3','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(4,3,4,'3','1','2017-09-26 12:25:29','2017-09-26 12:25:29');
+INSERT INTO `AssessmentQuestionSection` VALUES (1,1,1,'2','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(2,1,2,'2','2','2017-09-26 12:25:29','2017-09-26 12:25:29'),(3,2,3,'3','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(4,3,4,'3','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(5,1,1,'2','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(6,1,2,'2','2','2017-09-26 12:25:29','2017-09-26 12:25:29'),(7,2,3,'3','1','2017-09-26 12:25:29','2017-09-26 12:25:29'),(8,3,4,'3','1','2017-09-26 12:25:29','2017-09-26 12:25:29');
 /*!40000 ALTER TABLE `AssessmentQuestionSection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +93,7 @@ CREATE TABLE `AssessmentSection` (
   PRIMARY KEY (`id`,`AssessmentId`),
   KEY `AssessmentId` (`AssessmentId`),
   CONSTRAINT `AssessmentId` FOREIGN KEY (`AssessmentId`) REFERENCES `Assessment` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +102,7 @@ CREATE TABLE `AssessmentSection` (
 
 LOCK TABLES `AssessmentSection` WRITE;
 /*!40000 ALTER TABLE `AssessmentSection` DISABLE KEYS */;
-INSERT INTO `AssessmentSection` VALUES (1,1,'Section A',1,'2017-09-26 12:16:18','2017-09-26 12:16:18'),(2,1,'Section B',2,'2017-09-26 12:16:28','2017-09-26 12:16:28'),(3,1,'Section C',3,'2017-09-26 12:16:35','2017-09-26 12:16:35');
+INSERT INTO `AssessmentSection` VALUES (1,1,'Section A',1,'2017-09-26 12:16:18','2017-09-26 12:16:18'),(2,1,'Section B',2,'2017-09-26 12:16:28','2017-09-26 12:16:28'),(3,1,'Section C',3,'2017-09-26 12:16:35','2017-09-26 12:16:35'),(4,2,'Section A',1,'2017-09-26 12:16:18','2017-09-26 12:16:18'),(5,2,'Section B',2,'2017-09-26 12:16:28','2017-09-26 12:16:28'),(6,2,'Section C',3,'2017-09-26 12:16:35','2017-09-26 12:16:35');
 /*!40000 ALTER TABLE `AssessmentSection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,4 +229,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-28 14:05:29
+-- Dump completed on 2017-09-28 14:11:38
