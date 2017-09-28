@@ -1,31 +1,19 @@
 package com.boilerplate.service.implemetations;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
-import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
-import com.boilerplate.java.entities.AssessmentSectionEntity;
 import com.boilerplate.java.entities.AssessmentStatus;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
-import com.boilerplate.java.entities.BaseEntity;
-import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
-import com.boilerplate.java.entities.QuestionType;
 import com.boilerplate.service.interfaces.IAssessmentService;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This class implements the IAssessment service class
@@ -62,7 +50,7 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
-	 * @see IAssessmentService.getAssessment
+	 * @see IAssessmentService.getAssessmentData
 	 */
 	@Override
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException {
@@ -77,6 +65,8 @@ public class AssesmentService implements IAssessmentService {
 			} else {
 				// Get the assessment data regarding assessment id
 				assessmentData = assessment.getAssessment(assessmentEntity);
+				// Set assessment status to in progress
+				assessmentData.setStatus(AssessmentStatus.Inprogress);
 				// Set attempt id
 				assessmentData.setAttemptId(RequestThreadLocal.getSession().getUserId() + assessmentData.getId());
 				// Save assessment data to redis
@@ -91,6 +81,8 @@ public class AssesmentService implements IAssessmentService {
 			attemptAssessment.setUserId(RequestThreadLocal.getSession().getUserId());
 			// Get the assessment data regarding assessment id
 			assessmentData = assessment.getAssessment(assessmentEntity);
+			// Set assessment status to in progress
+			assessmentData.setStatus(AssessmentStatus.Inprogress);
 			// Set attempt id
 			assessmentData.setAttemptId(RequestThreadLocal.getSession().getUserId() + assessmentData.getId());
 			// Save assessment data to redis
@@ -154,12 +146,18 @@ public class AssesmentService implements IAssessmentService {
 		redisAssessment.saveAssessmentAttempt(attemptAssessment);
 	}
 
+	/**
+	 * @see IAssessmentService.getAssessments
+	 */
 	@Override
-	public List<AssessmentEntity> getAssessment() {
+	public List<AssessmentEntity> getAssessments() {
 		List<AssessmentEntity> assessmentList = assessment.getAssessment();
 		return assessmentList;
 	}
 
+	/**
+	 * @see IAssessmentService.getAssessmentAttempt
+	 */
 	@Override
 	public AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException {
 		AttemptAssessmentListEntity attemptAssessmentListEntity = redisAssessment.getAssessmentAttempt();
@@ -169,11 +167,28 @@ public class AssesmentService implements IAssessmentService {
 		return attemptAssessmentListEntity;
 	}
 
+	/**
+	 * @see IAssessmentService.saveAssesment
+	 */
 	@Override
 	public void saveAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException {
+		// Validate the assessment data
 		assessmentEntity.validate();
+		// Save the assessment to data store
 		redisAssessment.saveAssessment(assessmentEntity);
-		
+	}
+
+	/**
+	 * @see IAssessmentService.submitAssesment
+	 */
+	@Override
+	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException {
+		// Validate the assessment data
+		assessmentEntity.validate();
+		// Set the assessment status to submit
+		assessmentEntity.setStatus(AssessmentStatus.Submit);
+		// Save the assessment to data store
+		redisAssessment.saveAssessment(assessmentEntity);
 	}
 
 }
