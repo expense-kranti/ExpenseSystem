@@ -45,7 +45,7 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 		super.set(Attempt + attemptAssessmentListEntity.getUserId(), attemptAssessmentListEntity);
 
 	}
-
+	
 	/**
 	 * @see IRedisAssessment.saveAssessment
 	 */
