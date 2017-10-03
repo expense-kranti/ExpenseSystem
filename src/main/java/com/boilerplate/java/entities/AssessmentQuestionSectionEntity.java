@@ -33,9 +33,9 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	private String questionScore;
 
 	/**
-	 * This is the user score for this question
+	 * This is shows is the user answer is correct or not
 	 */
-	private String userScore;
+	private boolean isAnswerCorrect;
 
 	/**
 	 * This method is used to get the section id
@@ -155,22 +155,22 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	}
 
 	/**
-	 * This method is used to get the user score
+	 * This method is used to get isAnswerCorrect
 	 * 
-	 * @return the userScore
+	 * @return the isAnswerCorrect
 	 */
-	public String getUserScore() {
-		return userScore;
+	public boolean getIsAnswerCorrect() {
+		return isAnswerCorrect;
 	}
 
 	/**
-	 * This method is used to set the user score
+	 * This method is used to set the isAnswerCorrect
 	 * 
-	 * @param userScore
-	 *            the userScore to set
+	 * @param isAnswerCorrect
+	 *            the isAnswerCorrect to set
 	 */
-	public void setUserScore(String userScore) {
-		this.userScore = userScore;
+	public void setIsAnswerCorrect(boolean isAnswerCorrect) {
+		this.isAnswerCorrect = isAnswerCorrect;
 	}
 
 }

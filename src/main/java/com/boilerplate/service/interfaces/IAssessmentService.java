@@ -81,5 +81,5 @@ public interface IAssessmentService {
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
 	 */
-	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException;
+	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException,Exception;
 }

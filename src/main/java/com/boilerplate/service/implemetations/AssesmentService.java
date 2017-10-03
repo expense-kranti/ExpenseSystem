@@ -1,6 +1,10 @@
 package com.boilerplate.service.implemetations;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.boilerplate.asyncWork.AsyncWorkItem;
+import com.boilerplate.asyncWork.CreateUserAssessmentScoreObserver;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
 
@@ -11,8 +15,14 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
+import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
+import com.boilerplate.java.entities.AssessmentSectionEntity;
 import com.boilerplate.java.entities.AssessmentStatus;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
+import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
+import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
+import com.boilerplate.java.entities.QuestionEntity;
+import com.boilerplate.java.entities.QuestionType;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
 /**
@@ -23,6 +33,7 @@ import com.boilerplate.service.interfaces.IAssessmentService;
  */
 public class AssesmentService implements IAssessmentService {
 
+	private String createScoreBackgroundJobSubject = "CreateScore";
 	/**
 	 * this is the new instance of assessment class of data layer
 	 */
@@ -42,6 +53,8 @@ public class AssesmentService implements IAssessmentService {
 	IRedisAssessment redisAssessment;
 
 	/**
+	 * This method set the redisAssessment
+	 * 
 	 * @param redisAssessment
 	 *            the redisAssessment to set
 	 */
@@ -53,7 +66,8 @@ public class AssesmentService implements IAssessmentService {
 	 * @see IAssessmentService.getAssessmentData
 	 */
 	@Override
-	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException, NotFoundException {
+	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity)
+			throws BadRequestException, NotFoundException {
 		// Set assessment active status to true because we want to get only
 		// active assessment
 		assessmentEntity.setActive(true);
@@ -68,12 +82,10 @@ public class AssesmentService implements IAssessmentService {
 			} else {
 				// Get the assessment data regarding assessment id
 				assessmentData = assessment.getAssessment(assessmentEntity);
-				// Set assessment status to in progress
-				assessmentData.setStatus(AssessmentStatus.Inprogress);
 				// Set attempt id
 				assessmentData.setAttemptId(RequestThreadLocal.getSession().getUserId() + assessmentData.getId());
-				// Save assessment data to redis
-				redisAssessment.saveAssessment(assessmentData);
+				// Save the assessment
+				this.saveAssessment(assessmentData, AssessmentStatus.Inprogress);
 				// Save the attempt assessment data to redis
 				this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessmentList);
 			}
@@ -84,12 +96,10 @@ public class AssesmentService implements IAssessmentService {
 			attemptAssessment.setUserId(RequestThreadLocal.getSession().getUserId());
 			// Get the assessment data regarding assessment id
 			assessmentData = assessment.getAssessment(assessmentEntity);
-			// Set assessment status to in progress
-			assessmentData.setStatus(AssessmentStatus.Inprogress);
 			// Set attempt id
 			assessmentData.setAttemptId(RequestThreadLocal.getSession().getUserId() + assessmentData.getId());
-			// Save assessment data to redis
-			redisAssessment.saveAssessment(assessmentData);
+			// Save the assessment
+			this.saveAssessment(assessmentData, AssessmentStatus.Inprogress);
 			// Save the attempt assessment data to redis
 			this.saveAssessmentAttemptWithAppendAssessmentDetail(assessmentEntity, attemptAssessment);
 		}
@@ -188,13 +198,139 @@ public class AssesmentService implements IAssessmentService {
 	 * @see IAssessmentService.submitAssesment
 	 */
 	@Override
-	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException {
+	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException, Exception {
 		// Validate the assessment data
 		assessmentEntity.validate();
+		// Save the assessment
+		this.saveAssessment(assessmentEntity, AssessmentStatus.Submit);
+		// Get the assessment user score
+		AssessmentEntity assessmentScore = this.getAssessmentScore(assessmentEntity);
+	}
+
+	/**
+	 * This method is used to save the assessment into data store with set the
+	 * assessment status
+	 * 
+	 * @param assessmentEntity
+	 *            this parameter contains the assessment data which we need to
+	 *            save to data store ,assessment data like assessment id,
+	 *            assessment section,assessment questions etc.
+	 * @param assessmentStatus
+	 *            this is the assessment status like in-progress,submit
+	 */
+	private void saveAssessment(AssessmentEntity assessmentEntity, AssessmentStatus assessmentStatus) {
 		// Set the assessment status to submit
-		assessmentEntity.setStatus(AssessmentStatus.Submit);
+		assessmentEntity.setStatus(assessmentStatus);
 		// Save the assessment to data store
 		redisAssessment.saveAssessment(assessmentEntity);
 	}
 
+	/**
+	 * This method is used to get the user attempted assessment score
+	 * 
+	 * @param assessment
+	 *            this parameter contains the user attempted assessment data
+	 *            like assessment sections each section contains some question
+	 *            and each question also contains user answer
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to get
+	 *             the assessment score
+	 */
+	private AssessmentEntity getAssessmentScore(AssessmentEntity assessment) throws Exception {
+		// This is the user section score obtain
+		Float userSectionScore = 0f;
+		// This is the user assessment score
+		Float userAssessmentScore = 0f;
+		// This is the user correct answer count
+		Integer totalCorrectAnswer = 0;
+		// This is total number of question in assessment
+		Integer totalQuestion = 0;
+		// Run a for loop to check each section question score
+		for (AssessmentSectionEntity section : assessment.getSections()) {
+			// Set the user score to zero
+			userSectionScore = 0f;
+			// Get each question score
+			for (AssessmentQuestionSectionEntity questionData : section.getQuestions()) {
+				// Check is the question's answer is correct or not
+				if (this.getAnswerStatus(questionData.getQuestion())) {
+					// If answer is correct set the user score equal to question
+					// score
+					questionData.setIsAnswerCorrect(true);
+					// Increment correct answer count
+					totalCorrectAnswer = totalCorrectAnswer + 1;
+					// Add question score with section score
+					userSectionScore = userSectionScore + Float.valueOf(questionData.getQuestionScore());
+				}
+				// Increment total questions by 1
+				totalQuestion = totalQuestion + 1;
+			}
+			// Add the user section score with assessment score
+			userAssessmentScore = userAssessmentScore + userSectionScore;
+		}
+		// Set user obtained score
+		assessment.setObtainedScore(String.valueOf(userAssessmentScore));
+		// Set correct answer count
+		assessment.setTotalCorrectAnswer(totalCorrectAnswer);
+		// Set total question count
+		assessment.setTotalQuestions(totalQuestion);
+		return assessment;
+	}
+
+	/**
+	 * This method is used to get the question's answer status is the answer is
+	 * correct or not if correct then return true else false
+	 * 
+	 * @param question
+	 *            this parameter contains the question details like question id
+	 *            ,question type and question's answer
+	 * @return true if answer is correct else return false
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to get
+	 *             the answer status
+	 */
+	private boolean getAnswerStatus(QuestionEntity question) throws Exception {
+		// Set id by default zero
+		boolean questionCorrect;
+		// According to type get the question
+		switch (QuestionType.valueOf(question.getQuestionType().getName())) {
+		case MultipleChoice:
+			// Get the multiple choice question and options
+			questionCorrect = getMultipleChoiceQuestionAnswerStatus(question);
+			break;
+		default:
+			// If no case match then throw an exception
+			throw new NotImplementedException("No quetsion type found" + question.getQuestionType().getName());
+		}
+		return questionCorrect;
+	}
+
+	/**
+	 * This method is used to get the multiple choice question's answer status
+	 * is the answer is correct or not if correct then return true else false
+	 * 
+	 * @param question
+	 *            this parameter contains the question details like question id
+	 *            ,question type and user selected option
+	 * @return true if option is correct else return false
+	 * @throws BadRequestException
+	 *             throw this exception in case of any error while trying to get
+	 *             the multiple choice question option status
+	 */
+	private boolean getMultipleChoiceQuestionAnswerStatus(QuestionEntity question) throws BadRequestException {
+		// Get the options status
+		MultipleChoiceQuestionEntity multipleChoiceQuestionEntity = assessment
+				.getMultipleChoiceQuestionAndOptions(question.getId());
+		// Run a for to check the user selected option is correct or not
+		for (MultipleChoiceQuestionOptionEntity option : multipleChoiceQuestionEntity.getOptions()) {
+			// Match the option id
+			if (option.getId().equals(question.getAnswer())) {
+				// Check is option is correct or not
+				if (option.getIsCorrect()) {
+					// If option is correct return true
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

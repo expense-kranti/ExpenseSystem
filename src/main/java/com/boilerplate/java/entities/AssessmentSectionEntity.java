@@ -29,11 +29,6 @@ public class AssessmentSectionEntity extends BaseEntity implements Serializable 
 	private String orderId;
 
 	/**
-	 * This is the user section score;
-	 */
-	private String userSectionScore;
-
-	/**
 	 * This is the sections for the assessment
 	 */
 	private List<AssessmentQuestionSectionEntity> questions;
@@ -139,24 +134,5 @@ public class AssessmentSectionEntity extends BaseEntity implements Serializable 
 	 */
 	public void setQuestions(List<AssessmentQuestionSectionEntity> questions) {
 		this.questions = questions;
-	}
-
-	/**
-	 * This method is used to get the user section score
-	 * 
-	 * @return the userSectionScore
-	 */
-	public String getUserSectionScore() {
-		return userSectionScore;
-	}
-
-	/**
-	 * This method is used to set the user section score
-	 * 
-	 * @param userSectionScore
-	 *            the userSectionScore to set
-	 */
-	public void setUserSectionScore(String userSectionScore) {
-		this.userSectionScore = userSectionScore;
 	}
 }

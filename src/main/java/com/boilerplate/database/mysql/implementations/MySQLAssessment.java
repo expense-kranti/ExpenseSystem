@@ -122,7 +122,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 				case MultipleChoice:
 					// Get the multiple choice question and options
 					(question.getQuestion()).setQuestionData(
-							this.getMultipleChoiceQuestionAndOptionsForAssessment(question.getQuestion().getId()));
+							this.getMultipleChoiceQuestionAndOptions(question.getQuestion().getId()));
 					break;
 				default:
 					// If no case match then throw an exception

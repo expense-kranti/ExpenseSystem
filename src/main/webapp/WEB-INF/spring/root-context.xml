@@ -122,7 +122,7 @@
 
 				<entry key="ClientSideLog" value-ref="clientSideLogObserver" />
 
-				<entry key="CreateScore" value-ref="createUserAssessmentScoreObserver" />
+				<entry key="CreateScore" value-ref="createScoreObserver" />
 
 			</map>
 
@@ -194,7 +194,16 @@
 		</property>
 	</bean>
 
-
+	<bean id="createScoreObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="createUserAssessmentScoreObserver"></ref>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="sendRegistrationSMSObserver" class="com.boilerplate.asyncWork.SendRegistrationSMSObserver">
 		<property name="contentService" ref="contentService"></property>
@@ -206,8 +215,9 @@
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
-	
-	<bean id="createUserAssessmentScoreObserver" class="com.boilerplate.asyncWork.CreateUserAssessmentScoreObserver">
+
+	<bean id="createUserAssessmentScoreObserver"
+		class="com.boilerplate.asyncWork.CreateUserAssessmentScoreObserver">
 		<property name="assessment" ref="assessment"></property>
 	</bean>
 

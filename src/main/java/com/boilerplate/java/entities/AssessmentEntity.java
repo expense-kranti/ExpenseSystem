@@ -1,9 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
@@ -38,6 +36,21 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	 * This is the status of assessment define is assessment is active or not
 	 */
 	private boolean active;
+
+	/**
+	 * This is the user obtained score
+	 */
+	private String obtainedScore;
+
+	/**
+	 * This is the number of correct answer in assessment
+	 */
+	private Integer totalCorrectAnswer;
+
+	/**
+	 * This is the total questions in assessment
+	 */
+	private Integer totalQuestions;
 
 	/**
 	 * This method is used to construct this class and set id and status
@@ -189,10 +202,68 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * @param active the active to set
+	 * @param active
+	 *            the active to set
 	 */
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	/**
+	 * This method is used to get the user obtained score
+	 * 
+	 * @return the obtainedScore
+	 */
+	public String getObtainedScore() {
+		return obtainedScore;
+	}
+
+	/**
+	 * This method is used to set the user obtained score
+	 * 
+	 * @param obtainedScore
+	 *            the obtainedScore to set
+	 */
+	public void setObtainedScore(String obtainedScore) {
+		this.obtainedScore = obtainedScore;
+	}
+
+	/**
+	 * This method is used to get the total count of correct answer
+	 * 
+	 * @return the correctAnswerCount
+	 */
+	public Integer getTotalCorrectAnswer() {
+		return totalCorrectAnswer;
+	}
+
+	/**
+	 * This method is used to set the total count of correct answer
+	 * 
+	 * @param correctAnswerCount
+	 *            the correctAnswerCount to set
+	 */
+	public void setTotalCorrectAnswer(Integer totalCorrectAnswer) {
+		this.totalCorrectAnswer = totalCorrectAnswer;
+	}
+
+	/**
+	 * This method is used to get the total questions
+	 * 
+	 * @return the totalQuestions
+	 */
+	public Integer getTotalQuestions() {
+		return totalQuestions;
+	}
+
+	/**
+	 * This method is used to set the total questions
+	 * 
+	 * @param totalQuestions
+	 *            the totalQuestions to set
+	 */
+	public void setTotalQuestions(Integer totalQuestions) {
+		this.totalQuestions = totalQuestions;
 	}
 
 }
