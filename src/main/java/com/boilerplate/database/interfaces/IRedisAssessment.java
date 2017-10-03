@@ -2,6 +2,7 @@ package com.boilerplate.database.interfaces;
 
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
+import com.boilerplate.java.entities.ScoreEntity;
 
 /**
  * This class provide the mechanism to perform assessment related operations
@@ -54,4 +55,13 @@ public interface IRedisAssessment {
 	 *         section,assessment questions etc.
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity);
+
+	public void saveTotalScore(ScoreEntity scoreEntity);
+
+
+	public ScoreEntity getTotalScore(String userId);
+
+	public void saveAssessmentScore(ScoreEntity scoreEntity);
+
+	public ScoreEntity getAssessmentScore(String userId, String assessmentId);
 }
