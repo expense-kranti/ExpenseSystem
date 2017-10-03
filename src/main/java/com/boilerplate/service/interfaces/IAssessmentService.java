@@ -16,22 +16,27 @@ import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 public interface IAssessmentService {
 
 	/**
-	 * This method is used to get the assessment data regarding the assessment id
-	 * from the data store
+	 * This method is used to get the assessment data regarding the assessment
+	 * id from the data store
 	 * 
 	 * @param assessmentEntity
 	 *            this parameter contains the assessment details like assessment
 	 *            id
 	 * @return the assessment data like assessment id, assessment
 	 *         section,assessment questions etc.
-	 * @throws Exception
+	 * @throws NotFoundException
+	 *             throw this exception in case of no assessment found for given
+	 *             assessment id
+	 * @throws BadRequestException
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessment data
 	 */
-	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException;
+	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity)
+			throws BadRequestException, NotFoundException;
 
 	/**
-	 * This method is used to get the all assessment which is exist in our system.
+	 * This method is used to get the all assessment which is exist in our
+	 * system.
 	 * 
 	 * @return the list of all assessment exist in system and available for user
 	 */

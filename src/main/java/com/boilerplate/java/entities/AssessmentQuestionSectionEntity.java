@@ -10,7 +10,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class AssessmentQuestionSectionEntity extends BaseEntity implements Serializable{
+public class AssessmentQuestionSectionEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the section id
@@ -31,6 +31,11 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	 * This is the question score
 	 */
 	private String questionScore;
+
+	/**
+	 * This is the user score for this question
+	 */
+	private String userScore;
 
 	/**
 	 * This method is used to get the section id
@@ -55,20 +60,19 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	 * This method is used to get the question id
 	 * 
 	 * @return the questionId
-	 *//*
-	public QuestionEntity getQuestionId() {
-		return question;
-	}
-
-	*//**
-	 * This method is used to set the question id
+	 */
+	/*
+	 * public QuestionEntity getQuestionId() { return question; }
 	 * 
-	 * @param questionId
-	 *            the questionId to set
-	 *//*
-	public void setQuestionId(QuestionEntity question) {
-		this.question = question;
-	}*/
+	 *//**
+		 * This method is used to set the question id
+		 * 
+		 * @param questionId
+		 *            the questionId to set
+		 *//*
+		 * public void setQuestionId(QuestionEntity question) { this.question =
+		 * question; }
+		 */
 
 	/**
 	 * This method is used to get the order id
@@ -143,10 +147,30 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	}
 
 	/**
-	 * @param question the question to set
+	 * @param question
+	 *            the question to set
 	 */
 	public void setQuestion(QuestionEntity question) {
 		this.question = question;
+	}
+
+	/**
+	 * This method is used to get the user score
+	 * 
+	 * @return the userScore
+	 */
+	public String getUserScore() {
+		return userScore;
+	}
+
+	/**
+	 * This method is used to set the user score
+	 * 
+	 * @param userScore
+	 *            the userScore to set
+	 */
+	public void setUserScore(String userScore) {
+		this.userScore = userScore;
 	}
 
 }

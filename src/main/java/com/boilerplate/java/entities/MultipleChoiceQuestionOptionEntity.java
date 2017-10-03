@@ -3,7 +3,6 @@ package com.boilerplate.java.entities;
 import java.io.Serializable;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class is provide the data regarding Multiple Choice Question option
@@ -31,7 +30,6 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity implements Se
 	/**
 	 * This is the flag for option shows is the option is correct or not
 	 */
-	@JsonIgnore
 	private Boolean isCorrect;
 
 	/**

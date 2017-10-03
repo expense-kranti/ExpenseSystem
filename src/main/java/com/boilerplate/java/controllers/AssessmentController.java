@@ -14,6 +14,7 @@ import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
@@ -40,12 +41,13 @@ public class AssessmentController extends BaseController {
 	 * @param assessmentEntity
 	 *            this parameter contains the assessment details like assessment
 	 *            id
-	 * @return the assessment data like assessment id,
-	 *            assessment section,assessment questions etc.
+	 * @return the assessment data like assessment id, assessment
+	 *         section,assessment questions etc.
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessment data
 	 */
+	@ApiOperation(value = "Get the assessment data regarding the assessment id ,this data contains al the sections and each section conatins some questions")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.POST)
 	public @ResponseBody AssessmentEntity attemptAssessment(@RequestBody AssessmentEntity assessmentEntity)
@@ -62,6 +64,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessments
 	 */
+	@ApiOperation(value = "Get the all the assessments which is available for the current user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessments", method = RequestMethod.GET)
 	public @ResponseBody List<AssessmentEntity> getAssesments() throws Exception {
@@ -79,6 +82,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception if user has never attempt any assessment
 	 *             before
 	 */
+	@ApiOperation(value = "Get the user attemp assessment details,this details basically contain all those assessment which alreay attemped by user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.GET)
 	public @ResponseBody AttemptAssessmentListEntity getAssessmentAttempt() throws NotFoundException {
@@ -98,6 +102,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
 	 */
+	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessment", method = RequestMethod.POST)
 	public void saveAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
@@ -118,6 +123,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
 	 */
+	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct,and after submit user can't be able to re attemp this assessment")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/submitAssessment", method = RequestMethod.POST)
 	public void submitAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {

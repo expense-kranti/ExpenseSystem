@@ -122,6 +122,8 @@
 
 				<entry key="ClientSideLog" value-ref="clientSideLogObserver" />
 
+				<entry key="CreateScore" value-ref="createUserAssessmentScoreObserver" />
+
 			</map>
 
 
@@ -204,7 +206,10 @@
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
-
+	
+	<bean id="createUserAssessmentScoreObserver" class="com.boilerplate.asyncWork.CreateUserAssessmentScoreObserver">
+		<property name="assessment" ref="assessment"></property>
+	</bean>
 
 
 	<bean id="publishLibrary" class="com.boilerplate.aspects.PublishLibrary">
@@ -237,7 +242,7 @@
 		class="com.boilerplate.database.mysql.implementations.MySQLAssessment">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
-	
+
 	<bean id="redisAssessment"
 		class="com.boilerplate.database.redis.implementation.RedisAssessment">
 	</bean>

@@ -53,7 +53,7 @@ public class AssesmentService implements IAssessmentService {
 	 * @see IAssessmentService.getAssessmentData
 	 */
 	@Override
-	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException {
+	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException, NotFoundException {
 		// Set assessment active status to true because we want to get only
 		// active assessment
 		assessmentEntity.setActive(true);

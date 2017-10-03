@@ -12,7 +12,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @param <T>
  *
  */
-public class QuestionEntity<T> extends BaseEntity implements Serializable {
+public class QuestionEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the question type

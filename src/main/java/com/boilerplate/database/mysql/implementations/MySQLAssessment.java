@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AssessmentSectionEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
+import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
 import com.boilerplate.java.entities.QuestionType;
 
 /**
@@ -64,7 +66,8 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 * @see IAssessment.getAssessment
 	 */
 	@Override
-	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity) throws BadRequestException {
+	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity)
+			throws BadRequestException, NotFoundException {
 		// Get the SQL query to process the request
 		String sqlQuery = configurationManager.get(sqlQueryGetAssessment);
 		// Make a new instance of BoilerplateMap ,used to define query
@@ -84,6 +87,11 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			// assessment data regarding the assessment id
 			throw new BadRequestException("AssessmentEntity", "While trying to get the assessment ~ "
 					+ "This is the SQL query ~ " + sqlQuery + "~" + ex.toString(), null);
+		}
+		// Check the size of response of SQL query
+		if (requestedDataList.size() <= 0) {
+			// Throw this exception if the size of list is equal to zero
+			throw new NotFoundException("AssessmentEntity", "No assessment found for given id.", null);
 		}
 		// Get the questions for assessment data
 		AssessmentEntity assessment = this.getQuestion(requestedDataList.get(0));
@@ -113,8 +121,8 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 				switch (QuestionType.valueOf(question.getQuestion().getQuestionType().getName())) {
 				case MultipleChoice:
 					// Get the multiple choice question and options
-					(question.getQuestion())
-							.setQuestionData(this.getMultipleChoiceQuestionAndOptions(question.getQuestion().getId()));
+					(question.getQuestion()).setQuestionData(
+							this.getMultipleChoiceQuestionAndOptionsForAssessment(question.getQuestion().getId()));
 					break;
 				default:
 					// If no case match then throw an exception
@@ -129,7 +137,9 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 
 	/**
 	 * This method is used to get the multiple choice question and options
-	 * regarding the questionId from the data base
+	 * regarding the questionId from the data base and set the is correct to
+	 * false for each options to avoid the return the data with know what option
+	 * is correct
 	 * 
 	 * @param questionId
 	 *            this parameter contains the question id
@@ -137,7 +147,24 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 *             throw this exception in case of any error while trying to get
 	 *             the multiple choice question regarding question id
 	 */
-	private <T> T getMultipleChoiceQuestionAndOptions(String questionId) throws BadRequestException {
+	private MultipleChoiceQuestionEntity getMultipleChoiceQuestionAndOptionsForAssessment(String questionId)
+			throws BadRequestException {
+		// Get the multiple choice question and options for the given question
+		// id
+		MultipleChoiceQuestionEntity multipleChoiceQuestionAndOption = this
+				.getMultipleChoiceQuestionAndOptions(questionId);
+		// Run for loop to set each option isCorrect to false
+		for (MultipleChoiceQuestionOptionEntity option : multipleChoiceQuestionAndOption.getOptions()) {
+			option.setIsCorrect(false);
+		}
+		return multipleChoiceQuestionAndOption;
+	}
+
+	/**
+	 * @see IAssessment.getMultipleChoiceQuestionAndOptions
+	 */
+	public MultipleChoiceQuestionEntity getMultipleChoiceQuestionAndOptions(String questionId)
+			throws BadRequestException {
 		// Get the SQL query from configurations for get the multiple choice
 		// question
 		String sqlQuery = configurationManager.get(sqlQueryGetMultipleChoiceQuestion);
@@ -156,7 +183,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			throw new BadRequestException("AssessmentEntity", "While trying to get multiple choice question ~ "
 					+ "This is the SQL query ~ " + sqlQuery + "~" + ex.toString(), null);
 		}
-		return (T) requestedDataList.get(0);
+		return requestedDataList.get(0);
 	}
 
 	/**
