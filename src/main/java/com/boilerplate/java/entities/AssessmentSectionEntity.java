@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class is provide the information reading the assessment section
@@ -16,6 +17,7 @@ public class AssessmentSectionEntity extends BaseEntity implements Serializable 
 	/**
 	 * This is the assessment id
 	 */
+	@JsonIgnore
 	private AssessmentEntity assessment;
 
 	/**

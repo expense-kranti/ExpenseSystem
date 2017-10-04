@@ -3,6 +3,7 @@ package com.boilerplate.java.entities;
 import java.io.Serializable;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class is provide the information reading the assessment question section
@@ -15,6 +16,7 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	/**
 	 * This is the section id
 	 */
+	@JsonIgnore
 	private AssessmentSectionEntity section;
 
 	/**
@@ -42,7 +44,7 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	 * 
 	 * @return the sectionId
 	 */
-	public AssessmentSectionEntity getSectionId() {
+	public AssessmentSectionEntity getSection() {
 		return section;
 	}
 
@@ -52,7 +54,7 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	 * @param sectionId
 	 *            the sectionId to set
 	 */
-	public void setSectionId(AssessmentSectionEntity section) {
+	public void setSection(AssessmentSectionEntity section) {
 		this.section = section;
 	}
 

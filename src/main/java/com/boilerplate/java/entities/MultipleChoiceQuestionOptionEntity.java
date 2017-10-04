@@ -16,6 +16,7 @@ public class MultipleChoiceQuestionOptionEntity extends BaseEntity implements Se
 	/**
 	 * This is the question id
 	 */
+	@JsonIgnore
 	private MultipleChoiceQuestionEntity mutipleChoiceQuestionId;
 
 	/**
