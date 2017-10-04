@@ -105,7 +105,7 @@ public class AssessmentController extends BaseController {
 	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessment", method = RequestMethod.POST)
-	public void saveAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
+	public @ResponseBody void saveAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
 		// Save the assessment data
 		assessmentService.saveAssesment(assessmentEntity);
 	}
@@ -126,7 +126,7 @@ public class AssessmentController extends BaseController {
 	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct,and after submit user can't be able to re attemp this assessment")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/submitAssessment", method = RequestMethod.POST)
-	public void submitAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
+	public @ResponseBody void submitAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
 		// Save the assessment data
 		assessmentService.submitAssesment(assessmentEntity);
 	}
