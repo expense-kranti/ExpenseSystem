@@ -82,4 +82,6 @@ public interface IUserService {
 	ExternalFacingReturnedUser get(String userId, boolean encryptPasswordString)
 			throws NotFoundException, BadRequestException;
 
+	void logout(String sessionId);
+
 }

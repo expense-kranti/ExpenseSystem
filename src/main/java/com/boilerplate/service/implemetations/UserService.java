@@ -385,5 +385,13 @@ public class UserService implements IUserService {
 		return externalFacingUser;
 
 	}
+	
+	/**
+	 * @see IUserService.logout
+	 */
+	@Override
+	public void logout(String sessionId) {
+		sessionManager.logout(sessionId);
+	}
 
 }

@@ -131,4 +131,16 @@ public class UserController extends BaseController {
 			throws Exception, NotFoundException, BadRequestException {
 		return this.userService.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
 	}
+	
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+	public @ResponseBody void logout()throws Exception{
+		//find session Id
+		String sessionId = RequestThreadLocal.getSession().getSessionId();
+		
+		//call logout on service
+		this.userService.logout(sessionId);
+		//remove the same from cookies etc
+		super.addCookie(Constants.AuthTokenCookieKey, sessionId
+				,1);
+	}
 }
