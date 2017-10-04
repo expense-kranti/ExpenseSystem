@@ -469,8 +469,14 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		//logout api
 		
-		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.logout()");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.logout()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
