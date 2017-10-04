@@ -3,8 +3,7 @@ package com.boilerplate.service.implemetations;
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.asyncWork.AsyncWorkItem;
-import com.boilerplate.asyncWork.CreateUserAssessmentScoreObserver;
+import com.boilerplate.asyncWork.CalculateTotalScoreObserver;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
 
@@ -33,7 +32,38 @@ import com.boilerplate.service.interfaces.IAssessmentService;
  */
 public class AssesmentService implements IAssessmentService {
 
-	private String createScoreBackgroundJobSubject = "CreateScore";
+	/**
+	 * This is new instance of Calculate Total Score Observer
+	 */
+	CalculateTotalScoreObserver calculateTotalScoreObserver;
+
+	/**
+	 * This method is used to set the Calculate Total Score Observer
+	 * 
+	 * @param calculateTotalScoreObserver
+	 *            the calculateTotalScoreObserver to set
+	 */
+	public void setCalculateTotalScoreObserver(CalculateTotalScoreObserver calculateTotalScoreObserver) {
+		this.calculateTotalScoreObserver = calculateTotalScoreObserver;
+	}
+
+	/**
+	 * This is an instance of the queue job, to save the session back on to the
+	 * database async
+	 */
+	@Autowired
+	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
+
+	/**
+	 * This sets the queue reader job
+	 * 
+	 * @param queueReaderJob
+	 *            The queue reader job
+	 */
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
+		this.queueReaderJob = queueReaderJob;
+	}
+
 	/**
 	 * this is the new instance of assessment class of data layer
 	 */
@@ -49,6 +79,9 @@ public class AssesmentService implements IAssessmentService {
 		this.assessment = assessment;
 	}
 
+	/**
+	 * This is the new instance of redis assessment
+	 */
 	@Autowired
 	IRedisAssessment redisAssessment;
 
@@ -63,11 +96,25 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
+	 * This variable is used to define the list of subjects ,subjects basically
+	 * define the background operations need to be perform for calculate the
+	 * user total score
+	 */
+	BoilerplateList<String> subjectsForCalculateTotalScore = new BoilerplateList();
+
+	/**
+	 * Initializes the bean
+	 */
+	public void initilize() {
+		subjectsForCalculateTotalScore.add("CalculateTotalScore");
+	}
+
+	/**
 	 * @see IAssessmentService.getAssessmentData
 	 */
 	@Override
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity)
-			throws BadRequestException, NotFoundException {
+			throws BadRequestException, NotFoundException, ValidationFailedException {
 		// Set assessment active status to true because we want to get only
 		// active assessment
 		assessmentEntity.setActive(true);
@@ -116,15 +163,23 @@ public class AssesmentService implements IAssessmentService {
 	 * @param assessmentEntity
 	 *            this parameter define the new assessment
 	 * @return true if assessment exist else return false
+	 * @throws ValidationFailedException
+	 *             throw this exception in case of any error while trying to get
+	 *             any assessment which is already submitted by user
 	 */
-	private boolean isAssessmentExist(AttemptAssessmentListEntity attemptAssessmentList,
-			AssessmentEntity newAssessment) {
+	private boolean isAssessmentExist(AttemptAssessmentListEntity attemptAssessmentList, AssessmentEntity newAssessment)
+			throws ValidationFailedException {
 		// Get the assessment list
 		List<AssessmentEntity> assessmentList = attemptAssessmentList.getAssessmentList();
 		// Run for loop to check is exist or not
 		for (AssessmentEntity assessment : assessmentList) {
 			// Check is assessment id equal to or not
 			if ((assessment.getId()).equals(newAssessment.getId())) {
+				// Check is the assessment is submitted by user or not
+				if (assessment.getStatus().equals(AssessmentStatus.Submit)) {
+					throw new ValidationFailedException("AssessmentEntity",
+							"This assessment was already submitted by user", null);
+				}
 				return true;
 			}
 		}
@@ -201,10 +256,30 @@ public class AssesmentService implements IAssessmentService {
 	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException, Exception {
 		// Validate the assessment data
 		assessmentEntity.validate();
-		// Save the assessment
-		this.saveAssessment(assessmentEntity, AssessmentStatus.Submit);
 		// Get the assessment user score
 		AssessmentEntity assessmentScore = this.getAssessmentScore(assessmentEntity);
+		// Get user attempt assessment detail
+		AttemptAssessmentListEntity attemptAssessment = this.getAssessmentAttempt();
+		for (int i = 0; i < attemptAssessment.getAssessmentList().size(); i++) {
+			AssessmentEntity assessment = (AssessmentEntity) attemptAssessment.getAssessmentList().get(i);
+			// Set assessment status to submit
+			if (assessment.getId().equals(assessmentEntity.getId())) {
+				assessment.setStatus(AssessmentStatus.Submit);
+			}
+		}
+		// Save the assessment details
+		redisAssessment.saveAssessmentAttempt(attemptAssessment);
+		// Save the assessment
+		this.saveAssessment(assessmentScore, AssessmentStatus.Submit);
+		try {
+			queueReaderJob.requestBackroundWorkItem(assessmentScore, subjectsForCalculateTotalScore, "AssesmentService",
+					"submitAssesment");
+		} catch (Exception ex) {
+			// now if the queue is not working we calculate user total score on
+			// the thread
+			calculateTotalScoreObserver.calculateTotalScore(assessmentScore);
+		}
+
 	}
 
 	/**
