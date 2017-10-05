@@ -61,6 +61,12 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 * query is used to get list of assessment
 	 */
 	private static String sqlQueryGetAssessmenList = "SQL_QUERY_GET_ASSESSMENT_LIST";
+	
+	/**
+	 * This variable provide the key for SQL query for configurations this SQL
+	 * query is used to get list of survey
+	 */
+	private static String sqlQueryGetSurveyList = "SQL_QUERY_GET_SURVEY_LIST";
 
 	/**
 	 * @see IAssessment.getAssessment
@@ -121,8 +127,8 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 				switch (QuestionType.valueOf(question.getQuestion().getQuestionType().getName())) {
 				case MultipleChoice:
 					// Get the multiple choice question and options
-					(question.getQuestion()).setQuestionData(
-							this.getMultipleChoiceQuestionAndOptions(question.getQuestion().getId()));
+					(question.getQuestion())
+							.setQuestionData(this.getMultipleChoiceQuestionAndOptions(question.getQuestion().getId()));
 					break;
 				default:
 					// If no case match then throw an exception
@@ -193,6 +199,42 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	public List<AssessmentEntity> getAssessments() {
 		// Get the SQL query from configurations for get the list of assessment
 		String sqlQuery = configurationManager.get(sqlQueryGetAssessmenList);
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// This variable is used to hold the query response
+		List<Map<String, Object>> requestedDataList = new ArrayList<>();
+		// This variable is used to hold the list of assessment entity converted
+		// from map
+		List<AssessmentEntity> assessmentEntityList = new ArrayList<>();
+		try {
+			// Execute query
+			requestedDataList = super.executeSelectNative(sqlQuery, queryParameterMap);
+			int i = 0;
+			// While loop to convert each map into entity
+			while (i < requestedDataList.size()) {
+				// Convert map into entity
+				AssessmentEntity assessmentEntity = Base.fromMap(requestedDataList.get(i), AssessmentEntity.class);
+				// Add to list
+				assessmentEntityList.add(assessmentEntity);
+				i++;
+			}
+
+		} catch (Exception ex) {
+			// Throw this exception in case of any error while trying to convert
+			// the list of map to list of entity
+			throw ex;
+		}
+		return assessmentEntityList;
+	}
+
+	/**
+	 * @see IAssessment.getSurveys
+	 */
+	@Override
+	public List<AssessmentEntity> getSurveys() {
+		// Get the SQL query from configurations for get the list of assessment
+		String sqlQuery = configurationManager.get(sqlQueryGetSurveyList);
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();

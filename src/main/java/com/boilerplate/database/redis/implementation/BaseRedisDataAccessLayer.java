@@ -643,7 +643,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AdminPassword", "password");
 		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT", "From AssessmentEntity assessment where assessment.id = :Id and assessment.active = :Active ");
 		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION", "From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
-		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1");
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
+		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And IsSurvey = 1");
+
 		// Owner Allocation QUEUE NAme
 
 		return vAllEAll;

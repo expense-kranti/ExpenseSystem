@@ -6,6 +6,7 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
+import com.boilerplate.java.entities.ScoreEntity;
 
 /**
  * This class has the services for assessment related operations
@@ -87,6 +88,25 @@ public interface IAssessmentService {
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
+	 * 
+	 * @return the assessment data which is now contains the user total score
+	 *         for this assessment and count of question count of correct
+	 *         question
 	 */
-	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException, Exception;
+	public AssessmentEntity submitAssesment(AssessmentEntity assessmentEntity)
+			throws ValidationFailedException, Exception;
+
+	/**
+	 * This method is used to get the all survey which is exist in our system.
+	 * 
+	 * @return the list of all survey exist in system and available for user
+	 */
+	public List<AssessmentEntity> getSurveys();
+
+	/**
+	 * This method is used to get the user total score
+	 * 
+	 * @return the user total score
+	 */
+	public ScoreEntity getTotalScore();
 }

@@ -22,6 +22,7 @@ import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
 import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.QuestionType;
+import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
 /**
@@ -253,11 +254,14 @@ public class AssesmentService implements IAssessmentService {
 	 * @see IAssessmentService.submitAssesment
 	 */
 	@Override
-	public void submitAssesment(AssessmentEntity assessmentEntity) throws ValidationFailedException, Exception {
+	public AssessmentEntity submitAssesment(AssessmentEntity assessmentEntity)
+			throws ValidationFailedException, Exception {
 		// Validate the assessment data
 		assessmentEntity.validate();
 		// Get the assessment user score
 		AssessmentEntity assessmentScore = this.getAssessmentScore(assessmentEntity);
+		//Set the userId
+		assessmentScore.setUserId(RequestThreadLocal.getSession().getUserId());
 		// Get user attempt assessment detail
 		AttemptAssessmentListEntity attemptAssessment = this.getAssessmentAttempt();
 		for (int i = 0; i < attemptAssessment.getAssessmentList().size(); i++) {
@@ -279,7 +283,7 @@ public class AssesmentService implements IAssessmentService {
 			// the thread
 			calculateTotalScoreObserver.calculateTotalScore(assessmentScore);
 		}
-
+		return assessmentScore;
 	}
 
 	/**
@@ -407,5 +411,22 @@ public class AssesmentService implements IAssessmentService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @see IAssessmentService.getSurveys
+	 */
+	@Override
+	public List<AssessmentEntity> getSurveys() {
+		return assessment.getSurveys();
+	}
+
+	/**
+	 * @see IAssessmentService.getTotalScore
+	 */
+	@Override
+	public ScoreEntity getTotalScore() {
+		// Get the user total score
+		return redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
 	}
 }

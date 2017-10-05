@@ -53,6 +53,16 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	private Integer totalQuestions;
 
 	/**
+	 * This indicate this assessment is survey
+	 */
+	private boolean survey;
+	
+	/**
+	 * This is the userId
+	 */
+	private String userId;
+
+	/**
 	 * This method is used to construct this class and set id and status
 	 * 
 	 * @param id
@@ -264,6 +274,41 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	 */
 	public void setTotalQuestions(Integer totalQuestions) {
 		this.totalQuestions = totalQuestions;
+	}
+
+	/**
+	 * This method get the survey
+	 * 
+	 * @return the survey
+	 */
+	public boolean isSurvey() {
+		return survey;
+	}
+
+	/**
+	 * This method set the survey
+	 * 
+	 * @param survey
+	 *            the survey to set
+	 */
+	public void setSurvey(boolean survey) {
+		this.survey = survey;
+	}
+
+	/**
+	 * This method get the usetId
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * This method set the usetId
+	 * @param userId the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 }

@@ -13,6 +13,7 @@
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
 		<property name="active" column="IsActive" />
+		<property name="survey" column="IsSurvey" />
 		<bag name="sections" table="AssessmentSection" inverse="true"
 			lazy="false" fetch="select">
 			<key>

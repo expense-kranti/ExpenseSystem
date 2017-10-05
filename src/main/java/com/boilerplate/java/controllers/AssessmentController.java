@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
+import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -24,7 +25,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
  * @author love
  *
  */
-@Api(description = "This api has controllers for operate assessment", value = "Assessment API's", basePath = "/assessment")
+@Api(description = "This controller has api for operate assessment", value = "Assessment API's", basePath = "/assessment")
 @Controller
 public class AssessmentController extends BaseController {
 
@@ -122,12 +123,49 @@ public class AssessmentController extends BaseController {
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
+	 * 
+	 * @return the assessment data which is now contains the user total score
+	 *         for this assessment and count of question count of correct
+	 *         question
 	 */
 	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct,and after submit user can't be able to re attemp this assessment")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/submitAssessment", method = RequestMethod.POST)
-	public @ResponseBody void submitAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
+	public @ResponseBody AssessmentEntity submitAssesment(@RequestBody AssessmentEntity assessmentEntity)
+			throws Exception {
 		// Save the assessment data
-		assessmentService.submitAssesment(assessmentEntity);
+		return assessmentService.submitAssesment(assessmentEntity);
+	}
+
+	/**
+	 * This API is used to get the all survey which is exist in our system.
+	 * 
+	 * @return the list of all survey exist in system and available for user
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to get
+	 *             the surveys
+	 */
+	@ApiOperation(value = "Get the all the surveys which is available for the current user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/survey", method = RequestMethod.GET)
+	public @ResponseBody List<AssessmentEntity> getSurveys() throws Exception {
+		// Get the all assessments
+		return assessmentService.getSurveys();
+	}
+
+	/**
+	 * This API is used to get user total score.
+	 * 
+	 * @return the user total score
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to get
+	 *             user total score
+	 */
+	@ApiOperation(value = "Get the all the surveys which is available for the current user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/score", method = RequestMethod.GET)
+	public @ResponseBody ScoreEntity getTotalScore() throws Exception {
+		// Get the all assessments
+		return assessmentService.getTotalScore();
 	}
 }

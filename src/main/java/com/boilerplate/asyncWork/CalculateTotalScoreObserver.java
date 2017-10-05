@@ -99,7 +99,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		// Set the obtained score
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
 		// Set user id
-		scoreEntity.setUserId(RequestThreadLocal.getSession().getUserId());
+		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// Save total score
 		redisAssessment.saveTotalScore(scoreEntity);
 	}
