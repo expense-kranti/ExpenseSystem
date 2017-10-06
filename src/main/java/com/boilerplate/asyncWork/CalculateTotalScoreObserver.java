@@ -50,7 +50,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 */
 	public void calculateTotalScore(AssessmentEntity assessmentEntity) {
 		// Get total score
-		ScoreEntity scoreEntity = redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
+		ScoreEntity scoreEntity = redisAssessment.getTotalScore(assessmentEntity.getUserId());
 		// If score is not null
 		if (scoreEntity != null) {
 			this.updateTotalScore(scoreEntity, assessmentEntity);
@@ -71,10 +71,10 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 */
 	private void updateTotalScore(ScoreEntity scoreEntity, AssessmentEntity assessmentEntity) {
 		// Calculate max score
-		Integer maxScore = Integer.valueOf(scoreEntity.getMaxScore()) + Integer.valueOf(assessmentEntity.getMaxScore());
+		Float maxScore = Float.valueOf(scoreEntity.getMaxScore()) + Float.valueOf(assessmentEntity.getMaxScore());
 		// Calculate total score
-		Integer obtainedScore = Integer.valueOf(scoreEntity.getObtainedScore())
-				+ Integer.valueOf(assessmentEntity.getObtainedScore());
+		Float obtainedScore = Float.valueOf(scoreEntity.getObtainedScore())
+				+ Float.valueOf(assessmentEntity.getObtainedScore());
 		// Set max score
 		scoreEntity.setMaxScore(String.valueOf(maxScore));
 		// Set the obtained score
