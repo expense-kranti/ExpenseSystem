@@ -62,12 +62,24 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 * query is used to get list of assessment
 	 */
 	private static String sqlQueryGetAssessmenList = "SQL_QUERY_GET_ASSESSMENT_LIST";
-	
+
 	/**
 	 * This variable provide the key for SQL query for configurations this SQL
 	 * query is used to get list of survey
 	 */
 	private static String sqlQueryGetSurveyList = "SQL_QUERY_GET_SURVEY_LIST";
+
+	/**
+	 * This variable provide the key for SQL query for configurations this SQL
+	 * query is used to get the question explanation
+	 */
+	private static String sqlQueryGetQuestionExplanation = "SQL_QUERY_GET_QUESTION_EXPLANATION";
+
+	/**
+	 * This variable is used to define the key for get the question explanation
+	 * from the map
+	 */
+	private static String questionExplanation = "QuestionExplanation";
 
 	/**
 	 * @see IAssessment.getAssessment
@@ -242,6 +254,24 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			throw ex;
 		}
 		return assessmentEntityList;
+	}
+
+	/**
+	 * @see IAssessment.getQuestionExpanation
+	 */
+	@Override
+	public String getQuestionExpanation(String questionId) {
+		// Get the SQL query from configurations for get the list of assessment
+		String sqlQuery = configurationManager.get(sqlQueryGetQuestionExplanation);
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put question in query parameter
+		queryParameterMap.put("QuestionId", questionId);
+		// This variable is used to hold the query response
+		List<Map<String, Object>> requestedDataList = // Execute query
+				requestedDataList = super.executeSelectNative(sqlQuery, queryParameterMap);
+		return (String) requestedDataList.get(0).get(questionExplanation);
 	}
 
 }

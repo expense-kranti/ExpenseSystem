@@ -40,6 +40,11 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	private boolean isAnswerCorrect;
 
 	/**
+	 * This is the question explanation
+	 */
+	private String explanation;
+
+	/**
 	 * This method is used to get the section id
 	 * 
 	 * @return the sectionId
@@ -57,24 +62,6 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	public void setSection(AssessmentSectionEntity section) {
 		this.section = section;
 	}
-
-	/**
-	 * This method is used to get the question id
-	 * 
-	 * @return the questionId
-	 */
-	/*
-	 * public QuestionEntity getQuestionId() { return question; }
-	 * 
-	 *//**
-		 * This method is used to set the question id
-		 * 
-		 * @param questionId
-		 *            the questionId to set
-		 *//*
-		 * public void setQuestionId(QuestionEntity question) { this.question =
-		 * question; }
-		 */
 
 	/**
 	 * This method is used to get the order id
@@ -173,6 +160,25 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	 */
 	public void setIsAnswerCorrect(boolean isAnswerCorrect) {
 		this.isAnswerCorrect = isAnswerCorrect;
+	}
+
+	/**
+	 * This method is used to get the explanation
+	 * 
+	 * @return the explanation
+	 */
+	public String getExplanation() {
+		return explanation;
+	}
+
+	/**
+	 * This method is used to set the explanation
+	 * 
+	 * @param explanation
+	 *            the explanation to set
+	 */
+	public void setExplanation(String explanation) {
+		this.explanation = explanation;
 	}
 
 }
