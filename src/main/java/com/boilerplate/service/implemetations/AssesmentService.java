@@ -260,7 +260,7 @@ public class AssesmentService implements IAssessmentService {
 		assessmentEntity.validate();
 		// Get the assessment user score
 		AssessmentEntity assessmentScore = this.getAssessmentScore(assessmentEntity);
-		//Set the userId
+		// Set the userId
 		assessmentScore.setUserId(RequestThreadLocal.getSession().getUserId());
 		// Get user attempt assessment detail
 		AttemptAssessmentListEntity attemptAssessment = this.getAssessmentAttempt();
@@ -428,5 +428,20 @@ public class AssesmentService implements IAssessmentService {
 	public ScoreEntity getTotalScore() {
 		// Get the user total score
 		return redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
+	}
+
+	/**
+	 * @see IAssessmentService.validateAnswer
+	 */
+	@Override
+	public AssessmentQuestionSectionEntity validateAnswer(
+			AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception {
+		// Check and set the answer status
+		assessmentQuestionSectionEntity
+				.setIsAnswerCorrect(this.getAnswerStatus(assessmentQuestionSectionEntity.getQuestion()));
+		//Get the explanation
+		assessmentQuestionSectionEntity.setExplanation(
+				assessment.getQuestionExpanation(assessmentQuestionSectionEntity.getQuestion().getId()));
+		return assessmentQuestionSectionEntity;
 	}
 }

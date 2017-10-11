@@ -54,12 +54,21 @@ public interface IAssessment {
 	 */
 	public MultipleChoiceQuestionEntity getMultipleChoiceQuestionAndOptions(String questionId)
 			throws BadRequestException;
-	
+
 	/**
-	 * This method is used to get the all survey which is exist in our
-	 * system.
+	 * This method is used to get the all survey which is exist in our system.
 	 * 
 	 * @return the list of all assessment exist in system and available for user
 	 */
 	public List<AssessmentEntity> getSurveys();
+
+	/**
+	 * This method is used to get the question explanation
+	 * 
+	 * @param questionId
+	 *            this parameter contains the question Id used to get the
+	 *            explanation for this question
+	 * @return the explanation regarding the question id
+	 */
+	public String getQuestionExpanation(String questionId);
 }

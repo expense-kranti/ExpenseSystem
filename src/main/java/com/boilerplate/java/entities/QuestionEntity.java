@@ -3,13 +3,12 @@ package com.boilerplate.java.entities;
 import java.io.Serializable;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This is provide the question related information
  * 
  * @author shiva
- * @param <T>
- * @param <T>
  *
  */
 public class QuestionEntity extends BaseEntity implements Serializable {
@@ -29,6 +28,12 @@ public class QuestionEntity extends BaseEntity implements Serializable {
 	 * This is the answer of question by user
 	 */
 	private String answer;
+
+	/**
+	 * This is the question explanation
+	 */
+	@JsonIgnore
+	private String explanation;
 
 	/**
 	 * This method is used to get the question data
@@ -112,5 +117,24 @@ public class QuestionEntity extends BaseEntity implements Serializable {
 	 */
 	public void setAnswer(String answer) {
 		this.answer = answer;
+	}
+
+	/**
+	 * This method is used to get the explanation
+	 * 
+	 * @return the explanation
+	 */
+	public String getExplanation() {
+		return explanation;
+	}
+
+	/**
+	 * This method is used to set the explanation
+	 * 
+	 * @param explanation
+	 *            the explanation to set
+	 */
+	public void setExplanation(String explanation) {
+		this.explanation = explanation;
 	}
 }

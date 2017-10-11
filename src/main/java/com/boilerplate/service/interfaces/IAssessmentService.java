@@ -5,7 +5,9 @@ import java.util.List;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.AssessmentEntity;
+import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
+import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.ScoreEntity;
 
 /**
@@ -109,4 +111,17 @@ public interface IAssessmentService {
 	 * @return the user total score
 	 */
 	public ScoreEntity getTotalScore();
+
+	/**
+	 * This method is used to validate the answer is the answer is correct or
+	 * not
+	 * 
+	 * @param assessmentQuestionSectionEntity
+	 *            this parameter contains the question data like section id,
+	 *            question id,question type ,answer etc.
+	 * @return the assessment question section entity which is now also contain
+	 *         the explanation and answer status is correct or not
+	 */
+	public AssessmentQuestionSectionEntity validateAnswer(
+			AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception;
 }
