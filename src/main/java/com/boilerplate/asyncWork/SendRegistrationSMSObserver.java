@@ -10,6 +10,7 @@ import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.service.interfaces.IContentService;
+import com.boilerplate.service.interfaces.ISendSMSService;
 
 /**
  * This class sends a SMS when user registers
@@ -17,7 +18,21 @@ import com.boilerplate.service.interfaces.IContentService;
  *
  */
 public class SendRegistrationSMSObserver implements IAsyncWorkObserver {
+	
+	/**
+	 * this is the send sms service
+	 */
+	@Autowired
+	ISendSMSService sendSmsService;
 
+	/**
+	 * This method set the sms service.
+	 * @param sendSmsService the sendSmsService to set
+	 */
+	public void setSendSmsService(ISendSMSService sendSmsService) {
+		this.sendSmsService = sendSmsService;
+	}
+	
 	/**
 	 * This is the content service.
 	 */
@@ -76,7 +91,7 @@ public class SendRegistrationSMSObserver implements IAsyncWorkObserver {
 		url = url.replace("@sender", configurationManager.get("SMS_SENDER"));
 		url = url.replace("@message",URLEncoder.encode(message));
 		String response=null;
-		HttpResponse smsGatewayResponse= HttpUtility.makeHttpRequest(url, null, null, null, "GET");
+		HttpResponse smsGatewayResponse= sendSmsService.send(url, phoneNumber, message);
 		
 		
 	}

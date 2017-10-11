@@ -123,6 +123,8 @@
 				<entry key="ClientSideLog" value-ref="clientSideLogObserver" />
 
 				<entry key="CalculateTotalScore" value-ref="calculateTotalScore" />
+				<entry key="AutomaticPasswordReset" value-ref="passwordResetObserver" />
+				<entry key="PasswordChange" value-ref="passwordChangeObserver" />
 
 			</map>
 
@@ -208,6 +210,7 @@
 	<bean id="sendRegistrationSMSObserver" class="com.boilerplate.asyncWork.SendRegistrationSMSObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="sendSmsService" ref="sendSmsService"></property>
 	</bean>
 
 
@@ -231,6 +234,7 @@
 		init-method="initilize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="sesionManager" ref="sessionManager"></property>
+		<property name="mysqlPing" ref="mysqlPing"></property>
 	</bean>
 
 	<bean id="role" class="com.boilerplate.database.redis.implementation.RedisRole" />
@@ -257,5 +261,44 @@
 	<bean id="redisAssessment"
 		class="com.boilerplate.database.redis.implementation.RedisAssessment">
 	</bean>
-
+<bean id="mysqlPing"
+		class="com.boilerplate.database.mysql.implementations.MySQLPing">
+	</bean>
+	
+	<bean id="sendSmsService" class="com.boilerplate.service.implemetations.SendSMSService">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+	
+	<bean id="passwordResetObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendPasswordResetSMSObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	<bean id="sendPasswordResetSMSObserver" class="com.boilerplate.asyncWork.SendPasswordResetSMSObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService" />
+		<property name="sendSmsService" ref="sendSmsService"></property>
+	</bean>
+	<bean id="passwordChangeObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendSMSOnPasswordChange"></ref>
+			</list>
+		</property>
+	</bean>
+	<bean id="sendSMSOnPasswordChange" class="com.boilerplate.asyncWork.SendSMSOnPasswordChange">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="sendSmsService" ref="sendSmsService"></property>
+	</bean>
 </beans>

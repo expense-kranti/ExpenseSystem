@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendRegistrationEmailObserver;
+import com.boilerplate.asyncWork.SendSMSOnPasswordChange;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.database.interfaces.IUserRole;
 import com.boilerplate.exceptions.rest.BadRequestException;
@@ -15,11 +16,16 @@ import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Encryption;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.Role;
+import com.boilerplate.java.entities.UpdateUserEntity;
+import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.service.interfaces.IRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
@@ -164,17 +170,48 @@ public class UserService implements IUserService {
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
+	/**
+	 * This is the observer for password changes
+	 */
+	@Autowired
+	SendSMSOnPasswordChange sendSMSOnPasswordChange;
+	
+	/**
+	 * Sets the observer for password change
+	 * @param sendSMSOnPasswordChange
+	 */
+	public void setSendSMSOnPasswordChange(SendSMSOnPasswordChange sendSMSOnPasswordChange){
+		this.sendSMSOnPasswordChange = sendSMSOnPasswordChange;
+	}
 
 	/**
 	 * This variable is used to define the list of subjects ,subjects basically
 	 * define the background operations need to be perform this user
 	 */
 	BoilerplateList<String> subjectsForCreateUser = new BoilerplateList();
+	
+	BoilerplateList<String> subjectsForAutomaticPasswordReset = new BoilerplateList();
+	
+	BoilerplateList<String> subjectForPasswordChange = new BoilerplateList();
 
 	/**
 	 * This variable define the default status for the current user
 	 */
 	private int defaultUserStatus = 1;
+	
+	/**
+	 * Observer for SMS registration
+	 */
+	@Autowired
+	com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver;
+	
+	/**
+	 * This is the observer for sending SMS for user password reset
+	 * @param sendRegistrationSMSObserver The sms observer
+	 */
+	public void setSendPasswordResetSMSObserver(com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver){
+		this.sendPasswordResetSMSObserver = sendPasswordResetSMSObserver;
+	}
 
 	/**
 	 * Initializes the bean
@@ -183,6 +220,8 @@ public class UserService implements IUserService {
 		subjectsForCreateUser.add("CreateUser");
 		defaultUserStatus = Integer.parseInt(this.configurationManager.get("DefaultUserStatus") == null ? "1"
 				: this.configurationManager.get("DefaultUserStatus"));
+		subjectsForAutomaticPasswordReset.add("AutomaticPasswordReset");
+		subjectForPasswordChange.add("PasswordChange");
 	}
 
 	/**
@@ -392,6 +431,128 @@ public class UserService implements IUserService {
 	@Override
 	public void logout(String sessionId) {
 		sessionManager.logout(sessionId);
+	}
+	
+	/**
+	 * @see IUser.automaticPasswordReset
+	 */
+	@Override
+	public ExternalFacingReturnedUser automaticPasswordReset(ExternalFacingUser externalFacingUser)
+			throws ValidationFailedException, ConflictException,
+			NotFoundException,UnauthorizedException,BadRequestException {
+		//get the user requested for
+		ExternalFacingUser returnedUser = this.get(externalFacingUser.getUserId());
+		
+		//generate the password
+		UpdateUserPasswordEntity updatePasswordEntity = new UpdateUserPasswordEntity();
+		
+		String password = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0,6);
+		updatePasswordEntity.setPassword(password);
+		
+		//update the entity
+		ExternalFacingReturnedUser externalFacingReturnedUser = 
+				this.update(externalFacingUser.getUserId(),updatePasswordEntity.convertToUpdateUserEntity());
+		//Send a message
+		ExternalFacingUser externalFacingUserClone=null;
+		try{
+			
+			externalFacingUserClone = (ExternalFacingUser)externalFacingReturnedUser.clone();
+			externalFacingUserClone.setPassword(password);
+			// only send user id and password because metadata create problem in case of report extracted
+			BoilerplateMap<String, String> userPasswordMap = new BoilerplateMap<>();
+			userPasswordMap.put("userId", externalFacingUserClone.getUserId());
+			userPasswordMap.put("password", externalFacingUserClone.getPassword());
+			queueReaderJob.requestBackroundWorkItem(
+					userPasswordMap, subjectsForAutomaticPasswordReset, "UserService", "create");
+		}	
+		catch(Exception ex){
+			try{
+				this.sendPasswordResetSMSObserver.sendSMS(externalFacingUserClone.getFirstName()
+						, password, externalFacingUserClone.getPhoneNumber());
+			}
+			catch(Exception exSendPassword){
+				logger.logException("UserService", "Reset password", "inside catch: try-Queue Reader", exSendPassword.toString() + "" +"Gateway down", exSendPassword);
+			}
+			logger.logException("UserService", "Reset password", "try-Queue Reader", ex.toString() +" ExternalFacingUser inserting in queue is: "+ Base.toJSON(externalFacingUserClone) +" Queue Down", ex);
+		}
+		return externalFacingReturnedUser;
+	}
+	
+	/**
+	 * @see IUserService.update
+	 */
+	@Override
+	public ExternalFacingReturnedUser update(String userId, UpdateUserEntity updateUserEntity)
+			throws ValidationFailedException, ConflictException,
+			NotFoundException,BadRequestException {
+		//check if the user exists, if so get it
+		ExternalFacingUser user = this.get(userId,false);
+		//Update the user items from the incomming entity
+		if(updateUserEntity.getPassword() !=null){
+			if(updateUserEntity.getPassword().equals("") == false)
+			{
+				user.setPassword(updateUserEntity.getPassword());
+				//and hash the password
+				user.hashPassword();
+			}
+		}
+		//for each key updte the metadata
+		for(String key : updateUserEntity.getUserMetaData().keySet()){
+			user.getUserMetaData().put(key, updateUserEntity.getUserMetaData().get(key));
+		}
+		
+		user.setUpdationDate(new Date());
+		
+		//validate the entity
+		user.validate();
+		ExternalFacingReturnedUser returnedUser = new ExternalFacingReturnedUser(user);
+		//update the user in the database
+		this.userDataAccess.update(returnedUser);
+		//if we deleted the user we will not get it back
+		if(returnedUser.getUserStatus() == 0){
+			return null;
+		}
+		else{
+			return this.get(user.getUserId());
+		}
+	}
+	/**
+	 * @see IUser.updateUser
+	 */
+	@Override
+	public ExternalFacingReturnedUser update(UpdateUserPasswordEntity updateUserPasswordEntity)
+			throws ValidationFailedException, ConflictException,
+			NotFoundException,UnauthorizedException,BadRequestException {
+		//find the current logged in user
+		if(RequestThreadLocal.getSession() == null){
+			throw new UnauthorizedException("User", "User not logged in for update"
+					, null);
+		}
+		if(RequestThreadLocal.getSession().getUserId() == null || 
+				RequestThreadLocal.getSession().getUserId().isEmpty()){
+			throw new UnauthorizedException("User", "User not logged in for update"
+					, null);
+		}
+		
+		ExternalFacingReturnedUser externalFacingReturnedUser = this.update(RequestThreadLocal.getSession().getExternalFacingUser().getUserId()
+				,updateUserPasswordEntity.convertToUpdateUserEntity());
+		
+		//Send a message
+				try{
+					queueReaderJob.requestBackroundWorkItem(
+							externalFacingReturnedUser, subjectForPasswordChange, "UserService", "update");
+				}	
+				catch(Exception ex){
+					try{
+						sendSMSOnPasswordChange.sendSMS(externalFacingReturnedUser.getFirstName()
+								, externalFacingReturnedUser.getPhoneNumber());
+					}catch(Exception smsException){
+						logger.logException("UserService", "create", "try-Queue Reader", ex.toString()+" SMS Gateway Down", ex);
+					}
+					logger.logException("UserService", "create", "try-Queue Reader", ex.toString()+" Queue Down", ex);
+				}
+		
+		return externalFacingReturnedUser;
 	}
 
 }

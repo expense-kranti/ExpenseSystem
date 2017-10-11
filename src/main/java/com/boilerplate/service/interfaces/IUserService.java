@@ -8,6 +8,8 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.UpdateUserEntity;
+import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.sessions.Session;
 
 /**
@@ -82,6 +84,46 @@ public interface IUserService {
 	ExternalFacingReturnedUser get(String userId, boolean encryptPasswordString)
 			throws NotFoundException, BadRequestException;
 
-	void logout(String sessionId);
+	public void logout(String sessionId);
+	
+	/**
+	 * This method resets the password
+	 * @param externalFacingUser The entity to be updated
+	 * @return An instance of user
+	 * @throws ValidationFailedException If validation fails
+	 * @throws ConflictException If there is a data conflict
+	 * @throws NotFoundException If the user is not found
+	 * @throws UnauthorizedException If the user is not logged in.
+	 * @throws BadRequestException If the user information is not provided
+	 */
+	public ExternalFacingReturnedUser automaticPasswordReset(ExternalFacingUser externalFacingUser)
+			throws ValidationFailedException, ConflictException,
+			NotFoundException,UnauthorizedException,BadRequestException;
+
+	/**
+	 * This method is used to update a user.
+	 * @param userId The id of the user to be updated
+	 * @param updateUserEntity The entity of the user.
+	 * @return The updated user entity
+	 * @throws ValidationFailedException If any validation fails
+	 * @throws ConflictException If there is a conflict in updating entity due to a DB constraint
+	 * @throws NotFoundException If the user is not found.
+	 */
+	public ExternalFacingReturnedUser update(String userId,UpdateUserEntity updateUserEntity)throws 
+		ValidationFailedException, ConflictException,NotFoundException,BadRequestException;
+	
+	/**
+	 * This method updates the password of user
+	 * @param updateUserPasswordEntity The entity to be updated
+	 * @return An instance of user
+	 * @throws ValidationFailedException If validation fails
+	 * @throws ConflictException If there is a data conflict
+	 * @throws NotFoundException If the user is not found
+	 * @throws UnauthorizedException If the user is not logged in.
+	 * @throws BadRequestException If the user information is not provided
+	 */
+	public ExternalFacingReturnedUser update(UpdateUserPasswordEntity updateUserPasswordEntity)
+			throws ValidationFailedException, ConflictException,
+			NotFoundException,UnauthorizedException,BadRequestException ;
 
 }

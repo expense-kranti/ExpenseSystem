@@ -477,6 +477,21 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		//password reset api
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		//change password
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -660,6 +675,8 @@ public class BaseRedisDataAccessLayer {
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
 		contentMap.put("WELCOME_MESSAGE_SMS", "Welcome @FirstName your password is @Password");
+		contentMap.put("RESET_PASSWORD_SMS", "Dear @FirstName your new password is @Password");
+		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, Your password has been changed.");
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
 

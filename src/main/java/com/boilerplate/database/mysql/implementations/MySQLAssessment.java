@@ -1,6 +1,7 @@
 package com.boilerplate.database.mysql.implementations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,30 +142,6 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 
 	}
 
-	/**
-	 * This method is used to get the multiple choice question and options
-	 * regarding the questionId from the data base and set the is correct to
-	 * false for each options to avoid the return the data with know what option
-	 * is correct
-	 * 
-	 * @param questionId
-	 *            this parameter contains the question id
-	 * @throws BadRequestException
-	 *             throw this exception in case of any error while trying to get
-	 *             the multiple choice question regarding question id
-	 */
-	private MultipleChoiceQuestionEntity getMultipleChoiceQuestionAndOptionsForAssessment(String questionId)
-			throws BadRequestException {
-		// Get the multiple choice question and options for the given question
-		// id
-		MultipleChoiceQuestionEntity multipleChoiceQuestionAndOption = this
-				.getMultipleChoiceQuestionAndOptions(questionId);
-		// Run for loop to set each option isCorrect to false
-		for (MultipleChoiceQuestionOptionEntity option : multipleChoiceQuestionAndOption.getOptions()) {
-			option.setIsCorrect(false);
-		}
-		return multipleChoiceQuestionAndOption;
-	}
 
 	/**
 	 * @see IAssessment.getMultipleChoiceQuestionAndOptions
@@ -189,6 +166,9 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			throw new BadRequestException("AssessmentEntity", "While trying to get multiple choice question ~ "
 					+ "This is the SQL query ~ " + sqlQuery + "~" + ex.toString(), null);
 		}
+		//shuffle the option list so that correct option is not in same order
+		requestedDataList.get(0).setText(requestedDataList.get(0).getText().replace("\\", ""));
+		Collections.shuffle(requestedDataList.get(0).getOptions());
 		return requestedDataList.get(0);
 	}
 

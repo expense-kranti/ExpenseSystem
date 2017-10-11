@@ -17,6 +17,7 @@ import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
 import com.boilerplate.sessions.SessionManager;
@@ -142,5 +143,49 @@ public class UserController extends BaseController {
 		//remove the same from cookies etc
 		super.addCookie(Constants.AuthTokenCookieKey, sessionId
 				,1);
+	}
+	
+	/**
+	 * This method is used to automatcially update the user password
+	 * @externalFacingUser This entity of user
+	 * @throws ValidationFailedException This exception is thrown if the user name or password is blank
+	 * @throws ConflictException This exception is thrown if the user already exists in the system
+	 * @throws UnauthorizedException If the user is not authorized
+	 * @throws NotFoundException If the user is not found
+	 * @throws BadRequestException If the user information is not provided
+
+	 */
+	@ApiOperation(	value="Updates the password of the user given the proper userId."
+					,notes="Only User Id (which equals phone number)."
+				 )
+	@ApiResponses(value={
+							@ApiResponse(code=200, message="Ok")
+						,	@ApiResponse(code=404, message="Not Found")
+						,	@ApiResponse(code=400, message="Bad request, User name or password is empty")
+						,	@ApiResponse(code=409, message="The user already exists in the system for the provider")	
+						})
+	@RequestMapping(value = "/user/passwordReset", method = RequestMethod.POST)
+	public @ResponseBody ExternalFacingReturnedUser automaticPasswordReset(@RequestBody ExternalFacingUser externalFacingUser)
+			throws ValidationFailedException,ConflictException, NotFoundException, UnauthorizedException,BadRequestException{
+		//call the business layer
+		return userService.automaticPasswordReset(externalFacingUser);
+	}	
+	/**
+	 * This method is used to update the password of the user who is logged in.
+	 * @param updateUserPasswordEntity The password to be updated
+	 * @return The user
+	 */
+	@ApiOperation(	value="This api updated the password of the user"
+		 )
+	@ApiResponses(value={
+						@ApiResponse(code=200, message="Ok")
+					,	@ApiResponse(code=404, message="Not Found")
+					})
+	@RequestMapping(value = "/user/", method = RequestMethod.PUT)
+	public @ResponseBody ExternalFacingReturnedUser update(
+			@RequestBody UpdateUserPasswordEntity updateUserPasswordEntity)
+					throws Exception, ValidationFailedException,ConflictException,NotFoundException
+		,UnauthorizedException,BadRequestException{
+		return this.userService.update(updateUserPasswordEntity);
 	}
 }

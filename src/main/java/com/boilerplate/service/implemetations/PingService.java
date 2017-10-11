@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 
 import com.boilerplate.cache.CacheFactory;
+import com.boilerplate.database.interfaces.IPing;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ClientSideDiagnostic;
@@ -43,6 +44,18 @@ public class PingService implements IPingService{
 	 */
 	public void setSesionManager(SessionManager sessionManager){
 		this.sesionManager = sessionManager;
+	}
+	
+	@Autowired
+	IPing mysqlPing;
+
+	
+
+	/**
+	 * @param mysqlPing the mysqlPing to set
+	 */
+	public void setMysqlPing(IPing mysqlPing) {
+		this.mysqlPing = mysqlPing;
 	}
 
 	/**
@@ -170,7 +183,10 @@ public class PingService implements IPingService{
 		try{
 				//This method will be forced to goto database and return a null session
 				sesionManager.getSession("-1");
+				// check mysqldatabase connection
+				mysqlPing.checkDatabaseConnection();
 				ping.addStatus("Database", "OK", true);
+				
 					}
 		catch(Exception ex){
 			ping.addStatus("Database", "FAILED", false);
