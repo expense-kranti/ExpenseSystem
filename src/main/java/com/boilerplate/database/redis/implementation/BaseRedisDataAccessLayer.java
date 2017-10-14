@@ -23,7 +23,8 @@ public class BaseRedisDataAccessLayer {
 	/**
 	 * Redis database logger
 	 */
-	private static Logger logger = Logger.getInstance(BaseRedisDataAccessLayer.class);
+	private static Logger logger = Logger
+			.getInstance(BaseRedisDataAccessLayer.class);
 
 	/**
 	 * Creates a base DB layer
@@ -53,7 +54,8 @@ public class BaseRedisDataAccessLayer {
 
 		// This is the connections to redis it is expected in format
 		// host:port;host:port;...
-		String redisConnections = this.getDatabaseConnectionFormPropertiesFile();
+		String redisConnections = this
+				.getDatabaseConnectionFormPropertiesFile();
 
 		String[] hostPort;
 		String host;
@@ -66,8 +68,10 @@ public class BaseRedisDataAccessLayer {
 		port = Integer.parseInt(hostPort[1]);
 		// and create a non clustered command
 
-		BaseRedisDataAccessLayer.pool = new JedisPool(new JedisPoolConfig(), host, port);
-		logger.logInfo("RedisDatabase", "getConnection", "Creating Single", host + ":" + port);
+		BaseRedisDataAccessLayer.pool = new JedisPool(new JedisPoolConfig(),
+				host, port);
+		logger.logInfo("RedisDatabase", "getConnection", "Creating Single",
+				host + ":" + port);
 
 		createSeedData();
 		return BaseRedisDataAccessLayer.pool.getResource();
@@ -89,14 +93,18 @@ public class BaseRedisDataAccessLayer {
 
 		v1E1.put("V1_All_B", "V1_All_B");
 		// load server specific configuration
-		this.set("CONFIGURATION:V_ALL_E_TEST", Base.toXML(createSeedTestData()));
+		this.set("CONFIGURATION:V_ALL_E_TEST",
+				Base.toXML(createSeedTestData()));
 
-		this.set("CONFIGURATION:V_ALL_E_DEVELOPMENT", Base.toXML(createSeedDevelopmentData()));
+		this.set("CONFIGURATION:V_ALL_E_DEVELOPMENT",
+				Base.toXML(createSeedDevelopmentData()));
 
-		this.set("CONFIGURATION:V_ALL_E_PRODUCTION", Base.toXML(createSeedProductionData()));
+		this.set("CONFIGURATION:V_ALL_E_PRODUCTION",
+				Base.toXML(createSeedProductionData()));
 
 		// load common configuration
-		this.set("CONFIGURATION:V_ALL_E_ALL", Base.toXML(createSeedCommonData()));
+		this.set("CONFIGURATION:V_ALL_E_ALL",
+				Base.toXML(createSeedCommonData()));
 		this.set("CONFIGURATION:V_1_E_1", Base.toXML(v1E1));
 
 		this.set("CONFIGURATION:V_All_E_QA", Base.toXML(vAllEQA));
@@ -120,7 +128,8 @@ public class BaseRedisDataAccessLayer {
 			properties = new Properties();
 			// Using the .properties file in the class path load the file
 			// into the properties class
-			inputStream = this.getClass().getClassLoader().getResourceAsStream("boilerplate.properties");
+			inputStream = this.getClass().getClassLoader()
+					.getResourceAsStream("boilerplate.properties");
 			properties.load(inputStream);
 			return properties.getProperty("RedisDatabaseServer");
 		} catch (IOException ioException) {
@@ -207,7 +216,8 @@ public class BaseRedisDataAccessLayer {
 	 * @param value
 	 *            The value
 	 */
-	public <T extends Base> void set(String key, T value, int timeoutInSeconds) {
+	public <T extends Base> void set(String key, T value,
+			int timeoutInSeconds) {
 		Jedis jedis = null;
 		try {
 			jedis = this.getConnection();
@@ -386,7 +396,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishBusinessSubject("CHECK_SERVER_STATUS");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
@@ -401,7 +412,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishBusinessSubject("USER_LOGIN");
 
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
@@ -414,8 +426,10 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishMethod("POST");
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishBusinessSubject("GET_CURRENTLY_LOGGED_IN_USER");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		methodPermission
+				.setPublishBusinessSubject("GET_CURRENTLY_LOGGED_IN_USER");
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
@@ -431,7 +445,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishTemplate(
 				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"externalSystemId\": \"@externalSystemId\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"experianRequestEmailKey\": \"@experianRequestEmailKey\",\"userState\": \"@userState\",\"ownerId\": \"@ownerId\",\"source\": \"@source\",\"subSource\": \"@subSource\",\"dsaId\": \"@dsaId\",\"referalSource\": \"@referalSource\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 
 		// method permission for assessment attempt
 		methodPermission = new MethodPermissions();
@@ -441,56 +456,122 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
-		methodPermission.setMethodName("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		//logout api
-		
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+		// logout api
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.logout()");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.logout()");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.UserController.logout()");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		//password reset api
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+		// password reset api
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		//change password
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+		// change password
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+
+		// upload file api
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+		//get files on master tag basis
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.FileController.getFileOnMasterTag(java.lang.String)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.FileController.getFileOnMasterTag(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+		
+		//get files on master tag basis
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.FileController.download(java.lang.String,javax.servlet.http.HttpServletResponse)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.FileController.download(java.lang.String,javax.servlet.http.HttpServletResponse)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
+		
+		//user update self api
+		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
@@ -505,24 +586,31 @@ public class BaseRedisDataAccessLayer {
 		role = new Role("Admin", "Admin", "Admin of the system", true, false);
 		roles.getEntityList().add(role);
 		Role roleAdmin = role;
-		role = new Role("RoleAssigner", "RoleAssigner", "This role can assign roles to other users", true, false);
+		role = new Role("RoleAssigner", "RoleAssigner",
+				"This role can assign roles to other users", true, false);
 		roles.getEntityList().add(role);
 		Role roleAssigner = role;
 		role = new Role("SelfAssign1", "SelfAssign1", "UT role", false, true);
 		roles.getEntityList().add(role);
 		role = new Role("SelfAssign2", "SelfAssign2", "UT role", false, true);
 		roles.getEntityList().add(role);
-		role = new Role("NonSelfAssign1", "NonSelfAssign1", "UT role", false, false);
+		role = new Role("NonSelfAssign1", "NonSelfAssign1", "UT role", false,
+				false);
 		roles.getEntityList().add(role);
-		role = new Role("NonSelfAssign2", "NonSelfAssign2", "UT role", false, false);
+		role = new Role("NonSelfAssign2", "NonSelfAssign2", "UT role", false,
+				false);
 		roles.getEntityList().add(role);
-		role = new Role("BackOfficeUser", "BackOfficeUser", "The back office user of the system", true, false);
+		role = new Role("BackOfficeUser", "BackOfficeUser",
+				"The back office user of the system", true, false);
 		roles.getEntityList().add(role);
-		role = new Role("BankAdmin", "BankAdmin", "The admin of the bank", true, false);
+		role = new Role("BankAdmin", "BankAdmin", "The admin of the bank", true,
+				false);
 		roles.getEntityList().add(role);
-		role = new Role("BankUser", "BankUser", "The user in the bank", true, false);
+		role = new Role("BankUser", "BankUser", "The user in the bank", true,
+				false);
 		roles.getEntityList().add(role);
-		role = new Role("Impersinator", "Impersinator", "Is allowed impersination", true, false);
+		role = new Role("Impersinator", "Impersinator",
+				"Is allowed impersination", true, false);
 		roles.getEntityList().add(role);
 
 		this.set("ROLES", Base.toXML(roles));
@@ -587,11 +675,18 @@ public class BaseRedisDataAccessLayer {
 		// This attribute tells us about server name
 
 		BoilerplateMap<String, String> vAllETest = new BoilerplateMap<String, String>();
-		vAllETest.put("SMS_ROOT_URL", "http://alerts.solutionsinfini.com/api/v3/index.php");
+		vAllETest.put("SMS_ROOT_URL",
+				"http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllETest.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
 		vAllETest.put("SMS_SENDER", "CMDSMS");
-		vAllETest.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
-
+		vAllETest.put("SMS_URL",
+				"?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
+		vAllETest.put("S3_Bucket_Name", "csrdata-files");
+		vAllETest.put("Secret_Access_Key",
+				"VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
+		vAllETest.put("Access_Key", "AKIAISJEWKJJ77Z4G5MQ");
+		vAllETest.put("S3_Files_Path",
+				"https://s3-ap-southeast-1.amazonaws.com/csrdata-files/");
 		return vAllETest;
 	}
 
@@ -605,12 +700,20 @@ public class BaseRedisDataAccessLayer {
 
 		BoilerplateMap<String, String> vAllEDev = new BoilerplateMap<String, String>();
 		// put all configuration
-		vAllEDev.put("SMS_ROOT_URL", "http://alerts.solutionsinfini.com/api/v3/index.php");
+		vAllEDev.put("SMS_ROOT_URL",
+				"http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllEDev.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
 		vAllEDev.put("SMS_SENDER", "CMDSMS");
-		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
+		vAllEDev.put("SMS_URL",
+				"?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllEDev.put("RootFileUploadLocation", "/downloads/");
-
+		// new config
+		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
+		vAllEDev.put("Secret_Access_Key",
+				"VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
+		vAllEDev.put("Access_Key", "AKIAISJEWKJJ77Z4G5MQ");
+		vAllEDev.put("S3_Files_Path",
+				"https://s3-ap-southeast-1.amazonaws.com/csrdata-files/");
 		return vAllEDev;
 
 	}
@@ -625,10 +728,12 @@ public class BaseRedisDataAccessLayer {
 
 		BoilerplateMap<String, String> vAllEProduction = new BoilerplateMap<String, String>();
 
-		vAllEProduction.put("SMS_ROOT_URL", "http://alerts.solutionsinfini.com/api/v3/index.php");
+		vAllEProduction.put("SMS_ROOT_URL",
+				"http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllEProduction.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
 		vAllEProduction.put("SMS_SENDER", "CMDSMS");
-		vAllEProduction.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
+		vAllEProduction.put("SMS_URL",
+				"?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 
 		return vAllEProduction;
 	}
@@ -656,14 +761,19 @@ public class BaseRedisDataAccessLayer {
 		// Admin credentials
 		vAllEAll.put("AdminId", "admin");
 		vAllEAll.put("AdminPassword", "password");
-		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT", "From AssessmentEntity assessment where assessment.id = :Id and assessment.active = :Active ");
-		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION", "From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
-		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
-		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And IsSurvey = 1");
-		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION", "Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
-
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT",
+				"From AssessmentEntity assessment where assessment.id = :Id and assessment.active = :Active ");
+		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION",
+				"From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST",
+				"Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
+		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST",
+				"Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And IsSurvey = 1");
+		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION",
+				"Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
+		vAllEAll.put("Maximum_File_Upload_Size", "5");
 		// Owner Allocation QUEUE NAme
-
+		vAllEAll.put("S3_Signed_Url_Time_In_Hour", "5");
 		return vAllEAll;
 
 	}
@@ -675,10 +785,14 @@ public class BaseRedisDataAccessLayer {
 		// Storing seed content
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
-		contentMap.put("WELCOME_MESSAGE_SMS", "Welcome @FirstName your password is @Password");
-		contentMap.put("RESET_PASSWORD_SMS", "Dear @FirstName your new password is @Password");
-		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, Your password has been changed.");
-		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
+		contentMap.put("WELCOME_MESSAGE_SMS",
+				"Welcome @FirstName your password is @Password");
+		contentMap.put("RESET_PASSWORD_SMS",
+				"Dear @FirstName your new password is @Password");
+		contentMap.put("PASSWORD_CHANGE_SMS",
+				"Dear @FirstName, Your password has been changed.");
+		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL",
+				Base.toXML(contentMap));
 	}
 
 	/**

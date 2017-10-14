@@ -40,6 +40,9 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser implements Se
 		super.setMiddleName(user.getMiddleName());
 		super.setReferalSource(user.getReferalSource());
 		super.setLocation(user.getLocation());
+		super.setEmploymentStatus(user.getEmploymentStatus());
+		super.setDateOfBirth(user.getDateOfBirth());
+		super.setAlternateNumber(user.getAlternateNumber());
 			
 	}
 	/**

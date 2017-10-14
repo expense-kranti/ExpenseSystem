@@ -116,16 +116,6 @@ public class UpdateUserEntity extends BaseEntity{
 		this.userKey = userKey;
 	}
 
-	public String getCrmid() {
-		return crmid;
-	}
-
-	public void setCrmid(String crmid) {
-		this.crmid = crmid;
-	}
-
-	private String crmid;
-
 	/**
 	 * This is the status of user
 	 * 0 - disabled
@@ -142,172 +132,75 @@ public class UpdateUserEntity extends BaseEntity{
 	 */
 	@JsonIgnore
 	private String userKey;
-	
-	
-	/** 
-	 * This is the owner Id
+	/**
+	 * This is the user date of birth
 	 */
-	private String ownerId;
-	
-	/** 
-	 * This is the source
+	private String dateOfBirth;
+	/**
+	 * This is the user alternate number
 	 */
-	private String source;
-	
-	/** 
-	 * This is the subsource
+	private String alternateNumber;
+	/**
+	 * This is the user employment status
 	 */
-	private String subsource;
+	private EmploymentStatus employmentStatus;
 	
 	/**
-	 * This metthod gets the owner Id
-	 * @return ownerId The owner Id
+	 * This method get the date of birth
+	 * @return the dateOfBirth
 	 */
-	public String getOwnerId() {
-		return ownerId;
+	public String getDateOfBirth() {
+		return dateOfBirth;
 	}
 
 	/**
-	 * This method sets the ownerId
-	 * @param ownerId The owner Id
+	 * This method set the date of birth
+	 * @param dateOfBirth the dateOfBirth to set
 	 */
-	public void setOwnerId(String ownerId) {
-		this.ownerId = ownerId;
+	public void setDateOfBirth(String dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	/**
-	 * This method gets the source
-	 * @return source The source
+	 * This method get the alternate number
+	 * @return the alternateNumber
 	 */
-	public String getSource() {
-		return source;
+	public String getAlternateNumber() {
+		return alternateNumber;
 	}
 
 	/**
-	 * This method sets the source
-	 * @param source The source
+	 * This method set the alternate number
+	 * @param alternateNumber the alternateNumber to set
 	 */
-	public void setSource(String source) {
-		this.source = source;
+	public void setAlternateNumber(String alternateNumber) {
+		this.alternateNumber = alternateNumber;
 	}
 
 	/**
-	 * This method gets the subsource
-	 * @return The sub source
+	 * This method get the employment status
+	 * @return the employmentStatus
 	 */
-	public String getSubsource() {
-		return subsource;
+	public EmploymentStatus getEmploymentStatus() {
+		return employmentStatus;
 	}
 
 	/**
-	 * This method sets the sub source
-	 * @param subsource The Sub source
+	 * This method set the employment status
+	 * @param employmentStatus the employmentStatus to set
 	 */
-	public void setSubsource(String subsource) {
-		this.subsource = subsource;
+	public void setEmploymentStatus(EmploymentStatus employmentStatus) {
+		this.employmentStatus = employmentStatus;
 	}
 	
-	/**
-	 * This is the user experian report url
-	 */
-	private String experianReportUrl;
 	
-	/**
-	 * This method gets the user experian report url
-	 * @return The user experian report url
-	 */
-	public String getExperianReportUrl() {
-		return experianReportUrl;
-	}
 
-	/**
-	 * This method sets the user experian report url
-	 * @param experianReportUrl
-	 */
-	public void setExperianReportUrl(String experianReportUrl) {
-		this.experianReportUrl = experianReportUrl;
-	}
-
-	/**
-	 * This method gets the expressStatus
-	 * @return The expressStatus
-	 */
-	public String getExpressStatus() {
-		return expressStatus;
-	}
-
-	/**
-	 * This method sets the expressStatus
-	 * @param expressStatus The expressStatus
-	 */
-	public void setExpressStatus(String expressStatus) {
-		this.expressStatus = expressStatus;
-	}
-
-	/**
-	 * This method gets the oldAttemptExperianData
-	 * @return The oldAttemptExperianData
-	 */
-	public String getOldAttemptExperianData() {
-		return oldAttemptExperianData;
-	}
-
-	/**
-	 * This method sets the oldAttemptExperianData
-	 * @param oldAttemptExperianData The oldAttemptExperianData
-	 */
-	public void setOldAttemptExperianData(String oldAttemptExperianData) {
-		this.oldAttemptExperianData = oldAttemptExperianData;
-	}
-
-	/*
-	 * This is the expressStatus
-	 */
-	private String expressStatus;
 	
-	/**
-	 * This is the oldAttemptExperianData
-	 */
-	@JsonIgnore
-	private String oldAttemptExperianData;
+
 	
-	/**
-	 * This method get the approved
-	 * @return the approved
-	 */
-	public String getApproved() {
-		return approved;
-	}
 
-	/**
-	 * This method set the approved
-	 * @param approved the approved to set
-	 */
-	public void setApproved(String approved) {
-		this.approved = approved;
-	}
 
-	private String approved;
-	
-	/**
-	 * This method get the value of disableForReport
-	 * @return the disableForReport
-	 */
-	public String getDisableForReport() {
-		return disableForReport;
-	}
 
-	/**
-	 * This method set the value of disableForReport
-	 * @param disableForReport the disableForReport to set
-	 */
-	public void setDisableForReport(String disableForReport) {
-		this.disableForReport = disableForReport;
-	}
-	/**
-	 * We are taking string because for null check.
-	 */
-	private String disableForReport;
 	
 }
 
