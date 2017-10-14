@@ -90,8 +90,7 @@ public class FileService implements IFileService {
 			fileEntity.setOrganizationId(RequestThreadLocal.getSession()
 					.getExternalFacingUser().getOrganizationId());
 			fileEntity.setFullFileNameOnDisk(
-					configurationManager.get("S3_Files_Path")
-							+ fileNameOnDisk);
+					this.getPreSignedS3URL(fileNameOnDisk));
 			fileEntity = filePointer.save(fileEntity);
 			return fileEntity;
 		} catch (IOException ex) {
