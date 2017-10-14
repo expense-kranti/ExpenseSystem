@@ -299,22 +299,6 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 	@ApiModelProperty(value="This is location of user"
 			,required=false)
-	private String location;
-	/**
-	 * This method gets the location
-	 * @return The location
-	 */
-	public String getLocation() {
-		return location;
-	}
-
-	/**
-	 * This method sets the user location
-	 * @param location The location
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
 
 	/**
 	 * This method gets the experianRequestUniqueKey
