@@ -441,57 +441,78 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
-		methodPermission.setMethodName("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
+		methodPermission
+				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		//logout api
-		
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		// logout api
+
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		//password reset api
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		// password reset api
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		//change password
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		// change password
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),methodPermission);
-		
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		// Validate answer
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.AssessmentQuestionSectionEntity com.boilerplate.java.controllers.AssessmentController.validateAnswer(com.boilerplate.java.entities.AssessmentQuestionSectionEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.AssessmentQuestionSectionEntity com.boilerplate.java.controllers.AssessmentController.validateAnswer(com.boilerplate.java.entities.AssessmentQuestionSectionEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -656,11 +677,16 @@ public class BaseRedisDataAccessLayer {
 		// Admin credentials
 		vAllEAll.put("AdminId", "admin");
 		vAllEAll.put("AdminPassword", "password");
-		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT", "From AssessmentEntity assessment where assessment.id = :Id and assessment.active = :Active ");
-		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION", "From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
-		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
-		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST", "Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And IsSurvey = 1");
-		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION", "Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT",
+				"From AssessmentEntity assessment where assessment.id = :Id and assessment.active = :Active ");
+		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION",
+				"From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
+		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST",
+				"Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
+		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST",
+				"Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And IsSurvey = 1");
+		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION",
+				"Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
 
 		// Owner Allocation QUEUE NAme
 
