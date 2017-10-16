@@ -505,6 +505,10 @@ public class UserService implements IUserService {
 		if(updateUserEntity.getAlternateNumber() !=null &&updateUserEntity.getAlternateNumber().equals("") == false){
 			user.setAlternateNumber(updateUserEntity.getAlternateNumber());		
 		}
+		if(updateUserEntity.getLocation() !=null &&updateUserEntity.getLocation().equals("") == false){
+			user.setLocation(updateUserEntity.getLocation());		
+		}
+		
 		//for each key updte the metadata
 		for(String key : updateUserEntity.getUserMetaData().keySet()){
 			user.getUserMetaData().put(key, updateUserEntity.getUserMetaData().get(key));

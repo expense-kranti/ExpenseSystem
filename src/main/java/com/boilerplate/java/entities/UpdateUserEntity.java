@@ -194,6 +194,26 @@ public class UpdateUserEntity extends BaseEntity{
 	}
 	
 	
+	/**
+	 * This method get the location
+	 * @return the location
+	 */
+	public String getLocation() {
+		return location;
+	}
+
+	/**
+	 * This method set the location
+	 * @param location the location to set
+	 */
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	/**
+	 * This is the location
+	 */
+	private String location;
+	
 
 	
 
