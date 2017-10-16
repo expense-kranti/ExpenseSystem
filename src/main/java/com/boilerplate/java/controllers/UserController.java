@@ -17,6 +17,7 @@ import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
@@ -187,5 +188,24 @@ public class UserController extends BaseController {
 					throws Exception, ValidationFailedException,ConflictException,NotFoundException
 		,UnauthorizedException,BadRequestException{
 		return this.userService.update(updateUserPasswordEntity);
+	}
+	/**
+	 * This method updates a user who is logged in.
+	 * @param updateUserEntity The user entity to be updated. 
+	 * @return The user
+	 * @throws NotFoundException If user is not found
+	 */
+	@ApiOperation(	value="Updates the logged in user"
+		 )
+	@ApiResponses(value={
+						@ApiResponse(code=200, message="Ok")
+					,	@ApiResponse(code=404, message="Not Found")
+					})
+	@RequestMapping(value = "/user/self", method = RequestMethod.PUT)
+	public @ResponseBody ExternalFacingReturnedUser updateLoggedInUser(
+			@RequestBody UpdateUserEntity updateUserEntity)
+					throws Exception, ValidationFailedException,ConflictException,NotFoundException,BadRequestException{
+		String userId = super.getSession().getExternalFacingUser().getUserId();
+		return this.userService.update(userId,updateUserEntity);
 	}
 }

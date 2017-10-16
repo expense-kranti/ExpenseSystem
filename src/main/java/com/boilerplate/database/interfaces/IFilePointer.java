@@ -49,5 +49,8 @@ public interface IFilePointer {
 	 * @return The list of file entities
 	 */
 	public BoilerplateList<FileEntity> getFiles(String organizationId);
+
+	public BoilerplateList<FileEntity> getAllFilesOnMasterTag(String id,
+			String fileMasterTag);
 	
 }

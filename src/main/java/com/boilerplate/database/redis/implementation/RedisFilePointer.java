@@ -118,5 +118,26 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 		}
 		return files;
 	}
+	@Override
+	public BoilerplateList<FileEntity> getAllFilesOnMasterTag(String userId,
+			String fileMasterTag) {
+		BoilerplateList<String> fileIdsAsList = new BoilerplateList<>();
+		
+		//get files for the user
+		String  fileIdsForUserXML = super.get(UserFile+userId.toUpperCase());
+		if(fileIdsForUserXML != null){
+			fileIdsAsList.addAll((BoilerplateList<String>)Base.fromXML(fileIdsForUserXML,BoilerplateList.class));
+		}
+		
+		
+		BoilerplateList<FileEntity> files = new BoilerplateList<>();
+		for(Object fileId :  fileIdsAsList){
+			FileEntity  fileEntity = super.get(File+((String)fileId).toUpperCase(),FileEntity.class);
+			if(fileEntity.getFileMasterTag().equals(fileMasterTag)){
+				files.add(fileEntity);
+			}
+		}
+		return files;
+	}
 
 }

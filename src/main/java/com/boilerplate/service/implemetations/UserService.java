@@ -496,6 +496,15 @@ public class UserService implements IUserService {
 				user.hashPassword();
 			}
 		}
+		if(updateUserEntity.getDateOfBirth() !=null &&updateUserEntity.getDateOfBirth().equals("") == false){
+			user.setDateOfBirth(updateUserEntity.getDateOfBirth());		
+		}
+		if(updateUserEntity.getEmploymentStatus() !=null &&updateUserEntity.getEmploymentStatus().equals("") == false){
+			user.setEmploymentStatus(updateUserEntity.getEmploymentStatus());		
+		}
+		if(updateUserEntity.getAlternateNumber() !=null &&updateUserEntity.getAlternateNumber().equals("") == false){
+			user.setAlternateNumber(updateUserEntity.getAlternateNumber());		
+		}
 		//for each key updte the metadata
 		for(String key : updateUserEntity.getUserMetaData().keySet()){
 			user.getUserMetaData().put(key, updateUserEntity.getUserMetaData().get(key));
