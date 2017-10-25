@@ -45,6 +45,11 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	private String explanation;
 
 	/**
+	 * This is the correct option for this question
+	 */
+	private String correctOption;
+
+	/**
 	 * This method is used to get the section id
 	 * 
 	 * @return the sectionId
@@ -179,6 +184,25 @@ public class AssessmentQuestionSectionEntity extends BaseEntity implements Seria
 	 */
 	public void setExplanation(String explanation) {
 		this.explanation = explanation;
+	}
+
+	/**
+	 * This method get the correct option
+	 * 
+	 * @return the correctOption
+	 */
+	public String getCorrectOption() {
+		return correctOption;
+	}
+
+	/**
+	 * This method set the correct option
+	 * 
+	 * @param correctOption
+	 *            the correctOption to set
+	 */
+	public void setCorrectOption(String correctOption) {
+		this.correctOption = correctOption;
 	}
 
 }

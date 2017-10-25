@@ -414,6 +414,53 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
+	 * This method is used to get the multiple choice question's answer status
+	 * is the answer is correct or not if correct then set answer status to true
+	 * else false and return the correct option
+	 * 
+	 * @param assessmentQuestionSectionEntity
+	 *            this parameter contains the assessment question section
+	 *            details like question details, question id ,question type and
+	 *            user selected option
+	 * @return the assessmentQuestionSectionEntity which is now also have the
+	 *         answer status and correct option text
+	 * @throws BadRequestException
+	 *             throw this exception in case of any error while trying to get
+	 *             the multiple choice question option status
+	 */
+	private AssessmentQuestionSectionEntity getMultipleChoiceQuestionAnswerStatusAndCorrectOption(
+			AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws BadRequestException {
+		// Get the options status
+		MultipleChoiceQuestionEntity multipleChoiceQuestionEntity = assessment
+				.getMultipleChoiceQuestionAndOptions(assessmentQuestionSectionEntity.getQuestion().getId());
+		// Run a for to check the user selected option is correct or not
+		for (MultipleChoiceQuestionOptionEntity option : multipleChoiceQuestionEntity.getOptions()) {
+			// Match the option id
+			if (option.getId().equals(assessmentQuestionSectionEntity.getQuestion().getAnswer())) {
+				// Check is option is correct or not
+				if (option.getIsCorrect()) {
+					// If option is correct return true
+					assessmentQuestionSectionEntity.setIsAnswerCorrect(true);
+					// Set correct option
+					assessmentQuestionSectionEntity.setCorrectOption(option.getText());
+					// Return assessment question entity which is now also
+					// contain the correct option text and answer status
+					return assessmentQuestionSectionEntity;
+				}
+			}
+			if (option.getIsCorrect()) {
+				// Set correct option
+				assessmentQuestionSectionEntity.setCorrectOption(option.getText());
+			}
+		}
+		// Set answer status to false
+		assessmentQuestionSectionEntity.setIsAnswerCorrect(false);
+		// Return assessment question entity which is now also
+		// contain the correct option text and answer status
+		return assessmentQuestionSectionEntity;
+	}
+
+	/**
 	 * @see IAssessmentService.getSurveys
 	 */
 	@Override
@@ -436,12 +483,12 @@ public class AssesmentService implements IAssessmentService {
 	@Override
 	public AssessmentQuestionSectionEntity validateAnswer(
 			AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception {
-		// Check and set the answer status
-		assessmentQuestionSectionEntity
-				.setIsAnswerCorrect(this.getAnswerStatus(assessmentQuestionSectionEntity.getQuestion()));
-		//Get the explanation
-		assessmentQuestionSectionEntity.setExplanation(
+		//Get answer status and correct option
+		AssessmentQuestionSectionEntity assessmentQuestionSection = this
+				.getMultipleChoiceQuestionAnswerStatusAndCorrectOption(assessmentQuestionSectionEntity);
+		// Get the explanation
+		assessmentQuestionSection.setExplanation(
 				assessment.getQuestionExpanation(assessmentQuestionSectionEntity.getQuestion().getId()));
-		return assessmentQuestionSectionEntity;
+		return assessmentQuestionSection;
 	}
 }

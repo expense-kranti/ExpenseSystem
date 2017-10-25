@@ -147,7 +147,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to get
 	 *             the surveys
 	 */
-	@ApiOperation(value = "Get the all the surveys which is available for the current user")
+	@ApiOperation(value = "Get all the surveys which is available for the current user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/survey", method = RequestMethod.GET)
 	public @ResponseBody List<AssessmentEntity> getSurveys() throws Exception {
@@ -163,7 +163,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to get
 	 *             user total score
 	 */
-	@ApiOperation(value = "Get the all the surveys which is available for the current user")
+	@ApiOperation(value = "Get user score")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/score", method = RequestMethod.GET)
 	public @ResponseBody ScoreEntity getTotalScore() throws Exception {
