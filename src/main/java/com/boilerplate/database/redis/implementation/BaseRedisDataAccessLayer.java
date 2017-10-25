@@ -475,6 +475,7 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
 
@@ -485,6 +486,7 @@ public class BaseRedisDataAccessLayer {
 				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
 
@@ -516,8 +518,8 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),
-				methodPermission);
+
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		// change password
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
@@ -526,8 +528,16 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(),
-				methodPermission);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		// Validate answer
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.AssessmentQuestionSectionEntity com.boilerplate.java.controllers.AssessmentController.validateAnswer(com.boilerplate.java.entities.AssessmentQuestionSectionEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.AssessmentQuestionSectionEntity com.boilerplate.java.controllers.AssessmentController.validateAnswer(com.boilerplate.java.entities.AssessmentQuestionSectionEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// upload file api
 		methodPermission = new MethodPermissions();
