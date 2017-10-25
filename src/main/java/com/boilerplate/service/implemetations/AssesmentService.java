@@ -476,8 +476,10 @@ public class AssesmentService implements IAssessmentService {
 		// Get the user total score
 		ScoreEntity scoreEntity = redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
 		// check for null rank
-		if(scoreEntity.getRank()==null){
+		if(scoreEntity == null){
+			scoreEntity  = new ScoreEntity();
 			scoreEntity.setRank("First Steps");
+			scoreEntity.setObtainedScore("0");
 		}
 		return scoreEntity;
 	}
