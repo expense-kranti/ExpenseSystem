@@ -131,5 +131,25 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 	public BaseEntity transformToExternal() {
 		return null;
 	}
+	
+	/**
+	 * This method get the rank
+	 * @return the rank
+	 */
+	public String getRank() {
+		return rank;
+	}
+
+	/**
+	 * This method set the rank
+	 * @param rank the rank to set
+	 */
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+	/**
+	 * This is the rank of user
+	 */
+	private String rank;
 
 }

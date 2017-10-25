@@ -427,7 +427,12 @@ public class AssesmentService implements IAssessmentService {
 	@Override
 	public ScoreEntity getTotalScore() {
 		// Get the user total score
-		return redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
+		ScoreEntity scoreEntity = redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
+		// check for null rank
+		if(scoreEntity.getRank()==null){
+			scoreEntity.setRank("First Steps");
+		}
+		return scoreEntity;
 	}
 
 	/**

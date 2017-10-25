@@ -79,6 +79,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(String.valueOf(maxScore));
 		// Set the obtained score
 		scoreEntity.setObtainedScore(String.valueOf(obtainedScore));
+		// set rank
+		scoreEntity.setRank(calculateRank(obtainedScore));
 		// Save total score
 		redisAssessment.saveTotalScore(scoreEntity);
 	}
@@ -100,7 +102,37 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
+		// set rank
+		scoreEntity.setRank(calculateRank(Float.parseFloat(assessmentEntity.getObtainedScore())));
 		// Save total score
 		redisAssessment.saveTotalScore(scoreEntity);
+	}
+	/**
+	 * This method set the rank of the user.
+	 * @param score This is the current user score.
+	 * @return The rank of the user.
+	 */
+	private String calculateRank(Float score){
+		String rank = "";
+		if(score>0 && score<50){
+			rank = "First Steps";
+		}else if(score>=50 && score<100){
+			rank = "Stepping Up";
+		}else if(score>=100 && score<500){
+			rank = "Walker";
+		}else if(score>=500 && score<1000){
+			rank = "Jogger";
+		}else if(score>=1000 && score<1500){
+			rank = "Runner";
+		}else if(score>=1500 && score<2000){
+			rank = "Sprinter";
+		}else if(score>=2000 && score<2500){
+			rank = "Pace Setter";
+		}else if(score>=2500 && score<3000){
+			rank = "Cross Country Racer";
+		}else if(score>=3000){
+			rank = "Marathon Racer";
+		}
+		return rank;
 	}
 }
