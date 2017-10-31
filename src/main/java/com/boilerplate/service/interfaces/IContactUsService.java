@@ -1,7 +1,6 @@
 package com.boilerplate.service.interfaces;
 
 import com.boilerplate.java.entities.ContactUsEntity;
-import com.boilerplate.java.entities.ResumeProfileEntity;
 
 /**
  * 
