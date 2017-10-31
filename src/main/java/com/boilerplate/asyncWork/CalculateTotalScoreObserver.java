@@ -30,7 +30,20 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	public void setRedisAssessment(IRedisAssessment redisAssessment) {
 		this.redisAssessment = redisAssessment;
 	}
-
+	/**
+	 * This is the instance of the configuration manager.
+	 */
+	@Autowired
+	com.boilerplate.configurations.ConfigurationManager configurationManager;
+	/**
+	 * The setter to set the configuration manager
+	 * @param configurationManager
+	 */
+	public void setConfigurationManager(
+			com.boilerplate.configurations.ConfigurationManager 
+			configurationManager){
+		this.configurationManager = configurationManager;
+	}
 	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
@@ -115,23 +128,23 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	private String calculateRank(Float score){
 		String rank = "";
 		if(score>0 && score<50){
-			rank = "First Steps";
+			rank = configurationManager.get("Rank1");
 		}else if(score>=50 && score<100){
-			rank = "Stepping Up";
+			rank = configurationManager.get("Rank2");
 		}else if(score>=100 && score<500){
-			rank = "Walker";
+			rank = configurationManager.get("Rank3");
 		}else if(score>=500 && score<1000){
-			rank = "Jogger";
+			rank = configurationManager.get("Rank4");
 		}else if(score>=1000 && score<1500){
-			rank = "Runner";
+			rank = configurationManager.get("Rank5");
 		}else if(score>=1500 && score<2000){
-			rank = "Sprinter";
+			rank = configurationManager.get("Rank6");
 		}else if(score>=2000 && score<2500){
-			rank = "Pace Setter";
+			rank = configurationManager.get("Rank7");
 		}else if(score>=2500 && score<3000){
-			rank = "Cross Country Racer";
+			rank = configurationManager.get("Rank8");
 		}else if(score>=3000){
-			rank = "Marathon Racer";
+			rank = configurationManager.get("Rank9");
 		}
 		return rank;
 	}

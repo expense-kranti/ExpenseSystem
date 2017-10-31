@@ -125,7 +125,7 @@
 				<entry key="CalculateTotalScore" value-ref="calculateTotalScore" />
 				<entry key="AutomaticPasswordReset" value-ref="passwordResetObserver" />
 				<entry key="PasswordChange" value-ref="passwordChangeObserver" />
-
+				<entry key="ContactUs" value-ref="onContactUs" />
 			</map>
 
 
@@ -221,6 +221,7 @@
 
 	<bean id="calculateTotalScoreObserver" class="com.boilerplate.asyncWork.CalculateTotalScoreObserver">
 		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 
@@ -251,6 +252,7 @@
 		<property name="redisAssessment" ref="redisAssessment"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="calculateTotalScoreObserver" ref="calculateTotalScoreObserver"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 	<bean id="assessment"
@@ -318,5 +320,33 @@
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="26843545" /> <!-- 25 megs -->
+	</bean>
+	
+	<!-- Bean for contact us data access -->
+	<bean id="contactUsDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisContactUs">
+	</bean>
+	<!-- Bean for contact us service -->
+	<bean id="contactUsService" class="com.boilerplate.service.implemetations.ContactUsService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="contactUsDataAccess" ref="contactUsDataAccess"></property>
+	</bean>
+	
+	<!-- Contact us AsyncWorkDispatcherObserverList -->
+	<bean id="onContactUs"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="contactUsObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	<!-- contactUsObserver -->
+	<bean id="contactUsObserver" class="com.boilerplate.asyncWork.ContactUsObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 </beans>

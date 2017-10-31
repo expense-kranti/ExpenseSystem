@@ -95,7 +95,20 @@ public class AssesmentService implements IAssessmentService {
 	public void setRedisAssessment(IRedisAssessment redisAssessment) {
 		this.redisAssessment = redisAssessment;
 	}
-
+	/**
+	 * This is the instance of the configuration manager.
+	 */
+	@Autowired
+	com.boilerplate.configurations.ConfigurationManager configurationManager;
+	/**
+	 * The setter to set the configuration manager
+	 * @param configurationManager
+	 */
+	public void setConfigurationManager(
+			com.boilerplate.configurations.ConfigurationManager 
+			configurationManager){
+		this.configurationManager = configurationManager;
+	}
 	/**
 	 * This variable is used to define the list of subjects ,subjects basically
 	 * define the background operations need to be perform for calculate the
@@ -478,8 +491,8 @@ public class AssesmentService implements IAssessmentService {
 		// check for null rank
 		if(scoreEntity == null){
 			scoreEntity  = new ScoreEntity();
-			scoreEntity.setRank("First Steps");
-			scoreEntity.setObtainedScore("0");
+			scoreEntity.setRank(configurationManager.get("Rank1"));
+			scoreEntity.setObtainedScore(configurationManager.get("Default_Score"));
 		}
 		return scoreEntity;
 	}

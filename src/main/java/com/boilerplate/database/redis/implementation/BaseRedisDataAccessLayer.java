@@ -582,7 +582,17 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
+		//for contact us
 		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(),
+				methodPermission);
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -697,6 +707,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Access_Key", "AKIAISJEWKJJ77Z4G5MQ");
 		vAllETest.put("S3_Files_Path",
 				"https://s3-ap-southeast-1.amazonaws.com/csrdata-files/");
+		vAllETest.put("Contact_Person_Email", "love.kranti@clearmydues.com");
 		return vAllETest;
 	}
 
@@ -724,6 +735,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Access_Key", "AKIAISJEWKJJ77Z4G5MQ");
 		vAllEDev.put("S3_Files_Path",
 				"https://s3-ap-southeast-1.amazonaws.com/csrdata-files/");
+		vAllEDev.put("Contact_Person_Email", "love.kranti@clearmydues.com");
 		return vAllEDev;
 
 	}
@@ -784,6 +796,18 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("Maximum_File_Upload_Size", "5");
 		// Owner Allocation QUEUE NAme
 		vAllEAll.put("S3_Signed_Url_Time_In_Hour", "5");
+		vAllEAll.put("Default_Score", "0");
+		
+		vAllEAll.put("Rank1", "First Steps");
+		vAllEAll.put("Rank2", "Stepping Up");
+		vAllEAll.put("Rank3", "Walker");
+		vAllEAll.put("Rank4", "Jogger");
+		vAllEAll.put("Rank5", "Runner");
+		vAllEAll.put("Rank6", "Sprinter");
+		vAllEAll.put("Rank7", "Pace Setter");
+		vAllEAll.put("Rank8", "Cross Country Racer");
+		vAllEAll.put("Rank9", "Marathon Racer");
+		
 		return vAllEAll;
 
 	}
@@ -801,6 +825,8 @@ public class BaseRedisDataAccessLayer {
 				"Dear @FirstName your new password is @Password");
 		contentMap.put("PASSWORD_CHANGE_SMS",
 				"Dear @FirstName, Your password has been changed.");
+		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Contact Us");
+		contentMap.put("CONTACT_US_EMAIL_BODY", "<b><h2>Contact Person Details:<h2></b> <b>Name:</b> @ContactPersonName <br> <b>Email:</b> @ContactPersonEmail <br> <b>Contact Number:</b> @ContactPersonMobileNumber <br> <b>Message:</b> @ContactPersonMessage");
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL",
 				Base.toXML(contentMap));
 	}
