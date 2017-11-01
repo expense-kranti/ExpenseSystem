@@ -74,7 +74,7 @@ public class PublishLibrary {
 		publishEntity.setDynamicPublishURl(isDynamicPublishURl);
 		publishEntity.setPublishMethod(publishMethod);
 		try{
-			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishLibrary", "requestPublishAsyncOffline", "_PUBLISH_QUEUE_AKS_");
+			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishLibrary", "requestPublishAsyncOffline", configurationManager.get("AKS_PUBLISH_QUEUE"));
 		}catch(Exception ex){
 			try{
 				// Send an Email in case of Error

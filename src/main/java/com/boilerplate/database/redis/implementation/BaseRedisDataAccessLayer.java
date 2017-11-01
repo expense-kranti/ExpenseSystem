@@ -806,6 +806,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("Rank7", "Pace Setter");
 		vAllEAll.put("Rank8", "Cross Country Racer");
 		vAllEAll.put("Rank9", "Marathon Racer");
+		vAllEAll.put("AKS_PUBLISH_QUEUE", "_PUBLISH_QUEUE_AKS_");
+		
 		
 		return vAllEAll;
 
