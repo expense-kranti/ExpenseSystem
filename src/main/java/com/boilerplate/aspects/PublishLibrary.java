@@ -2,10 +2,12 @@ package com.boilerplate.aspects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.asyncWork.SendEmailOnUnsuccessfulBulkPublish;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.PublishEntity;
 
 public class PublishLibrary {
 	
@@ -44,7 +46,16 @@ public class PublishLibrary {
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob){
 		this.queueReaderJob = queueReaderJob;
 	}
+	/**
+	 * This is the observer to send email
+	 */
+	@Autowired
+	SendEmailOnUnsuccessfulBulkPublish sendEmailOnUnsuccessfulBulkPublish;
 	
+	public void setSendEmailOnUnsuccessfulBulkPublish(
+			SendEmailOnUnsuccessfulBulkPublish sendEmailOnUnsuccessfulBulkPublish) {
+		this.sendEmailOnUnsuccessfulBulkPublish = sendEmailOnUnsuccessfulBulkPublish;
+	}
 	
 	
 	public void requestPublishAsyncOffline(String url, String publishMethod,Object[] input, Object returnValue,String methodCalled, String publishSubject,
@@ -53,7 +64,31 @@ public class PublishLibrary {
 			subjects = new BoilerplateList<>();
 			subjects.add("Publish");
 		}
-		
+		PublishEntity publishEntity = new PublishEntity();
+		publishEntity.setUrl(url);
+		publishEntity.setInput(input);
+		publishEntity.setMethod(methodCalled);
+		publishEntity.setReturnValue(returnValue);
+		publishEntity.setPublishSubject(publishSubject);
+		publishEntity.setPublishTemplate(publishTemplate);
+		publishEntity.setDynamicPublishURl(isDynamicPublishURl);
+		publishEntity.setPublishMethod(publishMethod);
+		try{
+			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishLibrary", "requestPublishAsyncOffline", "_PUBLISH_QUEUE_");
+		}catch(Exception ex){
+			try{
+				// Send an Email in case of Error
+				BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
+				BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
+				tosEmailList.add(configurationManager.get("tosEmailListForPublishBulkFailure"));
+				ccsEmailList.add(configurationManager.get("ccsEmailListForPublishBulkFailure"));
+				BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
+				sendEmailOnUnsuccessfulBulkPublish.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, publishEntity.getPublishSubject() +"-Push in Publish queue failure"
+					,publishEntity.getReturnValue().toString(), "Exception :" + ex);
+			}catch(Exception exe){
+				logger.logException("PublishLibrary", "requestPublishAsyncOffline", "ExceptionBlock - Sending Email failure on Push in Publish queue failure", ex.toString(), exe);
+			}
+		}
 		
 	}
 	

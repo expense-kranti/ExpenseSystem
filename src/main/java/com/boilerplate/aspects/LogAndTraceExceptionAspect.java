@@ -130,7 +130,8 @@ public class LogAndTraceExceptionAspect {
 
 			Object returnValue = getReturnValue(proceedingJoinPoint,
 					methodPermissions);
-
+			// publish data to crm
+			publishToCRM(proceedingJoinPoint, methodPermissions, returnValue);
 			return returnValue;
 
 		} catch (InvalidStateException ex) {
@@ -172,6 +173,34 @@ public class LogAndTraceExceptionAspect {
 					RequestThreadLocal.getSession());
 			throw th;
 		}
+	}
+	/**
+     * This method publish the task to CRM.
+     * @param proceedingJoinPoint The proceedingJoinPoint
+     * @param methodPermissions the methodPermissions
+     * @param returnValue The return value
+     */
+    private void publishToCRM(ProceedingJoinPoint proceedingJoinPoint, MethodPermissions methodPermissions, Object returnValue) {
+    	 try{
+	            if(methodPermissions!=null){
+	            	if(methodPermissions.isPublishRequired()){
+	            		publishLibrary.requestPublishAsyncOffline(
+	            				methodPermissions.getUrlToPublish(),
+	            				methodPermissions.getPublishMethod(),
+	            				proceedingJoinPoint.getArgs(),
+	            				returnValue,
+	            				methodPermissions.getMethodName(),
+	            				methodPermissions.getPublishBusinessSubject(),
+	            				methodPermissions.getPublishTemplate(),
+	            				methodPermissions.isDynamicPublishURl()
+	            				
+	            				);
+	            	}
+	            }
+         }
+         catch(Exception ex){
+        	 logger.logException("LogAndTraceExceptionAspect", "publishToCRM", "try-catch block of CRM Publishing", ex.toString(), ex);
+         }	
 	}
 
 	/**

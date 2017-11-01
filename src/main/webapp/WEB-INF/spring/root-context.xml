@@ -226,7 +226,9 @@
 
 
 	<bean id="publishLibrary" class="com.boilerplate.aspects.PublishLibrary">
+		<property name="publishObserver" ref="publishObserver"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
 	</bean>
 
 
@@ -348,5 +350,11 @@
 	<bean id="contactUsObserver" class="com.boilerplate.asyncWork.ContactUsObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+	<bean id="sendEmailOnUnsuccessfulBulkPublish"
+		class="com.boilerplate.asyncWork.SendEmailOnUnsuccessfulBulkPublish">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="file" ref="file"></property>
 	</bean>
 </beans>
