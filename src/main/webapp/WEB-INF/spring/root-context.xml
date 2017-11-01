@@ -126,6 +126,7 @@
 				<entry key="AutomaticPasswordReset" value-ref="passwordResetObserver" />
 				<entry key="PasswordChange" value-ref="passwordChangeObserver" />
 				<entry key="ContactUs" value-ref="onContactUs" />
+				<entry key="Publish" value-ref="onPublish" />
 			</map>
 
 
@@ -226,13 +227,30 @@
 
 
 	<bean id="publishLibrary" class="com.boilerplate.aspects.PublishLibrary">
-		<property name="publishObserver" ref="publishObserver"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
 	</bean>
 
-
-
+	<bean id="onPublish"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="publishObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	<bean id="publishObserver" class="com.boilerplate.asyncWork.PublishObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="authTokenService" ref="authTokenService"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
+	</bean>
+<bean id="authTokenService" class="com.boilerplate.service.implemetations.AuthTokenService">
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
 	<bean id="iPingService" class="com.boilerplate.service.implemetations.PingService"
 		init-method="initilize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>

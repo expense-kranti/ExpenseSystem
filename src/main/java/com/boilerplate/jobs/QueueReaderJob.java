@@ -200,7 +200,7 @@ public class QueueReaderJob {
 				while(true){
 					try{
 						//read a job from queue
-						asyncWorkItem =QueueFactory.getInstance().remove("_BACKGROUN_JOBS_QUEUE_"+configurationManager.get("Enviornment"));
+						asyncWorkItem =QueueFactory.getInstance().remove("_BACKGROUN_JOBS_QUEUE_AKS_"+configurationManager.get("Enviornment"));
 						if(asyncWorkItem !=null){
 							//execute the message on all observers
 							asyncWorkItem.setUniqueRequestIdOfJob(RequestThreadLocal.getRequestId());
@@ -255,7 +255,7 @@ public class QueueReaderJob {
 	 */
 	public <T> void requestBackroundWorkItem(T item, BoilerplateList<String> subjects,
 			String requestingClassName, String requestingMethodName) throws Exception{
-	this.requestBackroundWorkItem(item, subjects, requestingClassName, requestingMethodName, "_BACKGROUN_JOBS_QUEUE_");
+	this.requestBackroundWorkItem(item, subjects, requestingClassName, requestingMethodName, "_BACKGROUN_JOBS_QUEUE_AKS_");
 	}
 	
 	public <T> void requestBackroundWorkItem(T item, BoilerplateList<String> subjects,

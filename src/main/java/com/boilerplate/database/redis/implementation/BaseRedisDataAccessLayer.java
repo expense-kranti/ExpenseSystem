@@ -440,10 +440,9 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setUrlToPublish("");
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
+		methodPermission.setPublishRequired(true);
 		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate(
-				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"externalSystemId\": \"@externalSystemId\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"experianRequestEmailKey\": \"@experianRequestEmailKey\",\"userState\": \"@userState\",\"ownerId\": \"@ownerId\",\"source\": \"@source\",\"subSource\": \"@subSource\",\"dsaId\": \"@dsaId\",\"referalSource\": \"@referalSource\"}");
+		methodPermission.setPublishTemplate("{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"externalSystemId\": \"@externalSystemId\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"experianRequestEmailKey\": \"@experianRequestEmailKey\",\"userState\": \"@userState\",\"ownerId\": \"@ownerId\",\"source\": \"@source\",\"subSource\": \"@subSource\",\"dsaId\": \"@dsaId\",\"referalSource\": \"@referalSource\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER");
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
