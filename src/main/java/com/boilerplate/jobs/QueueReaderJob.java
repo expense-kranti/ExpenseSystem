@@ -279,5 +279,86 @@ public class QueueReaderJob {
 		}
 	}
 	
-	
+	/**
+	 * This method is used to read next message from Publish queue and then
+	 * send the response to observers.
+	 * 
+	 * This method should be diabled on servers from the config file where
+	 * background service processing is not expected.
+	 */
+	public void readPublishQueueAndDispatch(){
+		if(this.isFirstRun ==false){
+			this.isBackgroundJobEnabled = Boolean.parseBoolean(configurationManager.get("IsQueueProcessingEnabled"));
+			this.isMaintainQueueHistory = Boolean.parseBoolean(configurationManager.get("IsMaintainQueueHistory"));
+			// check on processing of publish queue
+			this.isPublishQueueEnabled = Boolean.parseBoolean(configurationManager.get("IsPublishQueueEnabled"));
+			this.isFirstRun = true;
+		}
+		//if the queue is enabled then work
+		if(isBackgroundJobEnabled && isPublishQueueEnabled){
+			//Create a unique request id for the job and set it on thread
+			RequestThreadLocal.setRequest(UUID.randomUUID().toString(), null
+					,null,this.sessionManager.getBackgroundJobSession());
+			AsyncWorkItem asyncWorkItem =null;
+			try{
+				if(QueueFactory.getInstance().isQueueEnabled()){
+				Integer queueSize = 0;
+				/*** Finding queue size to run as many times, this will save us from all the data processing 
+				 * inserted in publish queue while we are pushing data.
+				 ***/
+				queueSize = (int)QueueFactory.getInstance().getQueueSize("_PUBLISH_QUEUE_AKS_" + configurationManager.get("Enviornment"));
+				logger.logInfo("QueueReaderJob", "readPublishQueueAndDispatch", "Calculate queue size", "Queue Size is : "+ queueSize);
+				for(int i=0; i< queueSize; i++)
+				{
+					try{
+						//read a job from queue
+						asyncWorkItem =QueueFactory.getInstance().remove("_PUBLISH_QUEUE_AKS_" + configurationManager.get("Enviornment"));
+						if(asyncWorkItem !=null){
+							//execute the message on all observers
+							asyncWorkItem.setUniqueRequestIdOfJob(RequestThreadLocal.getRequestId());
+							asyncWorkDispatcher.dispatch(asyncWorkItem);
+						}
+						else{
+							//when we get a null object the queue is empty, hence we get out
+							break;
+						}
+						}catch(Exception ex){
+							//A single job has failed
+							logger.logException("QueueReaderJob", "readPublishQueueAndDispatch"
+									, "Publish queue Job Failed Exception", 
+									asyncWorkItem == null?"Null":asyncWorkItem.toJSON(), ex);
+						}
+						finally{
+							//push into history queue if needed
+							if(this.isMaintainQueueHistory){
+								try {
+									if(asyncWorkItem != null){	
+										QueueFactory.getInstance().insert("_PUBLISH_QUEUE_" + configurationManager.get("Enviornment"), asyncWorkItem);
+									}
+								} catch (Exception e) {
+									//if this queue is down we dont care and we cant do much
+									logger.logException("QueueReaderJOb", "readPublishQueueAndDispatch", "Maintain Publish Queue History In Final", e.toString(), e);
+								}
+							}
+
+						}
+					}//end for
+				/*** Sleeping thread for some minutes to let publish 
+				 *   observer to complete its work
+				 */
+				RequestThreadLocal.sleepThread(Integer.parseInt(configurationManager.get("PublishDispatcherSleepTime")));
+				// Triggering Bulk queue to start processing
+				//this.readBulkQueueAndDispatch();
+				}//end if
+			}catch(Exception ex){
+				//the job group has failed
+				logger.logException("QueueReaderJob", "readPublishQueueAndDispatch"
+						, "Publish queue Job Group Failed", "", ex);
+			}
+			finally{
+				//clean up the thread so that this id is not available next time.
+				RequestThreadLocal.remove();
+			}
+		}
+	}
 }

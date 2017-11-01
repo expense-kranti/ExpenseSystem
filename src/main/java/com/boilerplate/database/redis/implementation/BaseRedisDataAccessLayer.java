@@ -443,7 +443,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(true);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate("{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"externalSystemId\": \"@externalSystemId\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"experianRequestEmailKey\": \"@experianRequestEmailKey\",\"userState\": \"@userState\",\"ownerId\": \"@ownerId\",\"source\": \"@source\",\"subSource\": \"@subSource\",\"dsaId\": \"@dsaId\",\"referalSource\": \"@referalSource\"}");
-		methodPermission.setPublishBusinessSubject("CREATE_USER");
+		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
 
