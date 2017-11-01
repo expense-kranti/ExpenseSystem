@@ -77,7 +77,7 @@
 		<task:scheduled ref="queueReaderJob" method="readQueueAndDispatch" fixed-delay="1000"/>
 	 </task:scheduled-tasks>	
   	<task:scheduled-tasks scheduler="scheduler">
-		<task:scheduled ref="queueReaderJob" method="readPublishQueueAndDispatch" fixed-delay="30000"/>
+		<task:scheduled ref="queueReaderJob" method="readPublishQueueAndDispatch" fixed-delay="3000"/>
 	 </task:scheduled-tasks>
 	 <!-- 
 	 	This is a background job to clean up sessions and must be turned off for Cassandra where

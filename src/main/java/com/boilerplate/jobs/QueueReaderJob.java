@@ -306,13 +306,13 @@ public class QueueReaderJob {
 				/*** Finding queue size to run as many times, this will save us from all the data processing 
 				 * inserted in publish queue while we are pushing data.
 				 ***/
-				queueSize = (int)QueueFactory.getInstance().getQueueSize("_PUBLISH_QUEUE_" + configurationManager.get("Enviornment"));
+				queueSize = (int)QueueFactory.getInstance().getQueueSize("_PUBLISH_QUEUE_AKS_" + configurationManager.get("Enviornment"));
 				logger.logInfo("QueueReaderJob", "readPublishQueueAndDispatch", "Calculate queue size", "Queue Size is : "+ queueSize);
 				for(int i=0; i< queueSize; i++)
 				{
 					try{
 						//read a job from queue
-						asyncWorkItem =QueueFactory.getInstance().remove("_PUBLISH_QUEUE_" + configurationManager.get("Enviornment"));
+						asyncWorkItem =QueueFactory.getInstance().remove("_PUBLISH_QUEUE_AKS_" + configurationManager.get("Enviornment"));
 						if(asyncWorkItem !=null){
 							//execute the message on all observers
 							asyncWorkItem.setUniqueRequestIdOfJob(RequestThreadLocal.getRequestId());
