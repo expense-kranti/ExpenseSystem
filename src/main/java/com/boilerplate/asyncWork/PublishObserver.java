@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.aspects.PublishLibrary;
 import com.boilerplate.database.redis.implementation.BaseRedisDataAccessLayer;
+import com.boilerplate.database.redis.implementation.RedisSFUpdateHash;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.HttpResponse;
@@ -20,6 +21,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.PublishEntity;
+import com.boilerplate.java.entities.SFUpdateHashEntity;
 import com.boilerplate.service.interfaces.IAuthTokenService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -99,6 +101,19 @@ public class PublishObserver extends BaseRedisDataAccessLayer implements IAsyncW
 	@Autowired PublishObserver publishObserver;
 	
 	/**
+	 * The RedisSFUpdateHash
+	 */
+	@Autowired
+	RedisSFUpdateHash redisSFUpdateHashAccess;
+	
+	/**
+	 * This method sets RedisSFUpdateHash
+	 */
+	public void setRedisSFUpdateHashAccess(
+			RedisSFUpdateHash redisSFUpdateHashAccess) {
+		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
+	}
+	/**
 	 * This sets the queue reader jon
 	 * @param queueReaderJob The queue reader jon
 	 */
@@ -153,11 +168,39 @@ public class PublishObserver extends BaseRedisDataAccessLayer implements IAsyncW
 	public void publish(PublishEntity publishEntity) throws IOException, NotFoundException, UnauthorizedException,Exception {
 		// PublishData instantiation
 			switch (publishEntity.getPublishSubject()) {
+			case "UPDATE_LOGGED_IN_USER_AKS":
+				ExternalFacingReturnedUser externalFacingReturnedUser = Base.fromJSON(publishEntity.getReturnValue().toString(), ExternalFacingReturnedUser.class);
+				redisSFUpdateHashAccess.hmset(configurationManager.get("SF_Update_Hash_Name")+":"+externalFacingReturnedUser.getId(), createSFHashMap(publishEntity, externalFacingReturnedUser));
+				
+				break;
 				default:
 					// This will push in Publish queue
 					this.requestBackroundWorkItem(publishEntity, publishEntity.getPublishSubject());
 					break;
 		}
+	}
+	/**
+	 * This method creates the SFHashMap
+	 * @param publishEntity The publishEntity
+	 * @param externalFacingReturnedUser The externalFacingReturnedUser
+	 * @return The sfUpdateHashMap
+	 * @throws JsonParseException The JsonParseException
+	 * @throws JsonMappingException The JsonMappingException
+	 * @throws IOException The IOException
+	 */
+	public Map<String, String> createSFHashMap(PublishEntity publishEntity, ExternalFacingReturnedUser externalFacingReturnedUser) throws JsonParseException, JsonMappingException, IOException{
+		// update field
+		SFUpdateHashEntity sfUpdateHashEntity = new SFUpdateHashEntity();
+		sfUpdateHashEntity.setUpdatedDateAndTime(Long.toString(new Date().getTime()));
+		sfUpdateHashEntity.setAccountId(externalFacingReturnedUser.getCrmid()==null?"":externalFacingReturnedUser.getCrmid());
+		sfUpdateHashEntity.setAlternateNumber(externalFacingReturnedUser.getAlternateNumber()==null?"":externalFacingReturnedUser.getAlternateNumber());
+		sfUpdateHashEntity.setLocation(externalFacingReturnedUser.getLocation()==null?"":externalFacingReturnedUser.getLocation());
+		sfUpdateHashEntity.setEmploymentStatus(externalFacingReturnedUser.getEmploymentStatus()==null?"":externalFacingReturnedUser.getEmploymentStatus().toString());
+		sfUpdateHashEntity.setDob(externalFacingReturnedUser.getDateOfBirth()==null?"":externalFacingReturnedUser.getDateOfBirth());
+		
+		Map<String, String> sfUpdateHashMap = new ObjectMapper().readValue(
+			    sfUpdateHashEntity.toJSON(), new TypeReference<HashMap<String,String>>(){});
+		return sfUpdateHashMap;
 	}
 
 private void requestBackroundWorkItem(PublishEntity publishEntity,String subject) throws Exception{

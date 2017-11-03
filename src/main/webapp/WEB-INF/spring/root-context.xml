@@ -127,6 +127,7 @@
 				<entry key="PasswordChange" value-ref="passwordChangeObserver" />
 				<entry key="ContactUs" value-ref="onContactUs" />
 				<entry key="Publish" value-ref="onPublish" />
+				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
 			</map>
 
 
@@ -246,6 +247,7 @@
 		<property name="authTokenService" ref="authTokenService"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
 	</bean>
 <bean id="authTokenService" class="com.boilerplate.service.implemetations.AuthTokenService">
@@ -374,5 +376,26 @@
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="file" ref="file"></property>
+	</bean>
+	<bean id="onBulkPublish"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="publishBulkObserver"></ref>
+				<ref bean="sendEmailOnUnsuccessfulBulkPublish"></ref>
+			</list>
+		</property>
+	</bean>
+	<bean id="publishBulkObserver" class="com.boilerplate.asyncWork.PublishBulkObserver">
+		<property name="authTokenService" ref="authTokenService"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
+	</bean>
+	<bean id="redisSFUpdateHashAccess"
+		class="com.boilerplate.database.redis.implementation.RedisSFUpdateHash">
 	</bean>
 </beans>
