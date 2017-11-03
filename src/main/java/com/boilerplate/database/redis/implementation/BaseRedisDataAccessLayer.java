@@ -756,7 +756,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("SF_Update_Account_Publish_Method", "POST");
 		vAllETest.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllETest.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
-		
+		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
 		
 		return vAllETest;
 	}
@@ -794,7 +794,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SF_Update_Account_Publish_Method", "POST");
 		vAllEDev.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllEDev.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
-		
+		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
 		return vAllEDev;
 
 	}
@@ -872,8 +872,14 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("Process_Bulk_Count", "10");
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
 		vAllEAll.put("AKS_PUBLISH_QUEUE", "_PUBLISH_QUEUE_AKS_");
+		vAllEAll.put("AKS_PUBLISH_SUBJECT", "Publish");
 		
-		
+		//assessment publish config
+		vAllEAll.put("AKS_Assessment_Publish_Method", "POST");
+		vAllEAll.put("AKS_Assessment_Publish_Subject", "REPORT_CREATED_AKS");
+		vAllEAll.put("AKS_Assessment_Publish_Template", "{\"Report:@reportId\": {\"id\": \"@reportId\",\"userId\": \"@userId\",\"fileId\": \"@fileId\",\"reportSourceEnum\": \"@reportSourceEnum\",\"reportStatusEnum\": \"@reportStatusEnum\",\"bureauScore\": @bureauScore,\"reportDateTime\": \"@reportDateTime\",\"reportNumber\": \"@reportNumber\",\"creditRating\": \"@creditRating\",\"reportVersionEnum\": \"@reportVersionEnum\",\"fileEntity\": @fileEntity,\"reportTradelines\": @reportTradelines,\"reportSource\": @reportSource,\"questionCount\": @questionCount,\"reportStatus\": @reportStatus,\"reportVersion\": @reportVersion,\"uniqueTransactionId\": \"@uniqueTransactionId\"}}");
+		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
+		vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
 		return vAllEAll;
 
 	}

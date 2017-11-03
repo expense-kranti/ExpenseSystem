@@ -3,8 +3,11 @@ package com.boilerplate.asyncWork;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
+import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ScoreEntity;
 
 /**
@@ -14,7 +17,23 @@ import com.boilerplate.java.entities.ScoreEntity;
  *
  */
 public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
-
+	
+	/**
+	 * CalculateTotalScoreObserver logger
+	 */
+	private static Logger  logger = Logger.getInstance(CalculateTotalScoreObserver.class);
+	
+	@Autowired
+	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
+	
+	/**
+	 * This sets the queue reader job
+	 * @param queueReaderJob The queue reader jon
+	 */
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob){
+		this.queueReaderJob = queueReaderJob;
+	}
+	
 	/**
 	 * This is the new instance of redis assessment
 	 */
@@ -45,6 +64,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
+	
+	private BoilerplateList<String> subjects = null;
 
 	/**
 	 * @see IAsyncWorkObserver.observe
@@ -142,6 +163,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		} else {
 			this.createNewMonthlyScore(assessmentEntity);
 		}
+		this.publishToCRM(assessmentEntity);
 	}
 
 	/**
@@ -165,6 +187,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setRank(calculateRank(Float.parseFloat(assessmentEntity.getObtainedScore())));
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);
+		
 	}
 
 	/**
@@ -223,5 +246,51 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 			rank = configurationManager.get("Rank9");
 		}
 		return rank;
+	}
+	
+	private void publishToCRM(AssessmentEntity assessmentEntity){
+		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
+		if(isPublishReport){
+			PublishEntity publishEntity =  this.
+					createPublishEntity("CalculateTotalScoreObserver.publishToCRM", 
+							configurationManager.get("AKS_Assessment_Publish_Method")
+					, configurationManager.get("AKS_Assessment_Publish_Subject"),
+					assessmentEntity,configurationManager.get("AKS_Assessment_Publish_URL"),
+					configurationManager.get("AKS_Assessment_Publish_Template"),
+					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));
+			if(subjects == null){
+				subjects = new BoilerplateList<>();
+				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
+			}
+			try{
+				logger.logInfo("CalculateTotalScoreObserver", "publishToCRM", "Publishing report", "publish assessment status"+assessmentEntity.getId());
+				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects , "CalculateTotalScoreObserver", "publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
+			}
+			catch (Exception exception){
+				logger.logError("CalculateTotalScoreObserver", "publishToCRM", "queueReaderJob catch block", "Exception :" + exception);
+			}
+		}
+	}
+	/**
+	 * This method creates the publish entity.
+	 * @param method the publish method
+	 * @param publishMethod the publish method
+	 * @param publishSubject the publish subject
+	 * @param returnValue the object
+	 * @param url the publish url
+	 * @return the publish entity
+	 */
+	private PublishEntity createPublishEntity(String method,String publishMethod,String publishSubject,
+			Object returnValue, String url, String publishTemplate, String isDynamicPublishURl){
+		PublishEntity publishEntity = new PublishEntity();
+		publishEntity.setInput(new Object[0]);
+		publishEntity.setMethod(method);
+		publishEntity.setPublishMethod(publishMethod);
+		publishEntity.setPublishSubject(publishSubject);
+		publishEntity.setReturnValue(returnValue);
+		publishEntity.setUrl(url);
+		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
+		publishEntity.setPublishTemplate(publishTemplate);
+		return publishEntity;
 	}
 }
