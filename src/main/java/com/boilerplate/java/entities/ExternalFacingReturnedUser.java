@@ -17,7 +17,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  *
  */
 @ApiModel(value="A User", description="This is a user", parent=ExternalFacingUser.class)
-public class ExternalFacingReturnedUser extends ExternalFacingUser implements Serializable{
+public class ExternalFacingReturnedUser extends ExternalFacingUser implements Serializable, ICRMPublishDynamicURl,ICRMPublishEntity{
 
 	public ExternalFacingReturnedUser(){
 		
@@ -43,6 +43,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser implements Se
 		super.setEmploymentStatus(user.getEmploymentStatus());
 		super.setDateOfBirth(user.getDateOfBirth());
 		super.setAlternateNumber(user.getAlternateNumber());
+		super.setCrmid(user.getCrmid());
 			
 	}
 	/**
@@ -111,7 +112,36 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser implements Se
 		this.otpList = otpList;
 	}
 	
-
+	/**
+	 * This method creates the user data for publishing
+	 * @return retrunValue The publish data string
+	 */
+	@Override
+	public String createPublishJSON(String template) {
+		String retrunValue = template;	
+		retrunValue = retrunValue.replace("@Id", this.getId());
+		retrunValue = retrunValue.replace("@userMetaData", Base.toJSON(this.getUserMetaData()));
+		retrunValue = retrunValue.replace("@userId", this.getUserId());
+		retrunValue = retrunValue.replace("@authenticationProvider", this.getAuthenticationProvider());
+		retrunValue = retrunValue.replace("@email", this.getEmail());
+		retrunValue = retrunValue.replace("@firstName", this.getFirstName());
+		retrunValue = retrunValue.replace("@lastName", this.getLastName());
+		retrunValue = retrunValue.replace("@middleName", this.getMiddleName() == null ? "" : this.getMiddleName());
+		retrunValue = retrunValue.replace("@phoneNumber", this.getPhoneNumber());
+		retrunValue = retrunValue.replace("@referalSource", this.getReferalSource() == null ? "" : this.getReferalSource());
+		return retrunValue;
+		
+	}
+	/**
+	 * This method creates the dynamic crm publish url.
+	 * @return returnUrl The publish url  string
+	 */
+	@Override
+	public String createPublishUrl(String url) {
+		String returnUrl = url;
+		returnUrl = returnUrl.replace("@crmRecordID", this.getCrmid()==null?"":this.getCrmid());
+		return returnUrl;
+	}
 	
 	
 	

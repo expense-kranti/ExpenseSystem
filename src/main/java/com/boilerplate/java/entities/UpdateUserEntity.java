@@ -26,7 +26,16 @@ public class UpdateUserEntity extends BaseEntity{
 	public void setUserMetaData(BoilerplateMap<String, String> userMetaData) {
 		this.userMetaData = userMetaData;
 	}
+	
+	public String getCrmid() {
+		return crmid;
+	}
 
+	public void setCrmid(String crmid) {
+		this.crmid = crmid;
+	}
+
+	private String crmid;
 	@JsonIgnore
 	/**
 	 * This is the password.

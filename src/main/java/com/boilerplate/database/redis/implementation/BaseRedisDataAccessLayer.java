@@ -378,7 +378,7 @@ public class BaseRedisDataAccessLayer {
 	 */
 	private void createMethodPermission() {
 		// This attribute tells us about server name
-
+		String salesForceBaseurl = getSalesForceBaseUrl();
 		// method permissions
 		BoilerplateMap<String, MethodPermissions> methodPermissionMap = new BoilerplateMap<>();
 
@@ -438,11 +438,11 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish("");
 		methodPermission.setPublishMethod("POST");
 		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate("{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"externalSystemId\": \"@externalSystemId\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"experianRequestEmailKey\": \"@experianRequestEmailKey\",\"userState\": \"@userState\",\"ownerId\": \"@ownerId\",\"source\": \"@source\",\"subSource\": \"@subSource\",\"dsaId\": \"@dsaId\",\"referalSource\": \"@referalSource\"}");
+		methodPermission.setPublishTemplate("{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
@@ -579,6 +579,13 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate("");
+		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
+		
 		methodPermissionMap.put(methodPermission.getMethodName(),
 				methodPermission);
 		//for contact us
@@ -684,6 +691,40 @@ public class BaseRedisDataAccessLayer {
 		this.set("USER:" + user.getUserId(), user);
 
 	}
+	/**
+	 * SalesForce Production Base Url
+	 */
+	public static final String SalesForceProductionBaseUrl = "https://clearmydues.my.salesforce.com";
+	
+	/**
+	 * SalesForce Development Base Url
+	 */
+	public static final String SalesForceDevelopmentBaseUrl = "https://clearmydues--Developmen.cs31.my.salesforce.com";
+	
+	/**
+	 * SalesForce UAT Base Url
+	 */
+	public static final String SalesForceTestBaseUrl = "https://clearmydues--Developmen.cs31.my.salesforce.com";
+	
+	/**
+	 * This method tells us about SalesForce Base url
+	 * @return serverName The salesForceBaseurl
+	 */
+		private String getSalesForceBaseUrl() {
+			String salesForceBaseurl = null;
+			switch (properties.getProperty("Enviornment").toUpperCase()) {
+			case "PRODUCTION":
+				salesForceBaseurl = SalesForceProductionBaseUrl;
+				break;
+			case "DEVELOPMENT":
+				salesForceBaseurl = SalesForceDevelopmentBaseUrl;
+				break;
+			case "TEST":
+				salesForceBaseurl = SalesForceTestBaseUrl;
+				break;
+			}
+			return salesForceBaseurl;
+		}
 
 	/**
 	 * This method create seed test data configuration.
@@ -692,7 +733,7 @@ public class BaseRedisDataAccessLayer {
 	 */
 	private BoilerplateMap<String, String> createSeedTestData() {
 		// This attribute tells us about server name
-
+				String salesForceBaseurl = getSalesForceBaseUrl();
 		BoilerplateMap<String, String> vAllETest = new BoilerplateMap<String, String>();
 		vAllETest.put("SMS_ROOT_URL",
 				"http://alerts.solutionsinfini.com/api/v3/index.php");
@@ -707,6 +748,16 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("S3_Files_Path",
 				"https://s3-ap-southeast-1.amazonaws.com/csrdata-files/");
 		vAllETest.put("Contact_Person_Email", "love.kranti@clearmydues.com");
+		vAllETest.put("Salesforce_Authtoken_URL", salesForceBaseurl + "/services/oauth2/token?grant_type=password&client_id=3MVG9Se4BnchkASk.FTlViI7LYUGoKUIgrSoEssN2rGYY6dc99Ijwl6saXGnFU54MHNmFK32Bltn2rble187S&client_secret=5717367022576838052&username=aman.bindal@clearmydues.com.developmen&password=Jan@2016AZEDXfLWSBLW8T3s9EtWzsJq");
+		vAllETest.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllETest.put("ccsEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllETest.put("RootFileDownloadLocation", "/downloads/");
+		
+		vAllETest.put("SF_Update_Account_Publish_Method", "POST");
+		vAllETest.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
+		vAllETest.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
+		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
+		
 		return vAllETest;
 	}
 
@@ -717,7 +768,7 @@ public class BaseRedisDataAccessLayer {
 	 */
 	private BoilerplateMap<String, String> createSeedDevelopmentData() {
 		// This attribute tells us about server name
-
+				String salesForceBaseurl = getSalesForceBaseUrl();
 		BoilerplateMap<String, String> vAllEDev = new BoilerplateMap<String, String>();
 		// put all configuration
 		vAllEDev.put("SMS_ROOT_URL",
@@ -735,6 +786,15 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("S3_Files_Path",
 				"https://s3-ap-southeast-1.amazonaws.com/csrdata-files/");
 		vAllEDev.put("Contact_Person_Email", "love.kranti@clearmydues.com");
+		vAllEDev.put("Salesforce_Authtoken_URL", salesForceBaseurl + "/services/oauth2/token?grant_type=password&client_id=3MVG9Se4BnchkASk.FTlViI7LYUGoKUIgrSoEssN2rGYY6dc99Ijwl6saXGnFU54MHNmFK32Bltn2rble187S&client_secret=5717367022576838052&username=aman.bindal@clearmydues.com.developmen&password=Jan@2016AZEDXfLWSBLW8T3s9EtWzsJq");
+		vAllEDev.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllEDev.put("ccsEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllEDev.put("RootFileDownloadLocation", "/downloads/");
+		
+		vAllEDev.put("SF_Update_Account_Publish_Method", "POST");
+		vAllEDev.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
+		vAllEDev.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
+		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
 		return vAllEDev;
 
 	}
@@ -746,7 +806,8 @@ public class BaseRedisDataAccessLayer {
 	 */
 	private BoilerplateMap<String, String> createSeedProductionData() {
 		// This attribute tells us about server name
-
+		// This attribute tells us about server name
+				String salesForceBaseurl = getSalesForceBaseUrl();
 		BoilerplateMap<String, String> vAllEProduction = new BoilerplateMap<String, String>();
 
 		vAllEProduction.put("SMS_ROOT_URL",
@@ -806,9 +867,19 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("Rank7", "Pace Setter");
 		vAllEAll.put("Rank8", "Cross Country Racer");
 		vAllEAll.put("Rank9", "Marathon Racer");
+		vAllEAll.put("PublishDispatcherSleepTime", "120000");
+		// process bulk process
+		vAllEAll.put("Process_Bulk_Count", "10");
+		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
 		vAllEAll.put("AKS_PUBLISH_QUEUE", "_PUBLISH_QUEUE_AKS_");
+		vAllEAll.put("AKS_PUBLISH_SUBJECT", "Publish");
 		
-		
+		//assessment publish config
+		vAllEAll.put("AKS_Assessment_Publish_Method", "POST");
+		vAllEAll.put("AKS_Assessment_Publish_Subject", "REPORT_CREATED_AKS");
+		vAllEAll.put("AKS_Assessment_Publish_Template", "{\"Report:@reportId\": {\"id\": \"@reportId\",\"userId\": \"@userId\",\"fileId\": \"@fileId\",\"reportSourceEnum\": \"@reportSourceEnum\",\"reportStatusEnum\": \"@reportStatusEnum\",\"bureauScore\": @bureauScore,\"reportDateTime\": \"@reportDateTime\",\"reportNumber\": \"@reportNumber\",\"creditRating\": \"@creditRating\",\"reportVersionEnum\": \"@reportVersionEnum\",\"fileEntity\": @fileEntity,\"reportTradelines\": @reportTradelines,\"reportSource\": @reportSource,\"questionCount\": @questionCount,\"reportStatus\": @reportStatus,\"reportVersion\": @reportVersion,\"uniqueTransactionId\": \"@uniqueTransactionId\"}}");
+		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
+		vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
 		return vAllEAll;
 
 	}
@@ -828,6 +899,7 @@ public class BaseRedisDataAccessLayer {
 				"Dear @FirstName, Your password has been changed.");
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Contact Us");
 		contentMap.put("CONTACT_US_EMAIL_BODY", "<b><h2>Contact Person Details:<h2></b> <b>Name:</b> @ContactPersonName <br> <b>Email:</b> @ContactPersonEmail <br> <b>Contact Number:</b> @ContactPersonMobileNumber <br> <b>Message:</b> @ContactPersonMessage");
+		contentMap.put("BULK_PUBLISH_FAIL_EMAIL_SUBJECT" , "AKS Bulk Publish Failure ");
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL",
 				Base.toXML(contentMap));
 	}

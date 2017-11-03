@@ -62,7 +62,7 @@ public class PublishLibrary {
 			String publishTemplate, boolean isDynamicPublishURl){
 		if(subjects == null){
 			subjects = new BoilerplateList<>();
-			subjects.add("Publish");
+			subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 		}
 		PublishEntity publishEntity = new PublishEntity();
 		publishEntity.setUrl(url);

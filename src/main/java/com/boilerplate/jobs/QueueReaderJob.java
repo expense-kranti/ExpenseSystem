@@ -348,7 +348,7 @@ public class QueueReaderJob {
 				 */
 				RequestThreadLocal.sleepThread(Integer.parseInt(configurationManager.get("PublishDispatcherSleepTime")));
 				// Triggering Bulk queue to start processing
-				//this.readBulkQueueAndDispatch();
+				this.readBulkQueueAndDispatch();
 				}//end if
 			}catch(Exception ex){
 				//the job group has failed
@@ -360,5 +360,87 @@ public class QueueReaderJob {
 				RequestThreadLocal.remove();
 			}
 		}
+	}
+	public void readBulkQueueAndDispatch(){
+		if(this.isFirstRun ==false){
+			this.isBackgroundJobEnabled = Boolean.parseBoolean(configurationManager.get("IsQueueProcessingEnabled"));
+			this.isMaintainQueueHistory = Boolean.parseBoolean(configurationManager.get("IsMaintainQueueHistory"));
+			this.isPublishQueueEnabled = Boolean.parseBoolean(configurationManager.get("IsPublishQueueEnabled"));
+			this.isFirstRun = true;
+		}
+		//if the queue is enabled then work
+		if(isBackgroundJobEnabled){
+			//Create a unique request id for the job and set it on thread
+			RequestThreadLocal.setRequest(UUID.randomUUID().toString(), null
+					,null,this.sessionManager.getBackgroundJobSession());
+			String userCreateJson=null;
+			try{
+				if(QueueFactory.getInstance().isQueueEnabled()){
+					logger.logInfo("QueueReaderJob", "readBulkQueueAndDispatch", "Publishing Bulk dispatcher", "Before Calling publishBulkFromSubject for CREATE_USER");
+					publishBulkFromSubject("CREATE_USER_AKS");
+									}//end if
+			}catch(Exception ex){
+				//the job group has failed
+				logger.logException("QueueReaderJob", "QueueReaderJob"
+						, "Job Group Failed", "", ex);
+			}
+			finally{
+				//clean up the thread so that this id is not available next time.
+				RequestThreadLocal.remove();
+			}
+		}
+	}
+	private void publishBulkFromSubject(String subject){
+		logger.logInfo("QueueReaderJob", "publishBulkFromSubject", "Inside publishBulkFromSubject", "Subject for Bulk Dispatcher :" +subject);
+		AsyncWorkItem asyncWorkItem = null;
+		try{
+			//read a job from queue
+				while(true){
+					BoilerplateList<AsyncWorkItem> asyncWorkItems =new BoilerplateList();
+					for(int i=0;i<Integer.parseInt(configurationManager.get("Process_Bulk_Count"));i++){
+						asyncWorkItem =QueueFactory.getInstance().remove(subject+ "_" +configurationManager.get("Enviornment"));
+						if(asyncWorkItem !=null){
+							//execute the message on all observers
+							asyncWorkItem.setUniqueRequestIdOfJob(RequestThreadLocal.getRequestId());
+							asyncWorkItems.add(asyncWorkItem);
+						}
+						else{
+							break;
+						}
+					}//end for
+					if(asyncWorkItems.size() >0){
+						BoilerplateList<String> subjects = new BoilerplateList<>();
+						subjects.add(subject);
+						AsyncWorkItemList publishItem = new AsyncWorkItemList();
+						publishItem.setItems(asyncWorkItems);
+						AsyncWorkItem bulkAsyncItem = new AsyncWorkItem<AsyncWorkItemList>(publishItem, subjects, "QueueReaderJob", "publishBulkFromSubject");
+						bulkAsyncItem.setUniqueRequestIdOfJob(RequestThreadLocal.getRequestId());
+						logger.logInfo("QueueReaderJob", "publishBulkFromSubject", "After creating bulkAsyncItem to dispatch", "Dispatch to BulkPublishObserver for subject :" +subject);
+						asyncWorkDispatcher.dispatch(bulkAsyncItem);
+					}
+					else{
+						return;
+					}
+				}//end while
+			}catch(Exception ex){
+				//A single job has failed
+				logger.logException("QueueReaderJob", "publishBulkFromSubject"
+						, "Job Failed Exception", 
+						asyncWorkItem == null?"Null":asyncWorkItem.toJSON(), ex);
+			}
+			finally{
+				//push into history queue if needed
+				if(this.isMaintainQueueHistory){
+					try {
+						if(asyncWorkItem != null){	
+							QueueFactory.getInstance().insert(subject+ "_" +configurationManager.get("Enviornment"), asyncWorkItem);
+						}
+					} catch (Exception e) {
+						//if this queue is down we dont care and we cant do much
+						logger.logException("QueueReaderJOb", "publishBulkFromSubject", "Maintain Queue History In Final", e.toString(), e);
+					}
+				}
+
+			}
 	}
 }
