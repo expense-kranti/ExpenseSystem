@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.AssessmentEntity;
+import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.service.interfaces.IAssessmentService;
 
 /**
  * This class calculate user total score and update the details into data store
@@ -32,6 +34,20 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	}
 
 	/**
+	 * This is the instance of the assessment service
+	 */
+	@Autowired
+	IAssessmentService assessmentService;
+
+	/**
+	 * @param assessmentService
+	 *            the assessmentService to set
+	 */
+	public void setAssessmentService(IAssessmentService assessmentService) {
+		this.assessmentService = assessmentService;
+	}
+
+	/**
 	 * This is the instance of the configuration manager.
 	 */
 	@Autowired
@@ -54,6 +70,34 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		AssessmentEntity assessmentEntity = (AssessmentEntity) asyncWorkItem.getPayload();
 		this.calculateTotalScore(assessmentEntity);
 		this.calculateMonthlyScore(assessmentEntity);
+		//this.publishAssessmentStatus(assessmentEntity);
+	}
+
+	/**
+	 * This method is used to publish the assessment status
+	 * 
+	 * @param assessmentEntity
+	 *            this parameter contains the assessment data ,assessment data
+	 *            like assessment id, assessment section,assessment
+	 *            questions,assessment score,obtained score etc.
+	 */
+	private void publishAssessmentStatus(AssessmentEntity assessmentEntity) {
+		// Create a new instance of assessment status publish entity
+		AssessmentStatusPubishEntity assessmentPublishData = new AssessmentStatusPubishEntity();
+		// Set the user id
+		assessmentPublishData.setUserId(assessmentEntity.getUserId());
+		// Set the total score of user
+		assessmentPublishData
+				.setTotalScore((redisAssessment.getTotalScore(assessmentEntity.getUserId())).getObtainedScore());
+		// Set the monthly score of user
+		assessmentPublishData
+				.setMonthlyScore((redisAssessment.getMonthlyScore(assessmentEntity.getUserId())).getObtainedScore());
+		// Set user Rank
+		assessmentPublishData.setRank(calculateRank(Float.parseFloat(assessmentPublishData.getTotalScore())));
+		// Set user monthly rank
+		assessmentPublishData.setMonthlyRank(calculateRank(Float.parseFloat(assessmentPublishData.getMonthlyScore())));
+		// Set the assessment status
+		assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(assessmentEntity.getUserId()));
 	}
 
 	/**

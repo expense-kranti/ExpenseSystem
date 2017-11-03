@@ -223,6 +223,7 @@
 	<bean id="calculateTotalScoreObserver" class="com.boilerplate.asyncWork.CalculateTotalScoreObserver">
 		<property name="redisAssessment" ref="redisAssessment"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="assessmentService" ref="assessmentService"></property>
 	</bean>
 
 

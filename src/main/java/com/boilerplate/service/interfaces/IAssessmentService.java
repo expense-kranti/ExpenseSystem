@@ -4,6 +4,7 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import java.util.List;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
@@ -124,4 +125,16 @@ public interface IAssessmentService {
 	 */
 	public AssessmentQuestionSectionEntity validateAnswer(
 			AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception;
+
+	/**
+	 * This method is used to get the user assessments status, what is the
+	 * status user regarding each assessments in our data store, status means is
+	 * it submitted or in progress.
+	 * 
+	 * @param userId
+	 *            this is the user id
+	 * @return the list of assessments and each element of list contain the
+	 *         assessment name and its status
+	 */
+	public BoilerplateList<AssessmentEntity> getUserAssessmentStatus(String userId);
 }
