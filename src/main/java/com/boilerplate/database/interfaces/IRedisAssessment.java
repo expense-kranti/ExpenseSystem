@@ -56,12 +56,59 @@ public interface IRedisAssessment {
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity);
 
+	/**
+	 * This method is used to save the total score
+	 * 
+	 * @param scoreEntity
+	 *            this parameter contains the score entity like user id ,user
+	 *            score
+	 */
 	public void saveTotalScore(ScoreEntity scoreEntity);
 
-
+	/**
+	 * This method is used to get the total score
+	 * 
+	 * @param userId
+	 *            this parameter contains the user id , this define whose score
+	 *            need to be get
+	 */
 	public ScoreEntity getTotalScore(String userId);
 
+	/**
+	 * This method is used to save the assessment score
+	 * 
+	 * @param scoreEntity
+	 *            this parameter contains the score entity like user id ,user
+	 *            score
+	 */
 	public void saveAssessmentScore(ScoreEntity scoreEntity);
 
+	/**
+	 * This method is used to get the assessment score regarding the userId and
+	 * assessment id
+	 * 
+	 * @param userId
+	 *            this is the user id
+	 * @param assessmentId
+	 *            this is the assessment id
+	 * @return the score entity which contains the user id ,assessment id,user
+	 *         obtained score and max score
+	 */
 	public ScoreEntity getAssessmentScore(String userId, String assessmentId);
+
+	/**
+	 * This method is used to save the monthly score of user
+	 * 
+	 * @param scoreEntity
+	 */
+	public void saveMonthlyScore(ScoreEntity scoreEntity);
+
+	/**
+	 * This method is used to get the user monthly score
+	 * 
+	 * @param userId
+	 *            this is the user id
+	 * @return scoreEntity this contains user id and user score
+	 */
+	public ScoreEntity getMonthlyScore(String userId);
 }

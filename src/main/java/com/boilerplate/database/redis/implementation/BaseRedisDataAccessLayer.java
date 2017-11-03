@@ -871,6 +871,9 @@ public class BaseRedisDataAccessLayer {
 		// process bulk process
 		vAllEAll.put("Process_Bulk_Count", "10");
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
+		vAllEAll.put("AKS_PUBLISH_QUEUE", "_PUBLISH_QUEUE_AKS_");
+		
+		
 		return vAllEAll;
 
 	}

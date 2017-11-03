@@ -50,7 +50,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessment data
 	 */
-	@ApiOperation(value = "Get the assessment data regarding the assessment id ,this data contains al the sections and each section conatins some questions")
+	@ApiOperation(value = "This API will get the assessment data regarding the assessment id ,When user want to get specific assessment data then this api will get the assessment data for any valid assessment id,valid means assessment is available for user or not,assessment data contains all the sections and each section conatins some questions")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/attemptAssessment", method = RequestMethod.POST)
 	public @ResponseBody AssessmentEntity attemptAssessment(@RequestBody AssessmentEntity assessmentEntity)
@@ -67,7 +67,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to get
 	 *             the assessments
 	 */
-	@ApiOperation(value = "Get the all the assessments which is available for the current user")
+	@ApiOperation(value = "Get the all the assessments which is available for the current user,only assessment details means like assessment name,assessment id etc.,not questions data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessments", method = RequestMethod.GET)
 	public @ResponseBody List<AssessmentEntity> getAssesments() throws Exception {
@@ -105,7 +105,7 @@ public class AssessmentController extends BaseController {
 	 *             throw this exception in case of any error while trying to
 	 *             save the assessment data to data store
 	 */
-	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct")
+	@ApiOperation(value = "Save the assessment data,assessment data which also contain the answer of the assessment question submitted by user", notes = "Data shold be correct")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/assessment", method = RequestMethod.POST)
 	public @ResponseBody void saveAssesment(@RequestBody AssessmentEntity assessmentEntity) throws Exception {
@@ -130,7 +130,7 @@ public class AssessmentController extends BaseController {
 	 *         for this assessment and count of question count of correct
 	 *         question
 	 */
-	@ApiOperation(value = "Save the assessment data", notes = "Data shold be correct,and after submit user can't be able to re attemp this assessment")
+	@ApiOperation(value = "Submit the assessment data,means save the assessment data but after this user is not able to change this assessment data any more ", notes = "Data shold be correct,and after submit user can't be able to re attemp this assessment")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/submitAssessment", method = RequestMethod.POST)
 	public @ResponseBody AssessmentEntity submitAssesment(@RequestBody AssessmentEntity assessmentEntity)
@@ -170,9 +170,10 @@ public class AssessmentController extends BaseController {
 		// Get the all assessments
 		return assessmentService.getTotalScore();
 	}
-	
+
 	/**
-	 * This API is used to validate the question answer is answer is correct or not.
+	 * This API is used to validate the question answer is answer is correct or
+	 * not.
 	 * 
 	 * @param assessmentQuestionSectionEntity
 	 *            this parameter contains the question data like section id,
@@ -187,10 +188,10 @@ public class AssessmentController extends BaseController {
 	@ApiOperation(value = "Validate the answer is it correct or not", notes = "")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/validateAnswer", method = RequestMethod.POST)
-	public @ResponseBody AssessmentQuestionSectionEntity validateAnswer(@RequestBody AssessmentQuestionSectionEntity assessmentQuestionSectionEntity)
-			throws Exception {
+	public @ResponseBody AssessmentQuestionSectionEntity validateAnswer(
+			@RequestBody AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception {
 		// Validate the answer
 		return assessmentService.validateAnswer(assessmentQuestionSectionEntity);
 	}
-	
+
 }
