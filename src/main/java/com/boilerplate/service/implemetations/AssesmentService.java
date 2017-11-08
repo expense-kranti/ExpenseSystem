@@ -67,7 +67,7 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
-	 * this is the new instance of assessment class of data layer
+	 * This is the new instance of assessment class of data layer
 	 */
 	@Autowired
 	IAssessment assessment;

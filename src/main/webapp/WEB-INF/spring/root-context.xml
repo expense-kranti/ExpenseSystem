@@ -283,6 +283,15 @@
 		class="com.boilerplate.database.mysql.implementations.MySQLAssessment">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
+	
+	<bean id="articleService" class="com.boilerplate.service.implemetations.ArticleService">
+		<property name="article" ref="article"></property>
+	</bean>
+
+	<bean id="article"
+		class="com.boilerplate.database.mysql.implementations.MySQLArticle">
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
 
 	<bean id="redisAssessment"
 		class="com.boilerplate.database.redis.implementation.RedisAssessment">
