@@ -231,6 +231,7 @@
 	<bean id="publishLibrary" class="com.boilerplate.aspects.PublishLibrary">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 	<bean id="onPublish"

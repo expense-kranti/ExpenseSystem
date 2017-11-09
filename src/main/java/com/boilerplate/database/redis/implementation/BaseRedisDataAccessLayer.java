@@ -643,24 +643,24 @@ public class BaseRedisDataAccessLayer {
 
 		// create annonnymous user
 		ExternalFacingReturnedUser user = new ExternalFacingReturnedUser();
-		user.setId("DEFAULT:ANNONYMOUS");
-		user.setUserId("DEFAULT:ANNONYMOUS");
+		user.setId("AKS:ANNONYMOUS");
+		user.setUserId("AKS:ANNONYMOUS");
 		user.setPassword("0");
-		user.setAuthenticationProvider("DEFAULT");
-		user.setExternalSystemId("DEFAULT:ANNONYMOUS");
+		user.setAuthenticationProvider("AKS");
+		user.setExternalSystemId("AKS:ANNONYMOUS");
 		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		this.set("USER:" + user.getUserId(), user);
 
 		// create admin
 		user = new ExternalFacingReturnedUser();
-		user.setId("DEFAULT:ADMIN");
-		user.setUserId("DEFAULT:ADMIN");
+		user.setId("AKS:ADMIN");
+		user.setUserId("AKS:ADMIN");
 		user.setPassword("password");
 		user.setFirstName("Admin");
 		user.hashPassword();
-		user.setAuthenticationProvider("DEFAULT");
-		user.setExternalSystemId("DEFAULT:ADMIN");
+		user.setAuthenticationProvider("AKS");
+		user.setExternalSystemId("AKS:ADMIN");
 		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		user.getRoles().add(roleAdmin);
@@ -668,11 +668,11 @@ public class BaseRedisDataAccessLayer {
 
 		// create background
 		user = new ExternalFacingReturnedUser();
-		user.setId("DEFAULT:BACKGROUND");
-		user.setUserId("DEFAULT:BACKGROUND");
+		user.setId("AKS:BACKGROUND");
+		user.setUserId("AKS:BACKGROUND");
 		user.setPassword("0");
-		user.setAuthenticationProvider("DEFAULT");
-		user.setExternalSystemId("DEFAULT:BACKGROUND");
+		user.setAuthenticationProvider("AKS");
+		user.setExternalSystemId("AKS:BACKGROUND");
 		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		user.getRoles().add(roleAdmin);
@@ -680,11 +680,11 @@ public class BaseRedisDataAccessLayer {
 
 		// create role assigner
 		user = new ExternalFacingReturnedUser();
-		user.setId("DEFAULT:ROLEASSIGNER");
-		user.setUserId("DEFAULT:ROLEASSIGNER");
+		user.setId("AKS:ROLEASSIGNER");
+		user.setUserId("AKS:ROLEASSIGNER");
 		user.setPassword("0");
-		user.setAuthenticationProvider("DEFAULT");
-		user.setExternalSystemId("DEFAULT:ROLEASSIGNER");
+		user.setAuthenticationProvider("AKS");
+		user.setExternalSystemId("AKS:ROLEASSIGNER");
 		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		user.getRoles().add(roleAssigner);
@@ -738,7 +738,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("SMS_ROOT_URL",
 				"http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllETest.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
-		vAllETest.put("SMS_SENDER", "CMDSMS");
+		vAllETest.put("SMS_SENDER", "CDSSMS");
 		vAllETest.put("SMS_URL",
 				"?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllETest.put("S3_Bucket_Name", "csrdata-files");
@@ -774,7 +774,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_ROOT_URL",
 				"http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllEDev.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
-		vAllEDev.put("SMS_SENDER", "CMDSMS");
+		vAllEDev.put("SMS_SENDER", "CDSSMS");
 		vAllEDev.put("SMS_URL",
 				"?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllEDev.put("RootFileUploadLocation", "/downloads/");
@@ -795,6 +795,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllEDev.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
+		
 		return vAllEDev;
 
 	}
@@ -807,16 +808,34 @@ public class BaseRedisDataAccessLayer {
 	private BoilerplateMap<String, String> createSeedProductionData() {
 		// This attribute tells us about server name
 		// This attribute tells us about server name
-				String salesForceBaseurl = getSalesForceBaseUrl();
+		String salesForceBaseurl = getSalesForceBaseUrl();
 		BoilerplateMap<String, String> vAllEProduction = new BoilerplateMap<String, String>();
 
 		vAllEProduction.put("SMS_ROOT_URL",
 				"http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllEProduction.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
-		vAllEProduction.put("SMS_SENDER", "CMDSMS");
+		vAllEProduction.put("SMS_SENDER", "CDSSMS");
 		vAllEProduction.put("SMS_URL",
 				"?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
-
+		
+		// new config
+		vAllEProduction.put("S3_Bucket_Name", "csrdata-filesprod");
+		vAllEProduction.put("Secret_Access_Key",
+				"u5jCd7AL6Gl3VK+hQvCoIqgJiT7FINjZAcze8MOQ");
+		vAllEProduction.put("Access_Key", "AKIAI4CMTKY46FFRDFFQ");
+		vAllEProduction.put("S3_Files_Path",
+				"https://s3-ap-southeast-1.amazonaws.com/csrdata-filesprod/");
+		vAllEProduction.put("Contact_Person_Email", "madhurima.bhadury@clearmydues.com");
+		vAllEProduction.put("Salesforce_Authtoken_URL", salesForceBaseurl + "/services/oauth2/token?grant_type=password&client_id=3MVG9Se4BnchkASk.FTlViI7LYUGoKUIgrSoEssN2rGYY6dc99Ijwl6saXGnFU54MHNmFK32Bltn2rble187S&client_secret=5717367022576838052&username=aman.bindal@clearmydues.com.developmen&password=Jan@2016AZEDXfLWSBLW8T3s9EtWzsJq");
+		vAllEProduction.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllEProduction.put("ccsEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllEProduction.put("RootFileDownloadLocation", "/downloads/");
+		
+		vAllEProduction.put("SF_Update_Account_Publish_Method", "POST");
+		vAllEProduction.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
+		vAllEProduction.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
+		vAllEProduction.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
+				
 		return vAllEProduction;
 	}
 
@@ -879,7 +898,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_Assessment_Publish_Subject", "REPORT_CREATED_AKS");
 		vAllEAll.put("AKS_Assessment_Publish_Template", "{\"Report:@reportId\": {\"id\": \"@reportId\",\"userId\": \"@userId\",\"fileId\": \"@fileId\",\"reportSourceEnum\": \"@reportSourceEnum\",\"reportStatusEnum\": \"@reportStatusEnum\",\"bureauScore\": @bureauScore,\"reportDateTime\": \"@reportDateTime\",\"reportNumber\": \"@reportNumber\",\"creditRating\": \"@creditRating\",\"reportVersionEnum\": \"@reportVersionEnum\",\"fileEntity\": @fileEntity,\"reportTradelines\": @reportTradelines,\"reportSource\": @reportSource,\"questionCount\": @questionCount,\"reportStatus\": @reportStatus,\"reportVersion\": @reportVersion,\"uniqueTransactionId\": \"@uniqueTransactionId\"}}");
 		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
-		vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
+		vAllEAll.put("Is_Publish_Report", "false"); // false for not publish
 		return vAllEAll;
 
 	}
@@ -892,11 +911,11 @@ public class BaseRedisDataAccessLayer {
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
 		contentMap.put("WELCOME_MESSAGE_SMS",
-				"Welcome @FirstName your password is @Password");
+				"Welcome @FirstName, @Password is your password. Thanks for registering on Akshar!");
 		contentMap.put("RESET_PASSWORD_SMS",
-				"Dear @FirstName your new password is @Password");
+				"Your new password is @Password. Please change your password after logging in. Akshar.");
 		contentMap.put("PASSWORD_CHANGE_SMS",
-				"Dear @FirstName, Your password has been changed.");
+				"Dear @FirstName, your password has been successfully changed. Akshar.");
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Contact Us");
 		contentMap.put("CONTACT_US_EMAIL_BODY", "<b><h2>Contact Person Details:<h2></b> <b>Name:</b> @ContactPersonName <br> <b>Email:</b> @ContactPersonEmail <br> <b>Contact Number:</b> @ContactPersonMobileNumber <br> <b>Message:</b> @ContactPersonMessage");
 		contentMap.put("BULK_PUBLISH_FAIL_EMAIL_SUBJECT" , "AKS Bulk Publish Failure ");
