@@ -899,6 +899,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_Assessment_Publish_Template", "{\"Report:@reportId\": {\"id\": \"@reportId\",\"userId\": \"@userId\",\"fileId\": \"@fileId\",\"reportSourceEnum\": \"@reportSourceEnum\",\"reportStatusEnum\": \"@reportStatusEnum\",\"bureauScore\": @bureauScore,\"reportDateTime\": \"@reportDateTime\",\"reportNumber\": \"@reportNumber\",\"creditRating\": \"@creditRating\",\"reportVersionEnum\": \"@reportVersionEnum\",\"fileEntity\": @fileEntity,\"reportTradelines\": @reportTradelines,\"reportSource\": @reportSource,\"questionCount\": @questionCount,\"reportStatus\": @reportStatus,\"reportVersion\": @reportVersion,\"uniqueTransactionId\": \"@uniqueTransactionId\"}}");
 		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
 		vAllEAll.put("Is_Publish_Report", "false"); // false for not publish
+
+		vAllEAll.put("SQL_QUERY_GET_USER_ARTICLE", "From ArticleEntity WHERE userId = :UserId");
 		return vAllEAll;
 
 	}

@@ -7,6 +7,7 @@ import com.boilerplate.asyncWork.CalculateTotalScoreObserver;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -66,7 +67,7 @@ public class AssesmentService implements IAssessmentService {
 	}
 
 	/**
-	 * this is the new instance of assessment class of data layer
+	 * This is the new instance of assessment class of data layer
 	 */
 	@Autowired
 	IAssessment assessment;
@@ -95,20 +96,22 @@ public class AssesmentService implements IAssessmentService {
 	public void setRedisAssessment(IRedisAssessment redisAssessment) {
 		this.redisAssessment = redisAssessment;
 	}
+
 	/**
 	 * This is the instance of the configuration manager.
 	 */
 	@Autowired
 	com.boilerplate.configurations.ConfigurationManager configurationManager;
+
 	/**
 	 * The setter to set the configuration manager
+	 * 
 	 * @param configurationManager
 	 */
-	public void setConfigurationManager(
-			com.boilerplate.configurations.ConfigurationManager 
-			configurationManager){
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
+
 	/**
 	 * This variable is used to define the list of subjects ,subjects basically
 	 * define the background operations need to be perform for calculate the
@@ -489,8 +492,8 @@ public class AssesmentService implements IAssessmentService {
 		// Get the user total score
 		ScoreEntity scoreEntity = redisAssessment.getTotalScore(RequestThreadLocal.getSession().getUserId());
 		// check for null rank
-		if(scoreEntity == null){
-			scoreEntity  = new ScoreEntity();
+		if (scoreEntity == null) {
+			scoreEntity = new ScoreEntity();
 			scoreEntity.setRank(configurationManager.get("Rank1"));
 			scoreEntity.setObtainedScore(configurationManager.get("Default_Score"));
 		}
@@ -503,7 +506,7 @@ public class AssesmentService implements IAssessmentService {
 	@Override
 	public AssessmentQuestionSectionEntity validateAnswer(
 			AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception {
-		//Get answer status and correct option
+		// Get answer status and correct option
 		AssessmentQuestionSectionEntity assessmentQuestionSection = this
 				.getMultipleChoiceQuestionAnswerStatusAndCorrectOption(assessmentQuestionSectionEntity);
 		// Get the explanation
@@ -511,4 +514,43 @@ public class AssesmentService implements IAssessmentService {
 				assessment.getQuestionExpanation(assessmentQuestionSectionEntity.getQuestion().getId()));
 		return assessmentQuestionSection;
 	}
+
+	
+	/**
+	 * @see IAssessmentService.getUserAssessmentStatus
+	 */
+	@Override
+	public BoilerplateList<AssessmentEntity> getUserAssessmentStatus(String userId) {
+		// Get all the assessments exist in data store
+		List<AssessmentEntity> assessments = assessment.getAssessments();
+		// Declare a new list to collect the information regarding the user
+		// assessments status
+		BoilerplateList<AssessmentEntity> userAssessmentsStatus = new BoilerplateList<AssessmentEntity>();
+		// Run a for to check each assessment status for the user
+		for (AssessmentEntity assessmentData : assessments) {
+			// Declare new instance of assessment to store information regarding
+			// the assessment status
+			AssessmentEntity assessmentsStatus = new AssessmentEntity();
+			// Get the assessment details of user means is this assessment is in
+			// progress or submit
+			AssessmentEntity userAssessment = redisAssessment.getAssessment(assessmentData);
+			// If user assessment is null means user never attempt this
+			// assessment before
+			if (userAssessment != null) {
+				// Set the assessment status
+				assessmentsStatus.setStatus(userAssessment.getStatus());
+				// Set the assessment name
+				assessmentsStatus.setName(userAssessment.getName());
+			} else {
+				// Set the assessment status
+				assessmentsStatus.setStatus(AssessmentStatus.Submit);
+				// Set the assessment name
+				assessmentsStatus.setName(userAssessment.getName());
+			}
+			// Add each assessment status to list
+			userAssessmentsStatus.add(assessmentsStatus);
+		}
+		return userAssessmentsStatus;
+	}
+
 }

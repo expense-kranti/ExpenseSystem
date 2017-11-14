@@ -5,7 +5,7 @@ import java.util.List;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
- * This class is provide the information reading the assessment
+ * This class is provide the information regarding the assessment
  * 
  * @author shiva
  *

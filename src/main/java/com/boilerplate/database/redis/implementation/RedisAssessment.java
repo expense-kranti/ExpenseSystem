@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.ScoreEntity;
