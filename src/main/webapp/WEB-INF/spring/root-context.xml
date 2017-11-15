@@ -128,6 +128,7 @@
 				<entry key="ContactUs" value-ref="onContactUs" />
 				<entry key="Publish" value-ref="onPublish" />
 				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
+				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 			</map>
 
 

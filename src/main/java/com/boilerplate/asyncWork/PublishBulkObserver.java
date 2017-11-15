@@ -188,6 +188,7 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 			} else {
 				publishUrl = publishEntity.getUrl();
 			}
+			System.out.println(jsonArray);
 
 			BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
 			requestHeaders = createRequestHeaders();
@@ -314,6 +315,12 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 									+ user.getUserId());
 				}
 
+			}
+			else{
+				jsonArray += ((ICRMPublishEntity)	((PublishEntity)publishList.get(i)).getReturnValue()).createPublishJSON(((PublishEntity)publishList.get(i)).getPublishTemplate());
+				if(i+1 < publishList.size()){
+	  				jsonArray+=",";
+	  			}
 			}
 		}
 

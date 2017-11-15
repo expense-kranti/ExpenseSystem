@@ -756,7 +756,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("SF_Update_Account_Publish_Method", "POST");
 		vAllETest.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllETest.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
-		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
+		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		
 		return vAllETest;
 	}
@@ -794,7 +794,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SF_Update_Account_Publish_Method", "POST");
 		vAllEDev.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllEDev.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
-		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
+		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		
 		return vAllEDev;
 
@@ -826,15 +826,15 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("S3_Files_Path",
 				"https://s3-ap-southeast-1.amazonaws.com/csrdata-filesprod/");
 		vAllEProduction.put("Contact_Person_Email", "madhurima.bhadury@clearmydues.com");
-		vAllEProduction.put("Salesforce_Authtoken_URL", salesForceBaseurl + "/services/oauth2/token?grant_type=password&client_id=3MVG9Se4BnchkASk.FTlViI7LYUGoKUIgrSoEssN2rGYY6dc99Ijwl6saXGnFU54MHNmFK32Bltn2rble187S&client_secret=5717367022576838052&username=aman.bindal@clearmydues.com.developmen&password=Jan@2016AZEDXfLWSBLW8T3s9EtWzsJq");
-		vAllEProduction.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllEProduction.put("Salesforce_Authtoken_URL", salesForceBaseurl + "/services/oauth2/token?grant_type=password&client_id=3MVG9ZL0ppGP5UrDP91Iy_g04TU6IXDdftERV1nrcjs_Waw4TT6OMzxsZTLsECa.yAiavsFuRwST.QiotldN7&client_secret=1742947365004389153&username=aman.bindal@clearmydues.com&password=Jan@2017oUa14f1cSUuJtZtxPVKyC8Og");
+		vAllEProduction.put("tosEmailListForPublishBulkFailure", "aman.bindal@clearmydues.com");
 		vAllEProduction.put("ccsEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
 		vAllEProduction.put("RootFileDownloadLocation", "/downloads/");
 		
 		vAllEProduction.put("SF_Update_Account_Publish_Method", "POST");
 		vAllEProduction.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllEProduction.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
-		vAllEProduction.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/Tradeline");
+		vAllEProduction.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 				
 		return vAllEProduction;
 	}
@@ -896,10 +896,10 @@ public class BaseRedisDataAccessLayer {
 		//assessment publish config
 		vAllEAll.put("AKS_Assessment_Publish_Method", "POST");
 		vAllEAll.put("AKS_Assessment_Publish_Subject", "REPORT_CREATED_AKS");
-		vAllEAll.put("AKS_Assessment_Publish_Template", "{\"Report:@reportId\": {\"id\": \"@reportId\",\"userId\": \"@userId\",\"fileId\": \"@fileId\",\"reportSourceEnum\": \"@reportSourceEnum\",\"reportStatusEnum\": \"@reportStatusEnum\",\"bureauScore\": @bureauScore,\"reportDateTime\": \"@reportDateTime\",\"reportNumber\": \"@reportNumber\",\"creditRating\": \"@creditRating\",\"reportVersionEnum\": \"@reportVersionEnum\",\"fileEntity\": @fileEntity,\"reportTradelines\": @reportTradelines,\"reportSource\": @reportSource,\"questionCount\": @questionCount,\"reportStatus\": @reportStatus,\"reportVersion\": @reportVersion,\"uniqueTransactionId\": \"@uniqueTransactionId\"}}");
+		vAllEAll.put("AKS_Assessment_Publish_Template", "{\"totalScore\": \"@totalScore\",\"userId\": \"@userId\",\"rank\": \"@rank\",\"aksAssessments\": @aksAssessments}");
 		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
-		vAllEAll.put("Is_Publish_Report", "false"); // false for not publish
-
+		vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
+		vAllEAll.put("PublishDispatcherSleepTimeBeforeUser", "120000");
 		vAllEAll.put("SQL_QUERY_GET_USER_ARTICLE", "From ArticleEntity WHERE userId = :UserId");
 		return vAllEAll;
 

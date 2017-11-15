@@ -530,7 +530,7 @@ public class AssesmentService implements IAssessmentService {
 		for (AssessmentEntity assessmentData : assessments) {
 			// Declare new instance of assessment to store information regarding
 			// the assessment status
-			AssessmentEntity assessmentsStatus = new AssessmentEntity();
+			AssessmentEntity assessmentsStatusEntity = new AssessmentEntity();
 			// Get the assessment details of user means is this assessment is in
 			// progress or submit
 			AssessmentEntity userAssessment = redisAssessment.getAssessment(assessmentData);
@@ -538,17 +538,17 @@ public class AssesmentService implements IAssessmentService {
 			// assessment before
 			if (userAssessment != null) {
 				// Set the assessment status
-				assessmentsStatus.setStatus(userAssessment.getStatus());
+				assessmentsStatusEntity.setStatus(userAssessment.getStatus());
 				// Set the assessment name
-				assessmentsStatus.setName(userAssessment.getName());
+				assessmentsStatusEntity.setName(assessmentData.getName());
 			} else {
 				// Set the assessment status
-				assessmentsStatus.setStatus(AssessmentStatus.Submit);
+				assessmentsStatusEntity.setStatus(AssessmentStatus.NotStarted);
 				// Set the assessment name
-				assessmentsStatus.setName(userAssessment.getName());
+				assessmentsStatusEntity.setName(assessmentData.getName());
 			}
 			// Add each assessment status to list
-			userAssessmentsStatus.add(assessmentsStatus);
+			userAssessmentsStatus.add(assessmentsStatusEntity);
 		}
 		return userAssessmentsStatus;
 	}

@@ -1,6 +1,14 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+
+import org.mockito.ReturnValues;
+
+import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.rabbitmq.client.AMQP.Basic.Return;
 
 /**
  * This class is used to provide the information regading the user assessments
@@ -9,7 +17,7 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author shiva
  *
  */
-public class AssessmentStatusPubishEntity {
+public class AssessmentStatusPubishEntity extends BaseEntity implements Serializable, ICRMPublishDynamicURl,ICRMPublishEntity {
 
 	/**
 	 * This is the user Id
@@ -153,5 +161,46 @@ public class AssessmentStatusPubishEntity {
 	 */
 	public void setAssessments(BoilerplateList<AssessmentEntity> assessments) {
 		this.assessments = assessments;
+	}
+
+	@Override
+	public String createPublishJSON(String template)
+			throws UnauthorizedException {
+		String retrunValue = template;	
+		retrunValue = retrunValue.replace("@totalScore", this.getTotalScore()==null ? "{}": this.getTotalScore());
+		retrunValue = retrunValue.replace("@userId", this.getUserId()==null ? "{}" :this.getUserId());
+		retrunValue = retrunValue.replace("@rank", this.getRank()==null ? "{}" :this.getRank());
+		retrunValue = retrunValue.replace("@aksAssessments", this.getAssessments()==null ? "{}" :this.getAssessments().toString());
+		return retrunValue;
+	}
+
+	@Override
+	public String createPublishUrl(String url)
+			throws UnsupportedEncodingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
+	 * @see BaseEntity.validate()
+	 */
+	@Override
+	public boolean validate() throws ValidationFailedException {
+		return true;
+	}
+	/**
+	 * @see BaseEntity.transformToInternal()
+	 */
+	@Override
+	public BaseEntity transformToInternal() {
+		
+		return null;
+	}
+	/**
+	 * @see BaseEntity.transformToExternal()
+	 */
+	@Override
+	public BaseEntity transformToExternal() {
+		
+		return null;
 	}
 }
