@@ -270,23 +270,23 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 */
 	private String calculateRank(Float score) {
 		String rank = "";
-		if (score > 0 && score < 50) {
+		if (score > 0 && score < 500) {
 			rank = configurationManager.get("Rank1");
-		} else if (score >= 50 && score < 100) {
-			rank = configurationManager.get("Rank2");
-		} else if (score >= 100 && score < 500) {
-			rank = configurationManager.get("Rank3");
 		} else if (score >= 500 && score < 1000) {
+			rank = configurationManager.get("Rank2");
+		} else if (score >= 1000 && score < 5000) {
+			rank = configurationManager.get("Rank3");
+		} else if (score >= 5000 && score < 10000) {
 			rank = configurationManager.get("Rank4");
-		} else if (score >= 1000 && score < 1500) {
+		} else if (score >= 10000 && score < 15000) {
 			rank = configurationManager.get("Rank5");
-		} else if (score >= 1500 && score < 2000) {
+		} else if (score >= 15000 && score < 20000) {
 			rank = configurationManager.get("Rank6");
-		} else if (score >= 2000 && score < 2500) {
+		} else if (score >= 20000 && score < 25000) {
 			rank = configurationManager.get("Rank7");
-		} else if (score >= 2500 && score < 3000) {
+		} else if (score >= 25000 && score < 30000) {
 			rank = configurationManager.get("Rank8");
-		} else if (score >= 3000) {
+		} else if (score >= 30000) {
 			rank = configurationManager.get("Rank9");
 		}
 		return rank;
