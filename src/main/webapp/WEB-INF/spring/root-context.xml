@@ -411,4 +411,10 @@
 	<bean id="redisSFUpdateHashAccess"
 		class="com.boilerplate.database.redis.implementation.RedisSFUpdateHash">
 	</bean>
+	
+	<bean id="scriptService" class="com.boilerplate.service.implemetations.ScriptService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="userService" ref="userService"></property>
+		</bean>
 </beans>
