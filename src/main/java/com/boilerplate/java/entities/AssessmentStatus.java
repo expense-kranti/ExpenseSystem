@@ -7,7 +7,12 @@ package com.boilerplate.java.entities;
  *
  */
 public enum AssessmentStatus {
-
+	
+	/**
+	 * This define user has not started the assessment
+	 */
+	NotStarted,
+	
 	/**
 	 * This define user has started the assessment
 	 */

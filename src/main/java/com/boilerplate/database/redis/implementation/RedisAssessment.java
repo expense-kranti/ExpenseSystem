@@ -131,4 +131,13 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 				ScoreEntity.class);
 		return scoreEntity;
 	}
+
+	@Override
+	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity,
+			String userId) {
+		AssessmentEntity assessmentDataEntity = super.get(
+				Assessment + userId + ":" + assessmentEntity.getId(),
+				AssessmentEntity.class);
+		return assessmentDataEntity;
+	}
 }

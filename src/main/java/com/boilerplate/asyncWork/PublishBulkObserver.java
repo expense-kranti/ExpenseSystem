@@ -6,9 +6,7 @@ import java.lang.StringBuffer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.aspects.PublishLibrary;
 import com.boilerplate.configurations.ConfigurationManager;
-import com.boilerplate.database.redis.implementation.BaseRedisDataAccessLayer;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.HttpResponse;
@@ -16,6 +14,7 @@ import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ICRMPublishEntity;
 import com.boilerplate.java.entities.ICRMPublishDynamicURl;
@@ -38,6 +37,7 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 	private BoilerplateList<String> subjects = null;
 
 	private static final String CreateUserQueueName = "CREATE_USER_AKS";
+	private static final String PublishReportQueueName = "REPORT_CREATED_AKS";
 	/**
 	 * This is the user service
 	 */
@@ -188,6 +188,7 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 			} else {
 				publishUrl = publishEntity.getUrl();
 			}
+			System.out.println(jsonArray);
 
 			BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
 			requestHeaders = createRequestHeaders();
@@ -290,33 +291,57 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 
 		BoilerplateMap<String, String> userPublishMap = new BoilerplateMap<>();
 		BoilerplateList<String> userReportPublishList = new BoilerplateList<>();
-
-		for (int i = 0; i < publishList.size(); i++) {
+		
+		if (((PublishEntity)publishList.get(0)).getPublishSubject().contentEquals(PublishReportQueueName)){
+			for(int i =publishList.size()-1; i>= 0;i--){
+				Object object = ((PublishEntity)publishList.get(i)).getReturnValue();
+				AssessmentStatusPubishEntity publishReportEntity = (AssessmentStatusPubishEntity) object;
+				if(userReportPublishList.contains(publishReportEntity.getUserId())){
+					continue;
+				}
+				else{
+					userReportPublishList.add(publishReportEntity.getUserId());
+					jsonArray += ((ICRMPublishEntity)	((PublishEntity)publishList.get(i)).getReturnValue()).createPublishJSON(((PublishEntity)publishList.get(i)).getPublishTemplate());
+					if(i+1 < publishList.size()){
+		  				jsonArray+=",";
+		  			}
+				}
+			}
+		}
+		else{
+			for (int i = 0; i < publishList.size(); i++) {
 			// Check if user being pushed into jsonArray again
 			if (((PublishEntity) publishList.get(i)).getPublishSubject()
 					.contentEquals(CreateUserQueueName)) {
-				Object object = ((PublishEntity) publishList.get(i))
-						.getReturnValue();
-				ExternalFacingReturnedUser user = (ExternalFacingReturnedUser) object;
-				if (userPublishMap.get(user.getUserId()) == null) {
-					userPublishMap.put(user.getUserId(), "1");
-					jsonArray += ((ICRMPublishEntity) ((PublishEntity) publishList
-							.get(i)).getReturnValue()).createPublishJSON(
-									((PublishEntity) publishList.get(i))
-											.getPublishTemplate());
-					if (i + 1 < publishList.size()) {
-						jsonArray += ",";
+				
+					Object object = ((PublishEntity) publishList.get(i))
+							.getReturnValue();
+					ExternalFacingReturnedUser user = (ExternalFacingReturnedUser) object;
+					if (userPublishMap.get(user.getUserId()) == null) {
+						userPublishMap.put(user.getUserId(), "1");
+						jsonArray += ((ICRMPublishEntity) ((PublishEntity) publishList
+								.get(i)).getReturnValue()).createPublishJSON(
+										((PublishEntity) publishList.get(i))
+												.getPublishTemplate());
+						if (i + 1 < publishList.size()) {
+							jsonArray += ",";
+						}
+					} else {
+						logger.logInfo("PublishBulkObserver", "createRequestBody",
+								"In else block of User already added in publish Json check",
+								"Prevented duplicate user entry from adding in publishing json"
+										+ user.getUserId());
 					}
-				} else {
-					logger.logInfo("PublishBulkObserver", "createRequestBody",
-							"In else block of User already added in publish Json check",
-							"Prevented duplicate user entry from adding in publishing json"
-									+ user.getUserId());
-				}
-
+				
+			}
+			else{
+				jsonArray += ((ICRMPublishEntity)	((PublishEntity)publishList.get(i)).getReturnValue()).createPublishJSON(((PublishEntity)publishList.get(i)).getPublishTemplate());
+				if(i+1 < publishList.size()){
+	  				jsonArray+=",";
+	  			}
+			}
 			}
 		}
-
 	
 
 	/*
@@ -338,27 +363,40 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 
 	/**
 	 * This method push the publish task in publish queue.
-	 * @param publishEntity The publish entity
+	 * 
+	 * @param publishEntity
+	 *            The publish entity
 	 */
 	private void pushPublishTaskAgainInQueue(PublishEntity publishEntity) {
-		try{
-			if(subjects == null){
+		try {
+			if (subjects == null) {
 				subjects = new BoilerplateList<>();
 				subjects.add("Publish");
 			}
-			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishLibrary", "requestPublishAsyncOffline", "_PUBLISH_QUEUE_");
-		}catch(Exception ex){
-			try{
+			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects,
+					"PublishLibrary", "requestPublishAsyncOffline",
+					"_PUBLISH_QUEUE_");
+		} catch (Exception ex) {
+			try {
 				// Send an Email in case of Error
 				BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 				BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
-				tosEmailList.add(configurationManager.get("tosEmailListForPublishBulkFailure"));
-				ccsEmailList.add(configurationManager.get("ccsEmailListForPublishBulkFailure"));
+				tosEmailList.add(configurationManager
+						.get("tosEmailListForPublishBulkFailure"));
+				ccsEmailList.add(configurationManager
+						.get("ccsEmailListForPublishBulkFailure"));
 				BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-				sendEmailOnUnsuccessfulBulkPublish.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, publishEntity.getPublishSubject() +"-Push in Publish queue failure"
-					,publishEntity.getReturnValue().toString(), "Exception :" + ex);
-			}catch(Exception exe){
-				logger.logException("PublishBulkObserver", "pushPublishTaskAgainInQueue", "ExceptionBlock - Sending Email failure on Push in Publish queue failure", ex.toString(), exe);
+				sendEmailOnUnsuccessfulBulkPublish.sendEmail(tosEmailList,
+						ccsEmailList, bccsEmailList,
+						publishEntity.getPublishSubject()
+								+ "-Push in Publish queue failure",
+						publishEntity.getReturnValue().toString(),
+						"Exception :" + ex);
+			} catch (Exception exe) {
+				logger.logException("PublishBulkObserver",
+						"pushPublishTaskAgainInQueue",
+						"ExceptionBlock - Sending Email failure on Push in Publish queue failure",
+						ex.toString(), exe);
 			}
 		}
 	}
@@ -366,21 +404,19 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 	/**
 	 * This method creates request header body to publish it on SF
 	 */
-	private BoilerplateMap createRequestHeaders() throws Exception{
-		BoilerplateMap<String,BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
+	private BoilerplateMap createRequestHeaders() throws Exception {
+		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
 		BoilerplateList<String> headerValue = new BoilerplateList<>();
 		headerValue.add("application/json;charset=UTF-8");
-		requestHeaders.put("Content-Type",headerValue);
-		if(authToken.equals("")){
+		requestHeaders.put("Content-Type", headerValue);
+		if (authToken.equals("")) {
 			authToken = authTokenService.getAuthToken();
 		}
 		// Make HttpRequest with jsonBody on Url provided by publishEntity
 		headerValue = new BoilerplateList<String>();
-		headerValue.add("Bearer "+authToken);
+		headerValue.add("Bearer " + authToken);
 		requestHeaders.put("authorization", headerValue);
 		return requestHeaders;
 	}
-
-
 
 }

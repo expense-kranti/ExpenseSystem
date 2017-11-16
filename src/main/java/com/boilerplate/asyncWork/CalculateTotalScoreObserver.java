@@ -91,7 +91,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		AssessmentEntity assessmentEntity = (AssessmentEntity) asyncWorkItem.getPayload();
 		this.calculateTotalScore(assessmentEntity);
 		this.calculateMonthlyScore(assessmentEntity);
-		//this.publishAssessmentStatus(assessmentEntity);
+		this.publishAssessmentStatus(assessmentEntity);
 	}
 
 	/**
@@ -119,6 +119,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		assessmentPublishData.setMonthlyRank(calculateRank(Float.parseFloat(assessmentPublishData.getMonthlyScore())));
 		// Set the assessment status
 		assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(assessmentEntity.getUserId()));
+		this.publishToCRM(assessmentPublishData);
 	}
 
 	/**
@@ -207,7 +208,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		} else {
 			this.createNewMonthlyScore(assessmentEntity);
 		}
-		this.publishToCRM(assessmentEntity);
+		
 	}
 
 	/**
@@ -292,14 +293,14 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		return rank;
 	}
 	
-	private void publishToCRM(AssessmentEntity assessmentEntity){
+	private void publishToCRM(AssessmentStatusPubishEntity assessmentStatusPubishEntity){
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
 		if(isPublishReport){
 			PublishEntity publishEntity =  this.
 					createPublishEntity("CalculateTotalScoreObserver.publishToCRM", 
 							configurationManager.get("AKS_Assessment_Publish_Method")
 					, configurationManager.get("AKS_Assessment_Publish_Subject"),
-					assessmentEntity,configurationManager.get("AKS_Assessment_Publish_URL"),
+					assessmentStatusPubishEntity,configurationManager.get("AKS_Assessment_Publish_URL"),
 					configurationManager.get("AKS_Assessment_Publish_Template"),
 					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));
 			if(subjects == null){
@@ -307,7 +308,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 			}
 			try{
-				logger.logInfo("CalculateTotalScoreObserver", "publishToCRM", "Publishing report", "publish assessment status"+assessmentEntity.getId());
+				logger.logInfo("CalculateTotalScoreObserver", "publishToCRM", "Publishing report", "publish assessment status"+assessmentStatusPubishEntity.getUserId());
 				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects , "CalculateTotalScoreObserver", "publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
 			}
 			catch (Exception exception){

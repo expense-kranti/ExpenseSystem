@@ -496,22 +496,6 @@ public class UserService implements IUserService {
 				user.hashPassword();
 			}
 		}
-		if(updateUserEntity.getDateOfBirth() !=null &&updateUserEntity.getDateOfBirth().equals("") == false){
-			user.setDateOfBirth(updateUserEntity.getDateOfBirth());		
-		}
-		if(updateUserEntity.getEmploymentStatus() !=null &&updateUserEntity.getEmploymentStatus().equals("") == false){
-			user.setEmploymentStatus(updateUserEntity.getEmploymentStatus());		
-		}
-		if(updateUserEntity.getAlternateNumber() !=null &&updateUserEntity.getAlternateNumber().equals("") == false){
-			user.setAlternateNumber(updateUserEntity.getAlternateNumber());		
-		}
-		if(updateUserEntity.getLocation() !=null &&updateUserEntity.getLocation().equals("") == false){
-			user.setLocation(updateUserEntity.getLocation());		
-		}
-		if(updateUserEntity.getCrmid() !=null &&updateUserEntity.getCrmid().equals("") == false){
-			user.setCrmid(updateUserEntity.getCrmid());		
-		}
-		
 		//for each key updte the metadata
 		for(String key : updateUserEntity.getUserMetaData().keySet()){
 			user.getUserMetaData().put(key, updateUserEntity.getUserMetaData().get(key));
@@ -522,6 +506,26 @@ public class UserService implements IUserService {
 		//validate the entity
 		user.validate();
 		ExternalFacingReturnedUser returnedUser = new ExternalFacingReturnedUser(user);
+		if(updateUserEntity.getDateOfBirth() !=null &&updateUserEntity.getDateOfBirth().equals("") == false){
+			returnedUser.setDateOfBirth(updateUserEntity.getDateOfBirth());		
+		}
+		if(updateUserEntity.getEmploymentStatus() !=null &&updateUserEntity.getEmploymentStatus().equals("") == false){
+			returnedUser.setEmploymentStatus(updateUserEntity.getEmploymentStatus());		
+		}
+		if(updateUserEntity.getAlternateNumber() !=null &&updateUserEntity.getAlternateNumber().equals("") == false){
+			returnedUser.setAlternateNumber(updateUserEntity.getAlternateNumber());		
+		}
+		if(updateUserEntity.getLocation() !=null &&updateUserEntity.getLocation().equals("") == false){
+			returnedUser.setLocation(updateUserEntity.getLocation());		
+		}
+		if(updateUserEntity.getCrmid() !=null &&updateUserEntity.getCrmid().equals("") == false){
+			returnedUser.setCrmid(updateUserEntity.getCrmid());		
+		}
+		if ((this.get(userId,true).getRoles())!=null&&(this.get(userId,true).getRoles()).size() !=0)
+			returnedUser.setRoles(get(userId,true).getRoles());
+		else
+			returnedUser.setRoles(new BoilerplateList<Role>());
+		
 		//update the user in the database
 		this.userDataAccess.update(returnedUser);
 		//if we deleted the user we will not get it back

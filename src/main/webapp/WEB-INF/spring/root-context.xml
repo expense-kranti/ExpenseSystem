@@ -128,6 +128,7 @@
 				<entry key="ContactUs" value-ref="onContactUs" />
 				<entry key="Publish" value-ref="onPublish" />
 				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
+				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 			</map>
 
 
@@ -410,4 +411,10 @@
 	<bean id="redisSFUpdateHashAccess"
 		class="com.boilerplate.database.redis.implementation.RedisSFUpdateHash">
 	</bean>
+	
+	<bean id="scriptService" class="com.boilerplate.service.implemetations.ScriptService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="userService" ref="userService"></property>
+		</bean>
 </beans>
