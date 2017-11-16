@@ -9,14 +9,14 @@ public class RedisScript  extends BaseRedisDataAccessLayer implements IRedisScri
 	/**
 	 * This is the main key of user in redis data base
 	 */
-	private static final String User = "USER:";
+	private static final String User = "USER:AKS";
 	
 	/**
 	 * @see IRedisScript.getAllUserKeys
 	 */
 	@Override
 	public Set<String> getAllUserKeys() {
-		Set<String> listOfUserKey = super.keys(User);
+		Set<String> listOfUserKey = super.keys(User + "*");
 		return listOfUserKey;		
 	}
 

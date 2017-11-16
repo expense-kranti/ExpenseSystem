@@ -216,7 +216,7 @@
 			<list>
 				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
-				<ref bean="calculateTotalScoreObserver"></ref>
+				<ref bean="publishUserDataObserver"></ref>
 			</list>
 		</property>
 	</bean>
@@ -242,6 +242,11 @@
 
 	<bean id="publishUserDataObserver" class="com.boilerplate.asyncWork.PublishUserDataObserver">
 		<property name="redisScript" ref="redisScript"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="assessmentService" ref="assessmentService"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 
