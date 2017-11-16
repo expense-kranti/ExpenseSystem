@@ -340,6 +340,8 @@ public class AssesmentService implements IAssessmentService {
 		Integer totalCorrectAnswer = 0;
 		// This is total number of question in assessment
 		Integer totalQuestion = 0;
+		//Get saved copy of assessment
+		AssessmentEntity assessmentSavedCopy = this.getAssessment(assessment);
 		// Run a for loop to check each section question score
 		for (AssessmentSectionEntity section : assessment.getSections()) {
 			// Set the user score to zero
@@ -348,13 +350,33 @@ public class AssesmentService implements IAssessmentService {
 			for (AssessmentQuestionSectionEntity questionData : section.getQuestions()) {
 				// Check is the question's answer is correct or not
 				if (this.getAnswerStatus(questionData.getQuestion())) {
-					// If answer is correct set the user score equal to question
-					// score
-					questionData.setIsAnswerCorrect(true);
-					// Increment correct answer count
-					totalCorrectAnswer = totalCorrectAnswer + 1;
-					// Add question score with section score
-					userSectionScore = userSectionScore + Float.valueOf(questionData.getQuestionScore());
+					// Get saved section data from saved copy of this assessment
+					for (AssessmentSectionEntity sectionSavedCopy : assessmentSavedCopy.getSections()) {
+						// If section id match with saved copy of section then
+						// check qustion
+						if (sectionSavedCopy.getId().equals(section.getId())) {
+							// Run for loop to check each question id if
+							// question match with saved copy of this question
+							// then update user section score
+							for (AssessmentQuestionSectionEntity questionSavedData : sectionSavedCopy.getQuestions()) {
+								// If question id match with saved copy of this
+								// question
+								if (questionSavedData.getId().equals(questionData.getId())) {
+									// If answer is correct set the user score
+									// equal to question
+									// score
+									questionData.setIsAnswerCorrect(true);
+									// Increment correct answer count
+									totalCorrectAnswer = totalCorrectAnswer + 1;
+									// Add question score with section score
+									userSectionScore = userSectionScore
+											+ Float.valueOf(questionSavedData.getQuestionScore());
+									break;
+								}
+							}
+							break;
+						}
+					}
 				}
 				// Increment total questions by 1
 				totalQuestion = totalQuestion + 1;
@@ -515,7 +537,6 @@ public class AssesmentService implements IAssessmentService {
 		return assessmentQuestionSection;
 	}
 
-	
 	/**
 	 * @see IAssessmentService.getUserAssessmentStatus
 	 */
