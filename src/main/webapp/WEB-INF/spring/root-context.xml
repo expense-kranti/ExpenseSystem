@@ -129,6 +129,7 @@
 				<entry key="Publish" value-ref="onPublish" />
 				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
 				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
+				<entry key="PublishUserData" value-ref="publishUserData" />
 			</map>
 
 
@@ -209,6 +210,16 @@
 			</list>
 		</property>
 	</bean>
+	<bean id="publishUserData"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="calculateTotalScoreObserver"></ref>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="sendRegistrationSMSObserver" class="com.boilerplate.asyncWork.SendRegistrationSMSObserver">
 		<property name="contentService" ref="contentService"></property>
@@ -227,6 +238,10 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+
+	<bean id="publishUserDataObserver" class="com.boilerplate.asyncWork.PublishUserDataObserver">
+		<property name="redisScript" ref="redisScript"></property>
 	</bean>
 
 
@@ -254,7 +269,7 @@
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
 	</bean>
-<bean id="authTokenService" class="com.boilerplate.service.implemetations.AuthTokenService">
+	<bean id="authTokenService" class="com.boilerplate.service.implemetations.AuthTokenService">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<bean id="iPingService" class="com.boilerplate.service.implemetations.PingService"
@@ -273,7 +288,8 @@
 		<property name="redisUsers" ref="userDataAccess"></property>
 	</bean>
 
-	<bean id="assessmentService" class="com.boilerplate.service.implemetations.AssesmentService" init-method="initilize">
+	<bean id="assessmentService" class="com.boilerplate.service.implemetations.AssesmentService"
+		init-method="initilize">
 		<property name="assessment" ref="assessment"></property>
 		<property name="redisAssessment" ref="redisAssessment"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
@@ -285,7 +301,7 @@
 		class="com.boilerplate.database.mysql.implementations.MySQLAssessment">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
-	
+
 	<bean id="articleService" class="com.boilerplate.service.implemetations.ArticleService">
 		<property name="article" ref="article"></property>
 	</bean>
@@ -298,15 +314,18 @@
 	<bean id="redisAssessment"
 		class="com.boilerplate.database.redis.implementation.RedisAssessment">
 	</bean>
-<bean id="mysqlPing"
+	<bean id="redisScript"
+		class="com.boilerplate.database.redis.implementation.RedisScript">
+	</bean>
+	<bean id="mysqlPing"
 		class="com.boilerplate.database.mysql.implementations.MySQLPing">
 	</bean>
-	
+
 	<bean id="sendSmsService" class="com.boilerplate.service.implemetations.SendSMSService">
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 	</bean>
-	
+
 	<bean id="passwordResetObserver"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
@@ -343,7 +362,7 @@
 		<property name="file" ref="file"></property>
 		<property name="filePointer" ref="filePointer"></property>
 	</bean>
-	
+
 	<bean id="filePointer"
 		class="com.boilerplate.database.redis.implementation.RedisFilePointer">
 	</bean>
@@ -356,7 +375,7 @@
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="26843545" /> <!-- 25 megs -->
 	</bean>
-	
+
 	<!-- Bean for contact us data access -->
 	<bean id="contactUsDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisContactUs">
@@ -367,7 +386,7 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="contactUsDataAccess" ref="contactUsDataAccess"></property>
 	</bean>
-	
+
 	<!-- Contact us AsyncWorkDispatcherObserverList -->
 	<bean id="onContactUs"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
@@ -411,10 +430,10 @@
 	<bean id="redisSFUpdateHashAccess"
 		class="com.boilerplate.database.redis.implementation.RedisSFUpdateHash">
 	</bean>
-	
+
 	<bean id="scriptService" class="com.boilerplate.service.implemetations.ScriptService"
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
-		</bean>
+	</bean>
 </beans>
