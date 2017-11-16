@@ -86,17 +86,19 @@ public class ScriptService implements IScriptsService{
     	if (RequestThreadLocal.getSession() != null){
 	    	ExternalFacingReturnedUser user = userService.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 			// check user state exists in input states
-			for(Role role:user.getRoles()){
-				if(
-					role.getRoleName().toUpperCase().equals("ADMIN") ||
-					role.getRoleName().toUpperCase().equals("BACKOFFICEUSER") ||	
-					role.getRoleName().toUpperCase().equals("BANKADMIN") ||
-					role.getRoleName().toUpperCase().equals("BANKUSER")
-				 ){
-					isAdmin = true;
-					break;
+	    	if(user.getRoles()!=null){
+				for(Role role:user.getRoles()){
+					if(
+						role.getRoleName().toUpperCase().equals("ADMIN") ||
+						role.getRoleName().toUpperCase().equals("BACKOFFICEUSER") ||	
+						role.getRoleName().toUpperCase().equals("BANKADMIN") ||
+						role.getRoleName().toUpperCase().equals("BANKUSER")
+					 ){
+						isAdmin = true;
+						break;
+					}
 				}
-			}
+	    	}
     	}
 		return isAdmin;
     }
