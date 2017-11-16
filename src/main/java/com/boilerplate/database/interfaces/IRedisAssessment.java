@@ -111,4 +111,17 @@ public interface IRedisAssessment {
 	 * @return scoreEntity this contains user id and user score
 	 */
 	public ScoreEntity getMonthlyScore(String userId);
+	
+	/**
+	 * This method is used to get the assessment data regarding the assessment
+	 * id from the data store
+	 * 
+	 * @param assessmentEntity
+	 *            this parameter contains the assessment details like assessment
+	 *            id
+	 * @param userId This is the user id of user
+	 * @return the assessment data like assessment id, assessment
+	 *         section,assessment questions etc.
+	 */
+	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity, String userId);
 }

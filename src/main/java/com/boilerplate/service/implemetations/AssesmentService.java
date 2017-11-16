@@ -533,7 +533,7 @@ public class AssesmentService implements IAssessmentService {
 			AssessmentEntity assessmentsStatusEntity = new AssessmentEntity();
 			// Get the assessment details of user means is this assessment is in
 			// progress or submit
-			AssessmentEntity userAssessment = redisAssessment.getAssessment(assessmentData);
+			AssessmentEntity userAssessment = redisAssessment.getAssessment(assessmentData,userId);
 			// If user assessment is null means user never attempt this
 			// assessment before
 			if (userAssessment != null) {
@@ -541,11 +541,13 @@ public class AssesmentService implements IAssessmentService {
 				assessmentsStatusEntity.setStatus(userAssessment.getStatus());
 				// Set the assessment name
 				assessmentsStatusEntity.setName(assessmentData.getName());
+				assessmentsStatusEntity.setId(assessmentData.getName()+":"+assessmentData.getId());
 			} else {
 				// Set the assessment status
 				assessmentsStatusEntity.setStatus(AssessmentStatus.NotStarted);
 				// Set the assessment name
 				assessmentsStatusEntity.setName(assessmentData.getName());
+				assessmentsStatusEntity.setId(assessmentData.getName()+":"+assessmentData.getId());
 			}
 			// Add each assessment status to list
 			userAssessmentsStatus.add(assessmentsStatusEntity);
