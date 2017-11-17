@@ -767,6 +767,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllETest.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
+		vAllETest.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		
 		return vAllETest;
 	}
@@ -805,6 +806,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllEDev.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
+		vAllEDev.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		
 		return vAllEDev;
 
@@ -845,7 +847,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllEProduction.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllEProduction.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
-				
+		vAllEProduction.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		return vAllEProduction;
 	}
 
@@ -911,6 +913,13 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
 		vAllEAll.put("PublishDispatcherSleepTimeBeforeUser", "120000");
 		vAllEAll.put("SQL_QUERY_GET_USER_ARTICLE", "From ArticleEntity WHERE userId = :UserId");
+		//assessment user publish script
+		
+		vAllEAll.put("AKS_USER_Publish_Method", "POST");
+		vAllEAll.put("AKS_USER_Publish_Subject", "CREATE_USER_AKS");
+		vAllEAll.put("AKS_USER_Publish_Template", "{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\"}");
+		vAllEAll.put("AKS_USER_Dynamic_Publish_Url", "false");
+		
 		return vAllEAll;
 
 	}

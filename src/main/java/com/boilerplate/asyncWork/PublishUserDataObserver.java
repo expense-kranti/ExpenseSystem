@@ -12,6 +12,7 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
+import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ScoreEntity;
@@ -26,9 +27,9 @@ import com.boilerplate.service.interfaces.IAssessmentService;
 public class PublishUserDataObserver implements IAsyncWorkObserver {
 
 	/**
-	 * CalculateTotalScoreObserver logger
+	 * PublishUserDataObserver logger
 	 */
-	private static Logger logger = Logger.getInstance(CalculateTotalScoreObserver.class);
+	private static Logger logger = Logger.getInstance(PublishUserDataObserver.class);
 
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
@@ -130,15 +131,44 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 
 		for (String userId : listOfUserKey) {
 			try {
-				ExternalFacingReturnedUser userDetails = this.getUserDetails(userId.replace("USER:", ""));
-				if (userDetails != null) {
+				ExternalFacingReturnedUser user = this.getUserDetails(userId.replace("USER:", ""));
+				
+				if (user != null) {
+					this.publishUserToCRM(user);
+					
 					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
 				}
 			} catch (Exception ex) {
-				// Catch this exception
+				logger.logException("PublishUserDataObserver", "publishUserToCRM", "Publishing user assessment script date", "", ex);
+				
 			}
 		}
 
+	}
+
+	private void publishUserToCRM(ExternalFacingReturnedUser user) {
+		PublishEntity publishEntity = this.createPublishEntity
+						("PublishUserDataObserver.publishUserToCRM",
+				configurationManager.get("AKS_USER_Publish_Method"),
+				configurationManager.get("AKS_USER_Publish_Subject"), user,
+				configurationManager.get("AKS_USER_Publish_URL"),
+				configurationManager.get("AKS_USER_Publish_Template"),
+				configurationManager.get("AKS_USER_Dynamic_Publish_Url"));
+		if (subjects == null) {
+			subjects = new BoilerplateList<>();
+			subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
+		}
+		try {
+			logger.logInfo("PublishUserDataObserver", "publishUserToCRM", "Publishing user",
+					"publish user status" + user.getUserId());
+			queueReaderJob.requestBackroundWorkItem(publishEntity,
+					subjects, "PublishUserDataObserver",
+					"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
+		} catch (Exception exception) {
+			logger.logError("PublishUserDataObserver", "publishUserToCRM", "queueReaderJob catch block",
+					"Exception :" + exception);
+		}
+		
 	}
 
 	/**
@@ -149,21 +179,25 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	 *            status
 	 */
 	private void publishUserAssessmentDetails(String userId) {
-		BoilerplateList<AssessmentEntity> assessmentStatus = assessmentService.getUserAssessmentStatus(userId);
-		// Create a new instance of assessment status publish entity
-		AssessmentStatusPubishEntity assessmentPublishData = new AssessmentStatusPubishEntity();
-		// Get user score details
-		ScoreEntity userScoreDetails = redisAssessment.getTotalScore(userId);
-		// Set the user id
-		assessmentPublishData.setUserId(userId);
-		// Set the total score of user
-		assessmentPublishData.setTotalScore(userScoreDetails.getObtainedScore());
-		// Set user Rank
-		assessmentPublishData.setRank(userScoreDetails.getRank());
-		// Set the assessment status
-		assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(userId));
-		// Publish user assessment status
-		this.publishToCRM(assessmentPublishData);
+		AttemptAssessmentListEntity attemptAssessment = redisAssessment.getAssessmentAttempt(userId);
+		if(attemptAssessment!=null){
+			BoilerplateList<AssessmentEntity> assessmentStatus = assessmentService.getUserAssessmentStatus(userId);
+			// Create a new instance of assessment status publish entity
+			AssessmentStatusPubishEntity assessmentPublishData = new AssessmentStatusPubishEntity();
+			// Get user score details
+			ScoreEntity userScoreDetails = redisAssessment.getTotalScore(userId);
+			// Set the user id
+			assessmentPublishData.setUserId(userId);
+			// Set the total score of user
+			assessmentPublishData.setTotalScore(userScoreDetails.getObtainedScore());
+			// Set user Rank
+			assessmentPublishData.setRank(userScoreDetails.getRank());
+			// Set the assessment status
+			assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(userId));
+			// Publish user assessment status
+			this.publishToCRM(assessmentPublishData);
+		}
+		
 	}
 
 	/**
@@ -191,7 +225,7 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	private void publishToCRM(AssessmentStatusPubishEntity assessmentStatusPubishEntity) {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
 		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
+			PublishEntity publishEntity = this.createPublishEntity("PublishUserDataObserver.publishToCRM",
 					configurationManager.get("AKS_Assessment_Publish_Method"),
 					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPubishEntity,
 					configurationManager.get("AKS_Assessment_Publish_URL"),
@@ -202,12 +236,12 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 			}
 			try {
-				logger.logInfo("CalculateTotalScoreObserver", "publishToCRM", "Publishing report",
+				logger.logInfo("PublishUserDataObserver", "publishToCRM", "Publishing report",
 						"publish assessment status" + assessmentStatusPubishEntity.getUserId());
 				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
 						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
 			} catch (Exception exception) {
-				logger.logError("CalculateTotalScoreObserver", "publishToCRM", "queueReaderJob catch block",
+				logger.logError("PublishUserDataObserver", "publishToCRM", "queueReaderJob catch block",
 						"Exception :" + exception);
 			}
 		}

@@ -140,4 +140,14 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 				AssessmentEntity.class);
 		return assessmentDataEntity;
 	}
+	
+	/**
+	 * @see IRedisAssessment.getAssessmentAttempt
+	 */
+	@Override
+	public AttemptAssessmentListEntity getAssessmentAttempt(String userId) {
+		AttemptAssessmentListEntity attemptAssessmentListEntity = super.get(
+				Attempt + userId, AttemptAssessmentListEntity.class);
+		return attemptAssessmentListEntity;
+	}
 }

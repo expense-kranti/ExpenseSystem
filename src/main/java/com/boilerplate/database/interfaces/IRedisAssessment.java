@@ -124,4 +124,14 @@ public interface IRedisAssessment {
 	 *         section,assessment questions etc.
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity, String userId);
+	
+	/**
+	 * This method is used to get the user attempted assessment details means
+	 * all those assessment which is attempted by user in past
+	 * 
+	 * @param userId This is the user id
+	 * @return the user attempted assessment details means all those assessment
+	 *         which was attempt by user in past
+	 */
+	public AttemptAssessmentListEntity getAssessmentAttempt(String userId);
 }
