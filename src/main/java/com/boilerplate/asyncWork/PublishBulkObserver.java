@@ -167,6 +167,11 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 	public void publish(BoilerplateList<PublishEntity> publishList)
 			throws IOException, NotFoundException, UnauthorizedException,
 			Exception {
+		
+		logger.logInfo("PublishBulkObserver",
+				"publish" + "publish the data",
+				"","");
+		
 		if (publishList.size() < 1) {
 			return;
 		}
@@ -188,7 +193,9 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 			} else {
 				publishUrl = publishEntity.getUrl();
 			}
-			System.out.println(jsonArray);
+			logger.logInfo("PublishBulkObserver",
+					"publish" + "publish json",
+					"required json",jsonArray);
 
 			BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
 			requestHeaders = createRequestHeaders();
@@ -287,6 +294,9 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 	private String createRequestBody(BoilerplateList<PublishEntity> publishList)
 			throws Exception {
 		// PublishData instantiation
+		logger.logInfo("PublishBulkObserver",
+				"publish" + "create publish json",
+				"","");
 		String jsonArray = "[";
 
 		BoilerplateMap<String, String> userPublishMap = new BoilerplateMap<>();
@@ -302,9 +312,9 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 				else{
 					userReportPublishList.add(publishReportEntity.getUserId());
 					jsonArray += ((ICRMPublishEntity)	((PublishEntity)publishList.get(i)).getReturnValue()).createPublishJSON(((PublishEntity)publishList.get(i)).getPublishTemplate());
-					if(i+1 < publishList.size()){
-		  				jsonArray+=",";
-		  			}
+					if(i>0){
+						jsonArray+=",";
+					}
 				}
 			}
 		}
@@ -359,6 +369,9 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 	}
 
 	jsonArray+="]";
+	logger.logInfo("PublishBulkObserver",
+			"publish" + "done publish json",
+			"","");
 	return jsonArray;}
 
 	/**

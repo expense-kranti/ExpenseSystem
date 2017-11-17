@@ -119,15 +119,15 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser implements Se
 	@Override
 	public String createPublishJSON(String template) {
 		String retrunValue = template;	
-		retrunValue = retrunValue.replace("@Id", this.getId());
-		retrunValue = retrunValue.replace("@userMetaData", Base.toJSON(this.getUserMetaData()));
-		retrunValue = retrunValue.replace("@userId", this.getUserId());
-		retrunValue = retrunValue.replace("@authenticationProvider", this.getAuthenticationProvider());
-		retrunValue = retrunValue.replace("@email", this.getEmail());
-		retrunValue = retrunValue.replace("@firstName", this.getFirstName());
-		retrunValue = retrunValue.replace("@lastName", this.getLastName());
+		retrunValue = retrunValue.replace("@Id", this.getId() == null ? "":this.getId());
+		retrunValue = retrunValue.replace("@userMetaData", this.getUserMetaData() == null ? "":Base.toJSON(this.getUserMetaData()));
+		retrunValue = retrunValue.replace("@userId", this.getUserId() == null ? "":this.getUserId());
+		retrunValue = retrunValue.replace("@authenticationProvider", this.getAuthenticationProvider() == null ? "":this.getAuthenticationProvider());
+		retrunValue = retrunValue.replace("@email", this.getEmail() == null ? "":this.getEmail());
+		retrunValue = retrunValue.replace("@firstName", this.getFirstName() == null ? "":this.getFirstName());
+		retrunValue = retrunValue.replace("@lastName", this.getLastName() == null ? "":this.getLastName());
 		retrunValue = retrunValue.replace("@middleName", this.getMiddleName() == null ? "" : this.getMiddleName());
-		retrunValue = retrunValue.replace("@phoneNumber", this.getPhoneNumber());
+		retrunValue = retrunValue.replace("@phoneNumber", this.getPhoneNumber() == null ? "":this.getPhoneNumber());
 		retrunValue = retrunValue.replace("@referalSource", this.getReferalSource() == null ? "" : this.getReferalSource());
 		return retrunValue;
 		
