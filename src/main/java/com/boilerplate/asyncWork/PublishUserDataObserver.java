@@ -1,5 +1,6 @@
 package com.boilerplate.asyncWork;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateSet;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
@@ -121,7 +123,7 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	public void setRedisAssessment(IRedisAssessment redisAssessment) {
 		this.redisAssessment = redisAssessment;
 	}
-
+	private static final BoilerplateSet<String> defaultUsersSet = new BoilerplateSet<>(Arrays.asList("USER:AKS:BACKGROUND", "USER:AKS:ANNONYMOUS", "USER:AKS:ROLEASSIGNER", "USER:AKS:ADMIN"));
 	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
@@ -131,11 +133,13 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 
 		for (String userId : listOfUserKey) {
 			try {
+				if (defaultUsersSet.contains(userId)){
+					continue;
+				}
 				ExternalFacingReturnedUser user = this.getUserDetails(userId.replace("USER:", ""));
 				
 				if (user != null) {
 					this.publishUserToCRM(user);
-					
 					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
 				}
 			} catch (Exception ex) {
