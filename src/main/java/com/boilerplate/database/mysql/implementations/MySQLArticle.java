@@ -79,8 +79,6 @@ public class MySQLArticle extends MySQLBaseDataAccessLayer implements IArticle {
 	 */
 	@Override
 	public void approveArticle(ArticleEntity articleEntity) {
-		// Set approved status to true
-		articleEntity.setIsApproved(true);
 		// Set current date for approved date
 		articleEntity.setApprovedDate(Date.valueOf(LocalDate.now()));
 		// Update article approve status to approved

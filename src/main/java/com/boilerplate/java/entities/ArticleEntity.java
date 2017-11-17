@@ -43,6 +43,30 @@ public class ArticleEntity extends BaseEntity implements Serializable {
 	private Date approvedDate;
 
 	/**
+	 * This is the key words for this article
+	 */
+	private String keyWords;
+
+	/**
+	 * This method is used to get the keyWords
+	 * 
+	 * @return the keyWords
+	 */
+	public String getKeyWords() {
+		return keyWords;
+	}
+
+	/**
+	 * This method is used to set the key words
+	 * 
+	 * @param keyWords
+	 *            the keyWords to set
+	 */
+	public void setKeyWords(String keyWords) {
+		this.keyWords = keyWords;
+	}
+
+	/**
 	 * This method is used to get the user id.
 	 * 
 	 * @return the userId
@@ -144,13 +168,18 @@ public class ArticleEntity extends BaseEntity implements Serializable {
 	public boolean validate() throws ValidationFailedException {
 		// Check the title is null if it is null then throw validation failed
 		// exception
-		if (this.title.equals(null)) {
-			throw new ValidationFailedException("ArticleEntity", "Title should not be null", null);
+		if (this.title.equals(null) || this.title.equals("")) {
+			throw new ValidationFailedException("ArticleEntity", "Title should not be null or blank", null);
 		}
 		// Check the content is null if it is null then throw validation failed
 		// exception
-		else if (this.content.equals(null)) {
-			throw new ValidationFailedException("ArticleEntity", "content should not be null", null);
+		else if (this.content.equals(null)  || this.content.equals("")) {
+			throw new ValidationFailedException("ArticleEntity", "content should not be null or blank", null);
+		}
+		// Check the content is null if it is null then throw validation failed
+		// exception
+		else if (this.keyWords.equals(null)  || this.keyWords.equals("")) {
+			throw new ValidationFailedException("ArticleEntity", "key words should not be null or blank", null);
 		}
 		return true;
 	}

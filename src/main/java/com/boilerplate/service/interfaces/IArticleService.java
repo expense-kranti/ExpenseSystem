@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import java.util.List;
 
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ArticleEntity;
 
@@ -19,8 +20,9 @@ public interface IArticleService {
 	 * @param articleEntity
 	 *            this parameter contains the articles details, details
 	 *            basically contain the article title and article content
+	 * @throws ValidationFailedException throw this exception if articleEntity is not valid
 	 */
-	public void saveUserArticle(ArticleEntity articleEntity);
+	public void saveUserArticle(ArticleEntity articleEntity) throws ValidationFailedException;
 
 	/**
 	 * This method is used to get all the user articles which is saved by user

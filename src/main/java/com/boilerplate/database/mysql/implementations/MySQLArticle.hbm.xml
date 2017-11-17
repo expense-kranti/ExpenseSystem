@@ -11,6 +11,7 @@
 		<property name="userId" column="UserId" />
 		<property name="title" column="Title" />
 		<property name="content" column="Content" />
+		<property name="keyWords" column="KeyWords" />
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdationDate" />
 		<property name="isApproved" column="IsApproved" />
