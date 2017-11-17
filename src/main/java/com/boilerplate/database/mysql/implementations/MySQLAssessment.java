@@ -154,7 +154,6 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 
 	}
 
-
 	/**
 	 * @see IAssessment.getMultipleChoiceQuestionAndOptions
 	 */
@@ -178,7 +177,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			throw new BadRequestException("AssessmentEntity", "While trying to get multiple choice question ~ "
 					+ "This is the SQL query ~ " + sqlQuery + "~" + ex.toString(), null);
 		}
-		//shuffle the option list so that correct option is not in same order
+		// shuffle the option list so that correct option is not in same order
 		requestedDataList.get(0).setText(requestedDataList.get(0).getText().replace("\\", ""));
 		Collections.shuffle(requestedDataList.get(0).getOptions());
 		return requestedDataList.get(0);
@@ -243,6 +242,8 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 			while (i < requestedDataList.size()) {
 				// Convert map into entity
 				AssessmentEntity assessmentEntity = Base.fromMap(requestedDataList.get(i), AssessmentEntity.class);
+				// Set is survey to true
+				assessmentEntity.setSurvey(true);
 				// Add to list
 				assessmentEntityList.add(assessmentEntity);
 				i++;

@@ -340,7 +340,7 @@ public class AssesmentService implements IAssessmentService {
 		Integer totalCorrectAnswer = 0;
 		// This is total number of question in assessment
 		Integer totalQuestion = 0;
-		//Get saved copy of assessment
+		// Get saved copy of assessment
 		AssessmentEntity assessmentSavedCopy = this.getAssessment(assessment);
 		// Run a for loop to check each section question score
 		for (AssessmentSectionEntity section : assessment.getSections()) {
@@ -544,31 +544,41 @@ public class AssesmentService implements IAssessmentService {
 	public BoilerplateList<AssessmentEntity> getUserAssessmentStatus(String userId) {
 		// Get all the assessments exist in data store
 		List<AssessmentEntity> assessments = assessment.getAssessments();
+		// Get all the surveys exist in data store
+		List<AssessmentEntity> surveys = assessment.getSurveys();
+		// Add all survey to assessment list
+		assessments.addAll(surveys);
 		// Declare a new list to collect the information regarding the user
 		// assessments status
 		BoilerplateList<AssessmentEntity> userAssessmentsStatus = new BoilerplateList<AssessmentEntity>();
-		// Run a for to check each assessment status for the user
+		// Run a for loop to check each assessment status for the user
 		for (AssessmentEntity assessmentData : assessments) {
 			// Declare new instance of assessment to store information regarding
 			// the assessment status
 			AssessmentEntity assessmentsStatusEntity = new AssessmentEntity();
 			// Get the assessment details of user means is this assessment is in
 			// progress or submit
-			AssessmentEntity userAssessment = redisAssessment.getAssessment(assessmentData,userId);
+			AssessmentEntity userAssessment = redisAssessment.getAssessment(assessmentData, userId);
 			// If user assessment is null means user never attempt this
 			// assessment before
 			if (userAssessment != null) {
 				// Set the assessment status
 				assessmentsStatusEntity.setStatus(userAssessment.getStatus());
-				// Set the assessment name
-				assessmentsStatusEntity.setName(assessmentData.getName());
-				assessmentsStatusEntity.setId(assessmentData.getName()+":"+assessmentData.getId());
 			} else {
 				// Set the assessment status
 				assessmentsStatusEntity.setStatus(AssessmentStatus.NotStarted);
-				// Set the assessment name
-				assessmentsStatusEntity.setName(assessmentData.getName());
-				assessmentsStatusEntity.setId(assessmentData.getName()+":"+assessmentData.getId());
+			}
+			// Set assessment name
+			assessmentsStatusEntity.setName(assessmentData.getName());
+			// Check the assessment is a survey or quiz
+			if (assessmentData.isSurvey()) {
+				// If it is survey
+				assessmentsStatusEntity
+						.setId("Survey:" + assessmentData.getName() + ":" + assessmentData.getId() + ":" + userId);
+			} else {
+				// If is not survey it is quiz
+				assessmentsStatusEntity
+						.setId("Quiz:" + assessmentData.getName() + ":" + assessmentData.getId() + ":" + userId);
 			}
 			// Add each assessment status to list
 			userAssessmentsStatus.add(assessmentsStatusEntity);

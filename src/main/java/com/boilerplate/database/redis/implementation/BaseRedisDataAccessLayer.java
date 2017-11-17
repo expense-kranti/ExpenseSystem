@@ -733,7 +733,8 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllETest.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
-
+		vAllETest.put("Is_Publish_Report", "true"); // false for not publish
+		vAllETest.put("Is_Script_Publish_User_To_CRM", "false"); // false for not publish
 		return vAllETest;
 	}
 
@@ -770,7 +771,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEDev.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
-
+		vAllEDev.put("Is_Publish_Report", "true"); // false for not publish
+		vAllEDev.put("Is_Script_Publish_User_To_CRM", "false"); // false for not publish
 		return vAllEDev;
 
 	}
@@ -809,6 +811,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
 		vAllEProduction.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEProduction.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
+		vAllEProduction.put("Is_Publish_Report", "true"); // false for not
+		vAllEProduction.put("Is_Script_Publish_User_To_CRM", "true"); // false for not publish													// publish
 		return vAllEProduction;
 	}
 
@@ -872,7 +876,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_Assessment_Publish_Template",
 				"{\"totalScore\": \"@totalScore\",\"userId\": \"@userId\",\"rank\": \"@rank\",\"aksAssessments\": @aksAssessments}");
 		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
-		vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
+		//vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
 		vAllEAll.put("PublishDispatcherSleepTimeBeforeUser", "120000");
 		vAllEAll.put("SQL_QUERY_GET_USER_ARTICLE", "From ArticleEntity WHERE userId = :UserId");
 		// assessment user publish script
