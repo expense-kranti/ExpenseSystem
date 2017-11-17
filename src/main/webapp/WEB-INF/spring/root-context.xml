@@ -126,6 +126,7 @@
 				<entry key="AutomaticPasswordReset" value-ref="passwordResetObserver" />
 				<entry key="PasswordChange" value-ref="passwordChangeObserver" />
 				<entry key="ContactUs" value-ref="onContactUs" />
+				<entry key="SendEmailArticle" value-ref="sendEmailArticle" />
 				<entry key="Publish" value-ref="onPublish" />
 				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
 				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
@@ -307,7 +308,9 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
-	<bean id="articleService" class="com.boilerplate.service.implemetations.ArticleService">
+	<bean id="articleService" class="com.boilerplate.service.implemetations.ArticleService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="article" ref="article"></property>
 	</bean>
 
@@ -403,6 +406,24 @@
 			</list>
 		</property>
 	</bean>
+	<!-- Contact us AsyncWorkDispatcherObserverList -->
+	<bean id="sendEmailArticle"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendEmailArticleObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	<!-- contactUsObserver -->
+	<bean id="sendEmailArticleObserver" class="com.boilerplate.asyncWork.SendEmailArticleObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService"></property>
+	</bean>
+
 	<!-- contactUsObserver -->
 	<bean id="contactUsObserver" class="com.boilerplate.asyncWork.ContactUsObserver">
 		<property name="contentService" ref="contentService"></property>
