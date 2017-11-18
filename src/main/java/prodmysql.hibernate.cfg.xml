@@ -3,7 +3,7 @@
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
-	
+
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="hibernate.connection.url">jdbc:mysql://bankexpress.ceofrws5syj6.ap-southeast-1.rds.amazonaws.com:3306/MySqlCSRDB?autoReconnect=true</property>
 		<property name="hibernate.connection.username">mysqlcsrdb</property>
@@ -12,7 +12,7 @@
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
 		<property name="hibernate.show_sql">false</property>
-			<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.format_sql">true</property>
 
 		<!--TODO - See if we should remove this as it could cause connection leaks -->
 		<property name="hibernate.c3p0.min_size">5</property>
@@ -38,6 +38,8 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLQuestion.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLQuestionType.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLArticle.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
 
