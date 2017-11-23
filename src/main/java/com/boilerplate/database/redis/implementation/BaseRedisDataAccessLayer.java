@@ -910,6 +910,13 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("POST_ARTICLE_EMAIL_SUBJECT", "Akshar Article : @Subject");
 		contentMap.put("POST_ARTICLE_EMAIL_BODY",
 				"<b><h2>Article Details:<h2></b> <b>Name:</b> @UserName <br> <b>Email:</b> @UserEmail <br> <b>Contact Number:</b> @UserMobileNumber <br> <b>Title:</b> @Title <br> <b>Content:</b> @Content <br> <b>KeyWords:</b> @KeyWords");
+		//sms message for sending invitation to referred user
+		contentMap.put("JOIN_INVITATION_SMS", "Hi there, @UserName sent you the invitation for joining Akshar.");
+        //email message for sending invitation to referred user related
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserName, to join Akshar");
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY", 
+				"<b><Inviters Name: @UserName, inviters phonenumber : @PhoneNumber @UserKey /b>");
+
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
 
