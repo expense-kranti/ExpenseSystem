@@ -1,13 +1,13 @@
 package com.boilerplate.java.controllers;
 
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.boilerplate.java.entities.ArticleEntity;
+import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -21,45 +21,47 @@ import com.wordnik.swagger.annotations.ApiResponses;
  *
  */
 @Api(description = "This controller has api for operate referral", value = "Referral API's", basePath = "/referral")
+@Controller
 public class ReferralController extends BaseController {
-	
-	IReferralService referralService;
-	
+
 	/**
-	 * This API is used to get all the referral contact list refered by user in current date 
+	 * This is a new instance of referral service
+	 */
+	@Autowired
+	IReferralService referralService;
+
+	/**
+	 * This API is used to get the contact referred by user in current date
 	 * 
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to get
-	 *             the user articles
+	 *             the contact referred by user
 	 */
-	@ApiOperation(value = "Get the all the user articles which is saved by user in our data store")
+	@ApiOperation(value = "Get the contact referred by user in current date")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/userArticle", method = RequestMethod.GET)
-	public @ResponseBody List<ArticleEntity> getAssesments() throws Exception {
+	@RequestMapping(value = "/userReferral", method = RequestMethod.GET)
+	public @ResponseBody ReferalEntity getUserReferredContacts() throws Exception {
 		// Get the all user articles
-		return referralService.getUserArticle();
+		return referralService.getUserReferredContacts();
 	}
-	
-	
+
 	/**
-	 * This API is used to save the user articles into the data store.
+	 * This API is used to send referral link to those contact referred by user.
 	 * 
-	 * @param articleEntity
-	 *            this parameter contains the articles details, details
-	 *            basically contain the article title and article content
+	 * @param ReferalEntity
+	 *            this parameter contains the details of referred contact by
+	 *            user and the type of referred medium
 	 * 
 	 * @throws Exception
 	 *             throw this exception in case of any error while trying to
-	 *             save the user articles into the data store
+	 *             send referral link to those contact referred by user
 	 */
-	@ApiOperation(value = "This api is used to save the user articles details, details basically contain the article title and article content")
+	@ApiOperation(value = "This api is used to send referral link to those contact referred by user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/userArticle", method = RequestMethod.POST)
-	public @ResponseBody void checkExistance(@RequestBody ArticleEntity articleEntity) throws Exception {
+	@RequestMapping(value = "/userReferral", method = RequestMethod.POST)
+	public @ResponseBody void sendReferralLink(@RequestBody ReferalEntity referalEntity) throws Exception {
 		// Save the user article
-		referralService.saveUserArticle(articleEntity);
+		referralService.sendReferralLink(referalEntity);
 	}
-	
-	
-	
+
 }

@@ -261,8 +261,9 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
-	
-	<bean id="setUserChangePasswordStatusObserver" class="com.boilerplate.asyncWork.SetUserChangePasswordStatusObserver">
+
+	<bean id="setUserChangePasswordStatusObserver"
+		class="com.boilerplate.asyncWork.SetUserChangePasswordStatusObserver">
 		<property name="redisScript" ref="redisScript"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
@@ -405,11 +406,19 @@
 	<bean id="contactUsDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisContactUs">
 	</bean>
+	<bean id="referral"
+		class="com.boilerplate.database.redis.implementation.RedisReferral">
+	</bean>
 	<!-- Bean for contact us service -->
 	<bean id="contactUsService" class="com.boilerplate.service.implemetations.ContactUsService"
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="contactUsDataAccess" ref="contactUsDataAccess"></property>
+	</bean>
+	<bean id="referralService" class="com.boilerplate.service.implemetations.ReferralService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="referral" ref="referral"></property>
 	</bean>
 
 	<!-- Contact us AsyncWorkDispatcherObserverList -->
@@ -479,4 +488,6 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
 	</bean>
+	
+	
 </beans>
