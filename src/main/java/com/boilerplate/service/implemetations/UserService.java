@@ -170,17 +170,19 @@ public class UserService implements IUserService {
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
+
 	/**
 	 * This is the observer for password changes
 	 */
 	@Autowired
 	SendSMSOnPasswordChange sendSMSOnPasswordChange;
-	
+
 	/**
 	 * Sets the observer for password change
+	 * 
 	 * @param sendSMSOnPasswordChange
 	 */
-	public void setSendSMSOnPasswordChange(SendSMSOnPasswordChange sendSMSOnPasswordChange){
+	public void setSendSMSOnPasswordChange(SendSMSOnPasswordChange sendSMSOnPasswordChange) {
 		this.sendSMSOnPasswordChange = sendSMSOnPasswordChange;
 	}
 
@@ -189,27 +191,30 @@ public class UserService implements IUserService {
 	 * define the background operations need to be perform this user
 	 */
 	BoilerplateList<String> subjectsForCreateUser = new BoilerplateList();
-	
+
 	BoilerplateList<String> subjectsForAutomaticPasswordReset = new BoilerplateList();
-	
+
 	BoilerplateList<String> subjectForPasswordChange = new BoilerplateList();
 
 	/**
 	 * This variable define the default status for the current user
 	 */
 	private int defaultUserStatus = 1;
-	
+
 	/**
 	 * Observer for SMS registration
 	 */
 	@Autowired
 	com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver;
-	
+
 	/**
 	 * This is the observer for sending SMS for user password reset
-	 * @param sendRegistrationSMSObserver The sms observer
+	 * 
+	 * @param sendRegistrationSMSObserver
+	 *            The sms observer
 	 */
-	public void setSendPasswordResetSMSObserver(com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver){
+	public void setSendPasswordResetSMSObserver(
+			com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver) {
 		this.sendPasswordResetSMSObserver = sendPasswordResetSMSObserver;
 	}
 
@@ -290,12 +295,14 @@ public class UserService implements IUserService {
 			queueReaderJob.requestBackroundWorkItem(externalFacingUserClone, subjectsForCreateUser, "UserService",
 					"create");
 		} catch (Exception ex) {
-			// now if the queue is not working we send sms and email on the thread
+			// now if the queue is not working we send sms and email on the
+			// thread
 			try {
 				sendRegistrationSMSObserver.sendSMS(externalFacingUserClone.getFirstName(),
 						externalFacingUserClone.getPassword(), externalFacingUserClone.getPhoneNumber());
 			} catch (Exception exSms) {
-				// if an exception takes place here we cant do much hence just log it and move
+				// if an exception takes place here we cant do much hence just
+				// log it and move
 				// forward
 				logger.logException("UserService", "create", "try-Queue Reader - Send SMS", exSms.toString(), exSms);
 			}
@@ -310,7 +317,8 @@ public class UserService implements IUserService {
 						externalFacingUserClone.getUserKey());
 
 			} catch (Exception exEmail) {
-				// if an exception takes place here we cant do much hence just log it and move
+				// if an exception takes place here we cant do much hence just
+				// log it and move
 				// forward
 				logger.logException("UserService", "create", "try-Queue Reader - Send Email", exEmail.toString(),
 						exEmail);
@@ -326,8 +334,8 @@ public class UserService implements IUserService {
 	}
 
 	/**
-	 * This method is used to check the user exists whether the user is exits in our
-	 * data base or not if exits then return true else return false.
+	 * This method is used to check the user exists whether the user is exits in
+	 * our data base or not if exits then return true else return false.
 	 * 
 	 * @param userId
 	 *            this parameter define userId
@@ -345,7 +353,8 @@ public class UserService implements IUserService {
 		userId = userId.toUpperCase();
 		// check if user id contains :
 		if (userId.contains(":") == false) {
-			// check if the user starts with DEFAULT:, if not then put in Default: before it
+			// check if the user starts with DEFAULT:, if not then put in
+			// Default: before it
 			if (!userId
 					.startsWith(this.configurationManager.get("DefaultAuthenticationProvider").toUpperCase() + ":")) {
 				userId = this.configurationManager.get("DefaultAuthenticationProvider") + ":" + userId;
@@ -379,7 +388,8 @@ public class UserService implements IUserService {
 			}
 			user.setPassword("Password Encrypted");
 			// get the roles, ACL and there details of this user
-			// if the user is valid create a new session, in the session add details
+			// if the user is valid create a new session, in the session add
+			// details
 			Session session = sessionManager.createNewSession(user);
 			return session;
 		} catch (NotFoundException nfe) {
@@ -424,7 +434,7 @@ public class UserService implements IUserService {
 		return externalFacingUser;
 
 	}
-	
+
 	/**
 	 * @see IUserService.logout
 	 */
@@ -432,146 +442,154 @@ public class UserService implements IUserService {
 	public void logout(String sessionId) {
 		sessionManager.logout(sessionId);
 	}
-	
+
 	/**
 	 * @see IUser.automaticPasswordReset
 	 */
 	@Override
 	public ExternalFacingReturnedUser automaticPasswordReset(ExternalFacingUser externalFacingUser)
-			throws ValidationFailedException, ConflictException,
-			NotFoundException,UnauthorizedException,BadRequestException {
-		//get the user requested for
+			throws ValidationFailedException, ConflictException, NotFoundException, UnauthorizedException,
+			BadRequestException {
+		// get the user requested for
 		ExternalFacingUser returnedUser = this.get(externalFacingUser.getUserId());
-		
-		//generate the password
+
+		// generate the password
 		UpdateUserPasswordEntity updatePasswordEntity = new UpdateUserPasswordEntity();
-		
-		String password = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0,6);
+
+		String password = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0, 6);
 		updatePasswordEntity.setPassword(password);
-		
-		//update the entity
-		ExternalFacingReturnedUser externalFacingReturnedUser = 
-				this.update(externalFacingUser.getUserId(),updatePasswordEntity.convertToUpdateUserEntity());
-		//Send a message
-		ExternalFacingUser externalFacingUserClone=null;
-		try{
-			
-			externalFacingUserClone = (ExternalFacingUser)externalFacingReturnedUser.clone();
+
+		// update the entity
+		ExternalFacingReturnedUser externalFacingReturnedUser = this.update(externalFacingUser.getUserId(),
+				updatePasswordEntity.convertToUpdateUserEntity());
+		// Send a message
+		ExternalFacingUser externalFacingUserClone = null;
+		try {
+
+			externalFacingUserClone = (ExternalFacingUser) externalFacingReturnedUser.clone();
 			externalFacingUserClone.setPassword(password);
-			// only send user id and password because metadata create problem in case of report extracted
+			// only send user id and password because metadata create problem in
+			// case of report extracted
 			BoilerplateMap<String, String> userPasswordMap = new BoilerplateMap<>();
 			userPasswordMap.put("userId", externalFacingUserClone.getUserId());
 			userPasswordMap.put("password", externalFacingUserClone.getPassword());
-			queueReaderJob.requestBackroundWorkItem(
-					userPasswordMap, subjectsForAutomaticPasswordReset, "UserService", "create");
-		}	
-		catch(Exception ex){
-			try{
-				this.sendPasswordResetSMSObserver.sendSMS(externalFacingUserClone.getFirstName()
-						, password, externalFacingUserClone.getPhoneNumber());
+			queueReaderJob.requestBackroundWorkItem(userPasswordMap, subjectsForAutomaticPasswordReset, "UserService",
+					"create");
+		} catch (Exception ex) {
+			try {
+				this.sendPasswordResetSMSObserver.sendSMS(externalFacingUserClone.getFirstName(), password,
+						externalFacingUserClone.getPhoneNumber());
+			} catch (Exception exSendPassword) {
+				logger.logException("UserService", "Reset password", "inside catch: try-Queue Reader",
+						exSendPassword.toString() + "" + "Gateway down", exSendPassword);
 			}
-			catch(Exception exSendPassword){
-				logger.logException("UserService", "Reset password", "inside catch: try-Queue Reader", exSendPassword.toString() + "" +"Gateway down", exSendPassword);
-			}
-			logger.logException("UserService", "Reset password", "try-Queue Reader", ex.toString() +" ExternalFacingUser inserting in queue is: "+ Base.toJSON(externalFacingUserClone) +" Queue Down", ex);
+			logger.logException("UserService", "Reset password", "try-Queue Reader",
+					ex.toString() + " ExternalFacingUser inserting in queue is: " + Base.toJSON(externalFacingUserClone)
+							+ " Queue Down",
+					ex);
 		}
 		return externalFacingReturnedUser;
 	}
-	
+
 	/**
 	 * @see IUserService.update
 	 */
 	@Override
 	public ExternalFacingReturnedUser update(String userId, UpdateUserEntity updateUserEntity)
-			throws ValidationFailedException, ConflictException,
-			NotFoundException,BadRequestException {
-		//check if the user exists, if so get it
-		ExternalFacingUser user = this.get(userId,false);
-		//Update the user items from the incomming entity
-		if(updateUserEntity.getPassword() !=null){
-			if(updateUserEntity.getPassword().equals("") == false)
-			{
+			throws ValidationFailedException, ConflictException, NotFoundException, BadRequestException {
+		// check if the user exists, if so get it
+		ExternalFacingUser user = this.get(userId, false);
+		// Update the user items from the incomming entity
+		if (updateUserEntity.getPassword() != null) {
+			if (updateUserEntity.getPassword().equals("") == false) {
 				user.setPassword(updateUserEntity.getPassword());
-				//and hash the password
+				// and hash the password
 				user.hashPassword();
 			}
 		}
-		//for each key updte the metadata
-		for(String key : updateUserEntity.getUserMetaData().keySet()){
+		// for each key updte the metadata
+		for (String key : updateUserEntity.getUserMetaData().keySet()) {
 			user.getUserMetaData().put(key, updateUserEntity.getUserMetaData().get(key));
 		}
-		
+
 		user.setUpdationDate(new Date());
-		
-		//validate the entity
+
+		// validate the entity
 		user.validate();
 		ExternalFacingReturnedUser returnedUser = new ExternalFacingReturnedUser(user);
-		if(updateUserEntity.getDateOfBirth() !=null &&updateUserEntity.getDateOfBirth().equals("") == false){
-			returnedUser.setDateOfBirth(updateUserEntity.getDateOfBirth());		
+		if (updateUserEntity.getDateOfBirth() != null && updateUserEntity.getDateOfBirth().equals("") == false) {
+			returnedUser.setDateOfBirth(updateUserEntity.getDateOfBirth());
 		}
-		if(updateUserEntity.getEmploymentStatus() !=null &&updateUserEntity.getEmploymentStatus().equals("") == false){
-			returnedUser.setEmploymentStatus(updateUserEntity.getEmploymentStatus());		
+		if (updateUserEntity.getEmploymentStatus() != null
+				&& updateUserEntity.getEmploymentStatus().equals("") == false) {
+			returnedUser.setEmploymentStatus(updateUserEntity.getEmploymentStatus());
 		}
-		if(updateUserEntity.getAlternateNumber() !=null &&updateUserEntity.getAlternateNumber().equals("") == false){
-			returnedUser.setAlternateNumber(updateUserEntity.getAlternateNumber());		
+		if (updateUserEntity.getAlternateNumber() != null
+				&& updateUserEntity.getAlternateNumber().equals("") == false) {
+			returnedUser.setAlternateNumber(updateUserEntity.getAlternateNumber());
 		}
-		if(updateUserEntity.getLocation() !=null &&updateUserEntity.getLocation().equals("") == false){
-			returnedUser.setLocation(updateUserEntity.getLocation());		
+		if (updateUserEntity.getLocation() != null && updateUserEntity.getLocation().equals("") == false) {
+			returnedUser.setLocation(updateUserEntity.getLocation());
 		}
-		if(updateUserEntity.getCrmid() !=null &&updateUserEntity.getCrmid().equals("") == false){
-			returnedUser.setCrmid(updateUserEntity.getCrmid());		
+		if (updateUserEntity.getCrmid() != null && updateUserEntity.getCrmid().equals("") == false) {
+			returnedUser.setCrmid(updateUserEntity.getCrmid());
 		}
-		if ((this.get(userId,true).getRoles())!=null&&(this.get(userId,true).getRoles()).size() !=0)
-			returnedUser.setRoles(get(userId,true).getRoles());
+		if (updateUserEntity.getIsPasswordChanged()) {
+			// Set is password reset to true
+			returnedUser.setIsPasswordChanged(true);
+		}
+		if ((this.get(userId, true).getRoles()) != null && (this.get(userId, true).getRoles()).size() != 0)
+			returnedUser.setRoles(get(userId, true).getRoles());
 		else
 			returnedUser.setRoles(new BoilerplateList<Role>());
-		
-		//update the user in the database
+		// update the user in the database
 		this.userDataAccess.update(returnedUser);
-		//if we deleted the user we will not get it back
-		if(returnedUser.getUserStatus() == 0){
+		// if we deleted the user we will not get it back
+		if (returnedUser.getUserStatus() == 0) {
 			return null;
-		}
-		else{
+		} else {
 			return this.get(user.getUserId());
 		}
 	}
+
 	/**
 	 * @see IUser.updateUser
 	 */
 	@Override
 	public ExternalFacingReturnedUser update(UpdateUserPasswordEntity updateUserPasswordEntity)
-			throws ValidationFailedException, ConflictException,
-			NotFoundException,UnauthorizedException,BadRequestException {
-		//find the current logged in user
-		if(RequestThreadLocal.getSession() == null){
-			throw new UnauthorizedException("User", "User not logged in for update"
-					, null);
+			throws ValidationFailedException, ConflictException, NotFoundException, UnauthorizedException,
+			BadRequestException {
+		// find the current logged in user
+		if (RequestThreadLocal.getSession() == null) {
+			throw new UnauthorizedException("User", "User not logged in for update", null);
 		}
-		if(RequestThreadLocal.getSession().getUserId() == null || 
-				RequestThreadLocal.getSession().getUserId().isEmpty()){
-			throw new UnauthorizedException("User", "User not logged in for update"
-					, null);
+		if (RequestThreadLocal.getSession().getUserId() == null
+				|| RequestThreadLocal.getSession().getUserId().isEmpty()) {
+			throw new UnauthorizedException("User", "User not logged in for update", null);
 		}
-		
-		ExternalFacingReturnedUser externalFacingReturnedUser = this.update(RequestThreadLocal.getSession().getExternalFacingUser().getUserId()
-				,updateUserPasswordEntity.convertToUpdateUserEntity());
-		
-		//Send a message
-				try{
-					queueReaderJob.requestBackroundWorkItem(
-							externalFacingReturnedUser, subjectForPasswordChange, "UserService", "update");
-				}	
-				catch(Exception ex){
-					try{
-						sendSMSOnPasswordChange.sendSMS(externalFacingReturnedUser.getFirstName()
-								, externalFacingReturnedUser.getPhoneNumber());
-					}catch(Exception smsException){
-						logger.logException("UserService", "create", "try-Queue Reader", ex.toString()+" SMS Gateway Down", ex);
-					}
-					logger.logException("UserService", "create", "try-Queue Reader", ex.toString()+" Queue Down", ex);
-				}
-		
+
+		// convert update user password entity to update user entity
+		UpdateUserEntity updateUserEntity = updateUserPasswordEntity.convertToUpdateUserEntity();
+		//Set is password change to true
+		updateUserEntity.setIsPasswordChanged(true);
+		ExternalFacingReturnedUser externalFacingReturnedUser = this
+				.update(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), updateUserEntity);
+
+		// Send a message
+		try {
+			queueReaderJob.requestBackroundWorkItem(externalFacingReturnedUser, subjectForPasswordChange, "UserService",
+					"update");
+		} catch (Exception ex) {
+			try {
+				sendSMSOnPasswordChange.sendSMS(externalFacingReturnedUser.getFirstName(),
+						externalFacingReturnedUser.getPhoneNumber());
+			} catch (Exception smsException) {
+				logger.logException("UserService", "create", "try-Queue Reader", ex.toString() + " SMS Gateway Down",
+						ex);
+			}
+			logger.logException("UserService", "create", "try-Queue Reader", ex.toString() + " Queue Down", ex);
+		}
+
 		return externalFacingReturnedUser;
 	}
 

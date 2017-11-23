@@ -54,6 +54,7 @@
 	<!-- Use one of the possible implementations of the User -->
 	<bean id="userDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisUsers">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 	<bean id="queueReaderJob" class="com.boilerplate.jobs.QueueReaderJob">
@@ -131,6 +132,7 @@
 				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
 				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 				<entry key="PublishUserData" value-ref="publishUserData" />
+				<entry key="SetUserChangePasswordStatus" value-ref="setUserChangePasswordStatus" />
 			</map>
 
 
@@ -221,6 +223,16 @@
 			</list>
 		</property>
 	</bean>
+	<bean id="setUserChangePasswordStatus"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="setUserChangePasswordStatusObserver"></ref>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="sendRegistrationSMSObserver" class="com.boilerplate.asyncWork.SendRegistrationSMSObserver">
 		<property name="contentService" ref="contentService"></property>
@@ -247,6 +259,11 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+	</bean>
+	
+	<bean id="setUserChangePasswordStatusObserver" class="com.boilerplate.asyncWork.SetUserChangePasswordStatusObserver">
+		<property name="redisScript" ref="redisScript"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 

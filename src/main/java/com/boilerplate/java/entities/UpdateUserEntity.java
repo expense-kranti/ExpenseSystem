@@ -223,6 +223,30 @@ public class UpdateUserEntity extends BaseEntity{
 	 */
 	private String location;
 	
+	/**
+	 * This is a flag is user reset its password or not
+	 */
+	private boolean isPasswordChanged;
+
+	/**
+	 * This method is used to get the status of user password changed.
+	 * 
+	 * @return the isPasswordChanged
+	 */
+	public boolean getIsPasswordChanged() {
+		return isPasswordChanged;
+	}
+
+	/**
+	 * This method is used to set the status of is user password changed.
+	 * 
+	 * @param isPasswordChanged
+	 *            the isPasswordChanged to set
+	 */
+	public void setIsPasswordChanged(boolean isPasswordChanged) {
+		this.isPasswordChanged = isPasswordChanged;
+	}
+	
 
 	
 

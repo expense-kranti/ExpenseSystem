@@ -886,6 +886,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_USER_Publish_Template",
 				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\"}");
 		vAllEAll.put("AKS_USER_Dynamic_Publish_Url", "false");
+		vAllEAll.put("AKS_USER_EMAIL_HASH_BASE_TAG", "AKS_EMAIL_LIST_HASH");
 
 		return vAllEAll;
 

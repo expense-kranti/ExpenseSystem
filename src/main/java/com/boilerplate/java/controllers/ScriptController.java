@@ -22,14 +22,22 @@ public class ScriptController extends BaseController {
 	 */
 	@Autowired
 	IScriptsService scriptService;
-	
+
 	@ApiOperation(value = "Publish the user and it's assessment to CRM", notes = "Get all the user keys and publish to crm")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok") })
 	@RequestMapping(value = "scripts/publishUserReport", method = RequestMethod.POST)
 	public @ResponseBody void publishUserAndAssessmentReport()
-			throws UnauthorizedException, NotFoundException,
-			BadRequestException {
+			throws UnauthorizedException, NotFoundException, BadRequestException {
 		// call the business layer
 		this.scriptService.publishUserAndAssessmentReport();
+	}
+
+	@ApiOperation(value = "Set all existing user password change status to 'true'", notes = "Set all existing user password change status to 'true'")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok") })
+	@RequestMapping(value = "scripts/setchangePasswordStatus", method = RequestMethod.POST)
+	public @ResponseBody void setUserChangePasswordStatus()
+			throws UnauthorizedException, NotFoundException, BadRequestException {
+		// call the business layer
+		this.scriptService.setUserChangePasswordStatus();
 	}
 }
