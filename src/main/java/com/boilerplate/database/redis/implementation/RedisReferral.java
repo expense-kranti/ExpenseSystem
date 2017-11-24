@@ -41,10 +41,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
-	 * @see IReferral.setUserReferralContacts
+	 * @see IReferral.saveUserReferredContacts
 	 */
 	@Override
-	public void setUserReferralContacts(ReferalEntity referalEntity) {
+	public void saveUserReferredContacts(ReferalEntity referalEntity) {
 		// Declare a new map used to hold the referral contacts
 		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
 		// Run for loop to insert all referral contact to map
@@ -52,7 +52,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 			super.hset(ReferralContact + RequestThreadLocal.getSession().getUserId() + ":"
 					+ Date.valueOf(LocalDate.now()) + ":" + referalEntity.getReferralMediumType(), (String) o, "0");
 		}
-
 	}
 
 }

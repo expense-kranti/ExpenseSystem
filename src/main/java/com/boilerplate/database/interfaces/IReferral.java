@@ -21,12 +21,12 @@ public interface IReferral {
 	public ReferalEntity getUserReferredContacts();
 
 	/**
-	 * This method is used to set all those contact which is referred by user in
+	 * This method is used to save all those contact which is referred by user in
 	 * current date
 	 * 
 	 * @param referalEntity
 	 *            this parameter contains the information regarding the user
 	 *            referral contacts by current date
 	 */
-	public void setUserReferralContacts(ReferalEntity referalEntity);
+	public void saveUserReferredContacts(ReferalEntity referalEntity);
 }
