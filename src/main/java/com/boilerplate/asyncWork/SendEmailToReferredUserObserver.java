@@ -2,6 +2,7 @@ package com.boilerplate.asyncWork;
 
 import java.util.Map;
 
+import org.apache.commons.codec.language.bm.PhoneticEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
@@ -62,13 +63,13 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver{
 		
 		String currentUserName = currentUser.getFirstName() + " " +currentUser.getMiddleName() + " " +currentUser.getLastName();
 		
-		for(Map.Entry<String, String> emailReferralMap : referralEntity.getEmailReferrals().entrySet()){
-			tosEmailList.add(emailReferralMap.getValue());
+		BoilerplateList<String> referralContacts = referralEntity.getReferralContacts();
+		for(int i = 0; i< referralContacts.size(); i++){
+			tosEmailList.add((String)referralContacts.get(i));
 			this.sendEmail(currentUserName, tosEmailList, ccsEmailList, bccsEmailList, currentUser.getPhoneNumber(), currentUser.getUserKey());
             tosEmailList.remove(0);
-			
 		}
-
+		
 		
 	}
 	
