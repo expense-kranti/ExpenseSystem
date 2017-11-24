@@ -232,7 +232,7 @@
 		</property>
 	</bean>
 
-	<bean id ="userReferredObserverForEmail"
+	<bean id ="userReferredObserverForSMS"
 	    class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 	    <property name="asyncJobList">
 	        <list>
@@ -243,7 +243,7 @@
 	    </property>
 	</bean>
 	
-	<bean id ="userReferredObserverForSMS"
+	<bean id ="userReferredObserverForEmail"
 	    class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 	    <property name="asyncJobList">
 	        <list>

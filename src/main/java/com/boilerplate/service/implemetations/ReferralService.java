@@ -149,17 +149,16 @@ public class ReferralService implements IReferralService {
 			// According to type trigger back ground job
 			switch (referalEntity.getReferralMediumType()) {
 			case Email:
-				// Send email
-				queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferralService",
-						"sendReferralLink");
+				// Send referral link through email
+				this.sendReferralLinkThroughEmail(referalEntity);
 				break;
 			case Phone_Number:
-				// Send SMS
-				queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendSMS, "ReferralService",
-						"sendReferralLink");
+				// Send referral link through SMS
+				this.sendReferralLinkThroughSMS(referalEntity);
 				break;
 			case Facebook:
 				// get referral link
+				// TODO need to discuss
 				break;
 			default:
 				throw new NotFoundException("ReferalEntity", "Not a valid Referral medium type", null);
@@ -167,6 +166,52 @@ public class ReferralService implements IReferralService {
 		} catch (Exception ex) {
 			// Log error
 			logger.logError("ReferralService", "sendReferralLink", "Inside try-catch block", ex.toString());
+		}
+	}
+
+	/**
+	 * This method is used to send referral link through SMS,using background
+	 * job, in case we fail to trigger background job ,we fall back to send SMS
+	 * on the thread
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains referral details
+	 */
+	private void sendReferralLinkThroughSMS(ReferalEntity referalEntity) {
+		try {
+			// Trigger back ground job to send referral link through SMS
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendSMS, "ReferalEntity",
+					"sendSmsOrEmail");
+		} catch (Exception ex) {
+			// if queue is not working we send sms on the thread
+			this.sendSmsToReferredUsersWithoutUsingQueue(referalEntity);
+			logger.logException("referralService",
+					"sendReferralLinkThroughSMS", "try-Queue Reader", ex.toString()
+							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
+					ex);
+		}
+	}
+
+	/**
+	 * This method is used to send referral link through Email,using background
+	 * job, in case we fail to trigger background job ,we fall back to send
+	 * Email on the thread
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains referral details
+	 */
+	private void sendReferralLinkThroughEmail(ReferalEntity referalEntity) {
+		try {
+			// Trigger back ground job to send referral link through Email
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
+					"sendSmsOrEmail");
+		} catch (Exception ex) {
+			// if queue is not working we send email on the thread
+			this.sendEmailToReferredUsersWithoutUsingQueue(referalEntity);
+			logger.logException("referralService",
+					"sendReferralLinkThroughEmail", "try-Queue Reader", ex.toString()
+							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
+					ex);
 		}
 	}
 
@@ -218,74 +263,62 @@ public class ReferralService implements IReferralService {
 	}
 
 	/**
-	 * @author kranti123
+	 * This method sends sms to referred users without using background queue
+	 * job
+	 * 
 	 * @param referalEntity
+	 *            the ReferalEntity
 	 */
-	public void sendSmsOrEmail(ReferalEntity referalEntity) {
-		UserReferalMediumType userReferralMediumType = referalEntity.getReferralMediumType();
-
+	public void sendSmsToReferredUsersWithoutUsingQueue(ReferalEntity referalEntity) {
+		// way of getting user name needs to be changed according to shiva
 		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
 		String currentUserName = currentUser.getFirstName() + " " + currentUser.getMiddleName() + " "
 				+ currentUser.getLastName();
-
-		switch (userReferralMediumType) {
-		case Email:
-			subjectsForInvitingReferredUser = subjectsForSendEmail;
-			break;
-
-		case Phone_Number:
-			subjectsForInvitingReferredUser = subjectsForSendSMS;
-			break;
-
-		case Facebook:
-			break;
-		}
-
-		try {
-			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForInvitingReferredUser, "ReferalEntity",
-					"sendSmsOrEmail");
-		} catch (Exception ex) {
-
-			if (subjectsForInvitingReferredUser == subjectsForSendEmail) {
-				BoilerplateList<String> tosEmailList = new BoilerplateList<>();
-				BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
-				BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-
-				for (Map.Entry<String, String> emailReferralMap : referalEntity.getEmailReferrals().entrySet()) {
-					tosEmailList.add(emailReferralMap.getValue());
-					try {
-						sendEmailToReferredUserObserver.sendEmail(currentUserName, tosEmailList, ccsEmailList,
-								bccsEmailList, currentUser.getPhoneNumber(), currentUser.getUserKey());
-					} catch (Exception exEmail) {
-						// if an exception takes place here we cant do much
-						// hence just
-						// log it and move
-						// forward
-						logger.logException("ReferralService", "sendSmsOrEmail", "try-Queue Reader - Send Email",
-								exEmail.toString(), exEmail);
-					}
-					tosEmailList.remove(0);
-
-				}
-			} else if (subjectsForInvitingReferredUser == subjectsForSendSMS) {
-				BoilerplateMap<String, String> phoneNumberReferrals = referalEntity.getPhoneNumberReferrals();
-				for (Map.Entry<String, String> phoneNumberMap : phoneNumberReferrals.entrySet()) {
-					String phoneNumber = phoneNumberMap.getValue();
-					try {
-						sendSmsToReferredUserObserver.sendSMS(currentUserName, phoneNumber);
-					} catch (Exception exSendPassword) {
-						logger.logException("ReferralService", "sendSmsOrEmail", "inside catch: try-Queue Reader",
-								exSendPassword.toString() + "" + "Gateway down", exSendPassword);
-					}
-
-					logger.logException("referralService", "sendSmsOrEmail", "try-Queue Reader", ex.toString()
-							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
-							ex);
-				}
+		BoilerplateMap<String, String> phoneNumberReferrals = referalEntity.getPhoneNumberReferrals();
+		for (Map.Entry<String, String> phoneNumberMap : phoneNumberReferrals.entrySet()) {
+			String phoneNumber = phoneNumberMap.getValue();
+			try {
+				sendSmsToReferredUserObserver.sendSMS(currentUserName, phoneNumber);
+			} catch (Exception exSendPassword) {
+				// if an exception takes place here we cant do much hence just
+				// log it and move
+				// forward
+				logger.logException("ReferralService", "sendSmsToReferredUsersWithoutUsingQueue",
+						"inside catch: try-Queue Reader", exSendPassword.toString() + "" + "Gateway down",
+						exSendPassword);
 			}
-
 		}
-
 	}
 
+	/**
+	 * This method sends email to referred users without using background queue
+	 * job
+	 * 
+	 * @param referalEntity
+	 *            The ReferalEntity
+	 */
+	public void sendEmailToReferredUsersWithoutUsingQueue(ReferalEntity referalEntity) {
+
+		// way of getting user name needs to be changed according to shiva
+		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
+		String currentUserName = currentUser.getFirstName() + " " + currentUser.getMiddleName() + " "
+				+ currentUser.getLastName();
+		BoilerplateList<String> tosEmailList = new BoilerplateList<>();
+		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
+		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
+		for (Map.Entry<String, String> emailReferralMap : referalEntity.getEmailReferrals().entrySet()) {
+			tosEmailList.add(emailReferralMap.getValue());
+			try {
+				sendEmailToReferredUserObserver.sendEmail(currentUserName, tosEmailList, ccsEmailList, bccsEmailList,
+						currentUser.getPhoneNumber(), currentUser.getUserKey());
+			} catch (Exception exEmail) {
+				// if an exception takes place here we cant do much hence just
+				// log it and move
+				// forward
+				logger.logException("ReferralService", "sendEmailToReferredUsersWithoutUsingQueue",
+						"try-Queue Reader - Send Email", exEmail.toString(), exEmail);
+			}
+			tosEmailList.remove(0);
+		}
+	}
 }

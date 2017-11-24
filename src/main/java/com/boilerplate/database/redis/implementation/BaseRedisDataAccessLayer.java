@@ -581,6 +581,29 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
+		//method permissions for ReferralController methods starts here
+		
+		//method permission for sendReferralLink method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
+		//method permission for getUserReferralContacts method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
+		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
+		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 

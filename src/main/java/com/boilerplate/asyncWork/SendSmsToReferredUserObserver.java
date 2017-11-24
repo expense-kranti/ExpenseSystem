@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
@@ -69,20 +70,26 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver{
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		
 		ReferalEntity referralEntity = (ReferalEntity)asyncWorkItem.getPayload();
-		
-		BoilerplateMap<String, String> phoneNumberReferrals = referralEntity.getPhoneNumberReferrals();
-		
+				
 		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
 		
 		String currentUserName = currentUser.getFirstName() + " " +currentUser.getMiddleName() + " " +currentUser.getLastName();
 		
-		for(Map.Entry<String, String> phoneNumberMap : phoneNumberReferrals.entrySet()){
-			String phoneNumber = phoneNumberMap.getValue();	
+		
+		BoilerplateList<String> referralContacts = referralEntity.getReferralContacts();
+		for(int i = 0; i< referralContacts.size(); i++){
+			String phoneNumber = (String)referralContacts.get(i);
 			
             this.sendSMS(currentUserName, phoneNumber);
 		}
 	}
 	
+	/**
+	 * This method sends sms to the given phone number
+	 * @param userName The userName of
+	 * @param phoneNumber
+	 * @throws Exception
+	 */
 	public void sendSMS(String userName, String phoneNumber) throws Exception{
 		String url = configurationManager.get("SMS_ROOT_URL")+configurationManager.get("SMS_URL");
 		url = url.replace("@apiKey", configurationManager.get("SMS_API_KEY"));
@@ -96,6 +103,7 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver{
 		HttpResponse smsGatewayResponse= sendSmsService.send(url, phoneNumber, message);
 	
 	}
+	
 	
 	
 	
