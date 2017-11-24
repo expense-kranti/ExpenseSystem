@@ -734,7 +734,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllETest.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		vAllETest.put("Is_Publish_Report", "true"); // false for not publish
-		vAllETest.put("Is_Script_Publish_User_To_CRM", "false"); // false for not publish
+		vAllETest.put("Is_Script_Publish_User_To_CRM", "false"); // false for
+																	// not
+																	// publish
 		return vAllETest;
 	}
 
@@ -772,7 +774,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEDev.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		vAllEDev.put("Is_Publish_Report", "true"); // false for not publish
-		vAllEDev.put("Is_Script_Publish_User_To_CRM", "false"); // false for not publish
+		vAllEDev.put("Is_Script_Publish_User_To_CRM", "false"); // false for not
+																// publish
 		return vAllEDev;
 
 	}
@@ -812,7 +815,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("AKS_Assessment_Publish_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEProduction.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		vAllEProduction.put("Is_Publish_Report", "true"); // false for not
-		vAllEProduction.put("Is_Script_Publish_User_To_CRM", "true"); // false for not publish													// publish
+		vAllEProduction.put("Is_Script_Publish_User_To_CRM", "true"); // false
+																		// for
+																		// not
+																		// publish
+																		// //
+																		// publish
 		return vAllEProduction;
 	}
 
@@ -876,7 +884,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_Assessment_Publish_Template",
 				"{\"totalScore\": \"@totalScore\",\"userId\": \"@userId\",\"rank\": \"@rank\",\"aksAssessments\": @aksAssessments}");
 		vAllEAll.put("AKS_Assessment_Dynamic_Publish_Url", "false");
-		//vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
+		// vAllEAll.put("Is_Publish_Report", "true"); // false for not publish
 		vAllEAll.put("PublishDispatcherSleepTimeBeforeUser", "120000");
 		vAllEAll.put("SQL_QUERY_GET_USER_ARTICLE", "From ArticleEntity WHERE userId = :UserId");
 		// assessment user publish script
@@ -887,6 +895,7 @@ public class BaseRedisDataAccessLayer {
 				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\"}");
 		vAllEAll.put("AKS_USER_Dynamic_Publish_Url", "false");
 		vAllEAll.put("AKS_USER_EMAIL_HASH_BASE_TAG", "AKS_EMAIL_LIST_HASH");
+		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
 
 		return vAllEAll;
 
@@ -903,7 +912,7 @@ public class BaseRedisDataAccessLayer {
 				"Welcome @FirstName, @Password is your password. Thanks for registering on Akshar!");
 		contentMap.put("RESET_PASSWORD_SMS",
 				"Your new password is @Password. Please change your password after logging in. Akshar.");
-		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, your password has been successfully changed. Akshar.");
+		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, your password has been changed successfully. Akshar.");
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Contact Us");
 		contentMap.put("CONTACT_US_EMAIL_BODY",
 				"<b><h2>Contact Person Details:<h2></b> <b>Name:</b> @ContactPersonName <br> <b>Email:</b> @ContactPersonEmail <br> <b>Contact Number:</b> @ContactPersonMobileNumber <br> <b>Message:</b> @ContactPersonMessage");
@@ -911,11 +920,11 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("POST_ARTICLE_EMAIL_SUBJECT", "Akshar Article : @Subject");
 		contentMap.put("POST_ARTICLE_EMAIL_BODY",
 				"<b><h2>Article Details:<h2></b> <b>Name:</b> @UserName <br> <b>Email:</b> @UserEmail <br> <b>Contact Number:</b> @UserMobileNumber <br> <b>Title:</b> @Title <br> <b>Content:</b> @Content <br> <b>KeyWords:</b> @KeyWords");
-		//sms message for sending invitation to referred user
+		// sms message for sending invitation to referred user
 		contentMap.put("JOIN_INVITATION_SMS", "Hi there, @UserName sent you the invitation for joining Akshar.");
-        //email message for sending invitation to referred user related
+		// email message for sending invitation to referred user related
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserName, to join Akshar");
-		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY", 
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
 				"<b><Inviters Name: @UserName, inviters phonenumber : @PhoneNumber @UserKey /b>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));

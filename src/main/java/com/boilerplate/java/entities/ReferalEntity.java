@@ -2,6 +2,7 @@ package com.boilerplate.java.entities;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Random;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -18,12 +19,27 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the list of referred users' contacts
 	 */
-	BoilerplateList<String> referralContacts;
+	private BoilerplateList<String> referralContacts;
 
 	/**
 	 * This is user referred contact details
 	 */
-	Map<String, Map<String, String>> referredContacts;
+	private Map<String, Map<String, String>> referredContacts;
+
+	/**
+	 * This is the userId
+	 */
+	private String userId;
+
+	/**
+	 * This is the referral link
+	 */
+	private String referralLink;
+
+	/**
+	 * This is the referral uuid
+	 */
+	private String referralUUID;
 
 	/**
 	 * This method is used to get the referred contacts details
@@ -140,8 +156,14 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		// In case user refer zero size referral contacts
+		if (this.referralContacts.size() == 0) {
+			throw new ValidationFailedException("ReferalEntity", "There is no referred contacts in list", null);
+		} // In case user refer more then 10 referral contacts
+		else if (this.referralContacts.size() > 10) {
+			throw new ValidationFailedException("ReferalEntity", "Reached max limit", null);
+		}
+		return true;
 	}
 
 	/**
@@ -160,6 +182,81 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * This method is used to get the userId
+	 * 
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * This method is used to set the userId
+	 * 
+	 * @param userId
+	 *            the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * This method is used to get the referral link
+	 * 
+	 * @return the referralLink
+	 */
+	public String getReferralLink() {
+		return referralLink;
+	}
+
+	/**
+	 * This method is used to set the referral link
+	 * 
+	 * @param referralLink
+	 *            the referralLink to set
+	 */
+	public void setReferralLink(String referralLink) {
+		this.referralLink = referralLink;
+	}
+
+	/**
+	 * This method is used to create the UUID
+	 * 
+	 * @return the UUID
+	 */
+	public void createUUID(Integer uuidLength) {
+		// New instance of random
+		Random rand = new Random();
+		this.referralUUID = "";
+		// Run a for loop to generate a configurations define length uuid
+		for (int i = 0; i < uuidLength; i++) {
+			// Get random number
+			int randomNum = rand.nextInt(26 - 0);
+			// Concatenate new char to string
+			referralUUID = referralUUID + String.valueOf((char) (randomNum + 97));
+		}
+	}
+
+	/**
+	 * This method is used to get the referral uuid
+	 * 
+	 * @return the referralUUID
+	 */
+	public String getReferralUUID() {
+		return referralUUID;
+	}
+
+	/**
+	 * This method is used to set the referral uuid
+	 * 
+	 * @param referralUUID
+	 *            the referralUUID to set
+	 */
+	public void setReferralUUID(String referralUUID) {
+		this.referralUUID = referralUUID;
 	}
 
 }

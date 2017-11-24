@@ -133,7 +133,10 @@
 				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 				<entry key="PublishUserData" value-ref="publishUserData" />
 				<entry key="SetUserChangePasswordStatus" value-ref="setUserChangePasswordStatus" />
-				<entry key="ReferUser" value-ref="userReferredObserver" />
+
+				<entry key="SendSMSToReferredUser" value-ref="userReferredObserverForSMS"/>
+				<entry key="SendEmailToReferredUser" value-ref="userReferredObserverForEmail"></entry>
+
 			</map>
 
 
@@ -217,6 +220,7 @@
 			</list>
 		</property>
 	</bean>
+
 	<bean id="setUserChangePasswordStatus"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
@@ -228,17 +232,27 @@
 		</property>
 	</bean>
 
-	<bean id="userReferredObserver"
-		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
-		<property name="asyncJobList">
-			<list>
-				<!-- This is the class that will save sessions to the database Also the 
+	<bean id ="userReferredObserverForEmail"
+	    class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+	    <property name="asyncJobList">
+	        <list>
+	           <!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
-				<ref bean="sendSmsToReferredUserObserver" />
-				<ref bean="sendEmailToReferredUserObserver" />
-			</list>
-		</property>
+	           <ref bean = "sendSmsToReferredUserObserver"/>
+	        </list>
+	    </property>
 	</bean>
+	
+	<bean id ="userReferredObserverForSMS"
+	    class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+	    <property name="asyncJobList">
+	        <list>
+	           <!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+	           <ref bean= "sendEmailToReferredUserObserver"/>
+	        </list>
+	    </property>
+    </bean>
 
 	<bean id="sendRegistrationSMSObserver" class="com.boilerplate.asyncWork.SendRegistrationSMSObserver">
 		<property name="contentService" ref="contentService"></property>
@@ -438,6 +452,8 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="referral" ref="referral"></property>
+		<property name="sendSmsToReferredUserObserver" ref="sendSmsToReferredUserObserver"></property>
+		<property name="sendEmailToReferredUserObserver" ref="sendEmailToReferredUserObserver"></property>
 	</bean>
 
 	<!-- Contact us AsyncWorkDispatcherObserverList -->

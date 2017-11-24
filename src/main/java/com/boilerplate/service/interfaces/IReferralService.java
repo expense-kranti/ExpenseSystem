@@ -1,5 +1,6 @@
 package com.boilerplate.service.interfaces;
 
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ReferalEntity;
 
 /**
@@ -26,7 +27,8 @@ public interface IReferralService {
 	 * @param referalEntity
 	 *            this parameter contains the details of referred contact by
 	 *            user and the type of referred medium
+	 * @throws ValidationFailedException 
 	 */
-	public void sendReferralLink(ReferalEntity referalEntity);
+	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException;
 
 }
