@@ -176,15 +176,17 @@ public class ReferralService implements IReferralService {
 	 * 
 	 * @param referalEntity
 	 *            this parameter contains referral details
+	 * @throws NotFoundException thrown if referring user not found
 	 */
-	private void sendReferralLinkThroughSMS(ReferalEntity referalEntity) {
+	private void sendReferralLinkThroughSMS(ReferalEntity referalEntity) throws NotFoundException {
 		try {
 			// Trigger back ground job to send referral link through SMS
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendSMS, "ReferalEntity",
 					"sendSmsOrEmail");
 		} catch (Exception ex) {
 			// if queue is not working we send sms on the thread
-			this.sendSmsToReferredUsersWithoutUsingQueue(referalEntity);
+			sendSmsToReferredUserObserver.prepareSmsDetailsAndSendSms(referalEntity,
+					RequestThreadLocal.getSession().getExternalFacingUser());
 			logger.logException("referralService",
 					"sendReferralLinkThroughSMS", "try-Queue Reader", ex.toString()
 							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
@@ -199,15 +201,17 @@ public class ReferralService implements IReferralService {
 	 * 
 	 * @param referalEntity
 	 *            this parameter contains referral details
+	 * @throws NotFoundException thrown if referring user is not found
 	 */
-	private void sendReferralLinkThroughEmail(ReferalEntity referalEntity) {
+	private void sendReferralLinkThroughEmail(ReferalEntity referalEntity) throws NotFoundException {
 		try {
 			// Trigger back ground job to send referral link through Email
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
 					"sendSmsOrEmail");
 		} catch (Exception ex) {
 			// if queue is not working we send email on the thread
-			this.sendEmailToReferredUsersWithoutUsingQueue(referalEntity);
+			sendEmailToReferredUserObserver.createEmailDetailsAndSendEmail(referalEntity,
+					RequestThreadLocal.getSession().getExternalFacingUser());
 			logger.logException("referralService",
 					"sendReferralLinkThroughEmail", "try-Queue Reader", ex.toString()
 							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
@@ -247,8 +251,7 @@ public class ReferralService implements IReferralService {
 	 */
 	private void validateReferRequest(ReferalEntity referalEntity) throws ValidationFailedException {
 		// Get today referred contacts size
-		Integer todayReferredContactsSize = referral
-				.getTodayReferredContactsSize(referalEntity.getReferralMediumType());
+		Integer todayReferredContactsSize = referral.getTodayReferredContactsSize(referalEntity.getReferralMediumType()); 
 		// Get max size of one day referral contacts
 		Integer maxSizeOfReferralContacts = Integer
 				.valueOf(configurationManager.get("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY"));
@@ -262,63 +265,4 @@ public class ReferralService implements IReferralService {
 		}
 	}
 
-	/**
-	 * This method sends sms to referred users without using background queue
-	 * job
-	 * 
-	 * @param referalEntity
-	 *            the ReferalEntity
-	 */
-	public void sendSmsToReferredUsersWithoutUsingQueue(ReferalEntity referalEntity) {
-		// way of getting user name needs to be changed according to shiva
-		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
-		String currentUserName = currentUser.getFirstName() + " " + currentUser.getMiddleName() + " "
-				+ currentUser.getLastName();
-		BoilerplateMap<String, String> phoneNumberReferrals = referalEntity.getPhoneNumberReferrals();
-		for (Map.Entry<String, String> phoneNumberMap : phoneNumberReferrals.entrySet()) {
-			String phoneNumber = phoneNumberMap.getValue();
-			try {
-				sendSmsToReferredUserObserver.sendSMS(currentUserName, phoneNumber);
-			} catch (Exception exSendPassword) {
-				// if an exception takes place here we cant do much hence just
-				// log it and move
-				// forward
-				logger.logException("ReferralService", "sendSmsToReferredUsersWithoutUsingQueue",
-						"inside catch: try-Queue Reader", exSendPassword.toString() + "" + "Gateway down",
-						exSendPassword);
-			}
-		}
-	}
-
-	/**
-	 * This method sends email to referred users without using background queue
-	 * job
-	 * 
-	 * @param referalEntity
-	 *            The ReferalEntity
-	 */
-	public void sendEmailToReferredUsersWithoutUsingQueue(ReferalEntity referalEntity) {
-
-		// way of getting user name needs to be changed according to shiva
-		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
-		String currentUserName = currentUser.getFirstName() + " " + currentUser.getMiddleName() + " "
-				+ currentUser.getLastName();
-		BoilerplateList<String> tosEmailList = new BoilerplateList<>();
-		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
-		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-		for (Map.Entry<String, String> emailReferralMap : referalEntity.getEmailReferrals().entrySet()) {
-			tosEmailList.add(emailReferralMap.getValue());
-			try {
-				sendEmailToReferredUserObserver.sendEmail(currentUserName, tosEmailList, ccsEmailList, bccsEmailList,
-						currentUser.getPhoneNumber(), currentUser.getUserKey());
-			} catch (Exception exEmail) {
-				// if an exception takes place here we cant do much hence just
-				// log it and move
-				// forward
-				logger.logException("ReferralService", "sendEmailToReferredUsersWithoutUsingQueue",
-						"try-Queue Reader - Send Email", exEmail.toString(), exEmail);
-			}
-			tosEmailList.remove(0);
-		}
-	}
 }
