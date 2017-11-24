@@ -1,15 +1,29 @@
 package com.boilerplate.service.implemetations;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.asyncWork.SendEmailToReferredUserObserver;
+import com.boilerplate.asyncWork.SendSmsToReferredUserObserver;
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.framework.Logger;
+import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
 import com.boilerplate.service.interfaces.IReferralService;
 
 public class ReferralService implements IReferralService {
 
+	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(ReferralService.class);
+	
 	/**
 	 * This is a new instance of Referral
 	 */
@@ -43,15 +57,53 @@ public class ReferralService implements IReferralService {
 	}
 	
 	/**
+	 * This is the generic publish subject list that can be sms or email subject list
+	 * @author kranti123
+	 */
+	BoilerplateList<String> subjectsForInvitingReferredUser = new BoilerplateList<>();
+	
+	
+	/**
+	 * This is the instance of SendSmsToReferredUserObserver
+	 */
+	@Autowired
+	SendSmsToReferredUserObserver sendSmsToReferredUserObserver;
+	
+	
+	/**
+	 * This sets the SendSmsToReferredUserObserver
+	 * @param sendSmsToReferredUserObserver
+	 */
+	public void setSendSmsToReferredUserObserver(SendSmsToReferredUserObserver sendSmsToReferredUserObserver) {
+		this.sendSmsToReferredUserObserver = sendSmsToReferredUserObserver;
+	}
+	
+	/**
+	 * This is the instance of SendEmailToReferredUserObserver
+	 */
+	@Autowired
+	SendEmailToReferredUserObserver sendEmailToReferredUserObserver;
+	
+	/**
+	 * This is the instance of SendEmailToReferredUserObserver
+	 */
+	public void setSendEmailToReferredUserObserver(SendEmailToReferredUserObserver sendEmailToReferredUserObserver) {
+		this.sendEmailToReferredUserObserver = sendEmailToReferredUserObserver;
+	}
+
+	/**
 	 * This is the publish subject list.
 	 */
 	BoilerplateList<String> subjectsForSendSMS = new BoilerplateList<>();
+	BoilerplateList<String> subjectsForSendEmail = new BoilerplateList<>();
 	
 	/**
 	 * Initializes the bean
 	 */
 	public void initialize() {
-		subjectsForSendSMS.add("");
+		subjectsForSendSMS.add("SendSMSToReferredUser");
+		subjectsForSendEmail.add("SendEmailToReferredUser");
+		
 	}
 
 	/**
@@ -68,6 +120,78 @@ public class ReferralService implements IReferralService {
 	@Override
 	public void sendReferralLink(ReferalEntity referalEntity) {
 		referral.setUserReferralContacts(referalEntity);
+	}
+	
+	
+	/**
+	 * @author kranti123
+	 * @param referalEntity
+	 */
+	public void sendSmsOrEmail(ReferalEntity referalEntity){
+		UserReferalMediumType userReferralMediumType = referalEntity.getReferralMediumType();
+		
+		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
+		String currentUserName = currentUser.getFirstName() + " " +currentUser.getMiddleName() + " " +currentUser.getLastName();
+		
+		switch (userReferralMediumType) {
+		case Email:
+			subjectsForInvitingReferredUser = subjectsForSendEmail;
+		 break;
+			
+        case Phone_Number:
+			subjectsForInvitingReferredUser = subjectsForSendSMS;
+		 break;	
+			
+        case Facebook:
+		 break;
+
+		}
+		
+		try{
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForInvitingReferredUser, "ReferalEntity", "sendSmsOrEmail");
+		} catch (Exception ex) {				
+				
+				if(subjectsForInvitingReferredUser == subjectsForSendEmail){
+					BoilerplateList<String> tosEmailList = new BoilerplateList<>(); 
+					BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
+					BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
+					
+					for(Map.Entry<String, String> emailReferralMap : referalEntity.getEmailReferrals().entrySet()){
+						tosEmailList.add(emailReferralMap.getValue());
+						try{
+						 sendEmailToReferredUserObserver.sendEmail(currentUserName, tosEmailList, ccsEmailList, bccsEmailList, currentUser.getPhoneNumber(), currentUser.getUserKey());
+						}
+						catch(Exception exEmail){
+							// if an exception takes place here we cant do much hence just
+							// log it and move
+							// forward
+							logger.logException("ReferralService", "sendSmsOrEmail", "try-Queue Reader - Send Email", exEmail.toString(),
+									exEmail);
+						}
+						tosEmailList.remove(0);
+			            
+					}				
+				}
+				else if(subjectsForInvitingReferredUser == subjectsForSendSMS){
+					BoilerplateMap<String, String> phoneNumberReferrals = referalEntity.getPhoneNumberReferrals();
+					for(Map.Entry<String, String> phoneNumberMap : phoneNumberReferrals.entrySet()){
+						String phoneNumber = phoneNumberMap.getValue();	
+						try{
+			            sendSmsToReferredUserObserver.sendSMS(currentUserName, phoneNumber);
+						}catch (Exception exSendPassword) {
+							logger.logException("ReferralService", "sendSmsOrEmail", "inside catch: try-Queue Reader",
+									exSendPassword.toString() + "" + "Gateway down", exSendPassword);
+						}
+						
+						logger.logException("referralService", "sendSmsOrEmail", "try-Queue Reader",
+								ex.toString() + " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity)
+										+ " Queue Down",
+								ex);
+					}
+				}
+			
+		}
+		
 	}
 
 }
