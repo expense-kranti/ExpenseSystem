@@ -601,6 +601,14 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		//method permission for getUserReferralContacts method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
 		
 		
 		
