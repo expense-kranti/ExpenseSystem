@@ -196,6 +196,8 @@ public class UserService implements IUserService {
 	BoilerplateList<String> subjectsForAutomaticPasswordReset = new BoilerplateList();
 
 	BoilerplateList<String> subjectForPasswordChange = new BoilerplateList();
+	
+	BoilerplateList<String> subjectForCampaign = new BoilerplateList<>();
 
 	/**
 	 * This variable define the default status for the current user
@@ -218,7 +220,7 @@ public class UserService implements IUserService {
 			com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver) {
 		this.sendPasswordResetSMSObserver = sendPasswordResetSMSObserver;
 	}
-	
+
 	/**
 	 * This is the instance of redissfupdatehashaccess
 	 */
@@ -227,7 +229,9 @@ public class UserService implements IUserService {
 
 	/**
 	 * This method set the instance of redisSFUpdateHashAccess
-	 * @param redisSFUpdateHashAccess the redisSFUpdateHashAccess to set
+	 * 
+	 * @param redisSFUpdateHashAccess
+	 *            the redisSFUpdateHashAccess to set
 	 */
 	public void setRedisSFUpdateHashAccess(ISFUpdateHash redisSFUpdateHashAccess) {
 		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
@@ -242,6 +246,7 @@ public class UserService implements IUserService {
 				: this.configurationManager.get("DefaultUserStatus"));
 		subjectsForAutomaticPasswordReset.add("AutomaticPasswordReset");
 		subjectForPasswordChange.add("PasswordChange");
+		subjectForCampaign.add("CampaignRelated");
 	}
 
 	/**
@@ -347,21 +352,22 @@ public class UserService implements IUserService {
 
 		return externalFacingUser;
 	}
-	
+
 	/**
-	 * This method email checks exists or not if not then put email entry in email_list_hash
-	 * otherwise throw conflict exception
+	 * This method email checks exists or not if not then put email entry in
+	 * email_list_hash otherwise throw conflict exception
+	 * 
 	 * @param email
 	 * @throws ConflictException
 	 */
-	private void checkOrCreateEmailInHash(ExternalFacingUser user) throws ConflictException{
-		if(this.redisSFUpdateHashAccess.hget(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"), 
-				user.getAuthenticationProvider()+":"+user.getEmail().toUpperCase())!=null){
-			throw new ConflictException("User","User with given email already exists",null);
-			
-		}
-		else{
-			this.redisSFUpdateHashAccess.hset(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"), user.getAuthenticationProvider()+":"+user.getEmail().toUpperCase(), user.getUserId());
+	private void checkOrCreateEmailInHash(ExternalFacingUser user) throws ConflictException {
+		if (this.redisSFUpdateHashAccess.hget(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
+				user.getAuthenticationProvider() + ":" + user.getEmail().toUpperCase()) != null) {
+			throw new ConflictException("User", "User with given email already exists", null);
+
+		} else {
+			this.redisSFUpdateHashAccess.hset(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
+					user.getAuthenticationProvider() + ":" + user.getEmail().toUpperCase(), user.getUserId());
 		}
 	}
 
@@ -602,7 +608,7 @@ public class UserService implements IUserService {
 
 		// convert update user password entity to update user entity
 		UpdateUserEntity updateUserEntity = updateUserPasswordEntity.convertToUpdateUserEntity();
-		//Set is password change to true
+		// Set is password change to true
 		updateUserEntity.setIsPasswordChanged(true);
 		ExternalFacingReturnedUser externalFacingReturnedUser = this
 				.update(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), updateUserEntity);
@@ -623,6 +629,16 @@ public class UserService implements IUserService {
 		}
 
 		return externalFacingReturnedUser;
+	}
+
+	public boolean checkIfUserRegisteredThroughCampaign(ExternalFacingUser externalFacingUser) {
+		if (externalFacingUser.getCampaignSource() != null && externalFacingUser.getCampaignType() != null
+				&& externalFacingUser.getCampaignUUID() != null) {
+           //queueReaderJob.requestBackroundWorkItem(externalFacingUser, subjectForCampaign, "UserService", "checkIfUserRegisteredThroughCampaign");
+		  return true;
+		}else{
+			return false;
+		}
 	}
 
 }
