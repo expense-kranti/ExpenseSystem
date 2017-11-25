@@ -949,7 +949,7 @@ public class BaseRedisDataAccessLayer {
 		// email message for sending invitation to referred user related
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserName, to join Akshar");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
-				"<b><Inviters Name: @UserName, inviters phonenumber : @PhoneNumber @UserKey /b>");
+				"<b><Inviters Name: @UserName, Please click on this Link @ReferralLink/b>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

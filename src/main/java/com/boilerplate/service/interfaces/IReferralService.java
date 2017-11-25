@@ -1,5 +1,7 @@
 package com.boilerplate.service.interfaces;
 
+import java.io.IOException;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ReferalEntity;
 
@@ -27,8 +29,10 @@ public interface IReferralService {
 	 * @param referalEntity
 	 *            this parameter contains the details of referred contact by
 	 *            user and the type of referred medium
-	 * @throws ValidationFailedException 
+	 * @throws ValidationFailedException
+	 * @throws IOException
+	 *             throw this exception in case we failed to get short url
 	 */
-	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException;
+	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException;
 
 }

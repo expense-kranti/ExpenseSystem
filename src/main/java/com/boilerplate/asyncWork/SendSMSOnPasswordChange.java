@@ -73,8 +73,8 @@ public class SendSMSOnPasswordChange implements IAsyncWorkObserver {
 	 * This method sends the SMS.
 	 * The reason we are keeping it public is so that
 	 * compensating sync code may be written if queues go down
-	 * @param firstName The first name of the user
-	 * @param The phone number
+	 * @param firstName The first name of the referring user
+	 * @param The phone number the phone number of referred user
 	 * @throws Exception If there is an error in processing
 	 */
 	public void sendSMS(String firstName,String phoneNumber) throws Exception{

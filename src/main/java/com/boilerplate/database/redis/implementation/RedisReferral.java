@@ -22,7 +22,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	/**
 	 * This variable is used to a prefix for key of user ReferredContact
 	 */
-	private static final String ReferredContact = "ReferralContact:";
+	private static final String ReferredContact = "ReferredContact:";
 
 	/**
 	 * This variable is used to a prefix for key of Campaign
@@ -76,7 +76,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 * @see IReferral.getTodayReferredContactsSize
 	 */
 	@Override
-	public Integer getTodayReferredContactsSize(UserReferalMediumType referralMediumType) {
+	public Integer getTodayReferredContactsCount(UserReferalMediumType referralMediumType) {
 		// Get the referred data of user
 		Map<String, String> referralData = super.hgetAll(ReferredContact + RequestThreadLocal.getSession().getUserId()
 				+ ":" + Date.valueOf(LocalDate.now()) + ":" + referralMediumType.toString());
