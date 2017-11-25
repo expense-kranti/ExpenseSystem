@@ -12,7 +12,7 @@ public class ContactUsService implements IContactUsService {
 	/**
 	 * This is an instance of the logger
 	 */
-	Logger logger = Logger.getInstance(UserService.class);
+	Logger logger = Logger.getInstance(ArticleService.class);
 
 	/**
 	 * This is the instance of IContactUs

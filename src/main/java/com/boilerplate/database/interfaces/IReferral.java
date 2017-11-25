@@ -32,18 +32,22 @@ public interface IReferral {
 	public void saveUserReferredContacts(ReferalEntity referalEntity);
 
 	/**
-	 * This method is used to save user referral details
+	 * This method is used to save user referral details like the contact
+	 * details of refer receiver and referral UUID
 	 * 
 	 * @param referalEntity
-	 *            this parameter contains referral details
+	 *            this parameter contains referral details like referral UUID
+	 *            and contact details of referral receiver
 	 */
 	public void saveUserReferralDetail(ReferalEntity referalEntity);
-	
+
 	/**
-	 * This method is used to save referral details
+	 * This method is used to save referral details like medium type ,referral
+	 * UUID and campaign type refer to redis
 	 * 
 	 * @param referalEntity
-	 *            this parameter contains referral details
+	 *            this parameter contains referral details like medium type
+	 *            ,referral UUID
 	 */
 	public void saveReferralDetail(ReferalEntity referalEntity);
 
@@ -55,5 +59,5 @@ public interface IReferral {
 	 *            this parameter define of which type size we want to get
 	 * @return the size of referred contacts by user
 	 */
-	public Integer getTodayReferredContactsSize(UserReferalMediumType referralMediumType);
+	public Integer getTodayReferredContactsCount(UserReferalMediumType referralMediumType);
 }

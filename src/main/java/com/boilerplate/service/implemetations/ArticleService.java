@@ -24,7 +24,7 @@ public class ArticleService implements IArticleService {
 	/**
 	 * This is an instance of the logger
 	 */
-	Logger logger = Logger.getInstance(UserService.class);
+	Logger logger = Logger.getInstance(ArticleService.class);
 
 	/**
 	 * This is the new instance of article class of data layer

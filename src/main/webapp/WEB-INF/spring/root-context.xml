@@ -287,12 +287,14 @@
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="sendSmsService" ref="sendSmsService"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 	<bean id="sendEmailToReferredUserObserver"
 		class="com.boilerplate.asyncWork.SendEmailToReferredUserObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 	<bean id="setUserChangePasswordStatusObserver"
