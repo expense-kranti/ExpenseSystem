@@ -218,6 +218,10 @@ public class UserService implements IUserService {
 			com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver) {
 		this.sendPasswordResetSMSObserver = sendPasswordResetSMSObserver;
 	}
+	
+	/**
+	 * This is the instance of redissfupdatehashaccess
+	 */
 	@Autowired
 	ISFUpdateHash redisSFUpdateHashAccess;
 
