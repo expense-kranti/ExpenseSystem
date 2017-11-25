@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.wordnik.swagger.annotations.Api;
@@ -62,6 +63,27 @@ public class ReferralController extends BaseController {
 	public @ResponseBody void sendReferralLink(@RequestBody ReferalEntity referalEntity) throws Exception {
 		// Save the user article
 		referralService.sendReferralLink(referalEntity);
+	}
+
+	/**
+	 * This API is used to send referral link to those contact referred by user.
+	 * 
+	 * @param ReferalEntity
+	 *            this parameter contains the details of referred contact by
+	 *            user and the type of referred medium
+	 * 
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to
+	 *             send referral link to those contact referred by user
+	 */
+	@ApiOperation(value = "This api is used to send referral link to those contact referred by user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 409, message = "The user already exists in the system for the provider") })
+	@RequestMapping(value = "/validateReferContact", method = RequestMethod.POST)
+	public @ResponseBody void validateReferContact(@RequestBody ReferalEntity referalEntity)
+			throws Exception, ConflictException {
+		// Save the user article
+		referralService.validateReferContact(referalEntity);
 	}
 
 }

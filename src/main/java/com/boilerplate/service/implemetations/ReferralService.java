@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.asyncWork.SendEmailToReferredUserObserver;
 import com.boilerplate.asyncWork.SendSmsToReferredUserObserver;
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
@@ -27,6 +29,21 @@ import com.boilerplate.service.interfaces.IReferralService;
  *
  */
 public class ReferralService implements IReferralService {
+
+	/**
+	 * The autowired instance of user data access
+	 */
+	@Autowired
+	private IUser userDataAccess;
+
+	/**
+	 * This is the setter for user data acess
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
+	}
 
 	/**
 	 * This is an instance of the logger
@@ -309,5 +326,16 @@ public class ReferralService implements IReferralService {
 		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
 		// Return short URL
 		return shortUrlEntity.getShortUrl();
+	}
+
+	/**
+	 * @see IReferralService.validateReferContact
+	 */
+	@Override
+	public void validateReferContact(ReferalEntity referalEntity) throws ConflictException {
+		// check if a user with given Id exists
+		if (userDataAccess.userExists((String) referalEntity.getReferralContacts().get(0))) {
+			throw new ConflictException("User", "User already exist with this mobile", null);
+		}
 	}
 }

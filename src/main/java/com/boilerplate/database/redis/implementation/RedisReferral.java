@@ -62,13 +62,12 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 */
 	@Override
 	public void saveUserReferredContacts(ReferalEntity referalEntity) {
-		// Declare a new map used to hold the referral contacts
-		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
 		// Run for loop to insert all referral contact to map
 		for (Object o : referalEntity.getReferralContacts()) {
-			super.hset(ReferredContact + RequestThreadLocal.getSession().getUserId() + ":"
-					+ Date.valueOf(LocalDate.now()) + ":" + referalEntity.getReferralMediumType(), (String) o,
-					referalEntity.getReferralLink());
+			super.hset(
+					ReferredContact + RequestThreadLocal.getSession().getUserId() + ":" + Date.valueOf(LocalDate.now())
+							+ ":" + referalEntity.getReferralMediumType(),
+					((String) o).toUpperCase(), referalEntity.getReferralLink());
 		}
 	}
 
@@ -89,12 +88,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 */
 	@Override
 	public void saveUserReferralDetail(ReferalEntity referalEntity) {
-		// Declare a new map used to hold the referral contacts
-		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
 		// Run for loop to insert all referral contact to map
 		for (Object o : referalEntity.getReferralContacts()) {
 			super.hset(UserReferral + referalEntity.getUserId() + ":" + referalEntity.getReferralUUID(),
-					referalEntity.getUserId(), referalEntity.getReferralLink());
+					((String) o).toUpperCase(), referalEntity.getReferralLink());
 		}
 	}
 
@@ -103,15 +100,8 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 */
 	@Override
 	public void saveReferralDetail(ReferalEntity referalEntity) {
-		// Declare a new map used to hold the referral contacts
-		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
-		// Run for loop to insert all referral contact to map
-		for (Object o : referalEntity.getReferralContacts()) {
-			super.hset(
-					Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType()
-							+ ":" + referalEntity.getReferralUUID(),
-					referalEntity.getUserId(), referalEntity.getReferralLink());
-		}
+		// Save refer details
+		super.hset(Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType()
+				+ ":" + referalEntity.getReferralUUID(), referalEntity.getUserId(), referalEntity.getReferralLink());
 	}
-
 }
