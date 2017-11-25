@@ -429,7 +429,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
-				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\"}");
+				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\",\"campaignType\": \"@campaignType\",\"campaignSource\": \"@campaignSource\",\"campaignUUID\": \"@campaignUUID\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
@@ -603,7 +603,14 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
+		
+		//method permission for send email method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -949,11 +956,11 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("POST_ARTICLE_EMAIL_BODY",
 				"<b><h2>Article Details:<h2></b> <b>Name:</b> @UserName <br> <b>Email:</b> @UserEmail <br> <b>Contact Number:</b> @UserMobileNumber <br> <b>Title:</b> @Title <br> <b>Content:</b> @Content <br> <b>KeyWords:</b> @KeyWords");
 		// sms message for sending invitation to referred user
-		contentMap.put("JOIN_INVITATION_SMS", "Hi there, @UserName sent you the invitation for joining Akshar.");
+		contentMap.put("JOIN_INVITATION_SMS", "Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
 		// email message for sending invitation to referred user related
-		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserName, to join Akshar");
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
-				"<b><Inviters Name: @UserName, Please click on this Link @ReferralLink/b>");
+				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link/b>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

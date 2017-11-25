@@ -440,9 +440,66 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 */
 	private String disableForReport;
 	
-	
-	
-	
+	/**
+	 * This is the campaign type
+	 */
+	private String campaignType;
+	/**
+	 * This is the campaign source
+	 */
+	private String campaignSource;
+	/**
+	 * This method get the campaign type
+	 * @return the campaignType
+	 */
+	public String getCampaignType() {
+		return campaignType;
+	}
+
+	/**
+	 * This method set the campaign type
+	 * @param campaignType the campaignType to set
+	 */
+	public void setCampaignType(String campaignType) {
+		this.campaignType = campaignType;
+	}
+
+	/**
+	 * This method get the campaign source
+	 * @return the campaignSource
+	 */
+	public String getCampaignSource() {
+		return campaignSource;
+	}
+
+	/**
+	 * This method set the campaign source
+	 * @param campaignSource the campaignSource to set
+	 */
+	public void setCampaignSource(String campaignSource) {
+		this.campaignSource = campaignSource;
+	}
+
+	/**
+	 * This method get the campaign uuid
+	 * @return the campaignUUID
+	 */
+	public String getCampaignUUID() {
+		return campaignUUID;
+	}
+
+	/**
+	 * This method set the campaign uuid
+	 * @param campaignUUID the campaignUUID to set
+	 */
+	public void setCampaignUUID(String campaignUUID) {
+		this.campaignUUID = campaignUUID;
+	}
+
+	/**
+	 * This is the campaign UUID
+	 */
+	private String campaignUUID;
 	
 
 }

@@ -192,6 +192,7 @@ public class ReferralService implements IReferralService {
 			// Trigger back ground job to send referral link through SMS
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendSMS, "ReferalEntity",
 					"sendSmsOrEmail");
+			throw new Exception();
 		} catch (Exception ex) {
 			// if queue is not working we send sms on the thread
 			sendSmsToReferredUserObserver.prepareSmsDetailsAndSendSms(referalEntity,
@@ -218,6 +219,7 @@ public class ReferralService implements IReferralService {
 			// Trigger back ground job to send referral link through Email
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
 					"sendSmsOrEmail");
+			throw new Exception();
 		} catch (Exception ex) {
 			// if queue is not working we send email on the thread
 			sendEmailToReferredUserObserver.createEmailDetailsAndSendEmail(referalEntity,
@@ -261,14 +263,14 @@ public class ReferralService implements IReferralService {
 	 *             throw this exception in case of user request is not valid
 	 */
 	private void validateReferRequest(ReferalEntity referalEntity) throws ValidationFailedException {
-		// Get today referred contacts size
-		Integer todayReferredContactsSize = referral
+		// Get today referred contacts count
+		Integer todayReferredContactsCount = referral
 				.getTodayReferredContactsCount(referalEntity.getReferralMediumType());
 		// Get max size of one day referral contacts
 		Integer maxSizeOfReferralContacts = Integer
 				.valueOf(configurationManager.get("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY"));
 		// Get today left max refer contacts
-		Integer todayLeftReferralContacts = maxSizeOfReferralContacts - todayReferredContactsSize;
+		Integer todayLeftReferralContacts = maxSizeOfReferralContacts - todayReferredContactsCount;
 		// validate today left size
 		if (referalEntity.getReferralContacts().size() > todayLeftReferralContacts) {
 			// Throw validation failed exception
