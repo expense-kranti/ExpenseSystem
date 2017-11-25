@@ -3,8 +3,10 @@ package com.boilerplate.service.interfaces;
 import java.io.IOException;
 
 import com.boilerplate.exceptions.rest.ConflictException;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.UserReferalMediumType;
 
 /**
  * This class has the services for referral related operations
@@ -32,7 +34,7 @@ public interface IReferralService {
 	 *            user and the type of referred medium
 	 * @throws ValidationFailedException
 	 * @throws IOException
-	 *             throw this exception in case we failed to get short url
+	 *             throw this exception in case we failed to get short URL
 	 */
 	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException;
 
@@ -47,6 +49,22 @@ public interface IReferralService {
 	 * @throws ConflictException
 	 *             throw this exception in case the refer contact exist in our
 	 *             data store
+	 * @throws NotFoundException
+	 *             throw this exception in case the referral medium is not match
+	 *             with our referral medium types
+	 * @throws ValidationFailedException 
 	 */
-	public void validateReferContact(ReferalEntity referalEntity) throws ConflictException;
+	public void validateReferContact(ReferalEntity referalEntity) throws ConflictException, NotFoundException, ValidationFailedException;
+	
+	/**
+	 * This method is used to check the contact existence in our data store
+	 * 
+	 * @param contactDetail
+	 *            this is the user contact details like its phone number or
+	 *            email
+	 * @param contactType
+	 *            like email or phone number
+	 * @return true in case contact does not exist
+	 */
+	public boolean checkReferredContactExistence(String contactDetail, UserReferalMediumType contactType);
 }

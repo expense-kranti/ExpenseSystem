@@ -1,5 +1,7 @@
 package com.boilerplate.database.interfaces;
 
+import java.util.Map;
+
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
 
@@ -60,4 +62,14 @@ public interface IReferral {
 	 * @return the size of referred contacts by user
 	 */
 	public Integer getTodayReferredContactsCount(UserReferalMediumType referralMediumType);
+
+	/**
+	 * This method is used to get the user referred contact details
+	 * 
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the refer
+	 *            contact and its medium type
+	 * @return referred contact details
+	 */
+	public String getUserReferredContactDetails(ReferalEntity referalEntity);
 }

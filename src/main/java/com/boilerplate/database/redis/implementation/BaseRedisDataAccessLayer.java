@@ -603,8 +603,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//method permission for send email method
+
+		// method permission for send email method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
 		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
@@ -927,10 +927,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_USER_EMAIL_HASH_BASE_TAG", "AKS_EMAIL_LIST_HASH");
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
 		vAllEAll.put("REFERRAL_LINK_UUID_LENGTH", "8");
-		vAllEAll.put("BASE_REFERRAL_LINK", "www.clearmydues.com?campaignType=@campaignType&&campaignSource=@campaignSource&&UUID=@UUID");
+		vAllEAll.put("BASE_REFERRAL_LINK",
+				"www.clearmydues.com?campaignType=@campaignType&&campaignSource=@campaignSource&&UUID=@UUID");
 		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
 		vAllEAll.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE", "10080");
 
 		return vAllEAll;
 
@@ -956,7 +958,8 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("POST_ARTICLE_EMAIL_BODY",
 				"<b><h2>Article Details:<h2></b> <b>Name:</b> @UserName <br> <b>Email:</b> @UserEmail <br> <b>Contact Number:</b> @UserMobileNumber <br> <b>Title:</b> @Title <br> <b>Content:</b> @Content <br> <b>KeyWords:</b> @KeyWords");
 		// sms message for sending invitation to referred user
-		contentMap.put("JOIN_INVITATION_SMS", "Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
+		contentMap.put("JOIN_INVITATION_SMS",
+				"Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
 		// email message for sending invitation to referred user related
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
@@ -980,6 +983,31 @@ public class BaseRedisDataAccessLayer {
 		try {
 			jedis = this.getConnection();
 			jedis.hset(key, field, value);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	/**
+	 * Sets a key field value
+	 * 
+	 * @param key
+	 *            The key
+	 * @param field
+	 *            The field
+	 * @param value
+	 *            The value
+	 * @param timeoutInSeconds
+	 *            The expire time
+	 */
+	public void hset(String key, String field, String value, int timeoutInSeconds) {
+		Jedis jedis = null;
+		try {
+			jedis = this.getConnection();
+			jedis.hset(key, field, value);
+			jedis.expire(key, timeoutInSeconds);
 		} finally {
 			if (jedis != null) {
 				jedis.close();
