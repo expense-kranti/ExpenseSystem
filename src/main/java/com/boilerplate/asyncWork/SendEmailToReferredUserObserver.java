@@ -113,8 +113,8 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * This method sends the email to the given tosEmaillist, bccsEmaillist with
 	 * prepared message to be send to those referred users in the list
 	 * 
-	 * @param userName
-	 *            The userName of referring user
+	 * @param referringUserFirstName
+	 *            The first Name of referring user
 	 * @param tosEmailList
 	 *            The list of emailIds to whom email to be sent
 	 * @param ccsEmailList
@@ -126,19 +126,19 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * @throws Exception
 	 *             is thrown if any exception occurs while sending email
 	 */
-	public void sendEmail(String referringUserName, BoilerplateList<String> tosEmailList,
+	public void sendEmail(String referringUserFirstName, BoilerplateList<String> tosEmailList,
 			BoilerplateList<String> ccsEmailList, BoilerplateList<String> bccsEmailList, String referralLink)
 			throws Exception {
 		// Get subject of invitation email
 		String subject = contentService.getContent("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT");
-		// Replace @UserName to referring user name
-		subject = subject.replace("@UserName", referringUserName);
+		// Replace @UserFirstName to referring user first name in email subject
+		subject = subject.replace("@UserFirstName", referringUserFirstName);
 		// Get the invitation email body
 		String body = contentService.getContent("JOIN_INVITATION_MESSAGE_EMAIL_BODY");
-		// Replace @UserName with referring user name
-		body = body.replace("@UserName", referringUserName);
-		// Replace @ReferralLink with real referral link in the email body
-		body = body.replace("@ReferralLink", referralLink);
+		// Replace @UserFirstName with referring user first name in email body
+		body = body.replace("@UserFirstName", referringUserFirstName);
+		// Replace @link with real referral link in the email body
+		body = body.replace("@link", referralLink);
 		// Send the email after all preparations
 		EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body, null);
 
@@ -162,17 +162,14 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-		// Preparing full name of referring user by concatenating its first
-		// name,middle name and last name
-		String referringUserName = detailsOfReferringUser.getFirstName()
-				+ (detailsOfReferringUser.getMiddleName() == null ? "" : " " + detailsOfReferringUser.getMiddleName())
-				+ (detailsOfReferringUser.getLastName() == null ? "" : " " + detailsOfReferringUser.getLastName());
-		// iterating through the list of all referred users and sending mails to
+		//Getting referring user first name
+		String referringUserFirstName = detailsOfReferringUser.getFirstName();
+	    // iterating through the list of all referred users and sending mails to
 		// each one of them one by one
 		for (int i = 0; i < referralEntity.getReferralContacts().size(); i++) {
 			tosEmailList.add((String) referralEntity.getReferralContacts().get(i));
 			try {
-				this.sendEmail(referringUserName, tosEmailList, ccsEmailList, bccsEmailList,
+				this.sendEmail(referringUserFirstName, tosEmailList, ccsEmailList, bccsEmailList,
 						referralEntity.getReferralLink());
 			} catch (Exception ex) {
 				logger.logException("SendEmailToReferredUserObserver", "createEmailDetails", "try-Queue Reader",
