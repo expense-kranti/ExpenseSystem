@@ -290,6 +290,7 @@
 		<property name="sendSmsService" ref="sendSmsService"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
 		<property name="referralService" ref="referralService"></property>
+		<property name="referral" ref="referral"></property>
 	</bean>
 
 	<bean id="sendEmailToReferredUserObserver"
@@ -298,6 +299,7 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
 		<property name="referralService" ref="referralService"></property>
+		<property name="referral" ref="referral"></property>
 	</bean>
 
 	<bean id="setUserChangePasswordStatusObserver"

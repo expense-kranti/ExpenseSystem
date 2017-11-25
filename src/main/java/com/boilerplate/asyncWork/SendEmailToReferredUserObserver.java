@@ -111,6 +111,10 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		// Get the referral entity from the payload
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
+		// Save user referral details
+		referral.saveReferralDetail(referralEntity);
+		// Save user referral details
+		referral.saveUserReferralDetail(referralEntity);
 		// Create email details and send email
 		this.createEmailDetailsAndSendEmail(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
 	}

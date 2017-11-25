@@ -1,19 +1,14 @@
 package com.boilerplate.asyncWork;
 
 import java.net.URLEncoder;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.service.interfaces.IContentService;
@@ -32,6 +27,21 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+
+	/**
+	 * This is a new instance of Referral
+	 */
+	IReferral referral;
+
+	/**
+	 * This method is used to set the referral
+	 * 
+	 * @param referral
+	 *            the referral to set
+	 */
+	public void setReferral(IReferral referral) {
+		this.referral = referral;
+	}
 
 	/**
 	 * This is the wired content service instance
@@ -116,8 +126,11 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
+		// Save user referral details
+		referral.saveReferralDetail(referralEntity);
+		// Save user referral details
+		referral.saveUserReferralDetail(referralEntity);
 		// Get referring user first name and fetch phone number of referred user
 		// one by one and send sms to each one
 		this.prepareSmsDetailsAndSendSms(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));

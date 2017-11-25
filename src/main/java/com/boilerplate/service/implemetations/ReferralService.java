@@ -185,10 +185,6 @@ public class ReferralService implements IReferralService {
 		referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
 		// Save referral contacts to data store
 		referral.saveUserReferredContacts(referalEntity);
-		// Save user referral details
-		referral.saveReferralDetail(referalEntity);
-		// Save user referral details
-		referral.saveUserReferralDetail(referalEntity);
 		try {
 			// According to type trigger back ground job
 			switch (referalEntity.getReferralMediumType()) {
