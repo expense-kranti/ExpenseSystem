@@ -456,8 +456,6 @@
 		<property name="referral" ref="referral"></property>
 		<property name="sendSmsToReferredUserObserver" ref="sendSmsToReferredUserObserver"></property>
 		<property name="sendEmailToReferredUserObserver" ref="sendEmailToReferredUserObserver"></property>
-	<!--to be deleted before commit  -->	<property name="configurationManager" ref="configurationManager"></property>
-
 	</bean>
 
 	<!-- Contact us AsyncWorkDispatcherObserverList -->
