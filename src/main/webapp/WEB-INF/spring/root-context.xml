@@ -32,6 +32,7 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="sendRegistrationSMSObserver" ref="sendRegistrationSMSObserver"></property>
 		<property name="sendRegistrationEmailObserver" ref="sendRegistrationEmailObserver"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -134,7 +135,7 @@
 				<entry key="PublishUserData" value-ref="publishUserData" />
 				<entry key="SetUserChangePasswordStatus" value-ref="setUserChangePasswordStatus" />
 
-				<entry key="SendSMSToReferredUser" value-ref="userReferredObserverForSMS"/>
+				<entry key="SendSMSToReferredUser" value-ref="userReferredObserverForSMS" />
 				<entry key="SendEmailToReferredUser" value-ref="userReferredObserverForEmail"></entry>
 
 			</map>
@@ -232,27 +233,27 @@
 		</property>
 	</bean>
 
-	<bean id ="userReferredObserverForSMS"
-	    class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
-	    <property name="asyncJobList">
-	        <list>
-	           <!-- This is the class that will save sessions to the database Also the 
+	<bean id="userReferredObserverForSMS"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
-	           <ref bean = "sendSmsToReferredUserObserver"/>
-	        </list>
-	    </property>
+				<ref bean="sendSmsToReferredUserObserver" />
+			</list>
+		</property>
 	</bean>
-	
-	<bean id ="userReferredObserverForEmail"
-	    class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
-	    <property name="asyncJobList">
-	        <list>
-	           <!-- This is the class that will save sessions to the database Also the 
+
+	<bean id="userReferredObserverForEmail"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
-	           <ref bean= "sendEmailToReferredUserObserver"/>
-	        </list>
-	    </property>
-    </bean>
+				<ref bean="sendEmailToReferredUserObserver" />
+			</list>
+		</property>
+	</bean>
 
 	<bean id="sendRegistrationSMSObserver" class="com.boilerplate.asyncWork.SendRegistrationSMSObserver">
 		<property name="contentService" ref="contentService"></property>

@@ -71,25 +71,11 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		// save user
 		user.setId(user.getUserId());
 		super.set(User + user.getUserId(), user);
-		//Update hash map 
-		this.updateHashMapUserEmail(user);
+
 		return user;
 	}
 
-	/**
-	 * This method is used to update the email's to hash map
-	 * 
-	 * @param user
-	 *            this parameter contains the information of user, we need to
-	 *            get email and phone number from this parameter
-	 */
-	private void updateHashMapUserEmail(ExternalFacingReturnedUser user) {
-		// Update hash map
-		super.hset(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
-				user.getAuthenticationProvider() + ":" + user.getEmail(),
-				user.getAuthenticationProvider() + ":" + user.getPhoneNumber());
-	}
-
+	
 	/**
 	 * @see getUser
 	 */
