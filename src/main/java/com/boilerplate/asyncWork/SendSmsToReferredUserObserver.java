@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.HttpResponse;
@@ -31,6 +32,21 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+	
+	/**
+	 * This is a new instance of Referral
+	 */
+	IReferral referral;
+
+	/**
+	 * This method is used to set the referral
+	 * 
+	 * @param referral
+	 *            the referral to set
+	 */
+	public void setReferral(IReferral referral) {
+		this.referral = referral;
+	}
 
 	/**
 	 * This is the wired content service instance
@@ -101,13 +117,19 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
-		//Get referring user first name and fetch phone number of referred user one by one and send sms to each one
+		// Save user referral details
+		referral.saveReferralDetail(referralEntity);
+		// Save user referral details
+		referral.saveUserReferralDetail(referralEntity);
+		// Get referring user first name and fetch phone number of referred user
+		// one by one and send sms to each one
 		this.prepareSmsDetailsAndSendSms(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
 
 	}
 
 	/**
-	 * This method prepares message content and sends sms to the given phone number
+	 * This method prepares message content and sends sms to the given phone
+	 * number
 	 * 
 	 * @param referringUserFirstName
 	 *            The first name of the referring user
@@ -153,7 +175,8 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 		String referringUserFirstName = detailsOfReferringUser.getFirstName();
 		// Getting the referred user contacts list
 		BoilerplateList<String> referralContacts = referralEntity.getReferralContacts();
-		// Iterating through contact list, fetching phone number from list and sending sms
+		// Iterating through contact list, fetching phone number from list and
+		// sending sms
 		// one by one
 		for (int i = 0; i < referralContacts.size(); i++) {
 			String phoneNumber = (String) referralContacts.get(i);

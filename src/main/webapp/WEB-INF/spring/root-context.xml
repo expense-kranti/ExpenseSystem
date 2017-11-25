@@ -288,7 +288,8 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="sendSmsService" ref="sendSmsService"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
-	</bean>
+		<property name="referral" ref="referral"></property>
+    </bean>
 
 	<bean id="sendEmailToReferredUserObserver"
 		class="com.boilerplate.asyncWork.SendEmailToReferredUserObserver">
