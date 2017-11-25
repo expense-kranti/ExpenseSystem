@@ -263,7 +263,8 @@ public class ReferralService implements IReferralService {
 	 */
 	private void validateReferRequest(ReferalEntity referalEntity) throws ValidationFailedException {
 		// Get today referred contacts size
-		Integer todayReferredContactsSize = referral.getTodayReferredContactsCount(referalEntity.getReferralMediumType());
+		Integer todayReferredContactsSize = referral
+				.getTodayReferredContactsSize(referalEntity.getReferralMediumType());
 		// Get max size of one day referral contacts
 		Integer maxSizeOfReferralContacts = Integer
 				.valueOf(configurationManager.get("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY"));
