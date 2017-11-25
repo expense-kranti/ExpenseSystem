@@ -106,30 +106,34 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * This method sends sms to the given phone number
+	 * This method prepares message content and sends sms to the given phone number
 	 * 
-	 * @param userName
-	 *            The name of the referring user
+	 * @param referringUserFirstName
+	 *            The first name of the referring user
 	 * @param phoneNumber
 	 *            The phone number of referred user to which message to be sent
+	 * @param referralLink
+	 *            the referral link sent by referring user to referred user
 	 * @throws Exception
 	 *             If there is an error in processing
 	 */
-	public void sendSMS(String userName, String phoneNumber) throws Exception {
+	public void sendSMS(String referringUserFirstName, String phoneNumber, String referralLink) throws Exception {
 		String url = configurationManager.get("SMS_ROOT_URL") + configurationManager.get("SMS_URL");
 		url = url.replace("@apiKey", configurationManager.get("SMS_API_KEY"));
 		url = url.replace("@sender", configurationManager.get("SMS_SENDER"));
-		//Replace @to with referred user phone number
+		// Replace @to with referred user phone number to whom sms to be sent
 		url = url.replace("@to", phoneNumber);
-		//Get the message content to be sent
+		// Get the message content to be sent
 		String message = contentService.getContent("JOIN_INVITATION_SMS");
-		//Replace @UserName with referring user name
-		message = message.replace("@UserName", userName);
-		//Replace @message with the prepared message content
+		// Replace @UserFirstName with referring user first name
+		message = message.replace("@UserFirstName", referringUserFirstName);
+		// Replace @link with real referral link in the SMS content
+		message = message.replace("@link", referralLink);
+		// Replace @message with the prepared message content
 		url = url.replace("@message", URLEncoder.encode(message));
 		String response = null;
-		//Send the sms to referred user
-		//HttpResponse smsGatewayResponse = sendSmsService.send(url, phoneNumber, message);
+		// Send the sms to referred user
+		HttpResponse smsGatewayResponse = sendSmsService.send(url, phoneNumber, message);
 
 	}
 
@@ -144,21 +148,19 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 *            information
 	 */
 	public void prepareSmsDetailsAndSendSms(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser) {
-        // Preparing full name of referring user by concatenating its first
-		// name,middle name and last name
-		String referringUserName = detailsOfReferringUser.getFirstName()
-				+ (detailsOfReferringUser.getMiddleName() == null ? "" : " " + detailsOfReferringUser.getMiddleName())
-				+ (detailsOfReferringUser.getLastName() == null ? "" : " " + detailsOfReferringUser.getLastName());
+		// Get referring user first name
+		String referringUserFirstName = detailsOfReferringUser.getFirstName();
 		// Getting the referred user contacts list
 		BoilerplateList<String> referralContacts = referralEntity.getReferralContacts();
-		//Iterating through contact list, fetching phone number and sending sms one by one
+		// Iterating through contact list, fetching phone number from list and sending sms
+		// one by one
 		for (int i = 0; i < referralContacts.size(); i++) {
 			String phoneNumber = (String) referralContacts.get(i);
 			try {
-				this.sendSMS(referringUserName, phoneNumber);
+				this.sendSMS(referringUserFirstName, phoneNumber, referralEntity.getReferralLink());
 			} catch (Exception ex) {
-				logger.logException("SendSmsToReferredUserObserver", "getReferringUserNameAndPhoneNumberAndSendSms",
-						"try-Queue Reader", ex.toString(), ex);
+				logger.logException("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms", "try-Queue Reader",
+						ex.toString(), ex);
 			}
 		}
 	}

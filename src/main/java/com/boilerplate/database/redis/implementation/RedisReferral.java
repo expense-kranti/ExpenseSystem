@@ -73,7 +73,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
-	 * @see IReferral.getTodayReferredContactsSize
+	 * @see IReferral.getTodayReferredContactsCount
 	 */
 	@Override
 	public Integer getTodayReferredContactsCount(UserReferalMediumType referralMediumType) {
