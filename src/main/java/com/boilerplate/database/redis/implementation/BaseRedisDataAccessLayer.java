@@ -429,7 +429,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
-				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\"}");
+				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\",\"campaignType\": \"@campaignType\",\"campaignSource\": \"@campaignSource\",\"campaignUUID\": \"@campaignUUID\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
@@ -581,29 +581,36 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		
-		//method permissions for ReferralController methods starts here
-		
-		//method permission for sendReferralLink method
+
+		// method permissions for ReferralController methods starts here
+
+		// method permission for sendReferralLink method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for getUserReferralContacts method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		
-		
-		//method permission for getUserReferralContacts method
+		//method permission for send email method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
-		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		
-		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -919,8 +926,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_USER_Dynamic_Publish_Url", "false");
 		vAllEAll.put("AKS_USER_EMAIL_HASH_BASE_TAG", "AKS_EMAIL_LIST_HASH");
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
+		vAllEAll.put("REFERRAL_LINK_UUID_LENGTH", "8");
+		vAllEAll.put("BASE_REFERRAL_LINK", "www.clearmydues.com?campaignType=@campaignType&&campaignSource=@campaignSource&&UUID=@UUID");
 		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
-		
+		vAllEAll.put("URL_SHORTENER_API_URL",
+				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+
 		return vAllEAll;
 
 	}

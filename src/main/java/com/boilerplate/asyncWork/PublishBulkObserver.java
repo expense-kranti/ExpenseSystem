@@ -193,9 +193,7 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 			} else {
 				publishUrl = publishEntity.getUrl();
 			}
-			logger.logInfo("PublishBulkObserver",
-					"publish" + "publish json",
-					"required json",jsonArray);
+
 
 			BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
 			requestHeaders = createRequestHeaders();
