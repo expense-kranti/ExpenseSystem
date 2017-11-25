@@ -32,6 +32,7 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="sendRegistrationSMSObserver" ref="sendRegistrationSMSObserver"></property>
 		<property name="sendRegistrationEmailObserver" ref="sendRegistrationEmailObserver"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">

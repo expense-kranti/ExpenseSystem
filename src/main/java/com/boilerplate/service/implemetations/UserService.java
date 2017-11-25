@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendRegistrationEmailObserver;
 import com.boilerplate.asyncWork.SendSMSOnPasswordChange;
+import com.boilerplate.database.interfaces.ISFUpdateHash;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.database.interfaces.IUserRole;
 import com.boilerplate.exceptions.rest.BadRequestException;
@@ -217,6 +218,16 @@ public class UserService implements IUserService {
 			com.boilerplate.asyncWork.SendPasswordResetSMSObserver sendPasswordResetSMSObserver) {
 		this.sendPasswordResetSMSObserver = sendPasswordResetSMSObserver;
 	}
+	@Autowired
+	ISFUpdateHash redisSFUpdateHashAccess;
+
+	/**
+	 * This method set the instance of redisSFUpdateHashAccess
+	 * @param redisSFUpdateHashAccess the redisSFUpdateHashAccess to set
+	 */
+	public void setRedisSFUpdateHashAccess(ISFUpdateHash redisSFUpdateHashAccess) {
+		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
+	}
 
 	/**
 	 * Initializes the bean
@@ -264,7 +275,7 @@ public class UserService implements IUserService {
 		 * check if a user with given email exists then throw conflict exception
 		 * otherwise put the email entry in email list hash
 		 */
-
+		this.checkOrCreateEmailInHash(externalFacingUser);
 		externalFacingUser
 				.setUserId(externalFacingUser.getAuthenticationProvider() + ":" + externalFacingUser.getUserId());
 
@@ -331,6 +342,23 @@ public class UserService implements IUserService {
 		// generate otp list
 
 		return externalFacingUser;
+	}
+	
+	/**
+	 * This method email checks exists or not if not then put email entry in email_list_hash
+	 * otherwise throw conflict exception
+	 * @param email
+	 * @throws ConflictException
+	 */
+	private void checkOrCreateEmailInHash(ExternalFacingUser user) throws ConflictException{
+		if(this.redisSFUpdateHashAccess.hget(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"), 
+				user.getAuthenticationProvider()+":"+user.getEmail().toUpperCase())!=null){
+			throw new ConflictException("User","User with given email already exists",null);
+			
+		}
+		else{
+			this.redisSFUpdateHashAccess.hset(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"), user.getAuthenticationProvider()+":"+user.getEmail().toUpperCase(), user.getUserId());
+		}
 	}
 
 	/**
