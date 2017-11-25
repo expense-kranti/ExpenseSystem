@@ -16,5 +16,5 @@ public enum CampaignType {
 	/**
 	 * This define the user come from Refer
 	 */
-	baseReferralLink
+	Refer
 }

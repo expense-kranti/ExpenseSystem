@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 
 /**
  * This entity represents the reference of user
@@ -37,7 +36,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	private String referralLink;
 
 	/**
-	 * This is the referral uuid
+	 * This is the referral UUID
 	 */
 	private String referralUUID;
 
@@ -63,17 +62,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the type of referral medium
 	 */
-	UserReferalMediumType referralMediumType;
-
-	/**
-	 * This is the map of phoneNumber referral medium type to referralContacts
-	 */
-	BoilerplateMap<String, String> phoneNumberReferrals;
-
-	/**
-	 * This is the map of email referral medium type to referralContacts
-	 */
-	BoilerplateMap<String, String> emailReferrals;
+	private UserReferalMediumType referralMediumType;
 
 	/**
 	 * This gets the list of referral contacts
@@ -87,10 +76,10 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	/**
 	 * This sets the referral contact list
 	 * 
-	 * @param referralContact
+	 * @param referralContacts
 	 *            The referral contacts list
 	 */
-	public void setReferralContact(BoilerplateList<String> referralContacts) {
+	public void setReferralContacts(BoilerplateList<String> referralContacts) {
 		this.referralContacts = referralContacts;
 	}
 
@@ -111,77 +100,6 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 */
 	public void setreferralMediumType(UserReferalMediumType referralMediumType) {
 		this.referralMediumType = referralMediumType;
-	}
-
-	/**
-	 * This gets the map of phone number referrals
-	 * 
-	 * @return The map of phone number referrals
-	 */
-	public BoilerplateMap<String, String> getPhoneNumberReferrals() {
-		return phoneNumberReferrals;
-	}
-
-	/**
-	 * This sets the phone number referral map
-	 * 
-	 * @param phoneNumberReferrals
-	 *            The phone
-	 */
-	public void setPhoneNumberReferrals(BoilerplateMap<String, String> phoneNumberReferrals) {
-		this.phoneNumberReferrals = phoneNumberReferrals;
-	}
-
-	/**
-	 * This gets the email referral map
-	 * 
-	 * @return The email referral map
-	 */
-	public BoilerplateMap<String, String> getEmailReferrals() {
-		return emailReferrals;
-	}
-
-	/**
-	 * This sets the email referral map
-	 * 
-	 * @param emailReferrals
-	 *            The email referral map
-	 */
-	public void setEmailReferrals(BoilerplateMap<String, String> emailReferrals) {
-		this.emailReferrals = emailReferrals;
-	}
-
-	/**
-	 * @see BaseEntity.validate()
-	 */
-	@Override
-	public boolean validate() throws ValidationFailedException {
-		// In case user refer zero size referral contacts
-		if (this.referralContacts.size() == 0) {
-			throw new ValidationFailedException("ReferalEntity", "There is no referred contacts in list", null);
-		} // In case user refer more then 10 referral contacts
-		else if (this.referralContacts.size() > 10) {
-			throw new ValidationFailedException("ReferalEntity", "Reached max limit", null);
-		}
-		return true;
-	}
-
-	/**
-	 * @see BaseEntity.transformToInternal
-	 */
-	@Override
-	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see BaseEntity.transformToExternal
-	 */
-	@Override
-	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/**
@@ -223,6 +141,25 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method is used to get the referral uuid
+	 * 
+	 * @return the referralUUID
+	 */
+	public String getReferralUUID() {
+		return referralUUID;
+	}
+
+	/**
+	 * This method is used to set the referral uuid
+	 * 
+	 * @param referralUUID
+	 *            the referralUUID to set
+	 */
+	public void setReferralUUID(String referralUUID) {
+		this.referralUUID = referralUUID;
+	}
+
+	/**
 	 * This method is used to create the UUID
 	 * 
 	 * @return the UUID
@@ -241,22 +178,36 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * This method is used to get the referral uuid
-	 * 
-	 * @return the referralUUID
+	 * @see BaseEntity.validate()
 	 */
-	public String getReferralUUID() {
-		return referralUUID;
+	@Override
+	public boolean validate() throws ValidationFailedException {
+		// In case user refer zero size referral contacts
+		if (this.referralContacts.size() == 0) {
+			throw new ValidationFailedException("ReferalEntity", "There is no referred contacts in list", null);
+		} // In case user refer more then 10 referral contacts
+		else if (this.referralContacts.size() > 10) {
+			throw new ValidationFailedException("ReferalEntity", "Reached max limit", null);
+		}
+		return true;
 	}
 
 	/**
-	 * This method is used to set the referral uuid
-	 * 
-	 * @param referralUUID
-	 *            the referralUUID to set
+	 * @see BaseEntity.transformToInternal
 	 */
-	public void setReferralUUID(String referralUUID) {
-		this.referralUUID = referralUUID;
+	@Override
+	public BaseEntity transformToInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
+	@Override
+	public BaseEntity transformToExternal() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

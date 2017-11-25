@@ -93,7 +93,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
 		// Run for loop to insert all referral contact to map
 		for (Object o : referalEntity.getReferralContacts()) {
-			super.hset(UserReferral + ":" + referalEntity.getUserId() + ":" + referalEntity.getReferralUUID(),
+			super.hset(UserReferral + referalEntity.getUserId() + ":" + referalEntity.getReferralUUID(),
 					referalEntity.getUserId(), referalEntity.getReferralLink());
 		}
 	}
@@ -108,7 +108,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		// Run for loop to insert all referral contact to map
 		for (Object o : referalEntity.getReferralContacts()) {
 			super.hset(
-					Campaign + ":" + CampaignType.valueOf("Refer").toString() + referalEntity.getReferralMediumType()
+					Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType()
 							+ ":" + referalEntity.getReferralUUID(),
 					referalEntity.getUserId(), referalEntity.getReferralLink());
 		}

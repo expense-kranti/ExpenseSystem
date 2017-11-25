@@ -295,6 +295,7 @@
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="referral" ref="referral"></property>
 	</bean>
 
 	<bean id="setUserChangePasswordStatusObserver"
@@ -456,6 +457,7 @@
 		<property name="referral" ref="referral"></property>
 		<property name="sendSmsToReferredUserObserver" ref="sendSmsToReferredUserObserver"></property>
 		<property name="sendEmailToReferredUserObserver" ref="sendEmailToReferredUserObserver"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 	<!-- Contact us AsyncWorkDispatcherObserverList -->
