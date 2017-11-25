@@ -429,7 +429,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
-				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\",\"campaignType\": \"@campaignType\",\"campaignSource\": \"@campaignSource\"\"campaignUUID\": \"@campaignUUID\"}");
+				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\",\"campaignType\": \"@campaignType\",\"campaignSource\": \"@campaignSource\",\"campaignUUID\": \"@campaignUUID\"}");
 		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
@@ -601,16 +601,14 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		//method permission for getUserReferralContacts method
+		//method permission for send email method
+		
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
 		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		
-		
 		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
