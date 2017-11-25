@@ -17,7 +17,6 @@ import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.java.entities.UserReferalMediumType;
 import com.boilerplate.service.interfaces.IReferralService;
 
 public class ReferralService implements IReferralService {

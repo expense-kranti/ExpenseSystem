@@ -919,7 +919,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_USER_Dynamic_Publish_Url", "false");
 		vAllEAll.put("AKS_USER_EMAIL_HASH_BASE_TAG", "AKS_EMAIL_LIST_HASH");
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
-
+		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
+		
 		return vAllEAll;
 
 	}
