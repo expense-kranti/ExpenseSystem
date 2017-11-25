@@ -1,8 +1,6 @@
 package com.boilerplate.asyncWork;
 
-import java.util.Map;
-
-import org.apache.commons.codec.language.bm.PhoneticEngine;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
@@ -10,14 +8,15 @@ import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.EmailUtility;
+import com.boilerplate.framework.HttpResponse;
+import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.entities.CampaignType;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.service.implemetations.ReferralService;
+import com.boilerplate.java.entities.ShortUrlEntity;
 import com.boilerplate.service.interfaces.IContentService;
 
 /**
@@ -178,4 +177,5 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			tosEmailList.remove(0);
 		}
 	}
+
 }

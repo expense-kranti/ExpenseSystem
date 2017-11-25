@@ -1,7 +1,6 @@
 package com.boilerplate.service.implemetations;
 
-import java.util.Map;
-
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendEmailToReferredUserObserver;
@@ -9,17 +8,24 @@ import com.boilerplate.asyncWork.SendSmsToReferredUserObserver;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.HttpResponse;
+import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
-import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.java.entities.UserReferalMediumType;
+import com.boilerplate.java.entities.ShortUrlEntity;
 import com.boilerplate.service.interfaces.IReferralService;
 
+/**
+ * This class provide service for referral related operations
+ * 
+ * @author shiva
+ *
+ */
 public class ReferralService implements IReferralService {
 
 	/**
@@ -134,7 +140,7 @@ public class ReferralService implements IReferralService {
 	 * @see IReferralService.sendReferralLink
 	 */
 	@Override
-	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException {
+	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException {
 		// Validate refer request for max and min limit
 		referalEntity.validate();
 		// Validate referral request
@@ -143,6 +149,8 @@ public class ReferralService implements IReferralService {
 		referalEntity.setUserId(RequestThreadLocal.getSession().getUserId());
 		// Get referral link
 		referalEntity.setReferralLink(this.generateUserReferralLink(referalEntity));
+		// Get short URL
+		referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
 		// Save referral contacts to data store
 		referral.saveUserReferredContacts(referalEntity);
 		try {
@@ -176,7 +184,8 @@ public class ReferralService implements IReferralService {
 	 * 
 	 * @param referalEntity
 	 *            this parameter contains referral details
-	 * @throws NotFoundException thrown if referring user not found
+	 * @throws NotFoundException
+	 *             thrown if referring user not found
 	 */
 	private void sendReferralLinkThroughSMS(ReferalEntity referalEntity) throws NotFoundException {
 		try {
@@ -202,7 +211,8 @@ public class ReferralService implements IReferralService {
 	 * 
 	 * @param referalEntity
 	 *            this parameter contains referral details
-	 * @throws NotFoundException thrown if referring user is not found
+	 * @throws NotFoundException
+	 *             thrown if referring user is not found
 	 */
 	private void sendReferralLinkThroughEmail(ReferalEntity referalEntity) throws NotFoundException {
 		try {
@@ -253,7 +263,7 @@ public class ReferralService implements IReferralService {
 	 */
 	private void validateReferRequest(ReferalEntity referalEntity) throws ValidationFailedException {
 		// Get today referred contacts size
-		Integer todayReferredContactsSize = referral.getTodayReferredContactsSize(referalEntity.getReferralMediumType()); 
+		Integer todayReferredContactsSize = referral.getTodayReferredContactsCount(referalEntity.getReferralMediumType());
 		// Get max size of one day referral contacts
 		Integer maxSizeOfReferralContacts = Integer
 				.valueOf(configurationManager.get("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY"));
@@ -267,4 +277,35 @@ public class ReferralService implements IReferralService {
 		}
 	}
 
+	/**
+	 * This method is used to get the short URl against the Long URL
+	 * 
+	 * @param referralLink
+	 *            this is the long url
+	 * @return the short url
+	 * @throws IOException
+	 *             throw this exception in case of any error while trying to get
+	 *             the short url
+	 */
+	private String getShortUrl(String referralLink) throws IOException {
+		// Create new request header
+		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap();
+		// Declare new header value
+		BoilerplateList<String> headerValue = new BoilerplateList();
+		// Add header value
+		headerValue.add("application/json");
+		// Put key and value in request header
+		requestHeaders.put("Content-Type", headerValue);
+		// Get request body
+		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
+		// Replace @lonurl with referral link
+		requestBody.replace("@longUrl", referralLink);
+		// Make HTTP request
+		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
+				requestHeaders, null, requestBody, "POST");
+		// Get short url entity from the http response
+		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
+		// Return short URL
+		return shortUrlEntity.getShortUrl();
+	}
 }
