@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.asyncWork.SendEmailToReferredUserObserver;
 import com.boilerplate.asyncWork.SendSmsToReferredUserObserver;
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.database.interfaces.ISFUpdateHash;
+import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
@@ -18,6 +21,7 @@ import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
+import com.boilerplate.java.entities.UserReferalMediumType;
 import com.boilerplate.service.interfaces.IReferralService;
 
 /**
@@ -27,6 +31,34 @@ import com.boilerplate.service.interfaces.IReferralService;
  *
  */
 public class ReferralService implements IReferralService {
+
+	@Autowired
+	ISFUpdateHash redisSFUpdateHashAccess;
+
+	/**
+	 * This method set the instance of redisSFUpdateHashAccess
+	 * 
+	 * @param redisSFUpdateHashAccess
+	 *            the redisSFUpdateHashAccess to set
+	 */
+	public void setRedisSFUpdateHashAccess(ISFUpdateHash redisSFUpdateHashAccess) {
+		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
+	}
+
+	/**
+	 * The autowired instance of user data access
+	 */
+	@Autowired
+	private IUser userDataAccess;
+
+	/**
+	 * This is the setter for user data acess
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
+	}
 
 	/**
 	 * This is an instance of the logger
@@ -300,7 +332,7 @@ public class ReferralService implements IReferralService {
 		requestHeaders.put("Content-Type", headerValue);
 		// Get request body
 		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
-		// Replace @lonurl with referral link
+		// Replace @long URL with referral link
 		requestBody = requestBody.replace("@longUrl", referralLink);
 		// Make HTTP request
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
@@ -309,5 +341,53 @@ public class ReferralService implements IReferralService {
 		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
 		// Return short URL
 		return shortUrlEntity.getShortUrl();
+	}
+
+	/**
+	 * @see IReferralService.validateReferContact
+	 */
+	@Override
+	public void validateReferContact(ReferalEntity referalEntity)
+			throws ConflictException, NotFoundException, ValidationFailedException {
+		// Validate referral entity
+		referalEntity.validate();
+		// According to type trigger back ground job
+		String referralLink = referral.getUserReferredContactDetails(referalEntity);
+		// If referred contact exist in referred contact list then throw
+		// exception
+		if (referralLink != null) {
+			throw new ConflictException("User",
+					"You have already referred this contact before ,this is the referral link :" + referralLink, null);
+		}
+		// Check is this contact exists or not in our data store
+		if (!(this.checkReferredContactExistence((String) referalEntity.getReferralContacts().get(0),
+				referalEntity.getReferralMediumType()))) {
+			throw new ConflictException("User", "This contact is already registered with us", null);
+		}
+	}
+
+	/**
+	 * @see IReferralService.checkReferredContactExistence
+	 */
+	@Override
+	public boolean checkReferredContactExistence(String contactDetail, UserReferalMediumType contactType) {
+		switch (contactType) {
+		case Email:
+			// Check is this email is exist or not in our data store
+			if (this.redisSFUpdateHashAccess.hget(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
+					"AKS" + ":" + contactDetail.toUpperCase()) != null) {
+				return false;
+			}
+			break;
+		case Phone_Number:
+			// Check is this mobile number is exist or not in our data store
+			if (userDataAccess.userExists("AKS" + ":" + contactDetail)) {
+				return false;
+			}
+			break;
+		default:
+			return true;
+		}
+		return true;
 	}
 }

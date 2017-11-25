@@ -23,7 +23,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is user referred contact details
 	 */
-	private Map<String, Map<String, String>> referredContacts;
+	private Map<String, Map<String, Map<String, String>>> referredContacts;
 
 	/**
 	 * This is the userId
@@ -45,7 +45,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @return the referredContacts
 	 */
-	public Map<String, Map<String, String>> getReferredContacts() {
+	public Map<String, Map<String, Map<String, String>>> getReferredContacts() {
 		return referredContacts;
 	}
 
@@ -55,7 +55,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 * @param referredContacts
 	 *            the referredContacts to set
 	 */
-	public void setReferredContacts(Map<String, Map<String, String>> referredContacts) {
+	public void setReferredContacts(Map<String, Map<String, Map<String, String>>> referredContacts) {
 		this.referredContacts = referredContacts;
 	}
 
@@ -187,6 +187,9 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 			throw new ValidationFailedException("ReferalEntity", "There is no referred contacts in list", null);
 		} // In case user refer more then 10 referral contacts
 		else if (this.referralContacts.size() > 10) {
+			throw new ValidationFailedException("ReferalEntity", "Reached max limit", null);
+		} // In case referral medium type is blank or null
+		else if (this.referralMediumType.equals("") || this.referralMediumType == null) {
 			throw new ValidationFailedException("ReferalEntity", "Reached max limit", null);
 		}
 		return true;

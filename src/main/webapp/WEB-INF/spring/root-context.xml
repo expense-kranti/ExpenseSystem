@@ -289,14 +289,16 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="sendSmsService" ref="sendSmsService"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="referralService" ref="referralService"></property>
 		<property name="referral" ref="referral"></property>
-    </bean>
+	</bean>
 
 	<bean id="sendEmailToReferredUserObserver"
 		class="com.boilerplate.asyncWork.SendEmailToReferredUserObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="referralService" ref="referralService"></property>
 		<property name="referral" ref="referral"></property>
 	</bean>
 
@@ -446,6 +448,7 @@
 	</bean>
 	<bean id="referral"
 		class="com.boilerplate.database.redis.implementation.RedisReferral">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<!-- Bean for contact us service -->
 	<bean id="contactUsService" class="com.boilerplate.service.implemetations.ContactUsService"
@@ -460,6 +463,8 @@
 		<property name="sendSmsToReferredUserObserver" ref="sendSmsToReferredUserObserver"></property>
 		<property name="sendEmailToReferredUserObserver" ref="sendEmailToReferredUserObserver"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 	<!-- Contact us AsyncWorkDispatcherObserverList -->

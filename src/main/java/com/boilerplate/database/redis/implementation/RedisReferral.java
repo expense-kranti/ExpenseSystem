@@ -2,7 +2,12 @@ package com.boilerplate.database.redis.implementation;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.framework.RequestThreadLocal;
@@ -18,6 +23,21 @@ import com.boilerplate.java.entities.UserReferalMediumType;
  *
  */
 public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral {
+
+	/**
+	 * This is the instance of the configuration manager.
+	 */
+	@Autowired
+	com.boilerplate.configurations.ConfigurationManager configurationManager;
+
+	/**
+	 * The setter to set the configuration manager
+	 * 
+	 * @param configurationManager
+	 */
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
+		this.configurationManager = configurationManager;
+	}
 
 	/**
 	 * This variable is used to a prefix for key of user ReferredContact
@@ -41,16 +61,21 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	public ReferalEntity getUserReferredContacts() {
 		ReferalEntity referalEntity = new ReferalEntity();
 		// Declare a new map to store the referred data of user
-		Map<String, Map<String, String>> userReferredContact = new BoilerplateMap<>();
+		Map<String, Map<String, Map<String, String>>> userReferredContact = new BoilerplateMap<>();
+		// Get all the referral dates made by user
+		Set<String> listOfReferDates = this.getUserAllReferralDates();
 		// For each type get data
 		for (UserReferalMediumType referType : UserReferalMediumType.values()) {
-			// Get the referred data of user
-			Map<String, String> referralData = super.hgetAll(
-					ReferredContact + RequestThreadLocal.getSession().getUserId() + ":" + Date.valueOf(LocalDate.now())
-							+ ":" + referType.toString());
+			// Declare new map to hold referral data
+			Map<String, Map<String, String>> userOneDayReferralData = new HashMap<>();
+			// Run for loop to extract all date data
+			for (String date : listOfReferDates) {
+				// Get the referred data of user
+				userOneDayReferralData.put(date, super.hgetAll(ReferredContact
+						+ RequestThreadLocal.getSession().getUserId() + ":" + date + ":" + referType.toString()));
+			}
 			// Put type of referred medium and its data to map
-			userReferredContact.put(referType.toString(), referralData);
-
+			userReferredContact.put(referType.toString(), userOneDayReferralData);
 		}
 		// Set the referred data into entity
 		referalEntity.setReferredContacts(userReferredContact);
@@ -58,17 +83,38 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
+	 * This method is used to get all the exist referral dates
+	 * 
+	 * @return user all referral dates
+	 */
+	private Set<String> getUserAllReferralDates() {
+		// Get exist data date
+		Set<String> listOfDatesKey = super.keys(
+				ReferredContact + RequestThreadLocal.getSession().getUserId() + ":" + "*");
+		// New set to store the referral dates
+		Set<String> listOfReferDates = new HashSet<>();
+		// Run for to get all referral dates
+		for (String dates : listOfDatesKey) {
+			// Split the keys
+			String[] splittedKeys = dates.split(":");
+			// Add date to list of referral dates
+			listOfReferDates.add(splittedKeys[splittedKeys.length - 2]);
+		}
+		return listOfReferDates;
+	}
+
+	/**
 	 * @see IReferral.saveUserReferredContacts
 	 */
 	@Override
 	public void saveUserReferredContacts(ReferalEntity referalEntity) {
-		// Declare a new map used to hold the referral contacts
-		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
 		// Run for loop to insert all referral contact to map
 		for (Object o : referalEntity.getReferralContacts()) {
-			super.hset(ReferredContact + RequestThreadLocal.getSession().getUserId() + ":"
-					+ Date.valueOf(LocalDate.now()) + ":" + referalEntity.getReferralMediumType(), (String) o,
-					referalEntity.getReferralLink());
+			super.hset(
+					ReferredContact + RequestThreadLocal.getSession().getUserId() + ":" + Date.valueOf(LocalDate.now())
+							+ ":" + referalEntity.getReferralMediumType(),
+					((String) o).toUpperCase(), referalEntity.getReferralLink(),
+					Integer.valueOf(configurationManager.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE")) * 60);
 		}
 	}
 
@@ -89,12 +135,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 */
 	@Override
 	public void saveUserReferralDetail(ReferalEntity referalEntity) {
-		// Declare a new map used to hold the referral contacts
-		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
 		// Run for loop to insert all referral contact to map
 		for (Object o : referalEntity.getReferralContacts()) {
 			super.hset(UserReferral + referalEntity.getUserId() + ":" + referalEntity.getReferralUUID(),
-					referalEntity.getUserId(), referalEntity.getReferralLink());
+					((String) o).toUpperCase(), referalEntity.getReferralLink());
 		}
 	}
 
@@ -103,15 +147,29 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 */
 	@Override
 	public void saveReferralDetail(ReferalEntity referalEntity) {
-		// Declare a new map used to hold the referral contacts
-		BoilerplateMap<String, String> userReferralContact = new BoilerplateMap<>();
-		// Run for loop to insert all referral contact to map
-		for (Object o : referalEntity.getReferralContacts()) {
-			super.hset(
-					Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType()
-							+ ":" + referalEntity.getReferralUUID(),
-					referalEntity.getUserId(), referalEntity.getReferralLink());
-		}
+		// Save refer details
+		super.hset(Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType()
+				+ ":" + referalEntity.getReferralUUID(), referalEntity.getUserId(), referalEntity.getReferralLink());
 	}
 
+	/**
+	 * @see IReferral.getUserReferredContactDeatils
+	 */
+	@Override
+	public String getUserReferredContactDetails(ReferalEntity referalEntity) {
+		// Get all the referral dates made by user
+		Set<String> listOfReferDates = this.getUserAllReferralDates();
+		String referredData = null;
+		// Check in all date
+		for (String date : listOfReferDates) {
+			referredData = super.hget(
+					ReferredContact + RequestThreadLocal.getSession().getUserId() + ":" + date + ":"
+							+ referalEntity.getReferralMediumType().toString(),
+					((String) referalEntity.getReferralContacts().get(0)).toUpperCase());
+			if (referredData != null) {
+				break;
+			}
+		}
+		return referredData;
+	}
 }

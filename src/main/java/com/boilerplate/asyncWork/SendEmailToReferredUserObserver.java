@@ -12,6 +12,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.service.interfaces.IContentService;
+import com.boilerplate.service.interfaces.IReferralService;
 
 /**
  * This class sends an Email to referred user
@@ -55,6 +56,22 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 */
 	public void setContentService(IContentService contentService) {
 		this.contentService = contentService;
+	}
+
+	/**
+	 * This is a new instance of referral service
+	 */
+	@Autowired
+	IReferralService referralService;
+
+	/**
+	 * This method set referral service
+	 * 
+	 * @param referralService
+	 *            the referralService to set
+	 */
+	public void setReferralService(IReferralService referralService) {
+		this.referralService = referralService;
 	}
 
 	/**
@@ -155,18 +172,24 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-		//Getting referring user first name
+		// Getting referring user first name
 		String referringUserFirstName = detailsOfReferringUser.getFirstName();
-	    // iterating through the list of all referred users and sending mails to
+		// iterating through the list of all referred users and sending mails to
 		// each one of them one by one
 		for (int i = 0; i < referralEntity.getReferralContacts().size(); i++) {
 			tosEmailList.add((String) referralEntity.getReferralContacts().get(i));
-			try {
-				this.sendEmail(referringUserFirstName, tosEmailList, ccsEmailList, bccsEmailList,
-						referralEntity.getReferralLink());
-			} catch (Exception ex) {
-				logger.logException("SendEmailToReferredUserObserver", "createEmailDetails", "try-Queue Reader",
-						ex.toString(), ex);
+			if (referralService.checkReferredContactExistence((String) tosEmailList.get(0),
+					referralEntity.getReferralMediumType())) {
+				try {
+					this.sendEmail(referringUserFirstName, tosEmailList, ccsEmailList, bccsEmailList,
+							referralEntity.getReferralLink());
+				} catch (Exception ex) {
+					logger.logException("SendEmailToReferredUserObserver", "createEmailDetails", "try-Queue Reader",
+							ex.toString(), ex);
+				}
+			} else {
+				logger.logError("SendEmailToReferredUserObserver", "createEmailDetails", "Check contact existence",
+						"referred Email id already register with our system");
 			}
 			tosEmailList.remove(0);
 		}

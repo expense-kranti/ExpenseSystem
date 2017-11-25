@@ -1,23 +1,18 @@
 package com.boilerplate.asyncWork;
 
 import java.net.URLEncoder;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.service.interfaces.IContentService;
+import com.boilerplate.service.interfaces.IReferralService;
 import com.boilerplate.service.interfaces.ISendSMSService;
 
 /**
@@ -32,7 +27,7 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
-	
+
 	/**
 	 * This is a new instance of Referral
 	 */
@@ -111,11 +106,26 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	}
 
 	/**
+	 * This is a new instance of referral service
+	 */
+	@Autowired
+	IReferralService referralService;
+
+	/**
+	 * This method set referral service
+	 * 
+	 * @param referralService
+	 *            the referralService to set
+	 */
+	public void setReferralService(IReferralService referralService) {
+		this.referralService = referralService;
+	}
+
+	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
 
 		// Get referring user first name and fetch phone number of referred user
@@ -177,12 +187,18 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 		// one by one
 		for (int i = 0; i < referralContacts.size(); i++) {
 			String phoneNumber = (String) referralContacts.get(i);
-			try {
-				this.sendSMS(referringUserFirstName, phoneNumber, referralEntity.getReferralLink());
-			} catch (Exception ex) {
-				logger.logException("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms", "try-Queue Reader",
-						ex.toString(), ex);
+			if (referralService.checkReferredContactExistence(phoneNumber, referralEntity.getReferralMediumType())) {
+				try {
+					this.sendSMS(referringUserFirstName, phoneNumber, referralEntity.getReferralLink());
+				} catch (Exception ex) {
+					logger.logException("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
+							"try-Queue Reader", ex.toString(), ex);
+				}
+			} else {
+				logger.logError("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
+						"Check contact existence", "referred phone number already register with our system");
 			}
+
 		}
 	}
 
