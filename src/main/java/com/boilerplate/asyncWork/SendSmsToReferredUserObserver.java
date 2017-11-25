@@ -101,6 +101,7 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
+		//Get referring user first name and fetch phone number of referred user one by one and send sms to each one
 		this.prepareSmsDetailsAndSendSms(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
 
 	}

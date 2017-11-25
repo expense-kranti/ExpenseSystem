@@ -244,11 +244,12 @@ public class ReferralService implements IReferralService {
 		// Get base referral link from configurations
 		String baseReferralLink = configurationManager.get("BASE_REFERRAL_LINK");
 		// Replace @campaignType with refer
-		baseReferralLink.replace("@campaignType", CampaignType.valueOf("Refer").toString());
+		baseReferralLink = baseReferralLink.replace("@campaignType", CampaignType.valueOf("Refer").toString());
 		// Replace @campaignSource with refer medium type
-		baseReferralLink.replace("@campaignSource", referralEntity.getReferralMediumType().toString());
-		// Replace @UUID with uuid
-		baseReferralLink.replace("@UUID", referralEntity.getReferralUUID());
+		baseReferralLink = baseReferralLink.replace("@campaignSource",
+				referralEntity.getReferralMediumType().toString());
+		// Replace @UUID with UUID
+		baseReferralLink = baseReferralLink.replace("@UUID", referralEntity.getReferralUUID());
 		// Return the referral link
 		return baseReferralLink;
 	}
@@ -300,7 +301,7 @@ public class ReferralService implements IReferralService {
 		// Get request body
 		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
 		// Replace @lonurl with referral link
-		requestBody.replace("@longUrl", referralLink);
+		requestBody = requestBody.replace("@longUrl", referralLink);
 		// Make HTTP request
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
 				requestHeaders, null, requestBody, "POST");
