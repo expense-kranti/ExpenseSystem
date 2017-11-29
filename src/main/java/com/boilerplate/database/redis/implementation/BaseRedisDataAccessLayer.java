@@ -598,7 +598,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
-		methodPermission.setId(
+		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
@@ -607,10 +607,29 @@ public class BaseRedisDataAccessLayer {
 		// method permission for send email method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		// method permission for validate refer 
+		
+		
+		//method permission for facebook refer link
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/ReferReport");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate(
+				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
+		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 

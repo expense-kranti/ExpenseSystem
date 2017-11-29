@@ -467,8 +467,6 @@ public class ReferralService implements IReferralService {
 		referalEntity.setReferralLink(
 				this.getShortUrl(referalEntity.getReferralLink()));
 		
-		// Publish referral data
-		this.publishReferralData(referalEntity);
 		return referalEntity;
 	}
 
@@ -547,27 +545,4 @@ public class ReferralService implements IReferralService {
 		return shortUrlEntity.getShortUrl();
 	}
 
-	/**
-	 * This method is used to publish the referral data to sales force
-	 * 
-	 * @param referalEntity
-	 *            this parameter contains the information regarding the user
-	 *            Reference like refer unique id ,referral link,referral
-	 *            contacts ,referral medium type etc.
-	 */
-	private void publishReferralData(ReferalEntity referalEntity) {
-		try {
-			// Trigger back ground job to send referral link through Email
-			queueReaderJob.requestBackroundWorkItem(referalEntity,
-					subjectsForPublishReferralReport, "ReferalEntity",
-					"publishReferralData");
-			throw new Exception();
-		} catch (Exception ex) {
-			logger.logException("referralService", "publishReferralData",
-					"try-Queue Reader",
-					ex.toString() + " ReferalEntity inserting in queue is: "
-							+ Base.toJSON(referalEntity) + " Queue Down",
-					ex);
-		}
-	}
 }
