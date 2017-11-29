@@ -19,6 +19,7 @@ import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
+import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferralLinkEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
@@ -180,14 +181,34 @@ public class ReferralService implements IReferralService {
 	 */
 	@Override
 	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException {
-		// Validate refer request for max and min limit
-		referalEntity.validate();
+		// Get user details
+		ExternalFacingReturnedUser user = RequestThreadLocal.getSession().getExternalFacingUser();
+		// Check is user contains its user refer id if not then create
+		if (user.getUserReferId() != null) {
+			user.createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+			try {
+				userDataAccess.update(user);
+			} catch (ConflictException ex) {
+				// Log error
+				logger.logError("ReferralService", "sendReferralLink", "Trying to update user with its refer id",
+						ex.toString());
+			}
+			// Set user refer id
+			referalEntity.setUserReferId(user.getUserReferId());
+			// Set the userId
+			referalEntity.setUserId(user.getUserId());
+			// save UUID details
+			referral.saveUserReferUUID(referalEntity);
+		} else {
+			// Set user refer id
+			referalEntity.setUserReferId(user.getUserReferId());
+			// Set the userId
+			referalEntity.setUserId(user.getUserId());
+		}
 		// Validate referral request
 		this.validateReferRequest(referalEntity);
 		// Generate referral link
-		this.generateContactReferralLinks(referalEntity);
-		// Set the userId
-		referalEntity.setUserId(RequestThreadLocal.getSession().getUserId());
+		this.generateReferralLink(referalEntity);
 		// Save referral contacts to data store
 		referral.saveUserReferredContacts(referalEntity);
 		try {
@@ -272,27 +293,16 @@ public class ReferralService implements IReferralService {
 	 * @param referralEntity
 	 *            this parameter is used to define the refer medium type
 	 */
-	private void generateContactReferralLinks(ReferalEntity referralEntity) {
-		// Run a for loop to generate referral links for each contact
-		for (Object o : referralEntity.getReferralContacts()) {
-			// Convert an object into entity
-			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) o;
-			// Generate UUID
-			referralLinkEntity.createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
-			// Get base referral link from configurations
-			String baseReferralLink = configurationManager.get("BASE_REFERRAL_LINK");
-			// Replace @campaignType with refer
-			baseReferralLink = baseReferralLink.replace("@campaignType", CampaignType.valueOf("Refer").toString());
-			// Replace @campaignSource with refer medium type
-			baseReferralLink = baseReferralLink.replace("@campaignSource",
-					referralEntity.getReferralMediumType().toString());
-			// Replace @UUID with UUID
-			baseReferralLink = baseReferralLink.replace("@UUID", referralEntity.getReferralUUID());
-			// Replace @contactUUID with contactUUID
-			baseReferralLink = baseReferralLink.replace("@contactUUID", referralLinkEntity.getReferralUUID());
-			// Set referral link
-			referralLinkEntity.setReferralLink(baseReferralLink);
-		}
+	private void generateReferralLink(ReferalEntity referralEntity) {
+		// Get base referral link from configurations
+		String baseReferralLink = configurationManager.get("BASE_REFERRAL_LINK");
+		// Replace @campaignType with refer
+		baseReferralLink = baseReferralLink.replace("@userReferId", referralEntity.getUserReferId());
+		// Replace @campaignSource with refer medium type
+		baseReferralLink = baseReferralLink.replace("@campaignSource",
+				referralEntity.getReferralMediumType().toString());
+		// Set referral link
+		referralEntity.setReferralLink(baseReferralLink);
 	}
 
 	/**
@@ -304,6 +314,8 @@ public class ReferralService implements IReferralService {
 	 *             throw this exception in case of user request is not valid
 	 */
 	private void validateReferRequest(ReferalEntity referalEntity) throws ValidationFailedException {
+		// Validate refer request for max and min limit
+		referalEntity.validate();
 		// Get today referred contacts count
 		Integer todayReferredContactsCount = referral
 				.getTodayReferredContactsCount(referalEntity.getReferralMediumType());

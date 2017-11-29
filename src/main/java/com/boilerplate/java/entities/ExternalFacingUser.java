@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
@@ -13,44 +14,39 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This is the user entity expcted as an input.
+ * 
  * @author gaurav.verma.icloud
  *
  */
-@ApiModel(value="A User", description="This is a user", parent=UpdateUserEntity.class)
-public class ExternalFacingUser extends UpdateUserEntity implements Serializable{
-	
-	@ApiModelProperty(value="This is the id of the user."
-			,required=true,notes="The id of the user is unique in the system, it is analogous to user name"
-			)
+@ApiModel(value = "A User", description = "This is a user", parent = UpdateUserEntity.class)
+public class ExternalFacingUser extends UpdateUserEntity implements Serializable {
+
+	@ApiModelProperty(value = "This is the id of the user.", required = true, notes = "The id of the user is unique in the system, it is analogous to user name")
 	/**
-	 * This is the user's Id, this is not the system generated Id, it is the id created
-	 * by the user.
+	 * This is the user's Id, this is not the system generated Id, it is the id
+	 * created by the user.
 	 */
 	private String userId;
 
-	@ApiModelProperty(value="This is the authenication provider of the user. This value is set to Default if not specified"
-			,required=true,notes="The legal values include Default")
+	@ApiModelProperty(value = "This is the authenication provider of the user. This value is set to Default if not specified", required = true, notes = "The legal values include Default")
 	/**
-	 * This is the authentication provider. Default means that the user is authenticated by the 
-	 * user name and password. A user may use SSO and other authentication providers like facebook,\
-	 * google and others.
+	 * This is the authentication provider. Default means that the user is
+	 * authenticated by the user name and password. A user may use SSO and other
+	 * authentication providers like facebook,\ google and others.
 	 */
 	private String authenticationProvider;
-	
-	@ApiModelProperty(value="This is the id as in external system, "
-			+ "if the provider is Default then id and external system id are same"
-			,required=false)
+
+	@ApiModelProperty(value = "This is the id as in external system, "
+			+ "if the provider is Default then id and external system id are same", required = false)
 	/**
-	 * This is the id of the user in external system, 
-	 * it is defaulted to the id if the authentication provider
-	 * is Default
+	 * This is the id of the user in external system, it is defaulted to the id
+	 * if the authentication provider is Default
 	 */
 	private String externalSystemId;
-	
-	
 
 	/**
 	 * Gets the user Id
+	 * 
 	 * @return The user id
 	 */
 	public String getUserId() {
@@ -59,14 +55,17 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * Sets the user id
-	 * @param userId The user id
+	 * 
+	 * @param userId
+	 *            The user id
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId.toUpperCase();
 	}
-	
+
 	/**
 	 * This returns the autheinctaion provider.
+	 * 
 	 * @return The authentication provider.
 	 */
 	public String getAuthenticationProvider() {
@@ -75,7 +74,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This sets the authentication provider
-	 * @param The authenticationProvider
+	 * 
+	 * @param The
+	 *            authenticationProvider
 	 */
 	public void setAuthenticationProvider(String authenticationProvider) {
 		this.authenticationProvider = authenticationProvider.toUpperCase();
@@ -83,6 +84,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * returns the external system id
+	 * 
 	 * @return The external system id
 	 */
 	public String getExternalSystemId() {
@@ -91,12 +93,12 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * Theis sets the external system id
+	 * 
 	 * @param externalSystemId
 	 */
 	public void setExternalSystemId(String externalSystemId) {
 		this.externalSystemId = externalSystemId;
 	}
-	
 
 	/**
 	 * @see BaseEntity.validate
@@ -104,37 +106,37 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		super.validate();
-		//The idea is that user name or password should not be null
-		if(this.isNullOrEmpty(this.getUserId())) throw new ValidationFailedException(
-				"User","UserId is null/Empty",null);
-		if(this.getUserId() == null) throw new ValidationFailedException(
-				"User","UserId is null/Empty",null);
-		if(this.isNullOrEmpty(this.getFirstName())) throw new ValidationFailedException(
-				"User","First Name is null/Empty",null);
-		if(this.isNullOrEmpty(this.getLastName())) throw new ValidationFailedException(
-				"User","Last Name is null/Empty",null);
-		if(this.isNullOrEmpty(this.getEmail())) throw new ValidationFailedException(
-				"User","Email is null/Empty",null);
-		if(this.getEmail() ==null){
-			throw new ValidationFailedException(
-					"User","Email is null/Empty",null);
+		// The idea is that user name or password should not be null
+		if (this.isNullOrEmpty(this.getUserId()))
+			throw new ValidationFailedException("User", "UserId is null/Empty", null);
+		if (this.getUserId() == null)
+			throw new ValidationFailedException("User", "UserId is null/Empty", null);
+		if (this.isNullOrEmpty(this.getFirstName()))
+			throw new ValidationFailedException("User", "First Name is null/Empty", null);
+		if (this.isNullOrEmpty(this.getLastName()))
+			throw new ValidationFailedException("User", "Last Name is null/Empty", null);
+		if (this.isNullOrEmpty(this.getEmail()))
+			throw new ValidationFailedException("User", "Email is null/Empty", null);
+		if (this.getEmail() == null) {
+			throw new ValidationFailedException("User", "Email is null/Empty", null);
 		}
 		Matcher matcher = emailResxPattern.matcher(this.getEmail());
-		if(matcher.matches() == false){
-			throw new ValidationFailedException(
-					"User","Email format is incorrect",null);
+		if (matcher.matches() == false) {
+			throw new ValidationFailedException("User", "Email format is incorrect", null);
 		}
-		if(this.isNullOrEmpty(this.getPhoneNumber())) throw new ValidationFailedException(
-				"User","Phone Number null/Empty",null);
-		if (this.getPhoneNumber().contains(":")) throw new ValidationFailedException(
-				"User", "':' doesn't allows in Phone Number", null);
+		if (this.isNullOrEmpty(this.getPhoneNumber()))
+			throw new ValidationFailedException("User", "Phone Number null/Empty", null);
+		if (this.getPhoneNumber().contains(":"))
+			throw new ValidationFailedException("User", "':' doesn't allows in Phone Number", null);
 		return true;
 	}
 
 	/**
 	 * This is the email regex expression
 	 */
-	public static Pattern emailResxPattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+	public static Pattern emailResxPattern = Pattern
+			.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
 	/**
 	 * @see BaseEntity.transformToInternal
 	 */
@@ -154,26 +156,24 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	/**
 	 * This is the email of the user
 	 */
-	@ApiModelProperty(value="This is the email of the user"
-			,required=true)
+	@ApiModelProperty(value = "This is the email of the user", required = true)
 	public String email;
-	
+
 	/**
 	 * This is the first name of the user
 	 */
-	@ApiModelProperty(value="This is the first name of the user"
-			,required=true)
+	@ApiModelProperty(value = "This is the first name of the user", required = true)
 	private String firstName;
-	
+
 	/**
 	 * This is the last name of the user
 	 */
-	@ApiModelProperty(value="This is the last name of the user"
-			,required=true)
+	@ApiModelProperty(value = "This is the last name of the user", required = true)
 	private String lastName;
-	
+
 	/**
 	 * This method gets the email of the user
+	 * 
 	 * @return The email
 	 */
 	public String getEmail() {
@@ -182,7 +182,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the email of the user
-	 * @param email The email
+	 * 
+	 * @param email
+	 *            The email
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -190,6 +192,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This methodgets the first name of the user
+	 * 
 	 * @return The first name
 	 */
 	public String getFirstName() {
@@ -198,7 +201,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the first name of the user
-	 * @param firstName The first name
+	 * 
+	 * @param firstName
+	 *            The first name
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -206,6 +211,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method gets the last name of the user
+	 * 
 	 * @return The last name
 	 */
 	public String getLastName() {
@@ -214,7 +220,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the last name of the user
-	 * @param lastName The last name
+	 * 
+	 * @param lastName
+	 *            The last name
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
@@ -222,6 +230,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method gets the phone number
+	 * 
 	 * @return The phone number
 	 */
 	public String getPhoneNumber() {
@@ -230,7 +239,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the phone number of the user
-	 * @param phoneNumber The phone number
+	 * 
+	 * @param phoneNumber
+	 *            The phone number
 	 */
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
@@ -239,19 +250,18 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	/**
 	 * This is the phone number of the customer or user
 	 */
-	@ApiModelProperty(value="This is the phone number of the user"
-			,required=true)
+	@ApiModelProperty(value = "This is the phone number of the user", required = true)
 	private String phoneNumber;
-	
+
 	/**
 	 * This is the referalSource use for providing referal
 	 */
-	@ApiModelProperty(value="The referal source"
-			,required=false)
+	@ApiModelProperty(value = "The referal source", required = false)
 	private String referalSource;
-	
+
 	/**
 	 * THis method gets the referalSource
+	 * 
 	 * @return The referalSource
 	 */
 	public String getReferalSource() {
@@ -260,7 +270,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the referalSource
-	 * @param referalSource The referalSource
+	 * 
+	 * @param referalSource
+	 *            The referalSource
 	 */
 	public void setReferalSource(String referalSource) {
 		this.referalSource = referalSource;
@@ -268,6 +280,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method gets the middle name
+	 * 
 	 * @return The middleName
 	 */
 	public String getMiddleName() {
@@ -276,7 +289,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the middle name
-	 * @param middleName The middleName
+	 * 
+	 * @param middleName
+	 *            The middleName
 	 */
 	public void setMiddleName(String middleName) {
 		this.middleName = middleName;
@@ -284,6 +299,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method gets the dsaId
+	 * 
 	 * @return The dsaId
 	 */
 	public String getDsaId() {
@@ -292,16 +308,19 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the dsaId
-	 * @param dsaId The dsaId
+	 * 
+	 * @param dsaId
+	 *            The dsaId
 	 */
 	public void setDsaId(String dsaId) {
 		this.dsaId = dsaId;
 	}
-	@ApiModelProperty(value="This is location of user"
-			,required=false)
+
+	@ApiModelProperty(value = "This is location of user", required = false)
 
 	/**
 	 * This method gets the experianRequestUniqueKey
+	 * 
 	 * @return The experianRequestUniqueKey
 	 */
 	public String getExperianRequestUniqueKey() {
@@ -310,7 +329,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the experianRequestUniqueKey
-	 * @param experianRequestUniqueKey The experianRequestUniqueKey
+	 * 
+	 * @param experianRequestUniqueKey
+	 *            The experianRequestUniqueKey
 	 */
 	public void setExperianRequestUniqueKey(String experianRequestUniqueKey) {
 		this.experianRequestUniqueKey = experianRequestUniqueKey;
@@ -320,23 +341,22 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the middleName of the customer/user
 	 */
 	private String middleName;
-	
+
 	/**
 	 * This is the dsaId of DSA
 	 */
-	@ApiModelProperty(value="This is dsaId"
-			,required=false)
+	@ApiModelProperty(value = "This is dsaId", required = false)
 	private String dsaId;
-	
+
 	/**
 	 * This is the otpList
 	 */
-	
+
 	private BoilerplateList<Integer> otpList;
-	
-	
+
 	/**
 	 * This method gets the otpList
+	 * 
 	 * @return The otpList
 	 */
 	public BoilerplateList<Integer> getOtpList() {
@@ -345,27 +365,30 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the otpList
-	 * @param otpList The otpList
+	 * 
+	 * @param otpList
+	 *            The otpList
 	 */
 	public void setOtpList(BoilerplateList<Integer> otpList) {
 		this.otpList = otpList;
 	}
+
 	/*
 	 * The email used to communicate with experian
 	 */
-	@ApiModelProperty(value="The email used to communicate with experian"
-			,required=true)
+	@ApiModelProperty(value = "The email used to communicate with experian", required = true)
 	private String experianRequestUniqueKey;
-	
+
 	/*
-	 * The isDefaultPassword boolean used to set default password corresponding to user 
+	 * The isDefaultPassword boolean used to set default password corresponding
+	 * to user
 	 */
-	@ApiModelProperty(value="The email used to communicate with experian"
-			,required=false)
+	@ApiModelProperty(value = "The email used to communicate with experian", required = false)
 	private boolean isDefaultPassword;
 
 	/**
-	 * This method gets the isDefaultPassword boolean value 
+	 * This method gets the isDefaultPassword boolean value
+	 * 
 	 * @return The isDefaultPassword
 	 */
 	public boolean isDefaultPassword() {
@@ -374,35 +397,40 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method sets the isDefaultPassword boolean
-	 * @param isDefaultPassword The isDefaultPassword
+	 * 
+	 * @param isDefaultPassword
+	 *            The isDefaultPassword
 	 */
 	public void setDefaultPassword(boolean isDefaultPassword) {
 		this.isDefaultPassword = isDefaultPassword;
 	}
+
 	/**
 	 * This is the experian new user Id.
 	 */
 	private String experianNewUserId;
-	
+
 	/**
 	 * This method get the experian new user id.
+	 * 
 	 * @return experianNewUserId
 	 */
 	public String getExperianNewUserId() {
 		return experianNewUserId;
 	}
+
 	/**
 	 * This method sety the experian new user id.
+	 * 
 	 * @param experianNewUserId
 	 */
 	public void setExperianNewUserId(String experianNewUserId) {
 		this.experianNewUserId = experianNewUserId;
 	}
-	
-	
 
 	/**
 	 * This method get the approved
+	 * 
 	 * @return the approved
 	 */
 	public String getApproved() {
@@ -411,7 +439,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method set the approved
-	 * @param approved the approved to set
+	 * 
+	 * @param approved
+	 *            the approved to set
 	 */
 	public void setApproved(String approved) {
 		this.approved = approved;
@@ -419,6 +449,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method get the value of disableForReport
+	 * 
 	 * @return the disableForReport
 	 */
 	public String getDisableForReport() {
@@ -427,19 +458,21 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method set the value of disableForReport
-	 * @param disableForReport the disableForReport to set
+	 * 
+	 * @param disableForReport
+	 *            the disableForReport to set
 	 */
 	public void setDisableForReport(String disableForReport) {
 		this.disableForReport = disableForReport;
 	}
 
 	private String approved;
-	
+
 	/**
 	 * We are taking string because for null check.
 	 */
 	private String disableForReport;
-	
+
 	/**
 	 * This is the campaign type
 	 */
@@ -448,8 +481,10 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the campaign source
 	 */
 	private String campaignSource;
+
 	/**
 	 * This method get the campaign type
+	 * 
 	 * @return the campaignType
 	 */
 	public String getCampaignType() {
@@ -458,7 +493,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method set the campaign type
-	 * @param campaignType the campaignType to set
+	 * 
+	 * @param campaignType
+	 *            the campaignType to set
 	 */
 	public void setCampaignType(String campaignType) {
 		this.campaignType = campaignType;
@@ -466,6 +503,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method get the campaign source
+	 * 
 	 * @return the campaignSource
 	 */
 	public String getCampaignSource() {
@@ -474,7 +512,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method set the campaign source
-	 * @param campaignSource the campaignSource to set
+	 * 
+	 * @param campaignSource
+	 *            the campaignSource to set
 	 */
 	public void setCampaignSource(String campaignSource) {
 		this.campaignSource = campaignSource;
@@ -482,6 +522,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method get the campaign uuid
+	 * 
 	 * @return the campaignUUID
 	 */
 	public String getCampaignUUID() {
@@ -490,16 +531,59 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method set the campaign uuid
-	 * @param campaignUUID the campaignUUID to set
+	 * 
+	 * @param campaignUUID
+	 *            the campaignUUID to set
 	 */
 	public void setCampaignUUID(String campaignUUID) {
 		this.campaignUUID = campaignUUID;
 	}
 
 	/**
+	 * This method is used to get the user refer Id
+	 * 
+	 * @return the userReferId
+	 */
+	public String getUserReferId() {
+		return userReferId;
+	}
+
+	/**
+	 * This method is used to set the user refer Id
+	 * 
+	 * @param userReferId
+	 *            the userReferId to set
+	 */
+	public void setUserReferId(String userReferId) {
+		this.userReferId = userReferId;
+	}
+
+	/**
 	 * This is the campaign UUID
 	 */
 	private String campaignUUID;
-	
+
+	/**
+	 * This is the user refer id
+	 */
+	private String userReferId;
+
+	/**
+	 * This method is used to create the UUID
+	 * 
+	 * @return the UUID
+	 */
+	public void createUUID(Integer uuidLength) {
+		// New instance of random
+		Random rand = new Random();
+		this.userReferId = "";
+		// Run a for loop to generate a configurations define length uuid
+		for (int i = 0; i < uuidLength; i++) {
+			// Get random number
+			int randomNum = rand.nextInt(26 - 0);
+			// Concatenate new char to string
+			userReferId = userReferId + String.valueOf((char) (randomNum + 97));
+		}
+	}
 
 }

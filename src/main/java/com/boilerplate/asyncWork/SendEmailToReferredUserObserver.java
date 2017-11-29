@@ -163,10 +163,12 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * @param referralEntity
 	 *            The referral Entity it has all the details of the referral
 	 *            details such as referral contacts, its referring userId
+	 * @throws IOException
 	 */
-	public void processReferRequest(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser) {
+	public void processReferRequest(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser)
+			throws IOException {
 		// Generate short URL
-		this.generateShortUrl(referralEntity);
+		referralEntity.setReferralLink(this.getShortUrl(referralEntity.getReferralLink()));
 		// Save referral data to data store
 		this.saveReferralData(referralEntity);
 		// list of referred user(s)
@@ -180,10 +182,8 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		// iterating through the list of all referred users and sending mails to
 		// each one of them one by one
 		for (Object contact : referralEntity.getReferralContacts()) {
-			// Convert a object into entity
-			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) contact;
-			// Add contact to tos list
-			tosEmailList.add(referralLinkEntity.getContact());
+			// Add contact to to's list
+			tosEmailList.add((String)contact);
 			// Check is this email address already registered with our system or
 			// not
 			if (referralService.checkReferredContactExistence((String) tosEmailList.get(0),
@@ -191,7 +191,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 				try {
 					// Send email
 					this.sendEmail(referringUserFirstName, tosEmailList, ccsEmailList, bccsEmailList,
-							referralLinkEntity.getReferralLink());
+							referralEntity.getReferralLink());
 				} catch (Exception ex) {
 					// Log the exception
 					logger.logException("SendEmailToReferredUserObserver", "createEmailDetails",
@@ -207,31 +207,6 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 								+ tosEmailList.get(0) + " ~ Sent by user : " + referralEntity.getUserId());
 			}
 			tosEmailList.remove(0);
-		}
-	}
-
-	/**
-	 * This method is used to generate short URL
-	 * 
-	 * @param referralEntity
-	 *            The referral Entity it has all the details of the referral
-	 *            details such as referral contacts, its referring userId
-	 */
-	private void generateShortUrl(ReferalEntity referralEntity) {
-		// Run a for loop to generate the short URL for each contact
-		for (Object o : referralEntity.getReferralContacts()) {
-			// Convert a object into entity
-			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) o;
-			try {
-				// Get short URL
-				referralLinkEntity.setReferralLink(this.getShortUrl(referralLinkEntity.getReferralLink()));
-			} catch (IOException ex) {
-				// Log the exception
-				logger.logException("SendEmailToReferredUserObserver",
-						"generateShortUrl", "While trying to get the short url ~ This is the conatct "
-								+ referralLinkEntity.getContact() + " ~ Sent by user : " + referralEntity.getUserId(),
-						ex.toString(), ex);
-			}
 		}
 	}
 
@@ -276,7 +251,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 */
 	private void saveReferralData(ReferalEntity referralEntity) {
 		// Save referral contacts to data store
-		referral.saveUserReferredContacts(referralEntity);
+		referral.saveUserReferredExpireContacts(referralEntity);
 		// Save user referral details
 		referral.saveReferralDetail(referralEntity);
 		// Save user referral details

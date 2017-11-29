@@ -1,10 +1,6 @@
 package com.boilerplate.database.interfaces;
 
-import java.util.Map;
-
-import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.java.entities.UserReferalMediumType;
 
 /**
  * This class provide the method for referral related operations regarding data
@@ -16,13 +12,30 @@ import com.boilerplate.java.entities.UserReferalMediumType;
 public interface IReferral {
 
 	/**
-	 * This method is used to get all those contact which is referred by user in
-	 * current date
+	 * This method is used to save the user refer UUID
 	 * 
-	 * @return all those contact which is referred by user in current date
-	 * 
+	 * @param referalEntity
+	 *            this parameter contains the information regarding user like
+	 *            user id and user refer UUID
 	 */
-	public ReferalEntity getUserReferredContacts();
+	public void saveUserReferUUID(ReferalEntity referalEntity);
+
+	/**
+	 * This method is used to get the user refer id
+	 * 
+	 * @param userId
+	 *            this is the user id
+	 * @return the user refer id
+	 */
+	public String getUserReferUUID(String userId);
+
+	/**
+	 * This method is used to get the user referred contact referral link
+	 * 
+	 * @param referalEntity
+	 * @return referral link
+	 */
+	public String getUserReferredExpireContacts(ReferalEntity referalEntity);
 
 	/**
 	 * This method is used to save all those contact which is referred by user
@@ -32,55 +45,46 @@ public interface IReferral {
 	 *            this parameter contains the information regarding the user
 	 *            referral contacts by current date
 	 */
-	public void saveUserReferredContacts(ReferalEntity referalEntity);
+	public void saveUserReferredExpireContacts(ReferalEntity referalEntity);
 
 	/**
-	 * This method is used to save user referral details like the contact
-	 * details of refer receiver and referral UUID
+	 * This method is used to increase referring day count
 	 * 
 	 * @param referalEntity
-	 *            this parameter contains referral details like referral UUID
-	 *            and contact details of referral receiver
+	 *            this parameter define the referral request details
 	 */
-	public void saveUserReferralDetail(ReferalEntity referalEntity);
+	public void increaseDayCounter(ReferalEntity referalEntity);
 
 	/**
-	 * This method is used to save referral details like medium type ,referral
-	 * UUID and campaign type refer to redis
+	 * This method is used to get the user refer day count
 	 * 
 	 * @param referalEntity
-	 *            this parameter contains referral details like medium type
-	 *            ,referral UUID
+	 *            this parameter define the referral request details
+	 * @return refer day count
 	 */
-	public void saveReferralDetail(ReferalEntity referalEntity);
+	public String getDayCount(ReferalEntity referalEntity);
 
 	/**
-	 * This method is used to get the user today referred contact size of
-	 * specific referred medium type
-	 * 
-	 * @param referralMediumType
-	 *            this parameter define of which type size we want to get
-	 * @return the size of referred contacts by user
-	 */
-	public Integer getTodayReferredContactsCount(UserReferalMediumType referralMediumType);
-
-	/**
-	 * This method is used to get the user referred contact details
+	 * This method is used to increase user referring signUp count
 	 * 
 	 * @param referalEntity
-	 *            this parameter contain the information regarding the refer
-	 *            contact and its medium type
-	 * @return referred contact details
+	 *            this parameter define the referral request details
 	 */
-	public String getUserReferredContactDetails(ReferalEntity referalEntity);
+	public void increaseReferSignUpCounter(ReferalEntity referalEntity);
 
 	/**
-	 * This method is used to get the campaign details
+	 * This method is used to save user referred contacts
 	 * 
-	 * @param campaignSource
-	 * @param mediumType
-	 * @param uuid
+	 * @param referalEntity
+	 *            this parameter define the referral request type
+	 */
+	public void saveUserReferContacts(ReferalEntity referalEntity);
+
+	/**
+	 * 
+	 * @param referalEntity
 	 * @return
 	 */
-	public Map<String, String> getCampaignDetails(String campaignSource, String mediumType, String uuid);
+	public String createDayCounter(ReferalEntity referalEntity);
+
 }

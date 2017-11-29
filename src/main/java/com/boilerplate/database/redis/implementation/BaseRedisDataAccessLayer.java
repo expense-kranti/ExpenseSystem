@@ -942,10 +942,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("REFER_SCORE_FOR_EMAIL", "10");
 		vAllEAll.put("REFER_SCORE_FOR_PHONE", "10");
 		vAllEAll.put("REFER_SCORE_FOR_FACEBOOK", "10");
-		
+
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_EMAIL", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_PHONE", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_FACEBOOK", "10");
+		vAllEAll.put("AKS_USER_UUID_HASH_BASE_TAG", "AKS_USER_UUID_HASH_MAP");
+		vAllEAll.put("AKS_UUID_USER_HASH_BASE_TAG", "AKS_UUID_USER_HASH_MAP");
 
 		// REFER publish configuration
 		vAllEAll.put("AKS_REFER_PUBLISH_METHOD", "POST");
@@ -1210,4 +1212,42 @@ public class BaseRedisDataAccessLayer {
 		}
 	}
 
+	/**
+	 * Sets the value
+	 * 
+	 * @param key
+	 *            The key
+	 * @param value
+	 *            The value
+	 */
+	public void set(String key, String value, int timeoutInSeconds) {
+		Jedis jedis = null;
+		try {
+			jedis = this.getConnection();
+			jedis.setex(key, timeoutInSeconds, value);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	/**
+	 * This method increase the key counter in redis
+	 * 
+	 * @param key
+	 *            The redis key
+	 * @return true/false
+	 */
+	public boolean increaseCounter(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = this.getConnection();
+			return jedis.incr(key) != null;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
 }
