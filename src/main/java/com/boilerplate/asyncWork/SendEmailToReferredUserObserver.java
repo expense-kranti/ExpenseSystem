@@ -1,13 +1,13 @@
 package com.boilerplate.asyncWork;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.EmailUtility;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
@@ -16,12 +16,13 @@ import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.java.entities.ReferralLinkEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
+import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
 import com.boilerplate.service.interfaces.IContentService;
 import com.boilerplate.service.interfaces.IReferralService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class sends an Email to referred user
@@ -142,9 +143,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		// Get the referral entity from the payload
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
 		// Save user referral details
-		referral.saveReferralDetail(referralEntity);
-		// Save user referral details
-		referral.saveUserReferralDetail(referralEntity);
+
 		try {
 			// Create email details and send email
 			this.processReferRequest(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
@@ -169,8 +168,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			throws IOException {
 		// Generate short URL
 		referralEntity.setReferralLink(this.getShortUrl(referralEntity.getReferralLink()));
-		// Save referral data to data store
-		this.saveReferralData(referralEntity);
+		
 		// list of referred user(s)
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		// list of ccemailsIds for this email
@@ -183,6 +181,8 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		// each one of them one by one
 		for (Object contact : referralEntity.getReferralContacts()) {
 			// Add contact to to's list
+			this.saveReferralData(referralEntity,(String)contact);
+			
 			tosEmailList.add((String)contact);
 			// Check is this email address already registered with our system or
 			// not
@@ -248,14 +248,25 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * @param referralEntity
 	 *            The referral Entity it has all the details of the referral
 	 *            details such as referral contacts, its referring userId
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
-	private void saveReferralData(ReferalEntity referralEntity) {
+	private void saveReferralData(ReferalEntity referralEntity,String contact) throws JsonParseException, JsonMappingException, IOException {
+
 		// Save referral contacts to data store
-		referral.saveUserReferredExpireContacts(referralEntity);
+		referral.saveUserReferredExpireContacts(referralEntity,contact);
 		// Save user referral details
-		referral.saveReferralDetail(referralEntity);
-		// Save user referral details
-		referral.saveUserReferralDetail(referralEntity);
+		if(referral.getDayCount(referralEntity)==null){
+			referral.createDayCounter(referralEntity, "1");
+		}else{
+			referral.increaseDayCounter(referralEntity);
+		}
+		//save the refer contact details
+		UpdateReferralContactDetailsEntity updateReferral = new UpdateReferralContactDetailsEntity(contact,
+				referralEntity.getUserReferId(),LocalDate.now().toString());
+		
+		referral.saveUserReferContacts(referralEntity, updateReferral);
 	}
 
 	/**

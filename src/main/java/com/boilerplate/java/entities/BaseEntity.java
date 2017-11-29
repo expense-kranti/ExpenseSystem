@@ -110,7 +110,7 @@ public  abstract class BaseEntity extends Base implements Serializable{
 	 * This is the create date in string;
 	 */
 	@JsonIgnore
-	private String stringCreationDate;
+	protected String stringCreationDate;
 	
 	/**
 	 * Gets the id of the entity.

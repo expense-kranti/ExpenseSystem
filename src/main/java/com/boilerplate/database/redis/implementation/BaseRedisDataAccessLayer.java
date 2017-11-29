@@ -955,6 +955,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_REFER_PUBLISH_TEMPLATE",
 				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
 		vAllEAll.put("AKS_REFER_DYNAMIC_PUBLISH_URL", "false");
+		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY", "1440");
 		return vAllEAll;
 
 	}

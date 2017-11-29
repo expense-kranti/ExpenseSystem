@@ -1,6 +1,11 @@
 package com.boilerplate.database.interfaces;
 
+import java.io.IOException;
+
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class provide the method for referral related operations regarding data
@@ -37,15 +42,7 @@ public interface IReferral {
 	 */
 	public String getUserReferredExpireContacts(ReferalEntity referalEntity);
 
-	/**
-	 * This method is used to save all those contact which is referred by user
-	 * in current date
-	 * 
-	 * @param referalEntity
-	 *            this parameter contains the information regarding the user
-	 *            referral contacts by current date
-	 */
-	public void saveUserReferredExpireContacts(ReferalEntity referalEntity);
+	
 
 	/**
 	 * This method is used to increase referring day count
@@ -73,18 +70,32 @@ public interface IReferral {
 	public void increaseReferSignUpCounter(ReferalEntity referalEntity);
 
 	/**
-	 * This method is used to save user referred contacts
-	 * 
-	 * @param referalEntity
-	 *            this parameter define the referral request type
-	 */
-	public void saveUserReferContacts(ReferalEntity referalEntity);
-
-	/**
 	 * 
 	 * @param referalEntity
 	 * @return
 	 */
-	public String createDayCounter(ReferalEntity referalEntity);
+	public void createDayCounter(ReferalEntity referalEntity,String initialValue);
+	/**
+	 * This method is used to save all those contact which is referred by user
+	 * in current date
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains the information regarding the user
+	 *            referral contacts by current date
+	 * @param contact this parameter contain the refer contact info
+	 */
+	void saveUserReferredExpireContacts(ReferalEntity referalEntity,
+			String contact);
+	/**
+	 * This method is used to save user referred contacts
+	 * 
+	 * @param referalEntity
+	 *            this parameter define the referral request type
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	void saveUserReferContacts(ReferalEntity referalEntity,
+			UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity) throws JsonParseException, JsonMappingException, IOException;
 
 }

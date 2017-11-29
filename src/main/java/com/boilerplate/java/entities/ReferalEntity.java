@@ -26,7 +26,7 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	/**
 	 * This is user referred contact details
 	 */
-	private BoilerplateList<ReferralLinkEntity> referredContacts;
+	private BoilerplateList<ReferredContactEntity> referredContacts;
 
 	/**
 	 * This is the userId
@@ -204,7 +204,7 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	/**
 	 * @return the referredContacts
 	 */
-	public BoilerplateList<ReferralLinkEntity> getReferredContacts() {
+	public BoilerplateList<ReferredContactEntity> getReferredContacts() {
 		return referredContacts;
 	}
 
@@ -212,7 +212,7 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	 * @param referredContacts
 	 *            the referredContacts to set
 	 */
-	public void setReferredContacts(BoilerplateList<ReferralLinkEntity> referredContacts) {
+	public void setReferredContacts(BoilerplateList<ReferredContactEntity> referredContacts) {
 		this.referredContacts = referredContacts;
 	}
 

@@ -43,6 +43,7 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 * This is coming user id
 	 */
 	private String comingUserId;
+	
 
 	/**
 	 * This method is used to get the contact
@@ -243,5 +244,12 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 		this.referredUserScore = referredUserScore;
 		this.comingTime = comingTime;
 		this.comingUserId = comingUserId;
+	}
+	
+	public UpdateReferralContactDetailsEntity(String contact, String referralUUID,String createdtime) {
+		this.contact = contact;
+		this.referralUUID = referralUUID;
+		super.stringCreationDate = createdtime;
+
 	}
 }

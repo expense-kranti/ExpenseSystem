@@ -11,7 +11,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class ReferralLinkEntity extends BaseEntity implements Serializable {
+public class ReferredContactEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the referral link
