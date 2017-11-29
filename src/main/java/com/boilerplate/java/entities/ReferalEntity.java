@@ -1,11 +1,14 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Random;
 
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This entity represents the reference of user
@@ -13,12 +16,12 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author kranti123
  *
  */
-public class ReferalEntity extends BaseEntity implements Serializable {
+public class ReferalEntity extends BaseEntity implements Serializable, ICRMPublishDynamicURl, ICRMPublishEntity {
 
 	/**
 	 * This is the list of referred users' contacts
 	 */
-	private BoilerplateList<String> referralContacts;
+	private BoilerplateList<ReferralLinkEntity> referralContacts;
 
 	/**
 	 * This is user referred contact details
@@ -28,17 +31,19 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the userId
 	 */
+	@JsonIgnore
 	private String userId;
+
+	/**
+	 * This is the referral UUID
+	 */
+	@JsonIgnore
+	private String referralUUID;
 
 	/**
 	 * This is the referral link
 	 */
 	private String referralLink;
-
-	/**
-	 * This is the referral UUID
-	 */
-	private String referralUUID;
 
 	/**
 	 * This method is used to get the referred contacts details
@@ -69,7 +74,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @return The list of referral contacts
 	 */
-	public BoilerplateList<String> getReferralContacts() {
+	public BoilerplateList<ReferralLinkEntity> getReferralContacts() {
 		return referralContacts;
 	}
 
@@ -79,7 +84,7 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 * @param referralContacts
 	 *            The referral contacts list
 	 */
-	public void setReferralContacts(BoilerplateList<String> referralContacts) {
+	public void setReferralContacts(BoilerplateList<ReferralLinkEntity> referralContacts) {
 		this.referralContacts = referralContacts;
 	}
 
@@ -119,25 +124,6 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-
-	/**
-	 * This method is used to get the referral link
-	 * 
-	 * @return the referralLink
-	 */
-	public String getReferralLink() {
-		return referralLink;
-	}
-
-	/**
-	 * This method is used to set the referral link
-	 * 
-	 * @param referralLink
-	 *            the referralLink to set
-	 */
-	public void setReferralLink(String referralLink) {
-		this.referralLink = referralLink;
 	}
 
 	/**
@@ -211,6 +197,88 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * This method is used to construct this entity and set campaign type ,uuid
+	 * and userId
+	 * 
+	 * @param mediumType
+	 *            this is the refer medium type
+	 * @param uuid
+	 *            this is the referral code uuid
+	 * @param userId
+	 *            this is the user id of those which refer its friend
+	 */
+	public ReferalEntity(String mediumType, String uuid, String userId) {
+		this.referralUUID = uuid;
+		this.referralMediumType = UserReferalMediumType.valueOf(mediumType);
+		this.userId = userId;
+	}
+
+	/**
+	 * This method is used to construct this entity and set campaign type and
+	 * userId
+	 * 
+	 * @param mediumType
+	 *            this is the refer medium type
+	 * @param userId
+	 *            this is the user id of those which refer its friend
+	 */
+	public ReferalEntity(UserReferalMediumType mediumType, String userId) {
+		this.referralMediumType = mediumType;
+		this.userId = userId;
+	}
+
+	/**
+	 * This is a simple constructor
+	 */
+	public ReferalEntity() {
+
+	}
+
+	/**
+	 * @see ICRMPublishEntity.createPublishJSON
+	 */
+	@Override
+	public String createPublishJSON(String template) throws UnauthorizedException {
+		String retrunValue = template;
+		retrunValue = retrunValue.replace("@userId", this.getUserId() == null ? "{}" : this.getUserId());
+		retrunValue = retrunValue.replace("@referralUUID",
+				this.getReferralUUID() == null ? "{}" : this.getReferralUUID());
+		retrunValue = retrunValue.replace("@referralContacts",
+				this.getReferralContacts() == null ? "{}" : this.getReferralContacts().toString());
+		retrunValue = retrunValue.replace("@type",
+				this.getReferralMediumType().toString() == null ? "{}" : this.getReferralMediumType().toString());
+		return retrunValue;
+	}
+
+	/**
+	 * @see ICRMPublishDynamicURl.createPublishUrl
+	 */
+	@Override
+	public String createPublishUrl(String url) throws UnsupportedEncodingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * This method get the referral link
+	 * 
+	 * @return the referralLink
+	 */
+	public String getReferralLink() {
+		return referralLink;
+	}
+
+	/**
+	 * This method set the referral link
+	 * 
+	 * @param referralLink
+	 *            the referralLink to set
+	 */
+	public void setReferralLink(String referralLink) {
+		this.referralLink = referralLink;
 	}
 
 }

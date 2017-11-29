@@ -20,6 +20,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralLinkEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
 import com.boilerplate.service.interfaces.IReferralService;
@@ -153,11 +154,17 @@ public class ReferralService implements IReferralService {
 	BoilerplateList<String> subjectsForSendEmail = new BoilerplateList<>();
 
 	/**
+	 * This is the publish subject list for send email.
+	 */
+	BoilerplateList<String> subjectsForPublishReferralReport = new BoilerplateList<>();
+
+	/**
 	 * Initializes the bean
 	 */
 	public void initialize() {
 		subjectsForSendSMS.add("SendSMSToReferredUser");
 		subjectsForSendEmail.add("SendEmailToReferredUser");
+		subjectsForPublishReferralReport.add("PublishReferReport");
 	}
 
 	/**
@@ -177,12 +184,10 @@ public class ReferralService implements IReferralService {
 		referalEntity.validate();
 		// Validate referral request
 		this.validateReferRequest(referalEntity);
+		// Generate referral link
+		this.generateContactReferralLinks(referalEntity);
 		// Set the userId
 		referalEntity.setUserId(RequestThreadLocal.getSession().getUserId());
-		// Get referral link
-		referalEntity.setReferralLink(this.generateUserReferralLink(referalEntity));
-		// Get short URL
-		referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
 		// Save referral contacts to data store
 		referral.saveUserReferredContacts(referalEntity);
 		try {
@@ -223,11 +228,10 @@ public class ReferralService implements IReferralService {
 		try {
 			// Trigger back ground job to send referral link through SMS
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendSMS, "ReferalEntity",
-					"sendSmsOrEmail");
-			throw new Exception();
+					"sendReferralLinkThroughSMS");
 		} catch (Exception ex) {
-			// if queue is not working we send sms on the thread
-			sendSmsToReferredUserObserver.prepareSmsDetailsAndSendSms(referalEntity,
+			// if queue is not working we send SMS on the thread
+			sendSmsToReferredUserObserver.processReferRequest(referalEntity,
 					RequestThreadLocal.getSession().getExternalFacingUser());
 			logger.logException("referralService",
 					"sendReferralLinkThroughSMS", "try-Queue Reader", ex.toString()
@@ -250,11 +254,10 @@ public class ReferralService implements IReferralService {
 		try {
 			// Trigger back ground job to send referral link through Email
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
-					"sendSmsOrEmail");
-			throw new Exception();
+					"sendReferralLinkThroughEmail");
 		} catch (Exception ex) {
 			// if queue is not working we send email on the thread
-			sendEmailToReferredUserObserver.createEmailDetailsAndSendEmail(referalEntity,
+			sendEmailToReferredUserObserver.processReferRequest(referalEntity,
 					RequestThreadLocal.getSession().getExternalFacingUser());
 			logger.logException("referralService",
 					"sendReferralLinkThroughEmail", "try-Queue Reader", ex.toString()
@@ -268,22 +271,28 @@ public class ReferralService implements IReferralService {
 	 * 
 	 * @param referralEntity
 	 *            this parameter is used to define the refer medium type
-	 * @return the referral link
 	 */
-	private String generateUserReferralLink(ReferalEntity referralEntity) {
-		// Create UUID
-		referralEntity.createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
-		// Get base referral link from configurations
-		String baseReferralLink = configurationManager.get("BASE_REFERRAL_LINK");
-		// Replace @campaignType with refer
-		baseReferralLink = baseReferralLink.replace("@campaignType", CampaignType.valueOf("Refer").toString());
-		// Replace @campaignSource with refer medium type
-		baseReferralLink = baseReferralLink.replace("@campaignSource",
-				referralEntity.getReferralMediumType().toString());
-		// Replace @UUID with UUID
-		baseReferralLink = baseReferralLink.replace("@UUID", referralEntity.getReferralUUID());
-		// Return the referral link
-		return baseReferralLink;
+	private void generateContactReferralLinks(ReferalEntity referralEntity) {
+		// Run a for loop to generate referral links for each contact
+		for (Object o : referralEntity.getReferralContacts()) {
+			// Convert an object into entity
+			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) o;
+			// Generate UUID
+			referralLinkEntity.createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+			// Get base referral link from configurations
+			String baseReferralLink = configurationManager.get("BASE_REFERRAL_LINK");
+			// Replace @campaignType with refer
+			baseReferralLink = baseReferralLink.replace("@campaignType", CampaignType.valueOf("Refer").toString());
+			// Replace @campaignSource with refer medium type
+			baseReferralLink = baseReferralLink.replace("@campaignSource",
+					referralEntity.getReferralMediumType().toString());
+			// Replace @UUID with UUID
+			baseReferralLink = baseReferralLink.replace("@UUID", referralEntity.getReferralUUID());
+			// Replace @contactUUID with contactUUID
+			baseReferralLink = baseReferralLink.replace("@contactUUID", referralLinkEntity.getReferralUUID());
+			// Set referral link
+			referralLinkEntity.setReferralLink(baseReferralLink);
+		}
 	}
 
 	/**
@@ -309,38 +318,6 @@ public class ReferralService implements IReferralService {
 			throw new ValidationFailedException("ReferalEntity",
 					"Today limit reach, you can refer " + todayLeftReferralContacts + "contacts more", null);
 		}
-	}
-
-	/**
-	 * This method is used to get the short URl against the Long URL
-	 * 
-	 * @param referralLink
-	 *            this is the long url
-	 * @return the short url
-	 * @throws IOException
-	 *             throw this exception in case of any error while trying to get
-	 *             the short url
-	 */
-	private String getShortUrl(String referralLink) throws IOException {
-		// Create new request header
-		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap();
-		// Declare new header value
-		BoilerplateList<String> headerValue = new BoilerplateList();
-		// Add header value
-		headerValue.add("application/json");
-		// Put key and value in request header
-		requestHeaders.put("Content-Type", headerValue);
-		// Get request body
-		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
-		// Replace @long URL with referral link
-		requestBody = requestBody.replace("@longUrl", referralLink);
-		// Make HTTP request
-		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
-				requestHeaders, null, requestBody, "POST");
-		// Get short url entity from the http response
-		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
-		// Return short URL
-		return shortUrlEntity.getShortUrl();
 	}
 
 	/**
@@ -389,5 +366,110 @@ public class ReferralService implements IReferralService {
 			return true;
 		}
 		return true;
+	}
+
+	/**
+	 * @see IReferralService.getFaceBookReferralLink
+	 */
+	@Override
+	public ReferalEntity getFaceBookReferralLink() throws IOException {
+		// Create a new instance of referral entity
+		ReferalEntity referalEntity = new ReferalEntity(UserReferalMediumType.Facebook,
+				RequestThreadLocal.getSession().getUserId());
+		// Get referral link
+		referalEntity.setReferralLink(this.generateUserReferralLink(referalEntity));
+		// Get short URL
+		referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
+		// Create a new list of referral contacts
+		BoilerplateList<String> referralContact = new BoilerplateList<>();
+		// Add facebook in list
+		referralContact.add(UserReferalMediumType.Facebook.toString() + " " + referalEntity.getReferralUUID());
+		// Set referral list
+		referalEntity.setReferralContacts(referralContact);
+		// Save referral contacts to data store
+		referral.saveUserReferredContacts(referalEntity);
+		// Save user referral details
+		referral.saveReferralDetail(referalEntity);
+		// Save user referral details
+		referral.saveUserReferralDetail(referalEntity);
+		// Publish referral data
+		this.publishReferralData(referalEntity);
+		return referalEntity;
+	}
+
+	/**
+	 * This method is used to generate the user referral link
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains the details about user refer request
+	 * @return referral link
+	 */
+	private String generateUserReferralLink(ReferalEntity referalEntity) {
+		// Generate UUID
+		referalEntity.createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+		// Get base referral link from configurations
+		String baseReferralLink = configurationManager.get("BASE_REFERRAL_LINK");
+		// Replace @campaignType with refer
+		baseReferralLink = baseReferralLink.replace("@campaignType", CampaignType.valueOf("Refer").toString());
+		// Replace @campaignSource with refer medium type
+		baseReferralLink = baseReferralLink.replace("@campaignSource",
+				referalEntity.getReferralMediumType().toString());
+		// Replace @UUID with UUID
+		baseReferralLink = baseReferralLink.replace("@UUID", referalEntity.getReferralUUID());
+		return baseReferralLink;
+	}
+
+	/**
+	 * This method is used to get the short URl against the Long URL
+	 * 
+	 * @param referralLink
+	 *            this is the long url
+	 * @return the short url
+	 * @throws IOException
+	 *             throw this exception in case of any error while trying to get
+	 *             the short url
+	 */
+	private String getShortUrl(String referralLink) throws IOException {
+		// Create new request header
+		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap();
+		// Declare new header value
+		BoilerplateList<String> headerValue = new BoilerplateList();
+		// Add header value
+		headerValue.add("application/json");
+		// Put key and value in request header
+		requestHeaders.put("Content-Type", headerValue);
+		// Get request body
+		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
+		// Replace @long URL with referral link
+		requestBody = requestBody.replace("@longUrl", referralLink);
+		// Make HTTP request
+		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
+				requestHeaders, null, requestBody, "POST");
+		// Get short url entity from the http response
+		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
+		// Return short URL
+		return shortUrlEntity.getShortUrl();
+	}
+
+	/**
+	 * This method is used to publish the referral data to sales force
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains the information regarding the user
+	 *            Reference like refer unique id ,referral link,referral
+	 *            contacts ,referral medium type etc.
+	 */
+	private void publishReferralData(ReferalEntity referalEntity) {
+		try {
+			// Trigger back ground job to send referral link through Email
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForPublishReferralReport, "ReferalEntity",
+					"publishReferralData");
+			throw new Exception();
+		} catch (Exception ex) {
+			logger.logException(
+					"referralService", "publishReferralData", "try-Queue Reader", ex.toString()
+							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
+					ex);
+		}
 	}
 }

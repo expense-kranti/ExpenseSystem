@@ -379,7 +379,9 @@ public class QueueReaderJob {
 					logger.logInfo("QueueReaderJob", "readBulkQueueAndDispatch", "Publishing Bulk dispatcher", "Before Calling publishBulkFromSubject for CREATE_USER");
 					publishBulkFromSubject("CREATE_USER_AKS");
 					RequestThreadLocal.sleepThread(Integer.parseInt(configurationManager.get("PublishDispatcherSleepTimeBeforeUser")));
-					publishBulkFromSubject("REPORT_CREATED_AKS");					
+					publishBulkFromSubject("REPORT_CREATED_AKS");
+					publishBulkFromSubject("REFER_REPORT_CREATED_AKS");	
+					
 									}//end if
 			}catch(Exception ex){
 				//the job group has failed

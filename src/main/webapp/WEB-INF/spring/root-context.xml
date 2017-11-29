@@ -132,11 +132,14 @@
 				<entry key="Publish" value-ref="onPublish" />
 				<entry key="CREATE_USER_AKS" value-ref="onBulkPublish" />
 				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
+				<entry key="REFER_REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 				<entry key="PublishUserData" value-ref="publishUserData" />
 				<entry key="SetUserChangePasswordStatus" value-ref="setUserChangePasswordStatus" />
 
 				<entry key="SendSMSToReferredUser" value-ref="userReferredObserverForSMS" />
 				<entry key="SendEmailToReferredUser" value-ref="userReferredObserverForEmail"></entry>
+				<entry key="UpdateReferScore" value-ref="updateReferScore"></entry>
+				<entry key="PublishReferReport" value-ref="publishReferReport"></entry>
 
 			</map>
 
@@ -244,6 +247,17 @@
 		</property>
 	</bean>
 
+	<bean id="updateReferScore"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="updateReferScoreObserver" />
+			</list>
+		</property>
+	</bean>
+
 	<bean id="userReferredObserverForEmail"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
@@ -251,6 +265,17 @@
 				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
 				<ref bean="sendEmailToReferredUserObserver" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="publishReferReport"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="publishReferReportObserver" />
 			</list>
 		</property>
 	</bean>
@@ -291,6 +316,13 @@
 		<property name="userDataAccess" ref="userDataAccess"></property>
 		<property name="referralService" ref="referralService"></property>
 		<property name="referral" ref="referral"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+
+	<bean id="updateReferScoreObserver" class="com.boilerplate.asyncWork.UpdateRefererScoreObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="referral" ref="referral"></property>
 	</bean>
 
 	<bean id="sendEmailToReferredUserObserver"
@@ -300,6 +332,7 @@
 		<property name="userDataAccess" ref="userDataAccess"></property>
 		<property name="referralService" ref="referralService"></property>
 		<property name="referral" ref="referral"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
 	</bean>
 
 	<bean id="setUserChangePasswordStatusObserver"
@@ -333,6 +366,13 @@
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="sendEmailOnUnsuccessfulBulkPublish" ref="sendEmailOnUnsuccessfulBulkPublish"></property>
 	</bean>
+
+	<bean id="publishReferReportObserver" class="com.boilerplate.asyncWork.PublishReferReportObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+
+
 	<bean id="authTokenService" class="com.boilerplate.service.implemetations.AuthTokenService">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>

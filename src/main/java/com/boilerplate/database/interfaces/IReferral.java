@@ -2,6 +2,7 @@ package com.boilerplate.database.interfaces;
 
 import java.util.Map;
 
+import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
 
@@ -72,4 +73,14 @@ public interface IReferral {
 	 * @return referred contact details
 	 */
 	public String getUserReferredContactDetails(ReferalEntity referalEntity);
+
+	/**
+	 * This method is used to get the campaign details
+	 * 
+	 * @param campaignSource
+	 * @param mediumType
+	 * @param uuid
+	 * @return
+	 */
+	public Map<String, String> getCampaignDetails(String campaignSource, String mediumType, String uuid);
 }

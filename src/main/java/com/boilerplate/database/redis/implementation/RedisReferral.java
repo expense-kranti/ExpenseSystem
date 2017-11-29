@@ -14,6 +14,7 @@ import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralLinkEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
 
 /**
@@ -109,11 +110,14 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	@Override
 	public void saveUserReferredContacts(ReferalEntity referalEntity) {
 		// Run for loop to insert all referral contact to map
-		for (Object o : referalEntity.getReferralContacts()) {
+		for (Object contact : referalEntity.getReferralContacts()) {
+			// Convert a object into entity
+			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) contact;
+			// Save data to redis
 			super.hset(
 					ReferredContact + RequestThreadLocal.getSession().getUserId() + ":" + Date.valueOf(LocalDate.now())
 							+ ":" + referalEntity.getReferralMediumType(),
-					((String) o).toUpperCase(), referalEntity.getReferralLink(),
+					referralLinkEntity.getContact().toUpperCase(), referralLinkEntity.getReferralLink(),
 					Integer.valueOf(configurationManager.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE")) * 60);
 		}
 	}
@@ -136,9 +140,12 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	@Override
 	public void saveUserReferralDetail(ReferalEntity referalEntity) {
 		// Run for loop to insert all referral contact to map
-		for (Object o : referalEntity.getReferralContacts()) {
+		for (Object contact : referalEntity.getReferralContacts()) {
+			// Convert a object into entity
+			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) contact;
+			// Save data to redis
 			super.hset(UserReferral + referalEntity.getUserId() + ":" + referalEntity.getReferralUUID(),
-					((String) o).toUpperCase(), referalEntity.getReferralLink());
+					referralLinkEntity.getReferralUUID(), referralLinkEntity.getContact().toUpperCase());
 		}
 	}
 
@@ -148,8 +155,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	@Override
 	public void saveReferralDetail(ReferalEntity referalEntity) {
 		// Save refer details
-		super.hset(Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType()
-				+ ":" + referalEntity.getReferralUUID(), referalEntity.getUserId(), referalEntity.getReferralLink());
+		super.hset(
+				Campaign + CampaignType.valueOf("Refer").toString() + ":" + referalEntity.getReferralMediumType() + ":"
+						+ referalEntity.getReferralUUID(),
+				referalEntity.getUserId(), Date.valueOf(LocalDate.now()).toString());
 	}
 
 	/**
@@ -171,5 +180,13 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 			}
 		}
 		return referredData;
+	}
+
+	/**
+	 * @see IReferral.getUserReferredContactDeatils
+	 */
+	@Override
+	public Map<String, String> getCampaignDetails(String campaignSource, String mediumType, String uuid) {
+		return super.hgetAll(Campaign + campaignSource + ":" + mediumType + ":" + uuid);
 	}
 }

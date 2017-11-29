@@ -86,4 +86,19 @@ public class ReferralController extends BaseController {
 		referralService.validateReferContact(referalEntity);
 	}
 
+	/**
+	 * This API is used to get the contact referred by user in current date
+	 * 
+	 * @throws Exception
+	 *             throw this exception in case of any error while trying to get
+	 *             the contact referred by user
+	 */
+	@ApiOperation(value = "Get the contact referred by user in current date")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/userReferralLink", method = RequestMethod.GET)
+	public @ResponseBody ReferalEntity getFaceBookReferralLink() throws Exception {
+		// Get the all user articles
+		return referralService.getFaceBookReferralLink();
+	}
+
 }

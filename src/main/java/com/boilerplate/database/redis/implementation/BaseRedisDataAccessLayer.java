@@ -767,6 +767,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_Script_Publish_User_To_CRM", "false"); // false for
 																	// not
 																	// publish
+		vAllETest.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
+		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
+		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		return vAllETest;
 	}
 
@@ -806,6 +809,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_Publish_Report", "true"); // false for not publish
 		vAllEDev.put("Is_Script_Publish_User_To_CRM", "false"); // false for not
 																// publish
+		vAllEDev.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
+		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
+		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		return vAllEDev;
 
 	}
@@ -849,8 +855,8 @@ public class BaseRedisDataAccessLayer {
 																		// for
 																		// not
 																		// publish
-																		// //
-																		// publish
+		vAllEProduction.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
+		vAllEProduction.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		return vAllEProduction;
 	}
 
@@ -928,12 +934,25 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
 		vAllEAll.put("REFERRAL_LINK_UUID_LENGTH", "8");
 		vAllEAll.put("BASE_REFERRAL_LINK",
-				"www.clearmydues.com?campaignType=@campaignType&&campaignSource=@campaignSource&&UUID=@UUID");
+				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?campaignSource=@campaignSource&&campaignType=@campaignType&&UUID=@UUID&&contactUUID=@contactUUID");
 		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
 		vAllEAll.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE", "10080");
+		vAllEAll.put("REFER_SCORE_FOR_EMAIL", "10");
+		vAllEAll.put("REFER_SCORE_FOR_PHONE", "10");
+		vAllEAll.put("REFER_SCORE_FOR_FACEBOOK", "10");
+		
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_EMAIL", "10");
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_PHONE", "10");
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_FACEBOOK", "10");
 
+		// REFER publish configuration
+		vAllEAll.put("AKS_REFER_PUBLISH_METHOD", "POST");
+		vAllEAll.put("AKS_REFER_PUBLISH_SUBJECT", "REFER_REPORT_CREATED_AKS");
+		vAllEAll.put("AKS_REFER_PUBLISH_TEMPLATE",
+				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
+		vAllEAll.put("AKS_REFER_DYNAMIC_PUBLISH_URL", "false");
 		return vAllEAll;
 
 	}
@@ -963,7 +982,7 @@ public class BaseRedisDataAccessLayer {
 		// email message for sending invitation to referred user related
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
-				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link/b>");
+				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

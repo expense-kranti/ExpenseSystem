@@ -1,5 +1,6 @@
 package com.boilerplate.asyncWork;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -7,10 +8,17 @@ import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.framework.HttpResponse;
+import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralLinkEntity;
+import com.boilerplate.java.entities.ShortUrlEntity;
 import com.boilerplate.service.interfaces.IContentService;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.boilerplate.service.interfaces.ISendSMSService;
@@ -18,7 +26,7 @@ import com.boilerplate.service.interfaces.ISendSMSService;
 /**
  * This class sends a SMS when a user is referred to the website
  * 
- * @author kranti123
+ * @author urvij
  *
  */
 public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
@@ -27,6 +35,22 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+
+	/**
+	 * This is the new instance of queue reader job
+	 */
+	@Autowired
+	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
+
+	/**
+	 * This sets the queue reader job
+	 * 
+	 * @param queueReaderJob
+	 *            The queue reader job
+	 */
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
+		this.queueReaderJob = queueReaderJob;
+	}
 
 	/**
 	 * This is a new instance of Referral
@@ -122,16 +146,149 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	}
 
 	/**
+	 * This is the subject list for publish
+	 */
+	private BoilerplateList<String> subjectsForPublishReferralReport = null;
+
+	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
+		// Save user referral details
+		referral.saveReferralDetail(referralEntity);
+		// Save user referral details
+		referral.saveUserReferralDetail(referralEntity);
+		try {
+			// Get referring user first name and fetch phone number of referred
+			// user one by one and send sms to each one
+			this.processReferRequest(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
+		} catch (Exception exception) {
+			logger.logError("SendSmsToReferredUserObserver", "observe", "queueReaderJob catch block",
+					"Exception :" + exception);
+		}
+		// Publish referral data to CRM
+		this.publishReferralData(referralEntity);
+	}
 
-		// Get referring user first name and fetch phone number of referred user
-		// one by one and send sms to each one
-		this.prepareSmsDetailsAndSendSms(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
+	/**
+	 * This method gets the referring user name and phone number to be used for
+	 * sending sms
+	 *
+	 * @param referralEntity
+	 *            The referralEntity with list of referred users' contacts
+	 * @param detailsOfReferringUser
+	 *            details of referring user to be used to fetch the required
+	 *            information
+	 */
+	public void processReferRequest(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser) {
+		// Generate short URL
+		this.generateShortUrl(referralEntity);
+		// Save referral data to data store
+		this.saveReferralData(referralEntity);
+		// Get referring user first name
+		String referringUserFirstName = detailsOfReferringUser.getFirstName();
+		// Iterating through contact list, fetching phone number from list and
+		// sending SMS one by one
+		for (Object contact : referralEntity.getReferralContacts()) {
+			// Convert a object into entity
+			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) contact;
+			// Get referral contact
+			String phoneNumber = referralLinkEntity.getContact();
+			// Check is this phone is already registered with our system or not
+			if (referralService.checkReferredContactExistence(phoneNumber, referralEntity.getReferralMediumType())) {
+				try {
+					// Send SMS
+					this.sendSMS(referringUserFirstName, phoneNumber, referralLinkEntity.getReferralLink());
+				} catch (Exception ex) {
+					// Log the exception
+					logger.logException("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
+							"While sending refer link throught the sms ~ This is the mobile number " + phoneNumber
+									+ " ~ Sent by user : " + referralEntity.getUserId(),
+							ex.toString(), ex);
+				}
+			} else {
+				// If phone number is already registered then log the error
+				logger.logError("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
+						"Check contact existence",
+						"referred phone number already register with our system" + "This is the mobile number "
+								+ phoneNumber + " ~ Sent by user : " + referralEntity.getUserId());
+			}
+		}
+	}
 
+	/**
+	 * This method is used to generate short URL
+	 * 
+	 * @param referralEntity
+	 *            The referral Entity it has all the details of the referral
+	 *            details such as referral contacts, its referring userId
+	 */
+	private void generateShortUrl(ReferalEntity referralEntity) {
+		// Run a for loop to generate the short URL for each contact
+		for (Object o : referralEntity.getReferralContacts()) {
+			// Convert a object into entity
+			ReferralLinkEntity referralLinkEntity = (ReferralLinkEntity) o;
+			try {
+				// Get short URL
+				referralLinkEntity.setReferralLink(this.getShortUrl(referralLinkEntity.getReferralLink()));
+			} catch (IOException ex) {
+				// Log the exception
+				logger.logException("SendEmailToReferredUserObserver",
+						"generateShortUrl", "While trying to get the short url ~ This is the conatct "
+								+ referralLinkEntity.getContact() + " ~ Sent by user : " + referralEntity.getUserId(),
+						ex.toString(), ex);
+			}
+		}
+	}
+
+	/**
+	 * This method is used to get the short URl against the Long URL
+	 * 
+	 * @param referralLink
+	 *            this is the long url
+	 * @return the short url
+	 * @throws IOException
+	 *             throw this exception in case of any error while trying to get
+	 *             the short url
+	 */
+	private String getShortUrl(String referralLink) throws IOException {
+		// Create new request header
+		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap();
+		// Declare new header value
+		BoilerplateList<String> headerValue = new BoilerplateList();
+		// Add header value
+		headerValue.add("application/json");
+		// Put key and value in request header
+		requestHeaders.put("Content-Type", headerValue);
+		// Get request body
+		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
+		// Replace @long URL with referral link
+		requestBody = requestBody.replace("@longUrl", referralLink);
+		// Make HTTP request
+		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
+				requestHeaders, null, requestBody, "POST");
+		// Get short url entity from the http response
+		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
+		// Return short URL
+		return shortUrlEntity.getShortUrl();
+	}
+
+	/**
+	 * This method is used to save the referral data to data store
+	 * 
+	 * @param referralEntity
+	 *            The referral Entity it has all the details of the referral
+	 *            details such as referral contacts, its referring userId
+	 */
+	private void saveReferralData(ReferalEntity referralEntity) {
+		// Save referral contacts to data store
+		referral.saveUserReferredContacts(referralEntity);
+		// Save user referral details
+		referral.saveReferralDetail(referralEntity);
+		// Save user referral details
+		referral.saveUserReferralDetail(referralEntity);
 	}
 
 	/**
@@ -164,41 +321,29 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 		String response = null;
 		// Send the sms to referred user
 		HttpResponse smsGatewayResponse = sendSmsService.send(url, phoneNumber, message);
-
 	}
 
 	/**
-	 * This method gets the referring user name and phone number to be used for
-	 * sending sms
-	 *
-	 * @param referralEntity
-	 *            The referralEntity with list of referred users' contacts
-	 * @param detailsOfReferringUser
-	 *            details of referring user to be used to fetch the required
-	 *            information
+	 * This method is used to publish the referral data to sales force
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains the information regarding the user
+	 *            Reference like refer unique id ,referral link,referral
+	 *            contacts ,referral medium type etc.
 	 */
-	public void prepareSmsDetailsAndSendSms(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser) {
-		// Get referring user first name
-		String referringUserFirstName = detailsOfReferringUser.getFirstName();
-		// Getting the referred user contacts list
-		BoilerplateList<String> referralContacts = referralEntity.getReferralContacts();
-		// Iterating through contact list, fetching phone number from list and
-		// sending sms
-		// one by one
-		for (int i = 0; i < referralContacts.size(); i++) {
-			String phoneNumber = (String) referralContacts.get(i);
-			if (referralService.checkReferredContactExistence(phoneNumber, referralEntity.getReferralMediumType())) {
-				try {
-					this.sendSMS(referringUserFirstName, phoneNumber, referralEntity.getReferralLink());
-				} catch (Exception ex) {
-					logger.logException("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
-							"try-Queue Reader", ex.toString(), ex);
-				}
-			} else {
-				logger.logError("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
-						"Check contact existence", "referred phone number already register with our system");
-			}
-
+	private void publishReferralData(ReferalEntity referalEntity) {
+		subjectsForPublishReferralReport = new BoilerplateList<>();
+		subjectsForPublishReferralReport.add("PublishReferReport");
+		try {
+			// Trigger back ground job to send referral link through Email
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForPublishReferralReport, "ReferalEntity",
+					"publishReferralData");
+			throw new Exception();
+		} catch (Exception ex) {
+			logger.logException(
+					"referralService", "publishReferralData", "try-Queue Reader", ex.toString()
+							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
+					ex);
 		}
 	}
 

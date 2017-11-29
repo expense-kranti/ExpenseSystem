@@ -52,10 +52,11 @@ public interface IReferralService {
 	 * @throws NotFoundException
 	 *             throw this exception in case the referral medium is not match
 	 *             with our referral medium types
-	 * @throws ValidationFailedException 
+	 * @throws ValidationFailedException
 	 */
-	public void validateReferContact(ReferalEntity referalEntity) throws ConflictException, NotFoundException, ValidationFailedException;
-	
+	public void validateReferContact(ReferalEntity referalEntity)
+			throws ConflictException, NotFoundException, ValidationFailedException;
+
 	/**
 	 * This method is used to check the contact existence in our data store
 	 * 
@@ -67,4 +68,12 @@ public interface IReferralService {
 	 * @return true in case contact does not exist
 	 */
 	public boolean checkReferredContactExistence(String contactDetail, UserReferalMediumType contactType);
+
+	/**
+	 * This method is used to get the referral link for facebook sharing
+	 * 
+	 * @return the referral link
+	 * @throws IOException 
+	 */
+	public ReferalEntity getFaceBookReferralLink() throws IOException;
 }
