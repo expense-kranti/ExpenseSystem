@@ -446,36 +446,49 @@ public class ReferralService implements IReferralService {
 	}
 
 	/**
+	 * @throws ConflictException 
 	 * @see IReferralService.getFaceBookReferralLink
 	 */
 	@Override
-	public ReferalEntity getFaceBookReferralLink() throws IOException {
+	public ReferalEntity getFaceBookReferralLink() throws IOException, ConflictException {
+		
+		String userReferId = this.getReferUserId();
+		
 		// Create a new instance of referral entity
 		ReferalEntity referalEntity = new ReferalEntity(
 				UserReferalMediumType.Facebook,
 				RequestThreadLocal.getSession().getUserId());
+		
+		referalEntity.setUserReferId(userReferId);
 		// Get referral link
 		referalEntity
 				.setReferralLink(this.generateUserReferralLink(referalEntity));
 		// Get short URL
 		referalEntity.setReferralLink(
 				this.getShortUrl(referalEntity.getReferralLink()));
-		// Create a new list of referral contacts
-		BoilerplateList<String> referralContact = new BoilerplateList<>();
-		// Add facebook in list
-		referralContact.add(UserReferalMediumType.Facebook.toString() + " "
-				+ referalEntity.getReferralUUID());
-		// Set referral list
-		referalEntity.setReferralContacts(referralContact);
-		// Save referral contacts to data store
-		referral.saveUserReferredContacts(referalEntity);
-		// Save user referral details
-		referral.saveReferralDetail(referalEntity);
-		// Save user referral details
-		referral.saveUserReferralDetail(referalEntity);
+		
 		// Publish referral data
 		this.publishReferralData(referalEntity);
 		return referalEntity;
+	}
+
+	private String getReferUserId() throws ConflictException {
+		// Get user details
+		ExternalFacingReturnedUser user = RequestThreadLocal.getSession()
+				.getExternalFacingUser();
+		// Check is user contains its user refer id if not then create
+		String userReferId;
+		if (user.getUserReferId() == null) {
+			userReferId = this.createUUID(Integer.valueOf(
+					configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+			user.setUserReferId(userReferId);
+			// update user
+			userDataAccess.update(user);
+		}
+		 else {
+			 userReferId = user.getUserReferId();
+		}
+		return userReferId;
 	}
 
 	/**
@@ -486,21 +499,16 @@ public class ReferralService implements IReferralService {
 	 * @return referral link
 	 */
 	private String generateUserReferralLink(ReferalEntity referalEntity) {
-		// Generate UUID
-		referalEntity.createUUID(Integer.valueOf(
-				configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+		
 		// Get base referral link from configurations
 		String baseReferralLink = configurationManager
 				.get("BASE_REFERRAL_LINK");
-		// Replace @campaignType with refer
-		baseReferralLink = baseReferralLink.replace("@campaignType",
-				CampaignType.valueOf("Refer").toString());
 		// Replace @campaignSource with refer medium type
 		baseReferralLink = baseReferralLink.replace("@campaignSource",
 				referalEntity.getReferralMediumType().toString());
 		// Replace @UUID with UUID
 		baseReferralLink = baseReferralLink.replace("@UUID",
-				referalEntity.getReferralUUID());
+				referalEntity.getUserReferId());
 		return baseReferralLink;
 	}
 

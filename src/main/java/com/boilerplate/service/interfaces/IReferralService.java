@@ -75,6 +75,7 @@ public interface IReferralService {
 	 * 
 	 * @return the referral link
 	 * @throws IOException 
+	 * @throws ConflictException 
 	 */
-	public ReferalEntity getFaceBookReferralLink() throws IOException;
+	public ReferalEntity getFaceBookReferralLink() throws IOException, ConflictException;
 }

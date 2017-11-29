@@ -55,6 +55,15 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	 */
 	private UserReferalMediumType referralMediumType;
 
+	public ReferalEntity(UserReferalMediumType mediumType, String userId) {
+		this.referralMediumType = mediumType;
+		this.userId = userId;
+	}
+
+	public ReferalEntity() {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * This method is used to get the referral contacts
 	 * 
