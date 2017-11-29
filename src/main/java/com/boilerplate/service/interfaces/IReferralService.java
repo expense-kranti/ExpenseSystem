@@ -35,8 +35,9 @@ public interface IReferralService {
 	 * @throws ValidationFailedException
 	 * @throws IOException
 	 *             throw this exception in case we failed to get short URL
+	 * @throws ConflictException 
 	 */
-	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException;
+	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException, ConflictException;
 
 	/**
 	 * This method is used to validate the contact check is this contact is

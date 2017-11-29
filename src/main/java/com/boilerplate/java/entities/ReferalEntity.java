@@ -5,10 +5,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Random;
 
+import org.h2.util.New;
+
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import scala.util.parsing.combinator.testing.Str;
 
 /**
  * This entity represents the reference of user
@@ -216,4 +221,19 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 		this.referredContacts = referredContacts;
 	}
 
+	/**
+	 * @return the dayCount
+	 */
+	public BoilerplateMap<String, String> getDayCount() {
+		return dayCount;
+	}
+
+	/**
+	 * @param dayCount the dayCount to set
+	 */
+	public void setDayCount(BoilerplateMap<String, String> dayCount) {
+		this.dayCount = dayCount;
+	}
+
+	private BoilerplateMap<String, String> dayCount;
 }

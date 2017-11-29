@@ -568,22 +568,6 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 */
 	private String userReferId;
 
-	/**
-	 * This method is used to create the UUID
-	 * 
-	 * @return the UUID
-	 */
-	public void createUUID(Integer uuidLength) {
-		// New instance of random
-		Random rand = new Random();
-		this.userReferId = "";
-		// Run a for loop to generate a configurations define length uuid
-		for (int i = 0; i < uuidLength; i++) {
-			// Get random number
-			int randomNum = rand.nextInt(26 - 0);
-			// Concatenate new char to string
-			userReferId = userReferId + String.valueOf((char) (randomNum + 97));
-		}
-	}
+	
 
 }
