@@ -64,6 +64,13 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 		// TODO Auto-generated constructor stub
 	}
 
+	public ReferalEntity(String campaignType, String userId,
+			String userReferId) {
+		this.referralMediumType = UserReferalMediumType.valueOf(campaignType);
+		this.userId = userId;
+		this.userReferId = userReferId;
+	}
+
 	/**
 	 * This method is used to get the referral contacts
 	 * 

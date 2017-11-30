@@ -111,6 +111,16 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 				configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"),
 				userId);
 	}
+	/**
+	 * @see IReferral.saveUserReferUUID
+	 */
+	@Override
+	public String getReferUser(String uuid) {
+		// Save user's id and refer UUID in hash map
+		return super.hget(
+				configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
+				uuid);
+	}
 
 	/**
 	 * @see IReferral.increaseDayCounter
@@ -129,6 +139,27 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	public void increaseReferSignUpCounter(ReferalEntity referalEntity) {
 		super.increaseCounter(ReferSignUpCount + referalEntity.getUserReferId()
 				+ ":" + referalEntity.getReferralMediumType().toString());
+	}
+	
+	
+	/**
+	 * @see IReferral.createDayCounter
+	 */
+	@Override
+	public void createSignUpCounter(ReferalEntity referalEntity,String initialValue) {
+		super.set(ReferSignUpCount + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString() ,initialValue,Integer.valueOf(configurationManager
+						.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY"))
+						* 60);
+	}
+	
+	/**
+	 * @see IReferral.getDayCount
+	 */
+	@Override
+	public String getSignUpCount(ReferalEntity referalEntity) {
+		return super.get(ReferSignUpCount + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString());
 	}
 
 	/**

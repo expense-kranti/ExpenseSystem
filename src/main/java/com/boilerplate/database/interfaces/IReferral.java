@@ -98,4 +98,10 @@ public interface IReferral {
 	void saveUserReferContacts(ReferalEntity referalEntity,
 			UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity) throws JsonParseException, JsonMappingException, IOException;
 
+	String getReferUser(String uuid);
+
+	void createSignUpCounter(ReferalEntity referalEntity, String initialValue);
+
+	String getSignUpCount(ReferalEntity referalEntity);
+
 }

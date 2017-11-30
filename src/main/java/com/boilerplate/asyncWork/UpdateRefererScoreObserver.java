@@ -103,21 +103,29 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		// Get externalFacingUser from asyncWorkItem
 		ExternalFacingUser externalFacingUser = (ExternalFacingUser) asyncWorkItem.getPayload();
-		// Get refer by user details
-		String referBYUser = this.getReferByUser(externalFacingUser);
+		
+		String referBYUser = referral.getReferUser(externalFacingUser.getUserReferId());
 		if (referBYUser != null) {
 			// Create the entity
 			ReferalEntity referalEntity = new ReferalEntity(externalFacingUser.getCampaignType(),
-					externalFacingUser.getCampaignUUID(), referBYUser);
-			// Update referring user score
-			this.updateReferringUserScore(referalEntity);
-			// Is sign up user get the refer score
-			if (Boolean.valueOf(configurationManager.get("IS_SIGN_UP_USER_GET_REFER_SCORE"))) {
-				// Update sign up user score
-				this.updateSignUpUserScore(referalEntity, externalFacingUser);
+					referBYUser,externalFacingUser.getUserReferId());
+			// check counter for maxm user
+			String signUpCount = referral.getSignUpCount(referalEntity);
+			if(signUpCount==null && Integer.parseInt(signUpCount)<
+					 Integer.parseInt(configurationManager.get("MAX_ALLOW_USER_SCORE")) ){
+				// Update referring user score
+				this.updateReferringUserScore(referalEntity);
+				// Is sign up user get the refer score
+				if (Boolean.valueOf(configurationManager.get("IS_SIGN_UP_USER_GET_REFER_SCORE"))) {
+					// Update sign up user score
+					this.updateSignUpUserScore(referalEntity, externalFacingUser);
+				}
+				// if null counter value then set othervise increase
+				this.checkAndSetSignUpCounter(signUpCount,referalEntity);
 			}
+			
 			UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity = new UpdateReferralContactDetailsEntity(
-					"", referalEntity.getReferralUUID(),
+					"", referalEntity.getUserReferId(),
 					this.getSignUpUserReferScore(referalEntity.getReferralMediumType()),
 					this.getReferScore(referalEntity.getReferralMediumType()), LocalDate.now().toString(),
 					externalFacingUser.getUserId());
@@ -127,24 +135,13 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 
 	}
 
-	/**
-	 * This method is used to get refer by user details or user id which is need
-	 * to update that user score
-	 * 
-	 * @param externalFacingUser
-	 *            this parameter contains the details about campaign
-	 *            source,campaign type and uuid which is need to get the refer
-	 *            by user details
-	 * @return userId of refer by user
-	 */
-	private String getReferByUser(ExternalFacingUser externalFacingUser) {
-		Map<String, String> campaignDetails = referral.getCampaignDetails(externalFacingUser.getCampaignSource(),
-				externalFacingUser.getCampaignType(), externalFacingUser.getCampaignUUID());
-		String referBYUser = null;
-		for (String key : campaignDetails.keySet()) {
-			referBYUser = key;
+	private void checkAndSetSignUpCounter(String signUpCount, ReferalEntity referalEntity) {
+		if(signUpCount==null){
+			referral.createSignUpCounter(referalEntity, "1");
+		}else{
+			referral.increaseReferSignUpCounter(referalEntity);
 		}
-		return referBYUser;
+		
 	}
 
 	/**
