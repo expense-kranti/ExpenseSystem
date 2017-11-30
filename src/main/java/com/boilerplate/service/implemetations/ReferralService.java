@@ -224,7 +224,6 @@ public class ReferralService implements IReferralService {
 			// Trigger back ground job to send referral link through SMS
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendSMS, "ReferalEntity",
 					"sendSmsOrEmail");
-			throw new Exception();
 		} catch (Exception ex) {
 			// if queue is not working we send sms on the thread
 			sendSmsToReferredUserObserver.prepareSmsDetailsAndSendSms(referalEntity,
@@ -251,7 +250,6 @@ public class ReferralService implements IReferralService {
 			// Trigger back ground job to send referral link through Email
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
 					"sendSmsOrEmail");
-			throw new Exception();
 		} catch (Exception ex) {
 			// if queue is not working we send email on the thread
 			sendEmailToReferredUserObserver.createEmailDetailsAndSendEmail(referalEntity,
@@ -268,7 +266,7 @@ public class ReferralService implements IReferralService {
 	 * 
 	 * @param referralEntity
 	 *            this parameter is used to define the refer medium type
-	 * @return the referral link
+	 * @return the referral link generated
 	 */
 	private String generateUserReferralLink(ReferalEntity referralEntity) {
 		// Create UUID

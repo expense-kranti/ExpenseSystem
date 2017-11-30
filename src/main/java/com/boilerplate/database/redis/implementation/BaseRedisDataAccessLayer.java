@@ -611,6 +611,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permissions for EMICalculatorController methods starts here
+
+		// method permission for calculateEmi method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
