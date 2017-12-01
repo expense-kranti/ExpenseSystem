@@ -37,14 +37,14 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		// loan tenure in years
 		float loanPeriodInYears = emiDataEntity.getLoanPeriodInYears();
 		// loan tenure in months
-		float loanPeriodInMonths;
+		int loanPeriodInMonths;
 		if (loanPeriodInYears != 0) {
 			// Getting loan period in months
 			//do we need to throw exception if loan period in months < 1 or make closest upper value
-			loanPeriodInMonths = Math.round(Math.ceil(loanPeriodInYears * 12));
+			loanPeriodInMonths = (int)Math.ceil(loanPeriodInYears * 12);
 		} else {
 			// Getting loan period in months filled
-			loanPeriodInMonths = Math.round(Math.ceil(emiDataEntity.getLoanPeriodInMonths()));
+			loanPeriodInMonths = (int)Math.ceil(emiDataEntity.getLoanPeriodInMonths());
 		}
 		// loan amount left after paying EMI
 		double balanceAtEndOFMonth = initialLoanAmount;
@@ -115,7 +115,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	 *            loan period in months
 	 * @return The EMI calculated
 	 */
-	public double calculateEMI(double principalAmount, double interestPerMonth, float loanPeriodInMonths) {
+	public double calculateEMI(double principalAmount, double interestPerMonth, int loanPeriodInMonths) {
 		// this is the formula for calculating EMI
 		return (principalAmount * interestPerMonth * ((Math.pow((1 + interestPerMonth), loanPeriodInMonths))
 				/ (Math.pow((1 + interestPerMonth), loanPeriodInMonths) - 1)));
@@ -146,7 +146,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	 * @param emiDataEntity
 	 *            the emiDataEntity whose some values will be set in the method
 	 */
-	public void generateAmortizedSchedule(double interest, double beginningBalance, float loanPeriodInMonths,
+	public void generateAmortizedSchedule(double interest, double beginningBalance, int loanPeriodInMonths,
 			double interestPerMonth, double arrearEmiAmount, double balanceAtEndOFMonth, EmiDataEntity emiDataEntity) {
 		// this is the total interest, total principal
 		double totalInterest = 0, totalPrincipal = 0;
