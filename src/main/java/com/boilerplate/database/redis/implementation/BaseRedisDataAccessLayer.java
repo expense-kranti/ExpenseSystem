@@ -825,7 +825,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		vAllETest.put("BASE_REFERRAL_LINK",
-				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
+				"http://javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllETest.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "eae0c74f-4b0b-4a7e-8a97-4488404d6dac_referFriendhtml");
