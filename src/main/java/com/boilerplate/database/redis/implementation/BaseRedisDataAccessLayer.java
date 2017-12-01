@@ -562,8 +562,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
 
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// for contact us
 
+		
+		// method permissions for ContactController starts here
+
+		// method permission for send email method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission
+				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		//method permission for contactUs method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
@@ -573,6 +584,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permissions for ScriptController starts here
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndAssessmentReport()");
@@ -641,7 +653,6 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
 		// method permissions for EMICalculatorController methods starts here
 
 		// method permission for calculateEmi method
@@ -817,7 +828,7 @@ public class BaseRedisDataAccessLayer {
 				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllETest.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
-		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "34ae79a6-5099-465d-a0fb-30cc023f3f69_referFriendhtml");
+		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "eae0c74f-4b0b-4a7e-8a97-4488404d6dac_referFriendhtml");
 		return vAllETest;
 	}
 

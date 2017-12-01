@@ -263,9 +263,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		// Set sign up user id
 		signUpUserReferralDetails.setUserId(externalFacingUser.getUserId());
 		// Update user Total score
-		this.updateUserTotalScore(referalEntity, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
+		this.updateUserTotalScore(signUpUserReferralDetails, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
 		// Update user monthly score
-		this.updateUserMonthlyScore(referalEntity, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
+		this.updateUserMonthlyScore(signUpUserReferralDetails, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
 	}
 
 	/**
