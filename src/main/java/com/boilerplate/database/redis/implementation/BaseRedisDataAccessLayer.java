@@ -813,7 +813,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
-		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
+		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "34ae79a6-5099-465d-a0fb-30cc023f3f69_referFriendhtml");
 		return vAllETest;
 	}
 
@@ -857,7 +857,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		
-		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
+		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 		return vAllEDev;
 
 	}

@@ -322,8 +322,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			throws Exception {
 		// Get subject of invitation email
 		String subject = contentService.getContent("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT");
-		// Replace @UserFirstName to referring user first name in email subject
-		subject = subject.replace("@UserFirstName", referringUserFirstName);
+
 		// Get the invitation email body
 		if(referTemplate==null){
 			// template from s3

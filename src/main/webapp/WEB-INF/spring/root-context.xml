@@ -334,6 +334,8 @@
 		<property name="referralService" ref="referralService"></property>
 		<property name="referral" ref="referral"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="file" ref="file"></property>
 	</bean>
 
 	<bean id="setUserChangePasswordStatusObserver"
