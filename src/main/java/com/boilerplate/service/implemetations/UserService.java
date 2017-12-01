@@ -630,7 +630,6 @@ public class UserService implements IUserService {
 			}
 			logger.logException("UserService", "create", "try-Queue Reader", ex.toString() + " Queue Down", ex);
 		}
-
 		return externalFacingReturnedUser;
 	}
 
@@ -645,8 +644,7 @@ public class UserService implements IUserService {
 	 *            uuid
 	 */
 	public void checkIfUserRegisteredThroughCampaign(ExternalFacingUser externalFacingUser) {
-		if (externalFacingUser.getCampaignSource() != null && externalFacingUser.getCampaignType() != null
-				&& externalFacingUser.getCampaignUUID() != null) {
+		if (externalFacingUser.getCampaignType() != null && externalFacingUser.getCampaignUUID() != null) {
 			try {
 				queueReaderJob.requestBackroundWorkItem(externalFacingUser, subjectForUpdateRefererScore, "UserService",
 						"checkIfUserRegisteredThroughCampaign");

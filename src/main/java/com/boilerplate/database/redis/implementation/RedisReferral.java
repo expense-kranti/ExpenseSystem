@@ -9,7 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
+import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -21,8 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author shiva
  *
  */
-public class RedisReferral extends BaseRedisDataAccessLayer
-		implements IReferral {
+public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral {
 
 	/**
 	 * This is the instance of the configuration manager.
@@ -35,8 +34,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	 * 
 	 * @param configurationManager
 	 */
-	public void setConfigurationManager(
-			com.boilerplate.configurations.ConfigurationManager configurationManager) {
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
 
@@ -64,16 +62,13 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	 * @see IReferral.saveUserReferredContacts
 	 */
 	@Override
-	public void saveUserReferredExpireContacts(ReferalEntity referalEntity,String contact) {
+	public void saveUserReferredExpireContacts(ReferalEntity referalEntity, String contact) {
 		// save the contact detail with expiry time
 		super.set(
 				ReferredExpireContact + referalEntity.getUserReferId() + ":"
-						+ referalEntity.getReferralMediumType().toString() + ":"
-						+ (contact).toUpperCase(),
+						+ referalEntity.getReferralMediumType().toString() + ":" + (contact).toUpperCase(),
 				referalEntity.getReferralLink(),
-				Integer.valueOf(configurationManager
-						.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE"))
-						* 60);
+				Integer.valueOf(configurationManager.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE")) * 60);
 
 	}
 
@@ -83,10 +78,9 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	@Override
 	public String getUserReferredExpireContacts(ReferalEntity referalEntity) {
 		// Save data to redis
-		return super.get(ReferredExpireContact + referalEntity.getUserReferId()
-				+ ":" + referalEntity.getReferralMediumType().toString() + ":"
-				+ ((String) referalEntity.getReferralContacts().get(0))
-						.toUpperCase());
+		return super.get(ReferredExpireContact + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString() + ":"
+				+ ((String) referalEntity.getReferralContacts().get(0)).toUpperCase());
 	}
 
 	/**
@@ -95,10 +89,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	@Override
 	public void saveUserReferUUID(ReferalEntity referalEntity) {
 		// Save user's id and refer UUID in hash map
-		super.hset(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"),
-				referalEntity.getUserId(), referalEntity.getUserReferId());
-		super.hset(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
-				referalEntity.getUserReferId(), referalEntity.getUserId());
+		super.hset(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), referalEntity.getUserId(),
+				referalEntity.getUserReferId());
+		super.hset(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), referalEntity.getUserReferId(),
+				referalEntity.getUserId());
 	}
 
 	/**
@@ -107,19 +101,16 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	@Override
 	public String getUserReferUUID(String userId) {
 		// Save user's id and refer UUID in hash map
-		return super.hget(
-				configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"),
-				userId);
+		return super.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId);
 	}
+
 	/**
 	 * @see IReferral.saveUserReferUUID
 	 */
 	@Override
 	public String getReferUser(String uuid) {
 		// Save user's id and refer UUID in hash map
-		return super.hget(
-				configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
-				uuid);
+		return super.hget(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), uuid);
 	}
 
 	/**
@@ -127,9 +118,8 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	 */
 	@Override
 	public void increaseDayCounter(ReferalEntity referalEntity) {
-		super.increaseCounter(ReferCounter + referalEntity.getUserReferId()
-				+ ":" + referalEntity.getReferralMediumType().toString() + ":"
-				+ Date.valueOf(LocalDate.now()));
+		super.increaseCounter(ReferCounter + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString() + ":" + Date.valueOf(LocalDate.now()));
 	}
 
 	/**
@@ -137,24 +127,25 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	 */
 	@Override
 	public void increaseReferSignUpCounter(ReferalEntity referalEntity) {
-		super.increaseCounter(ReferSignUpCount + referalEntity.getUserReferId()
-				+ ":" + referalEntity.getReferralMediumType().toString());
+		super.increaseCounter(ReferSignUpCount + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString());
 	}
-	
-	
+
 	/**
 	 * @see IReferral.createDayCounter
 	 */
 	@Override
-	public void createSignUpCounter(ReferalEntity referalEntity,String initialValue) {
-		super.set(ReferSignUpCount + referalEntity.getUserReferId() + ":"
-				+ referalEntity.getReferralMediumType().toString() ,initialValue,Integer.valueOf(configurationManager
-						.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY"))
+	public void createSignUpCounter(ReferalEntity referalEntity, String initialValue) {
+		super.set(
+				ReferSignUpCount + referalEntity.getUserReferId() + ":"
+						+ referalEntity.getReferralMediumType().toString(),
+				initialValue,
+				Integer.valueOf(configurationManager.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY"))
 						* 60);
 	}
-	
+
 	/**
-	 * @see IReferral.getDayCount
+	 * @see IReferral.getSignUpCount
 	 */
 	@Override
 	public String getSignUpCount(ReferalEntity referalEntity) {
@@ -168,38 +159,51 @@ public class RedisReferral extends BaseRedisDataAccessLayer
 	@Override
 	public String getDayCount(ReferalEntity referalEntity) {
 		return super.get(ReferCounter + referalEntity.getUserReferId() + ":"
-				+ referalEntity.getReferralMediumType().toString() + ":"
-				+ Date.valueOf(LocalDate.now()));
+				+ referalEntity.getReferralMediumType().toString() + ":" + Date.valueOf(LocalDate.now()));
 	}
 
 	/**
 	 * @see IReferral.createDayCounter
 	 */
 	@Override
-	public void createDayCounter(ReferalEntity referalEntity,String initialValue) {
-		super.set(ReferCounter + referalEntity.getUserReferId() + ":"
-				+ referalEntity.getReferralMediumType().toString() + ":"
-				+ Date.valueOf(LocalDate.now()),initialValue,Integer.valueOf(configurationManager
-						.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY"))
+	public void createDayCounter(ReferalEntity referalEntity, String initialValue) {
+		super.set(
+				ReferCounter + referalEntity.getUserReferId() + ":" + referalEntity.getReferralMediumType().toString()
+						+ ":" + Date.valueOf(LocalDate.now()),
+				initialValue,
+				Integer.valueOf(configurationManager.get("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY"))
 						* 60);
 	}
 
 	/**
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 * @see IReferral.saveUserReferContacts
 	 */
 	@Override
 	public void saveUserReferContacts(ReferalEntity referalEntity,
-			UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity) throws JsonParseException, JsonMappingException, IOException {
-			
-			Map<String, String> expressEntityHashMap = new ObjectMapper().readValue(
-					updateReferralContactDetailsEntity.toJSON(), new TypeReference<HashMap<String,String>>(){});
-			super.hmset(ReferredContact + referalEntity.getUserReferId() + ":"
-					+ referalEntity.getReferralMediumType().toString()
-					+ ":" + (updateReferralContactDetailsEntity.getContact()).toUpperCase(), 
-					expressEntityHashMap);
-		
+			ReferredContactDetailEntity referredContactDetailEntity)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		Map<String, String> expressEntityHashMap = new ObjectMapper().readValue(referredContactDetailEntity.toJSON(),
+				new TypeReference<HashMap<String, String>>() {
+				});
+		super.hmset(ReferredContact + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString() + ":"
+				+ (referredContactDetailEntity.getContact()).toUpperCase(), expressEntityHashMap);
+
+	}
+
+	/**
+	 * @return
+	 * @see IReferral.getUserReferredContacts
+	 */
+	@Override
+	public Map<String, String> getUserReferredContacts(ReferalEntity referalEntity, String contact) {
+
+		return super.hgetAll(ReferredContact + referalEntity.getUserReferId() + ":"
+				+ referalEntity.getReferralMediumType().toString() + ":" + contact.toUpperCase());
+
 	}
 }

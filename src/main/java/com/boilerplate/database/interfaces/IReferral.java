@@ -1,9 +1,10 @@
 package com.boilerplate.database.interfaces;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.boilerplate.java.entities.ReferalEntity;
-import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
+import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -42,8 +43,6 @@ public interface IReferral {
 	 */
 	public String getUserReferredExpireContacts(ReferalEntity referalEntity);
 
-	
-
 	/**
 	 * This method is used to increase referring day count
 	 * 
@@ -74,7 +73,8 @@ public interface IReferral {
 	 * @param referalEntity
 	 * @return
 	 */
-	public void createDayCounter(ReferalEntity referalEntity,String initialValue);
+	public void createDayCounter(ReferalEntity referalEntity, String initialValue);
+
 	/**
 	 * This method is used to save all those contact which is referred by user
 	 * in current date
@@ -82,26 +82,64 @@ public interface IReferral {
 	 * @param referalEntity
 	 *            this parameter contains the information regarding the user
 	 *            referral contacts by current date
-	 * @param contact this parameter contain the refer contact info
+	 * @param contact
+	 *            this parameter contain the refer contact info
 	 */
-	void saveUserReferredExpireContacts(ReferalEntity referalEntity,
-			String contact);
+	public void saveUserReferredExpireContacts(ReferalEntity referalEntity, String contact);
+
 	/**
 	 * This method is used to save user referred contacts
 	 * 
 	 * @param referalEntity
 	 *            this parameter define the referral request type
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
-	void saveUserReferContacts(ReferalEntity referalEntity,
-			UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity) throws JsonParseException, JsonMappingException, IOException;
+	public void saveUserReferContacts(ReferalEntity referalEntity,
+			ReferredContactDetailEntity updateReferralContactDetailsEntity)
+			throws JsonParseException, JsonMappingException, IOException;
 
-	String getReferUser(String uuid);
+	/**
+	 * This method is used to get the refer user
+	 * 
+	 * @param uuid
+	 *            this is the user refer id
+	 * @return the referring user id
+	 */
+	public String getReferUser(String uuid);
 
-	void createSignUpCounter(ReferalEntity referalEntity, String initialValue);
+	/**
+	 * This method is used to create sign up counter
+	 * 
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the referral
+	 *            details
+	 * @param initialValue
+	 *            this is the initial value for counter
+	 */
+	public void createSignUpCounter(ReferalEntity referalEntity, String initialValue);
 
-	String getSignUpCount(ReferalEntity referalEntity);
+	/**
+	 * This method is used to get the sign up count
+	 * 
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the referral
+	 *            details
+	 * @return the sign up count
+	 */
+	public String getSignUpCount(ReferalEntity referalEntity);
 
+	/**
+	 * This method is used to get the user referred contact details
+	 * 
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the referral
+	 *            details
+	 * @param String
+	 *            contact this parameter contains the information about referred
+	 *            contact
+	 * @return referred contact details all like when referred,refer type etc.
+	 */
+	public Map<String, String> getUserReferredContacts(ReferalEntity referalEntity, String contact);
 }
