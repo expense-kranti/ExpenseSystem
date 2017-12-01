@@ -23,11 +23,11 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the loan period in years
 	 */
-	private float loanPeriodInYears;
+	private int loanPeriodInYears;
 	/**
 	 * This is the loan period in months
 	 */
-	private float loanPeriodInMonths;
+	private int loanPeriodInMonths;
 	/**
 	 * This is the interest rate per year or per annum for which loan is taken
 	 */
@@ -88,7 +88,7 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @return The loan period in years of loan
 	 */
-	public float getLoanPeriodInYears() {
+	public int getLoanPeriodInYears() {
 		return loanPeriodInYears;
 	}
 
@@ -98,7 +98,7 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 * @param loanPeriodInYears
 	 *            The loan period/tenure in years
 	 */
-	public void setLoanPeriodInYears(float loanPeriodInYears) {
+	public void setLoanPeriodInYears(int loanPeriodInYears) {
 		this.loanPeriodInYears = loanPeriodInYears;
 	}
 
@@ -107,7 +107,7 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @return The loan period in months of loan
 	 */
-	public float getLoanPeriodInMonths() {
+	public int getLoanPeriodInMonths() {
 		return loanPeriodInMonths;
 	}
 
@@ -116,7 +116,7 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @param loanPeriodInMonths
 	 */
-	public void setLoanPeriodInMonths(float loanPeriodInMonths) {
+	public void setLoanPeriodInMonths(int loanPeriodInMonths) {
 		this.loanPeriodInMonths = loanPeriodInMonths;
 	}
 

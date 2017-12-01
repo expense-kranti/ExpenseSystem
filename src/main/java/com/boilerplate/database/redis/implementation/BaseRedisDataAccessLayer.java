@@ -562,8 +562,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
 
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// for contact us
 
+		
+		// method permissions for ContactController starts here
+
+		// method permission for send email method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission
+				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		//method permission for contactUs method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
@@ -573,6 +584,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permissions for ScriptController starts here
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndAssessmentReport()");
@@ -629,17 +641,6 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishTemplate(
 				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
 		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for ContactController starts here
-
-		// method permission for send email method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission
-				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permissions for EMICalculatorController methods starts here

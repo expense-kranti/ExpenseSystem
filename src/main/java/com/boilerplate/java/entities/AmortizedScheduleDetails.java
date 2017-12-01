@@ -25,7 +25,7 @@ public class AmortizedScheduleDetails extends BaseEntity implements Serializable
 	 * This is the loan amount left after payment of EMI at the end of each
 	 * month
 	 */
-	private String loanAtEndOfMonth;
+	private String loanLeft;
 	/**
 	 * This is the month of amortized schedule calculation
 	 */
@@ -68,15 +68,15 @@ public class AmortizedScheduleDetails extends BaseEntity implements Serializable
 	 * Gets the loan amount 
 	 * @return The loan amount at end of month
 	 */
-	public String getLoanAtEndOfMonth() {
-		return loanAtEndOfMonth;
+	public String getLoanLeft() {
+		return loanLeft;
 	}
 	/**
 	 * Sets the loan amount
 	 * @param loanAmountAtEndOfMonth The loan amount at end of month
 	 */
-	public void setLoanAtEndOfMonth(String loanAtEndOfMonth) {
-		this.loanAtEndOfMonth = loanAtEndOfMonth;
+	public void setLoanLeft(String loanLeft) {
+		this.loanLeft = loanLeft;
 	}
 	/**
 	 * Gets the Month

@@ -35,16 +35,18 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		// principal of loan
 		double initialLoanAmount = emiDataEntity.getInitialPrincipalBorrowed() - emiDataEntity.getDownPayment();
 		// loan tenure in years
-		float loanPeriodInYears = emiDataEntity.getLoanPeriodInYears();
+		int loanPeriodInYears = (int) emiDataEntity.getLoanPeriodInYears();
 		// loan tenure in months
 		int loanPeriodInMonths;
 		if (loanPeriodInYears != 0) {
-			// Getting loan period in months
-			//do we need to throw exception if loan period in months < 1 or make closest upper value
-			loanPeriodInMonths = (int)Math.ceil(loanPeriodInYears * 12);
+			// Getting loan period in months take closest upper value
+			loanPeriodInMonths = loanPeriodInYears * 12;
+			// loanPeriodInMonths = (int)Math.ceil(loanPeriodInYears * 12);
 		} else {
-			// Getting loan period in months filled
-			loanPeriodInMonths = (int)Math.ceil(emiDataEntity.getLoanPeriodInMonths());
+			// Getting loan period in months filled take closest upper value
+			loanPeriodInMonths = emiDataEntity.getLoanPeriodInMonths();
+			// loanPeriodInMonths =
+			// (int)Math.ceil(emiDataEntity.getLoanPeriodInMonths());
 		}
 		// loan amount left after paying EMI
 		double balanceAtEndOFMonth = initialLoanAmount;
@@ -69,8 +71,8 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 			// calculate Arrear based EMI
 			arrearEmiAmount = this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
 			// calculate amortized schedule
-			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths, interestPerMonth,
-					arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
+			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths,
+					interestPerMonth, arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
 			break;
 		case HomeLoan:
 			// calculate Arrear based EMI
@@ -88,7 +90,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 			break;
 		default:
 			// calculate Arrear based EMI
-			arrearEmiAmount = this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
+			arrearEmiAmount =  this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
 			// calculate amortized schedule
 			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths, interestPerMonth,
 					arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
@@ -97,7 +99,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		}
 
 		// setting the Arrear EMI to be paid for loan taken to emidataentity
-		emiDataEntity.setEmi(new Integer((int) Math.round(arrearEmiAmount)).toString());
+		emiDataEntity.setEmi(String.valueOf((int) Math.round(arrearEmiAmount)));
 
 		return emiDataEntity;
 
@@ -149,7 +151,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	public void generateAmortizedSchedule(double interest, double beginningBalance, int loanPeriodInMonths,
 			double interestPerMonth, double arrearEmiAmount, double balanceAtEndOFMonth, EmiDataEntity emiDataEntity) {
 		// this is the total interest, total principal
-		double totalInterest = 0, totalPrincipal = 0;
+		double totalInterest = 0, totalPrincipal = 0, principal = 0;
 		// this is starting month of Emi payment
 		LocalDateTime dateOfEmiStart = LocalDateTime.now();
 		// get the month of emi payment start date
@@ -160,22 +162,27 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		BoilerplateList<AmortizedScheduleDetails> amortizedScheduleList = new BoilerplateList<>();
 		// this loop calculates and yields amortized schedule
 		for (int i = 1; i <= loanPeriodInMonths + 1; i++) {
+			// check if loan period about to ended then set EMI principal to pay
+			// to zero
+			if (i == loanPeriodInMonths + 1) {
+				interest = 0;
+				principal = 0;
+				this.populateAndSetAmortizedScheduleDetailList(amortizedScheduleList, emiDataEntity, interest, principal,
+						balanceAtEndOFMonth, currentMonth.toString(), currentYearWrappedObject.toString());
+				break;
+			}
 			// here beginningBalance acts as base loan amount for next month
 			interest = beginningBalance * interestPerMonth;
 			// this is the principal part of EMI
-			double principal = arrearEmiAmount - interest;
+			principal = arrearEmiAmount - interest;
 			// this is the loan amount remaining after each EMI payment
 			balanceAtEndOFMonth = balanceAtEndOFMonth - principal;
 			// here beginningBalance acts as loan amount for next month
 			beginningBalance = balanceAtEndOFMonth;
-			// check if loan fully paid and set EMI principal to pay to zero
-			if (i == loanPeriodInMonths + 1) {
-				balanceAtEndOFMonth = 0;
-				principal = 0;
-			}
 			// populate and set amortized schedule details list per month
 			this.populateAndSetAmortizedScheduleDetailList(amortizedScheduleList, emiDataEntity, interest, principal,
 					balanceAtEndOFMonth, currentMonth.toString(), currentYearWrappedObject.toString());
+
 			// calculate total interest
 			totalInterest += interest;
 			// calculate total principal
@@ -191,9 +198,9 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		// set amortized schedule list of emi data entity
 		emiDataEntity.setAmortizedScheduleDetailsList(amortizedScheduleList);
 		// setting the total Interest paid for loan taken
-		emiDataEntity.setTotalInterest(new Integer((int) Math.round(totalInterest)).toString());
+		emiDataEntity.setTotalInterest(String.valueOf((int) totalInterest));
 		// setting the total payment
-		emiDataEntity.setTotalPayment(new Integer((int) Math.round(totalInterest + totalPrincipal)).toString());
+		emiDataEntity.setTotalPayment(String.valueOf((int) Math.round(totalInterest + totalPrincipal)));
 
 	}
 
@@ -223,13 +230,12 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		AmortizedScheduleDetails amortizedScheduleDetailsForEachMonth = new AmortizedScheduleDetails();
 
 		// set the interest amount paid at the current month of calculation
-		amortizedScheduleDetailsForEachMonth.setInterest(new Integer((int) (Math.round(interest))).toString());
+		amortizedScheduleDetailsForEachMonth.setInterest(String.valueOf((int)Math.round(interest)));
 		// set the loan amount remaining at the end of current month of
 		// calculation
-		amortizedScheduleDetailsForEachMonth
-				.setLoanAtEndOfMonth(new Integer((int) Math.round(balanceAtEndOFMonth)).toString());
+		amortizedScheduleDetailsForEachMonth.setLoanLeft(String.valueOf((int)Math.round(balanceAtEndOFMonth)));
 		// set the principal amount paid at the current month of calculation
-		amortizedScheduleDetailsForEachMonth.setPrincipal(new Integer((int) (Math.round(principal))).toString());
+		amortizedScheduleDetailsForEachMonth.setPrincipal(String.valueOf((int)Math.round(principal)));
 		// set the month
 		amortizedScheduleDetailsForEachMonth.setMonth(month);
 		// set the year
