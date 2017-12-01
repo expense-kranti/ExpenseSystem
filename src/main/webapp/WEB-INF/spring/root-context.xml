@@ -24,7 +24,6 @@
 	<bean id="userService" class="com.boilerplate.service.implemetations.UserService"
 		init-method="initilize">
 		<property name="userRole" ref="userRole" />
-
 		<property name="roleService" ref="roleService"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
@@ -33,6 +32,7 @@
 		<property name="sendRegistrationSMSObserver" ref="sendRegistrationSMSObserver"></property>
 		<property name="sendRegistrationEmailObserver" ref="sendRegistrationEmailObserver"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="referral" ref="referral"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -334,6 +334,8 @@
 		<property name="referralService" ref="referralService"></property>
 		<property name="referral" ref="referral"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="file" ref="file"></property>
 	</bean>
 
 	<bean id="setUserChangePasswordStatusObserver"

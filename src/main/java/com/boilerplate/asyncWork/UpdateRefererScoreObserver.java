@@ -110,6 +110,8 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		// Get externalFacingUser from asyncWorkItem
 		ExternalFacingUser externalFacingUser = (ExternalFacingUser) asyncWorkItem.getPayload();
 		String referBYUser = referral.getReferUser(externalFacingUser.getCampaignUUID());
+		String signUpUserScore = "";
+		String referUserScore = "";
 		if (referBYUser != null) {
 			// Create the entity
 			ReferalEntity referalEntity = new ReferalEntity(externalFacingUser.getCampaignType(), referBYUser,
@@ -124,13 +126,51 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 				if (Boolean.valueOf(configurationManager.get("IS_SIGN_UP_USER_GET_REFER_SCORE"))) {
 					// Update sign up user score
 					this.updateSignUpUserScore(referalEntity, externalFacingUser);
+					signUpUserScore = this.getSignUpUserReferScore(referalEntity.getReferralMediumType());
 				}
 				// if null counter value then set otherwise increase
 				this.checkAndSetSignUpCounter(signUpCount, referalEntity);
+				referUserScore = this.getReferScore(referalEntity.getReferralMediumType());
 			}
-			this.createPublishDataAndPublish(referalEntity, externalFacingUser);
+			// Create referred contact details
+			ReferredContactDetailEntity referredContactDetail = new ReferredContactDetailEntity(
+					this.getContact(referalEntity.getReferralMediumType(), externalFacingUser), signUpUserScore,
+					referUserScore, LocalDate.now().toString(), externalFacingUser.getUserId());
+			// New referred contact list
+			BoilerplateList<ReferredContactDetailEntity> referredContacts = new BoilerplateList<>();
+			// Add details to list
+			referredContacts.add(referredContactDetail);
+			// Set this referred data
+			referalEntity.setReferredContact(referredContacts);
+			// Publish report
+			this.publishReferralData(referalEntity);
+			// Update contact detail
+			this.updateReferredData(referalEntity, referredContactDetail);
 		}
 
+	}
+
+	private String getContact(UserReferalMediumType referralMediumType, ExternalFacingUser externalFacingUser) {
+		String contact = "";
+		// According to type trigger back ground job
+		switch (referralMediumType) {
+		case Email:
+			// Set contact with email
+			contact = externalFacingUser.getEmail();
+			break;
+		case Phone_Number:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+			break;
+		case Facebook:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+			break;
+		default:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+		}
+		return contact;
 	}
 
 	/**
@@ -170,60 +210,6 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		}
 		// Save to Redis
 		referral.saveUserReferContacts(referalEntity, referredContactDetail);
-	}
-
-	/**
-	 * This method is used to create the publish data and publish this data to
-	 * back ground job
-	 * 
-	 * @param referalEntity
-	 *            this parameter contain the information regarding the referring
-	 *            user id ,referring medium type and refer id
-	 * 
-	 * @param externalFacingUser
-	 *            this parameter contain information regarding referred contact
-	 * @throws JsonParseException
-	 *             throw this exception in case of we get error while trying to
-	 *             get referred contact details from data store
-	 * @throws JsonMappingException
-	 *             throw this exception in case we fail to map json with map
-	 *             type
-	 * @throws IOException
-	 *             throw this exception in case any we get any error while
-	 *             trying to get data
-	 */
-	private void createPublishDataAndPublish(ReferalEntity referalEntity, ExternalFacingUser externalFacingUser)
-			throws JsonParseException, JsonMappingException, IOException {
-		String contact = "";
-		// According to type trigger back ground job
-		switch (referalEntity.getReferralMediumType()) {
-		case Email:
-			// Set contact with email
-			contact = externalFacingUser.getEmail();
-			break;
-		case Phone_Number:
-			// Set contact with phone number
-			contact = externalFacingUser.getPhoneNumber();
-			break;
-		case Facebook:
-			// Set contact with phone number
-			contact = externalFacingUser.getPhoneNumber();
-			break;
-		default:
-			// Set contact with phone number
-			contact = externalFacingUser.getPhoneNumber();
-		}
-		BoilerplateList<ReferredContactDetailEntity> referredContacts = new BoilerplateList<>();
-		ReferredContactDetailEntity referredContactDetail = new ReferredContactDetailEntity(contact,
-				this.getSignUpUserReferScore(referalEntity.getReferralMediumType()),
-				this.getReferScore(referalEntity.getReferralMediumType()), LocalDate.now().toString(),
-				externalFacingUser.getUserId());
-		referredContacts.add(referredContactDetail);
-		referalEntity.setReferredContact(referredContacts);
-		// Publish report
-		this.publishReferralData(referalEntity);
-		// Update contact detail
-		this.updateReferredData(referalEntity, referredContactDetail);
 	}
 
 	/**
@@ -277,9 +263,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		// Set sign up user id
 		signUpUserReferralDetails.setUserId(externalFacingUser.getUserId());
 		// Update user Total score
-		this.updateUserTotalScore(referalEntity, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
+		this.updateUserTotalScore(signUpUserReferralDetails, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
 		// Update user monthly score
-		this.updateUserMonthlyScore(referalEntity, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
+		this.updateUserMonthlyScore(signUpUserReferralDetails, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
 	}
 
 	/**

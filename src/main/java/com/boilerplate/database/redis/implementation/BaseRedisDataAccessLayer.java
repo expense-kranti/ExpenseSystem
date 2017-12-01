@@ -814,6 +814,11 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
+		vAllETest.put("BASE_REFERRAL_LINK",
+				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
+		vAllETest.put("URL_SHORTENER_API_URL",
+				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "eae0c74f-4b0b-4a7e-8a97-4488404d6dac_referFriendhtml");
 		return vAllETest;
 	}
 
@@ -856,6 +861,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
+		vAllEDev.put("BASE_REFERRAL_LINK",
+				"http://localhost:8080/CSRFrontend/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
+		vAllEDev.put("URL_SHORTENER_API_URL",
+				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 		return vAllEDev;
 
 	}
@@ -896,11 +906,17 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		vAllEProduction.put("Is_Publish_Report", "true"); // false for not
 		vAllEProduction.put("Is_Script_Publish_User_To_CRM", "true"); // false
-																		// for
-																		// not
-																		// publish
+
 		vAllEProduction.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllEProduction.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
+
+		vAllEProduction.put("BASE_REFERRAL_LINK",
+				"http://www.projectakshar.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
+		vAllEProduction.put("URL_SHORTENER_API_URL",
+				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+
+		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
+				"bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
 		return vAllEProduction;
 	}
 
@@ -977,22 +993,17 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_USER_EMAIL_HASH_BASE_TAG", "AKS_EMAIL_LIST_HASH");
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
 		vAllEAll.put("REFERRAL_LINK_UUID_LENGTH", "8");
-		vAllEAll.put("BASE_REFERRAL_LINK",
-				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_campaign=@utm_campaign");
 		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
-		vAllEAll.put("URL_SHORTENER_API_URL",
-				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE", "10080");
 		vAllEAll.put("REFER_SCORE_FOR_EMAIL", "10");
 		vAllEAll.put("REFER_SCORE_FOR_PHONE", "10");
 		vAllEAll.put("REFER_SCORE_FOR_FACEBOOK", "10");
-
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_EMAIL", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_PHONE", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_FACEBOOK", "10");
 		vAllEAll.put("AKS_USER_UUID_HASH_BASE_TAG", "AKS_USER_UUID_HASH_MAP");
 		vAllEAll.put("AKS_UUID_USER_HASH_BASE_TAG", "AKS_UUID_USER_HASH_MAP");
-
+		vAllEAll.put("IS_SIGN_UP_USER_GET_REFER_SCORE", "true");
 		// REFER publish configuration
 		vAllEAll.put("AKS_REFER_PUBLISH_METHOD", "POST");
 		vAllEAll.put("AKS_REFER_PUBLISH_SUBJECT", "REFER_REPORT_CREATED_AKS");
@@ -1029,7 +1040,7 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("JOIN_INVITATION_SMS",
 				"Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
 		// email message for sending invitation to referred user related
-		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "You have just been referred!");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
 				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 

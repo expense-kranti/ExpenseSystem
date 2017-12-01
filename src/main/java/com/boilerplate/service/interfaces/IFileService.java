@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.FileEntity;
@@ -19,5 +20,7 @@ public interface IFileService {
 			String fileMasterTag);
 
 	public String getPreSignedS3URL(String id);
+
+	public FileEntity getFile(String id) throws NotFoundException;
 	
 }
