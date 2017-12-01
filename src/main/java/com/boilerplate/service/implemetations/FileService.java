@@ -162,6 +162,7 @@ public class FileService implements IFileService {
 			throw new NotFoundException("File", "Not found or unauthorized",
 					null);
 		}
+		fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileEntity.getId()));
 		return fileEntity;
 	}
 }
