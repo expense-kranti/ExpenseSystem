@@ -1,20 +1,21 @@
 package com.boilerplate.asyncWork;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.boilerplate.java.entities.ScoreEntity;
-import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class update referrer user score
@@ -90,12 +91,17 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-	
+
 	/**
 	 * This is the subject list for publish
 	 */
 	private BoilerplateList<String> subjects = null;
-	
+
+	/**
+	 * This is the subject list for publish
+	 */
+	private BoilerplateList<String> subjectsForPublishReferralReport = null;
+
 	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
@@ -103,16 +109,15 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		// Get externalFacingUser from asyncWorkItem
 		ExternalFacingUser externalFacingUser = (ExternalFacingUser) asyncWorkItem.getPayload();
-		
-		String referBYUser = referral.getReferUser(externalFacingUser.getUserReferId());
+		String referBYUser = referral.getReferUser(externalFacingUser.getCampaignUUID());
 		if (referBYUser != null) {
 			// Create the entity
-			ReferalEntity referalEntity = new ReferalEntity(externalFacingUser.getCampaignType(),
-					referBYUser,externalFacingUser.getUserReferId());
+			ReferalEntity referalEntity = new ReferalEntity(externalFacingUser.getCampaignType(), referBYUser,
+					externalFacingUser.getCampaignUUID());
 			// check counter for maxm user
 			String signUpCount = referral.getSignUpCount(referalEntity);
-			if(signUpCount==null && Integer.parseInt(signUpCount)<
-					 Integer.parseInt(configurationManager.get("MAX_ALLOW_USER_SCORE")) ){
+			if (signUpCount == null || Integer.parseInt(signUpCount) < Integer
+					.parseInt(configurationManager.get("MAX_ALLOW_USER_SCORE"))) {
 				// Update referring user score
 				this.updateReferringUserScore(referalEntity);
 				// Is sign up user get the refer score
@@ -120,28 +125,126 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 					// Update sign up user score
 					this.updateSignUpUserScore(referalEntity, externalFacingUser);
 				}
-				// if null counter value then set othervise increase
-				this.checkAndSetSignUpCounter(signUpCount,referalEntity);
+				// if null counter value then set otherwise increase
+				this.checkAndSetSignUpCounter(signUpCount, referalEntity);
 			}
-			
-			UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity = new UpdateReferralContactDetailsEntity(
-					"", referalEntity.getUserReferId(),
-					this.getSignUpUserReferScore(referalEntity.getReferralMediumType()),
-					this.getReferScore(referalEntity.getReferralMediumType()), LocalDate.now().toString(),
-					externalFacingUser.getUserId());
-			// Publish report
-			this.publishToCRM(updateReferralContactDetailsEntity);
+			this.createPublishDataAndPublish(referalEntity, externalFacingUser);
 		}
 
 	}
 
+	/**
+	 * This method is used to update referred contact data to database
+	 * 
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the referring
+	 *            user id ,referring medium type and refer id
+	 * @param referredContactDetail
+	 *            this parameter contain information regarding referred contact
+	 * @throws JsonParseException
+	 *             throw this exception in case of we get error while trying to
+	 *             get referred contact details from data store
+	 * @throws JsonMappingException
+	 *             throw this exception in case we fail to map json with map
+	 *             type
+	 * @throws IOException
+	 *             throw this exception in case any we get any error while
+	 *             trying to get data
+	 */
+	private void updateReferredData(ReferalEntity referalEntity, ReferredContactDetailEntity referredContactDetail)
+			throws JsonParseException, JsonMappingException, IOException {
+		if (referral.getUserReferredContacts(referalEntity, referredContactDetail.getContact()).size() > 0) {
+			// Convert map to entity
+			ReferredContactDetailEntity savedReferredContactDetailEntity = Base.fromMap(
+					referral.getUserReferredContacts(referalEntity, referredContactDetail.getContact()),
+					ReferredContactDetailEntity.class);
+			// Set creation date
+			referredContactDetail.setStringCreationDate(savedReferredContactDetailEntity.getStringCreationDate());
+			// Set update date
+			referredContactDetail.setStringUpdateDate(LocalDate.now().toString());
+		} else {
+			// Set creation date
+			referredContactDetail.setStringCreationDate(LocalDate.now().toString());
+			// Set update date
+			referredContactDetail.setStringUpdateDate(LocalDate.now().toString());
+		}
+		// Save to Redis
+		referral.saveUserReferContacts(referalEntity, referredContactDetail);
+	}
+
+	/**
+	 * This method is used to create the publish data and publish this data to
+	 * back ground job
+	 * 
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the referring
+	 *            user id ,referring medium type and refer id
+	 * 
+	 * @param externalFacingUser
+	 *            this parameter contain information regarding referred contact
+	 * @throws JsonParseException
+	 *             throw this exception in case of we get error while trying to
+	 *             get referred contact details from data store
+	 * @throws JsonMappingException
+	 *             throw this exception in case we fail to map json with map
+	 *             type
+	 * @throws IOException
+	 *             throw this exception in case any we get any error while
+	 *             trying to get data
+	 */
+	private void createPublishDataAndPublish(ReferalEntity referalEntity, ExternalFacingUser externalFacingUser)
+			throws JsonParseException, JsonMappingException, IOException {
+		String contact = "";
+		// According to type trigger back ground job
+		switch (referalEntity.getReferralMediumType()) {
+		case Email:
+			// Set contact with email
+			contact = externalFacingUser.getEmail();
+			break;
+		case Phone_Number:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+			break;
+		case Facebook:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+			break;
+		default:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+		}
+		BoilerplateList<ReferredContactDetailEntity> referredContacts = new BoilerplateList<>();
+		ReferredContactDetailEntity referredContactDetail = new ReferredContactDetailEntity(contact,
+				this.getSignUpUserReferScore(referalEntity.getReferralMediumType()),
+				this.getReferScore(referalEntity.getReferralMediumType()), LocalDate.now().toString(),
+				externalFacingUser.getUserId());
+		referredContacts.add(referredContactDetail);
+		referalEntity.setReferredContact(referredContacts);
+		// Publish report
+		this.publishReferralData(referalEntity);
+		// Update contact detail
+		this.updateReferredData(referalEntity, referredContactDetail);
+	}
+
+	/**
+	 * This method is used to check is sign up count exist if not then create
+	 * and increase is by one
+	 * 
+	 * @param signUpCount
+	 *            this parameter define the value of signUp count if it is null
+	 *            means we dont have sign up counter for this referral type for
+	 *            referring user
+	 * @param referalEntity
+	 *            this parameter contain the information regarding the referring
+	 *            user id ,referring medium type and refer id
+	 */
 	private void checkAndSetSignUpCounter(String signUpCount, ReferalEntity referalEntity) {
-		if(signUpCount==null){
+		if (signUpCount == null) {
 			referral.createSignUpCounter(referalEntity, "1");
-		}else{
+		} else {
 			referral.increaseReferSignUpCounter(referalEntity);
 		}
-		
+
 	}
 
 	/**
@@ -158,6 +261,16 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		this.updateUserMonthlyScore(referalEntity, this.getReferScore(referalEntity.getReferralMediumType()));
 	}
 
+	/**
+	 * This method is used to update sign up user score
+	 * 
+	 * @param referalEntity
+	 *            this parameter contains the information regarding the refer by
+	 *            user like refer medium type and user id of refer by user
+	 * @param externalFacingUser
+	 *            this parameter contain the information regarding the coming
+	 *            user
+	 */
 	private void updateSignUpUserScore(ReferalEntity referalEntity, ExternalFacingUser externalFacingUser) {
 		// Clone referral entity
 		ReferalEntity signUpUserReferralDetails = (ReferalEntity) referalEntity.clone();
@@ -188,7 +301,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		}
 		if (newScore != null) {
 			// Save total score
-			redisAssessment.saveMonthlyScore(newScore);
+			redisAssessment.saveTotalScore(newScore);
 		}
 	}
 
@@ -235,7 +348,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			userReferScore = Float.valueOf(referScore);
 		}
 		// Set refer score
-		scoreEntity.setReferScore(String.valueOf(referScore));
+		scoreEntity.setReferScore(String.valueOf(userReferScore));
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.valueOf(scoreEntity.getObtainedScore()) + userReferScore));
 		return scoreEntity;
@@ -255,6 +368,10 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setUserId(referalEntity.getUserId());
 		// Set refer score
 		scoreEntity.setReferScore(referScore);
+		// Set max score 0
+		scoreEntity.setObtainedScore(String.valueOf(0f));
+		// Set obtained score 0
+		scoreEntity.setMaxScore(String.valueOf(0f));
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.valueOf(referScore)));
 		return scoreEntity;
@@ -351,65 +468,26 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * This method is used to publish the referral details to sales force
+	 * This method is used to publish the referral data to sales force
 	 * 
-	 * @param updateReferralContactDetailsEntity
-	 *            this parameter contain information regarding the refer like
-	 *            referral uuid,coming user id,referring user id,coming
-	 *            time,coming user refer score and referring user refer score
+	 * @param referalEntity
+	 *            this parameter contains the information regarding the user
+	 *            Reference like refer unique id ,referral link,referral
+	 *            contacts ,referral medium type etc.
 	 */
-	private void publishToCRM(UpdateReferralContactDetailsEntity updateReferralContactDetailsEntity) {
-		// Get the status of is refer report publishing is enabled or not
-		if (Boolean.valueOf(configurationManager.get("Is_REFERRAL_REPORT_PUBLISH_ENABLED"))) {
-			// Create the publish entity
-			PublishEntity publishEntity = this.createPublishEntity("PublishReferReportObserver.publishToCRM",
-					configurationManager.get("AKS_REFER_PUBLISH_METHOD"),
-					configurationManager.get("AKS_REFER_PUBLISH_SUBJECT"), updateReferralContactDetailsEntity,
-					configurationManager.get("AKS_REFER_PUBLISH_URL"),
-					configurationManager.get("AKS_REFER_PUBLISH_TEMPLATE"),
-					configurationManager.get("AKS_REFER_DYNAMIC_PUBLISH_URL"));
-			if (subjects == null) {
-				subjects = new BoilerplateList<>();
-				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-			}
-			try {
-				logger.logInfo("PublishReferReportObserver", "publishToCRM", "Publishing report",
-						"publish referral report status" + updateReferralContactDetailsEntity.getComingUserId());
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishReferReportObserver",
-						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
-			} catch (Exception exception) {
-				logger.logError("PublishReferReportObserver", "publishToCRM", "queueReaderJob catch block",
-						"Exception :" + exception);
-			}
+	private void publishReferralData(ReferalEntity referalEntity) {
+		subjectsForPublishReferralReport = new BoilerplateList<>();
+		subjectsForPublishReferralReport.add("PublishReferReport");
+		try {
+			// Trigger back ground job to send referral link through Email
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForPublishReferralReport, "ReferalEntity",
+					"publishReferralData");
+			throw new Exception();
+		} catch (Exception ex) {
+			logger.logException(
+					"referralService", "publishReferralData", "try-Queue Reader", ex.toString()
+							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
+					ex);
 		}
-	}
-
-	/**
-	 * This method creates the publish entity.
-	 * 
-	 * @param method
-	 *            the publish method
-	 * @param publishMethod
-	 *            the publish method
-	 * @param publishSubject
-	 *            the publish subject
-	 * @param returnValue
-	 *            the object
-	 * @param url
-	 *            the publish url
-	 * @return the publish entity
-	 */
-	private PublishEntity createPublishEntity(String method, String publishMethod, String publishSubject,
-			Object returnValue, String url, String publishTemplate, String isDynamicPublishURl) {
-		PublishEntity publishEntity = new PublishEntity();
-		publishEntity.setInput(new Object[0]);
-		publishEntity.setMethod(method);
-		publishEntity.setPublishMethod(publishMethod);
-		publishEntity.setPublishSubject(publishSubject);
-		publishEntity.setReturnValue(returnValue);
-		publishEntity.setUrl(url);
-		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
-		publishEntity.setPublishTemplate(publishTemplate);
-		return publishEntity;
 	}
 }

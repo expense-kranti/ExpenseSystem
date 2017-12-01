@@ -17,8 +17,8 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
-import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
 import com.boilerplate.service.interfaces.IContentService;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.boilerplate.service.interfaces.ISendSMSService;
@@ -158,11 +158,11 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
-
 		try {
 			// Get referring user first name and fetch phone number of referred
 			// user one by one and send sms to each one
-			this.processReferRequest(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
+			referralEntity.setReferredContact(
+					this.processReferRequest(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null)));
 		} catch (Exception exception) {
 			logger.logError("SendSmsToReferredUserObserver", "observe", "queueReaderJob catch block",
 					"Exception :" + exception);
@@ -180,27 +180,27 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 * @param detailsOfReferringUser
 	 *            details of referring user to be used to fetch the required
 	 *            information
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
-	public void processReferRequest(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser) throws JsonParseException, JsonMappingException, IOException {
-		
+	public BoilerplateList<ReferredContactDetailEntity> processReferRequest(ReferalEntity referralEntity,
+			ExternalFacingUser detailsOfReferringUser) throws JsonParseException, JsonMappingException, IOException {
+		BoilerplateList<ReferredContactDetailEntity> referredContacts = new BoilerplateList<>();
 		referralEntity.setReferralLink(this.getShortUrl(referralEntity.getReferralLink()));
 		// Get referring user first name
 		String referringUserFirstName = detailsOfReferringUser.getFirstName();
 		// Iterating through contact list, fetching phone number from list and
 		// sending SMS one by one
 		for (Object contact : referralEntity.getReferralContacts()) {
-			this.saveReferralData(referralEntity,(String)contact);
+			this.saveReferralData(referralEntity, (String) contact);
 			// Get referral contact
 			String phoneNumber = (String) contact;
 			// Check is this phone is already registered with our system or not
 			if (referralService.checkReferredContactExistence(phoneNumber, referralEntity.getReferralMediumType())) {
 				try {
 					// Send SMS
-					this.sendSMS(referringUserFirstName, phoneNumber, 
-							referralEntity.getReferralLink());
+					this.sendSMS(referringUserFirstName, phoneNumber, referralEntity.getReferralLink());
 				} catch (Exception ex) {
 					// Log the exception
 					logger.logException("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
@@ -215,10 +215,10 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 						"referred phone number already register with our system" + "This is the mobile number "
 								+ phoneNumber + " ~ Sent by user : " + referralEntity.getUserId());
 			}
+			referredContacts.add(new ReferredContactDetailEntity((String) contact, LocalDate.now().toString()));
 		}
+		return referredContacts;
 	}
-
-
 
 	/**
 	 * This method is used to get the short URl against the Long URL
@@ -258,24 +258,25 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	 * @param referralEntity
 	 *            The referral Entity it has all the details of the referral
 	 *            details such as referral contacts, its referring userId
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
-	private void saveReferralData(ReferalEntity referralEntity,String contact) throws JsonParseException, JsonMappingException, IOException {
+	private void saveReferralData(ReferalEntity referralEntity, String contact)
+			throws JsonParseException, JsonMappingException, IOException {
 
 		// Save referral contacts to data store
-		referral.saveUserReferredExpireContacts(referralEntity,contact);
+		referral.saveUserReferredExpireContacts(referralEntity, contact);
 		// Save user referral details
-		if(referral.getDayCount(referralEntity)==null){
+		if (referral.getDayCount(referralEntity) == null) {
 			referral.createDayCounter(referralEntity, "1");
-		}else{
+		} else {
 			referral.increaseDayCounter(referralEntity);
 		}
-		//save the refer contact details
-		UpdateReferralContactDetailsEntity updateReferral = new UpdateReferralContactDetailsEntity(contact,
-				referralEntity.getUserReferId(),LocalDate.now().toString());
-		
+		// save the refer contact details
+		ReferredContactDetailEntity updateReferral = new ReferredContactDetailEntity(contact,
+				LocalDate.now().toString());
+
 		referral.saveUserReferContacts(referralEntity, updateReferral);
 	}
 

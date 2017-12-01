@@ -12,17 +12,12 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
  * @author shiva
  *
  */
-public class UpdateReferralContactDetailsEntity extends BaseEntity
+public class ReferredContactDetailEntity extends BaseEntity
 		implements Serializable, ICRMPublishDynamicURl, ICRMPublishEntity {
 	/**
 	 * This is the contact detail
 	 */
 	private String contact;
-
-	/**
-	 * This is referral uuid
-	 */
-	private String referralUUID;
 
 	/**
 	 * This is the coming user score
@@ -32,7 +27,7 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	/**
 	 * This referred user score
 	 */
-	private String referredUserScore;
+	private String refferedUserScore;
 
 	/**
 	 * This is the user coming time
@@ -43,7 +38,6 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 * This is coming user id
 	 */
 	private String comingUserId;
-	
 
 	/**
 	 * This method is used to get the contact
@@ -62,25 +56,6 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 */
 	public void setContact(String contact) {
 		this.contact = contact;
-	}
-
-	/**
-	 * This method is used to get the referral uuid
-	 * 
-	 * @return the referralUUID
-	 */
-	public String getReferralUUID() {
-		return referralUUID;
-	}
-
-	/**
-	 * This method is used to set the referral uuid
-	 * 
-	 * @param referralUUID
-	 *            the referralUUID to set
-	 */
-	public void setReferralUUID(String referralUUID) {
-		this.referralUUID = referralUUID;
 	}
 
 	/**
@@ -107,8 +82,8 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 * 
 	 * @return the referredUserScore
 	 */
-	public String getReferredUserScore() {
-		return referredUserScore;
+	public String getrefferedUserScore() {
+		return refferedUserScore;
 	}
 
 	/**
@@ -117,8 +92,8 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 * @param referredUserScore
 	 *            the referredUserScore to set
 	 */
-	public void setReferredUserScore(String referredUserScore) {
-		this.referredUserScore = referredUserScore;
+	public void setrefferedUserScore(String referredUserScore) {
+		this.refferedUserScore = referredUserScore;
 	}
 
 	/**
@@ -166,12 +141,10 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	public String createPublishJSON(String template) throws UnauthorizedException {
 		String retrunValue = template;
 		retrunValue = retrunValue.replace("@contact", this.getContact() == null ? "{}" : this.getContact());
-		retrunValue = retrunValue.replace("@referralUUID",
-				this.getReferralUUID() == null ? "{}" : this.getReferralUUID());
 		retrunValue = retrunValue.replace("@comingUserScore",
 				this.getComingUserScore() == null ? "{}" : this.getComingUserScore());
 		retrunValue = retrunValue.replace("@refferedUserScore",
-				this.getReferredUserScore() == null ? "{}" : this.getReferredUserScore());
+				this.getrefferedUserScore() == null ? "{}" : this.getrefferedUserScore());
 		retrunValue = retrunValue.replace("@comingTime", this.getComingTime() == null ? "{}" : this.getComingTime());
 		retrunValue = retrunValue.replace("@comingUserId",
 				this.getComingUserId() == null ? "{}" : this.getComingUserId());
@@ -214,7 +187,10 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 		return null;
 	}
 
-	public UpdateReferralContactDetailsEntity() {
+	/**
+	 * This is a simple constructor
+	 */
+	public ReferredContactDetailEntity() {
 
 	}
 
@@ -225,8 +201,6 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 * 
 	 * @param contact
 	 *            this is the contact of referred user
-	 * @param referralUUID
-	 *            this is the referral UUID
 	 * @param comingUserScore
 	 *            this is the coming user gain score
 	 * @param referredUserScore
@@ -236,20 +210,27 @@ public class UpdateReferralContactDetailsEntity extends BaseEntity
 	 * @param comingUserId
 	 *            this is the coming user id
 	 */
-	public UpdateReferralContactDetailsEntity(String contact, String referralUUID, String comingUserScore,
-			String referredUserScore, String comingTime, String comingUserId) {
+	public ReferredContactDetailEntity(String contact, String comingUserScore, String referredUserScore,
+			String comingTime, String comingUserId) {
 		this.contact = contact;
-		this.referralUUID = referralUUID;
 		this.comingUserScore = comingUserScore;
-		this.referredUserScore = referredUserScore;
+		this.refferedUserScore = referredUserScore;
 		this.comingTime = comingTime;
 		this.comingUserId = comingUserId;
 	}
-	
-	public UpdateReferralContactDetailsEntity(String contact, String referralUUID,String createdtime) {
-		this.contact = contact;
-		this.referralUUID = referralUUID;
-		super.stringCreationDate = createdtime;
 
+	/**
+	 * This method is used to construct this entity and set contact and
+	 * referring time
+	 * 
+	 * @param contact
+	 *            this is the contact of referred user
+	 * @param creationTime
+	 *            this is the creation time
+	 */
+	public ReferredContactDetailEntity(String contact, String creationTime) {
+		this.stringCreationDate = creationTime;
+		this.contact = contact;
 	}
+
 }
