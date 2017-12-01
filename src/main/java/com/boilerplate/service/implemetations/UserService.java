@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendRegistrationEmailObserver;
 import com.boilerplate.asyncWork.SendSMSOnPasswordChange;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.ISFUpdateHash;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.database.interfaces.IUserRole;
@@ -153,6 +154,21 @@ public class UserService implements IUserService {
 	 */
 	public void setUserRole(IUserRole userRole) {
 		this.userRole = userRole;
+	}
+
+	/**
+	 * This is a new instance of Referral
+	 */
+	IReferral referral;
+
+	/**
+	 * This method is used to set the referral
+	 * 
+	 * @param referral
+	 *            the referral to set
+	 */
+	public void setReferral(IReferral referral) {
+		this.referral = referral;
 	}
 
 	/**
@@ -644,7 +660,10 @@ public class UserService implements IUserService {
 	 *            uuid
 	 */
 	public void checkIfUserRegisteredThroughCampaign(ExternalFacingUser externalFacingUser) {
-		if (externalFacingUser.getCampaignType() != null && externalFacingUser.getCampaignUUID() != null) {
+		// Check is campaign uuid is not null if it not null then check its
+		// Existence
+		if (externalFacingUser.getCampaignUUID() != null
+				&& referral.getReferUser(externalFacingUser.getCampaignUUID()) != null) {
 			try {
 				queueReaderJob.requestBackroundWorkItem(externalFacingUser, subjectForUpdateRefererScore, "UserService",
 						"checkIfUserRegisteredThroughCampaign");
