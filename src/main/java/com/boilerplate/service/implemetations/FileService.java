@@ -8,11 +8,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.database.interfaces.IFile;
 import com.boilerplate.database.interfaces.IFilePointer;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.FileEntity;
+import com.boilerplate.java.entities.Role;
 import com.boilerplate.service.interfaces.IFileService;
 
 public class FileService implements IFileService {
@@ -117,5 +119,49 @@ public class FileService implements IFileService {
 	@Override
 	public String getPreSignedS3URL(String id) {
 		return file.getPreSignedS3URL(id);
+	}
+	
+	/**
+	 * @see IFileService.getFile
+	 */
+	@Override
+	public FileEntity getFile(String id) throws NotFoundException {
+		// check if the user has permission to read the file or if the file
+		// exists
+		FileEntity fileEntity = filePointer.getFilePointerById(id);
+		if (fileEntity == null) {
+			throw new NotFoundException("File", "Not found or unauthorized",
+					null);
+		}
+		boolean userHasRightsOnFile = false;
+
+		// validate that the user has the rights to read the file
+		if (fileEntity.getUserId().equals(RequestThreadLocal.getSession()
+				.getExternalFacingUser().getId())) {
+			userHasRightsOnFile = true;
+		}
+
+		if (fileEntity.getOrganizationId() != null) {
+			if (RequestThreadLocal.getSession().getExternalFacingUser()
+					.getOrganizationId()
+					.equals(fileEntity.getOrganizationId())) {
+				userHasRightsOnFile = true;
+			}
+		}
+
+		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser()
+				.getRoles()) {
+			if (role.getRoleName().toUpperCase().equals("ADMIN") || role
+					.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+				userHasRightsOnFile = true;
+				break;
+			}
+		}
+
+		if (!userHasRightsOnFile) {
+			throw new NotFoundException("File", "Not found or unauthorized",
+					null);
+		}
+		return fileEntity;
 	}
 }

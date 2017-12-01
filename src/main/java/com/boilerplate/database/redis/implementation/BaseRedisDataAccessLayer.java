@@ -789,6 +789,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
+		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
 		return vAllETest;
 	}
 
@@ -831,6 +832,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
+		
+		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
 		return vAllEDev;
 
 	}
@@ -871,11 +874,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		vAllEProduction.put("Is_Publish_Report", "true"); // false for not
 		vAllEProduction.put("Is_Script_Publish_User_To_CRM", "true"); // false
-																		// for
-																		// not
-																		// publish
+																	
 		vAllEProduction.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllEProduction.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
+		
+		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT", "bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
 		return vAllEProduction;
 	}
 
@@ -1004,7 +1007,7 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("JOIN_INVITATION_SMS",
 				"Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
 		// email message for sending invitation to referred user related
-		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "You have just been referred!");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
 				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 
