@@ -323,6 +323,7 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="redisAssessment" ref="redisAssessment"></property>
 		<property name="referral" ref="referral"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
 	</bean>
 
 	<bean id="sendEmailToReferredUserObserver"
@@ -574,6 +575,9 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
+	</bean>
+	
+	<bean id="emiCalculatorService" class="com.boilerplate.service.implemetations.EmiCalculatorService">
 	</bean>
 
 

@@ -29,9 +29,10 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	private BoilerplateList<String> referralContacts;
 
 	/**
-	 * This is user referred contact details
+	 * This is the list of referred users' contacts
 	 */
-	private BoilerplateList<ReferredContactEntity> referredContacts;
+	@JsonIgnore
+	private BoilerplateList<ReferredContactDetailEntity> referredContact;
 
 	/**
 	 * This is the userId
@@ -42,12 +43,12 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	/**
 	 * This is the referral link
 	 */
-	@JsonIgnore
 	private String referralLink;
 
 	/**
 	 * This is the userId
 	 */
+	@JsonIgnore
 	private String userId;
 
 	/**
@@ -64,10 +65,25 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 		// TODO Auto-generated constructor stub
 	}
 
-	public ReferalEntity(String campaignType, String userId,
-			String userReferId) {
+	public ReferalEntity(String campaignType, String userId, String userReferId) {
 		this.referralMediumType = UserReferalMediumType.valueOf(campaignType);
 		this.userId = userId;
+		this.userReferId = userReferId;
+	}
+
+	/**
+	 * This constructor is used construct this entity and set the user id and
+	 * user refer id
+	 * 
+	 * @param userId
+	 *            this is the user id need to be set
+	 * @param userReferId
+	 *            this is the user refer id need to be set
+	 */
+	public ReferalEntity(String userId, String userReferId) {
+		// Set user id
+		this.userId = userId;
+		// Set user refer id
 		this.userReferId = userReferId;
 	}
 
@@ -190,9 +206,11 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	public String createPublishJSON(String template) throws UnauthorizedException {
 		String retrunValue = template;
 		retrunValue = retrunValue.replace("@userId", this.getUserId() == null ? "{}" : this.getUserId());
-		retrunValue = retrunValue.replace("@userReferId", this.getUserReferId() == null ? "{}" : this.getUserReferId());
+		retrunValue = retrunValue.replace("@referralUUID", this.getUserReferId() == null ? "{}" : this.getUserReferId());
+		String referralLink = this.getReferralLink() == null ? "" : this.getReferralLink();
+		retrunValue = retrunValue.replace("@referralLink", referralLink);
 		retrunValue = retrunValue.replace("@referralContacts",
-				this.getReferralContacts() == null ? "{}" : this.getReferralContacts().toString());
+				this.getReferredContact() == null ? "[]" : this.getReferredContact().toString());
 		retrunValue = retrunValue.replace("@type",
 				this.getReferralMediumType().toString() == null ? "{}" : this.getReferralMediumType().toString());
 		return retrunValue;
@@ -208,6 +226,8 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	}
 
 	/**
+	 * This method is used to get the user id
+	 * 
 	 * @return the userId
 	 */
 	public String getUserId() {
@@ -215,6 +235,8 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	}
 
 	/**
+	 * This method is used to set the userId
+	 * 
 	 * @param userId
 	 *            the userId to set
 	 */
@@ -223,21 +245,8 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	}
 
 	/**
-	 * @return the referredContacts
-	 */
-	public BoilerplateList<ReferredContactEntity> getReferredContacts() {
-		return referredContacts;
-	}
-
-	/**
-	 * @param referredContacts
-	 *            the referredContacts to set
-	 */
-	public void setReferredContacts(BoilerplateList<ReferredContactEntity> referredContacts) {
-		this.referredContacts = referredContacts;
-	}
-
-	/**
+	 * This method is used to get the day count
+	 * 
 	 * @return the dayCount
 	 */
 	public BoilerplateMap<String, String> getDayCount() {
@@ -245,10 +254,32 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	}
 
 	/**
-	 * @param dayCount the dayCount to set
+	 * This method is used to set the day count
+	 * 
+	 * @param dayCount
+	 *            the dayCount to set
 	 */
 	public void setDayCount(BoilerplateMap<String, String> dayCount) {
 		this.dayCount = dayCount;
+	}
+
+	/**
+	 * This method is used to get the referred contacts
+	 * 
+	 * @return the referredContact
+	 */
+	public BoilerplateList<ReferredContactDetailEntity> getReferredContact() {
+		return referredContact;
+	}
+
+	/**
+	 * This method is used to set the referred contacts
+	 * 
+	 * @param referredContact
+	 *            the referredContact to set
+	 */
+	public void setReferredContact(BoilerplateList<ReferredContactDetailEntity> referredContact) {
+		this.referredContact = referredContact;
 	}
 
 	private BoilerplateMap<String, String> dayCount;

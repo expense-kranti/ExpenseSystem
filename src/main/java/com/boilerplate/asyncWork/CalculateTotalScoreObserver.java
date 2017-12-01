@@ -194,6 +194,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
+		// Set refer score 0
+		scoreEntity.setReferScore(String.valueOf(0f));
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.parseFloat(assessmentEntity.getObtainedScore())));
 		// Save total score
@@ -235,6 +237,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(assessmentEntity.getMaxScore());
 		// Set the obtained score
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		// Set refer score 0
+		scoreEntity.setReferScore(String.valueOf(0f));
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// set rank
@@ -272,8 +276,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 			// set rank
 			scoreEntity.setRank(calculateRank(obtainedScore));
 		}
-		// set rank
-		scoreEntity.setRank(calculateRank(obtainedScore));
+		// Set the obtained score
+		scoreEntity.setObtainedScore(String.valueOf(obtainedScore));
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);
 	}

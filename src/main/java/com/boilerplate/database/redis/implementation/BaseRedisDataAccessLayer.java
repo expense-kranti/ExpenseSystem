@@ -604,21 +604,22 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for send email method
+		// method permission for validateReferContact method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ReferralController.validateReferContact(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ReferralController.validateReferContact(com.boilerplate.java.entities.ReferalEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		// method permission for validate refer 
-		
-		
-		//method permission for facebook refer link
+
+		// method permission for facebook refer link
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
@@ -629,7 +630,30 @@ public class BaseRedisDataAccessLayer {
 				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
 		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
+
+		// method permissions for ContactController starts here
+
+		// method permission for send email method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission
+				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permissions for EMICalculatorController methods starts here
+
+		// method permission for calculateEmi method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -774,7 +798,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Salesforce_Authtoken_URL", salesForceBaseurl
 				+ "/services/oauth2/token?grant_type=password&client_id=3MVG9Se4BnchkASk.FTlViI7LYUGoKUIgrSoEssN2rGYY6dc99Ijwl6saXGnFU54MHNmFK32Bltn2rble187S&client_secret=5717367022576838052&username=aman.bindal@clearmydues.com.developmen&password=Jan@2016AZEDXfLWSBLW8T3s9EtWzsJq");
 		vAllETest.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
-		vAllETest.put("ccsEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllETest.put("ccsEmailListForPublishBulkFailure", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("RootFileDownloadLocation", "/downloads/");
 
 		vAllETest.put("SF_Update_Account_Publish_Method", "POST");
@@ -818,7 +842,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Salesforce_Authtoken_URL", salesForceBaseurl
 				+ "/services/oauth2/token?grant_type=password&client_id=3MVG9Se4BnchkASk.FTlViI7LYUGoKUIgrSoEssN2rGYY6dc99Ijwl6saXGnFU54MHNmFK32Bltn2rble187S&client_secret=5717367022576838052&username=aman.bindal@clearmydues.com.developmen&password=Jan@2016AZEDXfLWSBLW8T3s9EtWzsJq");
 		vAllEDev.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
-		vAllEDev.put("ccsEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
+		vAllEDev.put("ccsEmailListForPublishBulkFailure", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("RootFileDownloadLocation", "/downloads/");
 
 		vAllEDev.put("SF_Update_Account_Publish_Method", "POST");
@@ -956,7 +980,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
 		vAllEAll.put("REFERRAL_LINK_UUID_LENGTH", "8");
 		vAllEAll.put("BASE_REFERRAL_LINK",
-				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?campaignSource=@campaignSource&&campaignType=@campaignType&&UUID=@UUID&&contactUUID=@contactUUID");
+				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_campaign=@utm_campaign");
 		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
 		vAllEAll.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
@@ -975,11 +999,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_REFER_PUBLISH_METHOD", "POST");
 		vAllEAll.put("AKS_REFER_PUBLISH_SUBJECT", "REFER_REPORT_CREATED_AKS");
 		vAllEAll.put("AKS_REFER_PUBLISH_TEMPLATE",
-				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
+				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts,\"referralLink\": \"@referralLink\"}");
 		vAllEAll.put("AKS_REFER_DYNAMIC_PUBLISH_URL", "false");
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY", "1440");
 		vAllEAll.put("MAX_ALLOW_USER_SCORE", "40");
-		
+
 		return vAllEAll;
 
 	}

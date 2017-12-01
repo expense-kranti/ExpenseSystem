@@ -7,15 +7,15 @@ package com.boilerplate.java.entities;
  */
 public enum UserReferalMediumType {
       /**
-       * This is the email as the user referral medium
+       * This means the user was referred through email
        */
 	  Email,
       /**
-       * This is the phone number as the user referral medium
+       * This means the user was referred through his/her phone number
        */
 	  Phone_Number,
 	  /**
-	   * This is the facebook as the user referral medium
+	   * This means the user was referred through facebook
 	   */
 	  Facebook
 }
