@@ -33,6 +33,11 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 	private String assessmentId;
 
 	/**
+	 * This is the user refer score
+	 */
+	private String referScore;
+
+	/**
 	 * This method is used to get the user id
 	 * 
 	 * @return the userId
@@ -131,9 +136,10 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 	public BaseEntity transformToExternal() {
 		return null;
 	}
-	
+
 	/**
 	 * This method get the rank
+	 * 
 	 * @return the rank
 	 */
 	public String getRank() {
@@ -142,11 +148,33 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This method set the rank
-	 * @param rank the rank to set
+	 * 
+	 * @param rank
+	 *            the rank to set
 	 */
 	public void setRank(String rank) {
 		this.rank = rank;
 	}
+
+	/**
+	 * This method is used to get the refer score
+	 * 
+	 * @return the referScore
+	 */
+	public String getReferScore() {
+		return referScore;
+	}
+
+	/**
+	 * This method is used to set the refer score
+	 * 
+	 * @param referScore
+	 *            the referScore to set
+	 */
+	public void setReferScore(String referScore) {
+		this.referScore = referScore;
+	}
+
 	/**
 	 * This is the rank of user
 	 */

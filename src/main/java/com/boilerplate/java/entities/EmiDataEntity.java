@@ -1,5 +1,10 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+
+import javax.xml.bind.ValidationException;
+
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 
 /**
@@ -10,15 +15,19 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author urvij
  *
  */
-public class EmiDataEntity {
+public class EmiDataEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the principal amount of loan borrowed
 	 */
 	private double initialPrincipalBorrowed;
 	/**
-	 * This is the loan period in years for which loan is taken
+	 * This is the loan period in years
 	 */
 	private float loanPeriodInYears;
+	/**
+	 * This is the loan period in months
+	 */
+	private float loanPeriodInMonths;
 	/**
 	 * This is the interest rate per year or per annum for which loan is taken
 	 */
@@ -37,24 +46,23 @@ public class EmiDataEntity {
 	 */
 	private double downPayment;
 	/**
-	 * This is the amortized schedule data list 
+	 * This is the amortized schedule data list
 	 */
 	private BoilerplateList<AmortizedScheduleDetails> amortizedScheduleDetailsList;
-	
 	/**
-	 * Gets the amortizedScheduleDetails list
-	 * @return The amortizedscheduleDetails list
+	 * This is the calculated EMI to be paid
 	 */
-	public BoilerplateList<AmortizedScheduleDetails> getAmortizedScheduleDetailsList() {
-		return amortizedScheduleDetailsList;
-	}
+	private String emi;
 	/**
-	 * Sets the amortizedScheduleDetails list
-	 * @param amortizedSchedulePerMonth The amortized scheduled data details list
+	 * This is the calculated total interest calculated to be paid for loan
+	 * taken
 	 */
-	public void setAmortizedScheduleDetailsList(BoilerplateList<AmortizedScheduleDetails> amortizedScheduleDetailsList) {
-		this.amortizedScheduleDetailsList = amortizedScheduleDetailsList;
-	}
+	private String totalInterest;
+	/**
+	 * This is the calculated total payment(principal + interest) to be done for
+	 * the loan
+	 */
+	private String totalPayment;
 
 	/**
 	 * Gets the principal borrowed in a loan
@@ -87,10 +95,29 @@ public class EmiDataEntity {
 	/**
 	 * Sets the loan period in years for which loan is taken
 	 * 
-	 * @return The loan period in years of loan
+	 * @param loanPeriodInYears
+	 *            The loan period/tenure in years
 	 */
 	public void setLoanPeriodInYears(float loanPeriodInYears) {
 		this.loanPeriodInYears = loanPeriodInYears;
+	}
+
+	/**
+	 * Gets the loan period in months for which loan is taken
+	 * 
+	 * @return The loan period in months of loan
+	 */
+	public float getLoanPeriodInMonths() {
+		return loanPeriodInMonths;
+	}
+
+	/**
+	 * Sets the loan period in months for which loan is taken
+	 * 
+	 * @param loanPeriodInMonths
+	 */
+	public void setLoanPeriodInMonths(float loanPeriodInMonths) {
+		this.loanPeriodInMonths = loanPeriodInMonths;
 	}
 
 	/**
@@ -111,9 +138,10 @@ public class EmiDataEntity {
 	public void setInterestRatePerYear(double interestRatePerYear) {
 		this.interestRatePerYear = interestRatePerYear;
 	}
-	
+
 	/**
-	 * Gets the interest rate per month applied on loan taken or borrowed 
+	 * Gets the interest rate per month applied on loan taken or borrowed
+	 * 
 	 * @return The interest rate applied per month
 	 */
 	public double getInterestRatePerMonth() {
@@ -122,7 +150,9 @@ public class EmiDataEntity {
 
 	/**
 	 * Sets the interest rate per month applied on loan taken or borrowed
-	 * @param interestRatePerMonth The interest rate applied per month
+	 * 
+	 * @param interestRatePerMonth
+	 *            The interest rate applied per month
 	 */
 	public void setInterestRatePerMonth(double interestRatePerMonth) {
 		this.interestRatePerMonth = interestRatePerMonth;
@@ -146,9 +176,10 @@ public class EmiDataEntity {
 	public void setLoanType(LoanType loanType) {
 		this.loanType = loanType;
 	}
-	
+
 	/**
 	 * Gets the down payment for loan
+	 * 
 	 * @return The down payment
 	 */
 	public double getDownPayment() {
@@ -157,28 +188,37 @@ public class EmiDataEntity {
 
 	/**
 	 * Sets the down payment paid for loan
-	 * @param downPayment The down payment
+	 * 
+	 * @param downPayment
+	 *            The down payment
 	 */
 	public void setDownPayment(double downPayment) {
 		this.downPayment = downPayment;
 	}
-	
+
 	/**
-	 * This is the calculated EMI to be paid 
+	 * Gets the amortizedScheduleDetails list
+	 * 
+	 * @return The amortizedscheduleDetails list
 	 */
-	private String emi;
+	public BoilerplateList<AmortizedScheduleDetails> getAmortizedScheduleDetailsList() {
+		return amortizedScheduleDetailsList;
+	}
+
 	/**
-	 * This is the calculated total interest calculated to be paid for loan taken 
+	 * Sets the amortizedScheduleDetails list
+	 * 
+	 * @param amortizedSchedulePerMonth
+	 *            The amortized scheduled data details list
 	 */
-	private String totalInterest;
-	/**
-	 * This is the calculated total payment(principal + interest) to be done for the loan
-	 */
-	private String  totalPayment;
-	
+	public void setAmortizedScheduleDetailsList(
+			BoilerplateList<AmortizedScheduleDetails> amortizedScheduleDetailsList) {
+		this.amortizedScheduleDetailsList = amortizedScheduleDetailsList;
+	}
 
 	/**
 	 * Gets the EMI to be paid
+	 * 
 	 * @return The EMI to be paid
 	 */
 	public String getEmi() {
@@ -187,14 +227,17 @@ public class EmiDataEntity {
 
 	/**
 	 * Sets the EMI to be paid
-	 * @param emi The EMI to be paid
+	 * 
+	 * @param emi
+	 *            The EMI to be paid
 	 */
 	public void setEmi(String emi) {
 		this.emi = emi;
 	}
 
 	/**
-	 * Sets the total interest to be paid 
+	 * Gets the total interest to be paid
+	 * 
 	 * @return The total interest to be paid
 	 */
 	public String getTotalInterest() {
@@ -203,7 +246,9 @@ public class EmiDataEntity {
 
 	/**
 	 * Sets the total interest to be paid
-	 * @param totalInterest The total interest to be paid
+	 * 
+	 * @param totalInterest
+	 *            The total interest to be paid
 	 */
 	public void setTotalInterest(String totalInterest) {
 		this.totalInterest = totalInterest;
@@ -211,6 +256,7 @@ public class EmiDataEntity {
 
 	/**
 	 * Gets the total payment to be done
+	 * 
 	 * @return The total payment to be paid
 	 */
 	public String getTotalPayment() {
@@ -218,12 +264,53 @@ public class EmiDataEntity {
 	}
 
 	/**
-	 * Sets the total payment to be done 
-	 * @param totalPayment The total payment to be paid
+	 * Sets the total payment to be done
+	 * 
+	 * @param totalPayment
+	 *            The total payment to be paid
 	 */
 	public void setTotalPayment(String totalPayment) {
 		this.totalPayment = totalPayment;
 	}
 
-	
+	/**
+	 * @see BaseEntity.validate
+	 */
+	@Override
+	public boolean validate() throws ValidationFailedException {
+		// check if loan amount borrowed is 0
+		if (this.getInitialPrincipalBorrowed() == 0) {
+			throw new ValidationFailedException("EmiDataEntity", "Initial principal borrowed is equal to zero", null);
+		}
+		// check if interest rate per year and interest rate per month is 0
+		if (this.getInterestRatePerYear() == 0 && this.getInterestRatePerMonth() == 0) {
+			throw new ValidationFailedException("EmiDataEntity",
+					"One of the interest rates per year or interest rate per month should not be zero", null);
+		}
+		// checks if loan period in years and loan period in months is 0
+		if (this.getLoanPeriodInYears() == 0 && this.getLoanPeriodInMonths() == 0) {
+			throw new ValidationFailedException("EmiDataEntity",
+					"One of the loan period in years or in months should not be zero", null);
+		}
+		return true;
+	}
+
+	/**
+	 * @see BaseEntity.transformToInternal
+	 */
+	@Override
+	public BaseEntity transformToInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
+	@Override
+	public BaseEntity transformToExternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

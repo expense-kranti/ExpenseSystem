@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import javax.xml.bind.ValidationException;
 
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.EmiDataEntity;
 
 /**
@@ -21,8 +22,8 @@ public interface IEmiCalculatorService {
 	 * @return The emiDataEntity It contains(as output) the amortized schedule
 	 *         data(like interest, principal paid per month in each year), the
 	 *         total interest payable,total payment to be done
-	 * @throws ValidationException Thrown when one or more of the required fields are empty
+	 * @throws ValidationFailedException Thrown when one or more of the required fields are empty
 	 */
-	public EmiDataEntity emiCalculator(EmiDataEntity emiDataEntity) throws ValidationException;
+	public EmiDataEntity emiCalculator(EmiDataEntity emiDataEntity) throws ValidationFailedException;
 
 }

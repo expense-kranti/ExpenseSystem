@@ -598,7 +598,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
-		methodPermission.setId(
+		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
@@ -607,10 +607,29 @@ public class BaseRedisDataAccessLayer {
 		// method permission for send email method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		// method permission for validate refer 
+		
+		
+		//method permission for facebook refer link
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/ReferReport");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate(
+				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
+		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 
 		// method permissions for EMICalculatorController methods starts here
 
@@ -780,6 +799,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_Script_Publish_User_To_CRM", "false"); // false for
 																	// not
 																	// publish
+		vAllETest.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
+		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
+		vAllETest.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		return vAllETest;
 	}
 
@@ -819,6 +841,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_Publish_Report", "true"); // false for not publish
 		vAllEDev.put("Is_Script_Publish_User_To_CRM", "false"); // false for not
 																// publish
+		vAllEDev.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
+		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
+		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		return vAllEDev;
 
 	}
@@ -862,8 +887,8 @@ public class BaseRedisDataAccessLayer {
 																		// for
 																		// not
 																		// publish
-																		// //
-																		// publish
+		vAllEProduction.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
+		vAllEProduction.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
 		return vAllEProduction;
 	}
 
@@ -941,12 +966,30 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("MAX_SIZE_OF_REFERRAL_CONTACTS_PER_DAY", "10");
 		vAllEAll.put("REFERRAL_LINK_UUID_LENGTH", "8");
 		vAllEAll.put("BASE_REFERRAL_LINK",
-				"www.clearmydues.com?campaignType=@campaignType&&campaignSource=@campaignSource&&UUID=@UUID");
+				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?campaignSource=@campaignSource&&campaignType=@campaignType&&UUID=@UUID&&contactUUID=@contactUUID");
 		vAllEAll.put("GET_SHORT_URL_REQUEST_BODY_TEMPLATE", "{\"longUrl\":\"@longUrl\"}");
 		vAllEAll.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE", "10080");
+		vAllEAll.put("REFER_SCORE_FOR_EMAIL", "10");
+		vAllEAll.put("REFER_SCORE_FOR_PHONE", "10");
+		vAllEAll.put("REFER_SCORE_FOR_FACEBOOK", "10");
 
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_EMAIL", "10");
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_PHONE", "10");
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_FACEBOOK", "10");
+		vAllEAll.put("AKS_USER_UUID_HASH_BASE_TAG", "AKS_USER_UUID_HASH_MAP");
+		vAllEAll.put("AKS_UUID_USER_HASH_BASE_TAG", "AKS_UUID_USER_HASH_MAP");
+
+		// REFER publish configuration
+		vAllEAll.put("AKS_REFER_PUBLISH_METHOD", "POST");
+		vAllEAll.put("AKS_REFER_PUBLISH_SUBJECT", "REFER_REPORT_CREATED_AKS");
+		vAllEAll.put("AKS_REFER_PUBLISH_TEMPLATE",
+				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
+		vAllEAll.put("AKS_REFER_DYNAMIC_PUBLISH_URL", "false");
+		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY", "1440");
+		vAllEAll.put("MAX_ALLOW_USER_SCORE", "40");
+		
 		return vAllEAll;
 
 	}
@@ -976,7 +1019,7 @@ public class BaseRedisDataAccessLayer {
 		// email message for sending invitation to referred user related
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
-				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link/b>");
+				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
@@ -1204,4 +1247,42 @@ public class BaseRedisDataAccessLayer {
 		}
 	}
 
+	/**
+	 * Sets the value
+	 * 
+	 * @param key
+	 *            The key
+	 * @param value
+	 *            The value
+	 */
+	public void set(String key, String value, int timeoutInSeconds) {
+		Jedis jedis = null;
+		try {
+			jedis = this.getConnection();
+			jedis.setex(key, timeoutInSeconds, value);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	/**
+	 * This method increase the key counter in redis
+	 * 
+	 * @param key
+	 *            The redis key
+	 * @return true/false
+	 */
+	public boolean increaseCounter(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = this.getConnection();
+			return jedis.incr(key) != null;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
 }

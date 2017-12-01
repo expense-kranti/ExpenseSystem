@@ -196,8 +196,10 @@ public class UserService implements IUserService {
 	BoilerplateList<String> subjectsForAutomaticPasswordReset = new BoilerplateList();
 
 	BoilerplateList<String> subjectForPasswordChange = new BoilerplateList();
-	
+
 	BoilerplateList<String> subjectForCampaign = new BoilerplateList<>();
+
+	BoilerplateList<String> subjectForUpdateRefererScore = new BoilerplateList<>();
 
 	/**
 	 * This variable define the default status for the current user
@@ -247,6 +249,7 @@ public class UserService implements IUserService {
 		subjectsForAutomaticPasswordReset.add("AutomaticPasswordReset");
 		subjectForPasswordChange.add("PasswordChange");
 		subjectForCampaign.add("CampaignRelated");
+		subjectForUpdateRefererScore.add("UpdateReferScore");
 	}
 
 	/**
@@ -349,7 +352,7 @@ public class UserService implements IUserService {
 		// we dont want to share the hash hence sending bacj the text
 		externalFacingUser.setPassword("Password Encrypted");
 		// generate otp list
-
+		this.checkIfUserRegisteredThroughCampaign(externalFacingUser);
 		return externalFacingUser;
 	}
 
@@ -631,13 +634,26 @@ public class UserService implements IUserService {
 		return externalFacingReturnedUser;
 	}
 
-	public boolean checkIfUserRegisteredThroughCampaign(ExternalFacingUser externalFacingUser) {
+	/**
+	 * This method is used to check is user come through campaign if it is then
+	 * call a background job update refer by user score
+	 * 
+	 * @param externalFacingUser
+	 *            this parameter contain the information regarding the sing up
+	 *            user like if it is come through campaign then its will contain
+	 *            information regarding the campaign source,campaign type and
+	 *            uuid
+	 */
+	public void checkIfUserRegisteredThroughCampaign(ExternalFacingUser externalFacingUser) {
 		if (externalFacingUser.getCampaignSource() != null && externalFacingUser.getCampaignType() != null
 				&& externalFacingUser.getCampaignUUID() != null) {
-           //queueReaderJob.requestBackroundWorkItem(externalFacingUser, subjectForCampaign, "UserService", "checkIfUserRegisteredThroughCampaign");
-		  return true;
-		}else{
-			return false;
+			try {
+				queueReaderJob.requestBackroundWorkItem(externalFacingUser, subjectForUpdateRefererScore, "UserService",
+						"checkIfUserRegisteredThroughCampaign");
+			} catch (Exception ex) {
+				logger.logException("UserService", "checkIfUserRegisteredThroughCampaign", "try-Queue Reader",
+						ex.toString() + "Fail to update referer score", ex);
+			}
 		}
 	}
 

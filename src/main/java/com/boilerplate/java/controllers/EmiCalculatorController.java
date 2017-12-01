@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.EmiDataEntity;
 import com.boilerplate.service.interfaces.IEmiCalculatorService;
 import com.wordnik.swagger.annotations.Api;
@@ -55,13 +56,15 @@ public class EmiCalculatorController extends BaseController{
 	 * @return The emiDataEntity It contains(as output) the amortized schedule
 	 *         data(like interest, principal paid per month in each year), the
 	 *         total interest payable,total payment to be done
-	 * @throws ValidationException Thrown when one or more of the required fields are empty
+	 * @throws ValidationFailedException Thrown when one or more of the required fields are equal to zero
 	 */
 	@ApiOperation(value = "Calculates the EMI and amortized schedule for the loan borrowed")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
-			@ApiResponse(code = 400, message = "Bad request, some details are not provided") })
+	@ApiResponses(value = { 
+			@ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 400, message = "Bad request, some details are not provided") 
+			})
 	@RequestMapping(value = "/calculateEmi", method = RequestMethod.POST)
-	public @ResponseBody EmiDataEntity calculateEmi(@RequestBody EmiDataEntity emiDataEntity) throws ValidationException {
+	public @ResponseBody EmiDataEntity calculateEmi(@RequestBody EmiDataEntity emiDataEntity) throws ValidationFailedException {
 		return emiCalculatorService.emiCalculator(emiDataEntity);
 	}
 

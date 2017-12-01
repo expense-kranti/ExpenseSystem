@@ -1,18 +1,28 @@
 package com.boilerplate.asyncWork;
 
+import java.io.IOException;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.EmailUtility;
+import com.boilerplate.framework.HttpResponse;
+import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ShortUrlEntity;
+import com.boilerplate.java.entities.UpdateReferralContactDetailsEntity;
 import com.boilerplate.service.interfaces.IContentService;
 import com.boilerplate.service.interfaces.IReferralService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class sends an Email to referred user
@@ -26,6 +36,22 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+
+	/**
+	 * This is the new instance of queue reader job
+	 */
+	@Autowired
+	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
+
+	/**
+	 * This sets the queue reader job
+	 * 
+	 * @param queueReaderJob
+	 *            The queue reader job
+	 */
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
+		this.queueReaderJob = queueReaderJob;
+	}
 
 	/**
 	 * This is a new instance of Referral
@@ -105,6 +131,11 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	}
 
 	/**
+	 * This is the subject list for publish
+	 */
+	private BoilerplateList<String> subjectsForPublishReferralReport = null;
+
+	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
@@ -112,11 +143,130 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		// Get the referral entity from the payload
 		ReferalEntity referralEntity = (ReferalEntity) asyncWorkItem.getPayload();
 		// Save user referral details
-		referral.saveReferralDetail(referralEntity);
+
+		try {
+			// Create email details and send email
+			this.processReferRequest(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
+		} catch (Exception exception) {
+			logger.logError("SendEmailToReferredUserObserver", "observe", "queueReaderJob catch block",
+					"Exception :" + exception);
+		}
+		// Publish referral data to CRM
+		this.publishReferralData(referralEntity);
+	}
+
+	/**
+	 * This method prepare email lists and email details and send the email to
+	 * referred users one by one
+	 * 
+	 * @param referralEntity
+	 *            The referral Entity it has all the details of the referral
+	 *            details such as referral contacts, its referring userId
+	 * @throws IOException
+	 */
+	public void processReferRequest(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser)
+			throws IOException {
+		// Generate short URL
+		referralEntity.setReferralLink(this.getShortUrl(referralEntity.getReferralLink()));
+		
+		// list of referred user(s)
+		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
+		// list of ccemailsIds for this email
+		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
+		// list of bccemialIds for this email
+		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
+		// Getting referring user first name
+		String referringUserFirstName = detailsOfReferringUser.getFirstName();
+		// iterating through the list of all referred users and sending mails to
+		// each one of them one by one
+		for (Object contact : referralEntity.getReferralContacts()) {
+			// Add contact to to's list
+			this.saveReferralData(referralEntity,(String)contact);
+			
+			tosEmailList.add((String)contact);
+			// Check is this email address already registered with our system or
+			// not
+			if (referralService.checkReferredContactExistence((String) tosEmailList.get(0),
+					referralEntity.getReferralMediumType())) {
+				try {
+					// Send email
+					this.sendEmail(referringUserFirstName, tosEmailList, ccsEmailList, bccsEmailList,
+							referralEntity.getReferralLink());
+				} catch (Exception ex) {
+					// Log the exception
+					logger.logException("SendEmailToReferredUserObserver", "createEmailDetails",
+							"While sending refer link throught the Email ~ This is the Email address "
+									+ tosEmailList.get(0) + " ~ Sent by user : " + referralEntity.getUserId(),
+							ex.toString(), ex);
+				}
+			} else {
+				// If Email is already registered then log the error
+				logger.logError("SendSmsToReferredUserObserver", "prepareSmsDetailsAndSendSms",
+						"Check contact existence",
+						"referred Email already register with our system" + "This is Email address "
+								+ tosEmailList.get(0) + " ~ Sent by user : " + referralEntity.getUserId());
+			}
+			tosEmailList.remove(0);
+		}
+	}
+
+	/**
+	 * This method is used to get the short URl against the Long URL
+	 * 
+	 * @param referralLink
+	 *            this is the long url
+	 * @return the short url
+	 * @throws IOException
+	 *             throw this exception in case of any error while trying to get
+	 *             the short url
+	 */
+	private String getShortUrl(String referralLink) throws IOException {
+		// Create new request header
+		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap();
+		// Declare new header value
+		BoilerplateList<String> headerValue = new BoilerplateList();
+		// Add header value
+		headerValue.add("application/json");
+		// Put key and value in request header
+		requestHeaders.put("Content-Type", headerValue);
+		// Get request body
+		String requestBody = configurationManager.get("GET_SHORT_URL_REQUEST_BODY_TEMPLATE");
+		// Replace @long URL with referral link
+		requestBody = requestBody.replace("@longUrl", referralLink);
+		// Make HTTP request
+		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("URL_SHORTENER_API_URL"),
+				requestHeaders, null, requestBody, "POST");
+		// Get short url entity from the http response
+		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
+		// Return short URL
+		return shortUrlEntity.getShortUrl();
+	}
+
+	/**
+	 * This method is used to save the referral data to data store
+	 * 
+	 * @param referralEntity
+	 *            The referral Entity it has all the details of the referral
+	 *            details such as referral contacts, its referring userId
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	private void saveReferralData(ReferalEntity referralEntity,String contact) throws JsonParseException, JsonMappingException, IOException {
+
+		// Save referral contacts to data store
+		referral.saveUserReferredExpireContacts(referralEntity,contact);
 		// Save user referral details
-		referral.saveUserReferralDetail(referralEntity);
-		// Create email details and send email
-		this.createEmailDetailsAndSendEmail(referralEntity, userDataAccess.getUser(referralEntity.getUserId(), null));
+		if(referral.getDayCount(referralEntity)==null){
+			referral.createDayCounter(referralEntity, "1");
+		}else{
+			referral.increaseDayCounter(referralEntity);
+		}
+		//save the refer contact details
+		UpdateReferralContactDetailsEntity updateReferral = new UpdateReferralContactDetailsEntity(contact,
+				referralEntity.getUserReferId(),LocalDate.now().toString());
+		
+		referral.saveUserReferContacts(referralEntity, updateReferral);
 	}
 
 	/**
@@ -155,43 +305,26 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * This method prepare email lists and email details and send the email to
-	 * referred users one by one
+	 * This method is used to publish the referral data to sales force
 	 * 
-	 * @param referralEntity
-	 *            The referral Entity it has all the details of the referral
-	 *            details such as referral contacts, its referring userId
-	 * @throws NotFoundException
-	 *             thrown when referring user not found
+	 * @param referalEntity
+	 *            this parameter contains the information regarding the user
+	 *            Reference like refer unique id ,referral link,referral
+	 *            contacts ,referral medium type etc.
 	 */
-	public void createEmailDetailsAndSendEmail(ReferalEntity referralEntity, ExternalFacingUser detailsOfReferringUser)
-			throws NotFoundException {
-		// list of referred user(s)
-		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
-		// list of ccemailsIds for this email
-		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
-		// list of bccemialIds for this email
-		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-		// Getting referring user first name
-		String referringUserFirstName = detailsOfReferringUser.getFirstName();
-		// iterating through the list of all referred users and sending mails to
-		// each one of them one by one
-		for (int i = 0; i < referralEntity.getReferralContacts().size(); i++) {
-			tosEmailList.add((String) referralEntity.getReferralContacts().get(i));
-			if (referralService.checkReferredContactExistence((String) tosEmailList.get(0),
-					referralEntity.getReferralMediumType())) {
-				try {
-					this.sendEmail(referringUserFirstName, tosEmailList, ccsEmailList, bccsEmailList,
-							referralEntity.getReferralLink());
-				} catch (Exception ex) {
-					logger.logException("SendEmailToReferredUserObserver", "createEmailDetails", "try-Queue Reader",
-							ex.toString(), ex);
-				}
-			} else {
-				logger.logError("SendEmailToReferredUserObserver", "createEmailDetails", "Check contact existence",
-						"referred Email id already register with our system");
-			}
-			tosEmailList.remove(0);
+	private void publishReferralData(ReferalEntity referalEntity) {
+		subjectsForPublishReferralReport = new BoilerplateList<>();
+		subjectsForPublishReferralReport.add("PublishReferReport");
+		try {
+			// Trigger back ground job to send referral link through Email
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForPublishReferralReport, "ReferalEntity",
+					"publishReferralData");
+			throw new Exception();
+		} catch (Exception ex) {
+			logger.logException(
+					"referralService", "publishReferralData", "try-Queue Reader", ex.toString()
+							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
+					ex);
 		}
 	}
 

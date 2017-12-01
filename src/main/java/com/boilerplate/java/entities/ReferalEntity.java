@@ -1,11 +1,19 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Random;
 
+import org.h2.util.New;
+
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import scala.util.parsing.combinator.testing.Str;
 
 /**
  * This entity represents the reference of user
@@ -13,7 +21,7 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author kranti123
  *
  */
-public class ReferalEntity extends BaseEntity implements Serializable {
+public class ReferalEntity extends BaseEntity implements Serializable, ICRMPublishDynamicURl, ICRMPublishEntity {
 
 	/**
 	 * This is the list of referred users' contacts
@@ -23,7 +31,19 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is user referred contact details
 	 */
-	private Map<String, Map<String, Map<String, String>>> referredContacts;
+	private BoilerplateList<ReferredContactEntity> referredContacts;
+
+	/**
+	 * This is the userId
+	 */
+	@JsonIgnore
+	private String userReferId;
+
+	/**
+	 * This is the referral link
+	 */
+	@JsonIgnore
+	private String referralLink;
 
 	/**
 	 * This is the userId
@@ -31,53 +51,40 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	private String userId;
 
 	/**
-	 * This is the referral link
-	 */
-	private String referralLink;
-
-	/**
-	 * This is the referral UUID
-	 */
-	private String referralUUID;
-
-	/**
-	 * This method is used to get the referred contacts details
-	 * 
-	 * @return the referredContacts
-	 */
-	public Map<String, Map<String, Map<String, String>>> getReferredContacts() {
-		return referredContacts;
-	}
-
-	/**
-	 * This method is used to set the referred contacts details
-	 * 
-	 * @param referredContacts
-	 *            the referredContacts to set
-	 */
-	public void setReferredContacts(Map<String, Map<String, Map<String, String>>> referredContacts) {
-		this.referredContacts = referredContacts;
-	}
-
-	/**
 	 * This is the type of referral medium
 	 */
 	private UserReferalMediumType referralMediumType;
 
+	public ReferalEntity(UserReferalMediumType mediumType, String userId) {
+		this.referralMediumType = mediumType;
+		this.userId = userId;
+	}
+
+	public ReferalEntity() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public ReferalEntity(String campaignType, String userId,
+			String userReferId) {
+		this.referralMediumType = UserReferalMediumType.valueOf(campaignType);
+		this.userId = userId;
+		this.userReferId = userReferId;
+	}
+
 	/**
-	 * This gets the list of referral contacts
+	 * This method is used to get the referral contacts
 	 * 
-	 * @return The list of referral contacts
+	 * @return the referralContacts
 	 */
 	public BoilerplateList<String> getReferralContacts() {
 		return referralContacts;
 	}
 
 	/**
-	 * This sets the referral contact list
+	 * This method is used to set the referral contacts
 	 * 
 	 * @param referralContacts
-	 *            The referral contacts list
+	 *            the referralContacts to set
 	 */
 	public void setReferralContacts(BoilerplateList<String> referralContacts) {
 		this.referralContacts = referralContacts;
@@ -103,26 +110,26 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * This method is used to get the userId
+	 * This method is used to get the user refer id
 	 * 
-	 * @return the userId
+	 * @return the userReferId
 	 */
-	public String getUserId() {
-		return userId;
+	public String getUserReferId() {
+		return userReferId;
 	}
 
 	/**
-	 * This method is used to set the userId
+	 * This method is used to set the user refer id
 	 * 
-	 * @param userId
-	 *            the userId to set
+	 * @param userReferId
+	 *            the userReferId to set
 	 */
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserReferId(String userReferId) {
+		this.userReferId = userReferId;
 	}
 
 	/**
-	 * This method is used to get the referral link
+	 * This method get the referral link
 	 * 
 	 * @return the referralLink
 	 */
@@ -131,50 +138,13 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * This method is used to set the referral link
+	 * This method set the referral link
 	 * 
 	 * @param referralLink
 	 *            the referralLink to set
 	 */
 	public void setReferralLink(String referralLink) {
 		this.referralLink = referralLink;
-	}
-
-	/**
-	 * This method is used to get the referral uuid
-	 * 
-	 * @return the referralUUID
-	 */
-	public String getReferralUUID() {
-		return referralUUID;
-	}
-
-	/**
-	 * This method is used to set the referral uuid
-	 * 
-	 * @param referralUUID
-	 *            the referralUUID to set
-	 */
-	public void setReferralUUID(String referralUUID) {
-		this.referralUUID = referralUUID;
-	}
-
-	/**
-	 * This method is used to create the UUID
-	 * 
-	 * @return the UUID
-	 */
-	public void createUUID(Integer uuidLength) {
-		// New instance of random
-		Random rand = new Random();
-		this.referralUUID = "";
-		// Run a for loop to generate a configurations define length uuid
-		for (int i = 0; i < uuidLength; i++) {
-			// Get random number
-			int randomNum = rand.nextInt(26 - 0);
-			// Concatenate new char to string
-			referralUUID = referralUUID + String.valueOf((char) (randomNum + 97));
-		}
 	}
 
 	/**
@@ -213,4 +183,73 @@ public class ReferalEntity extends BaseEntity implements Serializable {
 		return null;
 	}
 
+	/**
+	 * @see ICRMPublishEntity.createPublishJSON
+	 */
+	@Override
+	public String createPublishJSON(String template) throws UnauthorizedException {
+		String retrunValue = template;
+		retrunValue = retrunValue.replace("@userId", this.getUserId() == null ? "{}" : this.getUserId());
+		retrunValue = retrunValue.replace("@userReferId", this.getUserReferId() == null ? "{}" : this.getUserReferId());
+		retrunValue = retrunValue.replace("@referralContacts",
+				this.getReferralContacts() == null ? "{}" : this.getReferralContacts().toString());
+		retrunValue = retrunValue.replace("@type",
+				this.getReferralMediumType().toString() == null ? "{}" : this.getReferralMediumType().toString());
+		return retrunValue;
+	}
+
+	/**
+	 * @see ICRMPublishDynamicURl.createPublishUrl
+	 */
+	@Override
+	public String createPublishUrl(String url) throws UnsupportedEncodingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId
+	 *            the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * @return the referredContacts
+	 */
+	public BoilerplateList<ReferredContactEntity> getReferredContacts() {
+		return referredContacts;
+	}
+
+	/**
+	 * @param referredContacts
+	 *            the referredContacts to set
+	 */
+	public void setReferredContacts(BoilerplateList<ReferredContactEntity> referredContacts) {
+		this.referredContacts = referredContacts;
+	}
+
+	/**
+	 * @return the dayCount
+	 */
+	public BoilerplateMap<String, String> getDayCount() {
+		return dayCount;
+	}
+
+	/**
+	 * @param dayCount the dayCount to set
+	 */
+	public void setDayCount(BoilerplateMap<String, String> dayCount) {
+		this.dayCount = dayCount;
+	}
+
+	private BoilerplateMap<String, String> dayCount;
 }

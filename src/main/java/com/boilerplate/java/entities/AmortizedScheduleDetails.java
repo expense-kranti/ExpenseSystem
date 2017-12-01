@@ -1,5 +1,9 @@
 package com.boilerplate.java.entities;
 
+import java.io.Serializable;
+
+import com.boilerplate.exceptions.rest.ValidationFailedException;
+
 /**
  * This entity contains the details of the amortized schedule that contains
  * principal paid, interest paid, and loan amount at the end of month remaining
@@ -8,7 +12,7 @@ package com.boilerplate.java.entities;
  * @author urvij
  *
  */
-public class AmortizedScheduleDetails {
+public class AmortizedScheduleDetails extends BaseEntity implements Serializable{
 	/**
 	 * This is the interest amount paid at that month
 	 */
@@ -21,7 +25,7 @@ public class AmortizedScheduleDetails {
 	 * This is the loan amount left after payment of EMI at the end of each
 	 * month
 	 */
-	private String loanAmountAtEndOfMonth;
+	private String loanAtEndOfMonth;
 	/**
 	 * This is the month of amortized schedule calculation
 	 */
@@ -64,15 +68,15 @@ public class AmortizedScheduleDetails {
 	 * Gets the loan amount 
 	 * @return The loan amount at end of month
 	 */
-	public String getLoanAmountAtEndOfMonth() {
-		return loanAmountAtEndOfMonth;
+	public String getLoanAtEndOfMonth() {
+		return loanAtEndOfMonth;
 	}
 	/**
 	 * Sets the loan amount
 	 * @param loanAmountAtEndOfMonth The loan amount at end of month
 	 */
-	public void setLoanAmountAtEndOfMonth(String loanAmountAtEndOfMonth) {
-		this.loanAmountAtEndOfMonth = loanAmountAtEndOfMonth;
+	public void setLoanAtEndOfMonth(String loanAtEndOfMonth) {
+		this.loanAtEndOfMonth = loanAtEndOfMonth;
 	}
 	/**
 	 * Gets the Month
@@ -101,6 +105,30 @@ public class AmortizedScheduleDetails {
 	 */
 	public void setYear(String year) {
 		this.year = year;
+	}
+	/**
+	 * @see BaseEntity.validate
+	 */
+	@Override
+	public boolean validate() throws ValidationFailedException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	/**
+     * @see BaseEntity.transformToInternal
+     */
+	@Override
+	public BaseEntity transformToInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
+	@Override
+	public BaseEntity transformToExternal() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
