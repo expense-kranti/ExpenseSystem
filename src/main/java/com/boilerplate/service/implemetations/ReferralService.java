@@ -425,7 +425,7 @@ public class ReferralService implements IReferralService {
 		// Get referral link
 		this.generateReferralLink(referalEntity);
 		// Get short URL
-		referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
+		//referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
 		return referalEntity;
 	}
 
