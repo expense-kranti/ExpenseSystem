@@ -635,10 +635,10 @@ public class BaseRedisDataAccessLayer {
 
 		// method permission for send email method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
 		methodPermission
-				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setIsAuthenticationRequired(true);
+				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
