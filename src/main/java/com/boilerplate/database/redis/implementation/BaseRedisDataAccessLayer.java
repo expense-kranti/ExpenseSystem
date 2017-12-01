@@ -604,21 +604,22 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for send email method
+		// method permission for validateReferContact method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ReferralController.validateReferContact(com.boilerplate.java.entities.ReferalEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ReferralController.validateReferContact(com.boilerplate.java.entities.ReferalEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		// method permission for validate refer 
-		
-		
-		//method permission for facebook refer link
+
+		// method permission for facebook refer link
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
@@ -629,7 +630,30 @@ public class BaseRedisDataAccessLayer {
 				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
 		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
+
+		// method permissions for ContactController starts here
+
+		// method permission for send email method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission
+				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permissions for EMICalculatorController methods starts here
+
+		// method permission for calculateEmi method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -793,7 +817,7 @@ public class BaseRedisDataAccessLayer {
 				"javacsr-120082491.ap-southeast-1.elb.amazonaws.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllETest.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
-		
+		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "34ae79a6-5099-465d-a0fb-30cc023f3f69_referFriendhtml");
 		return vAllETest;
 	}
 
@@ -836,11 +860,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/AKSReport");
 		vAllEDev.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
-		
 		vAllEDev.put("BASE_REFERRAL_LINK",
 				"http://localhost:8080/CSRFrontend/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllEDev.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 		return vAllEDev;
 
 	}
@@ -881,17 +905,17 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("AKS_USER_Publish_URL", salesForceBaseurl + "/services/apexrest/Account");
 		vAllEProduction.put("Is_Publish_Report", "true"); // false for not
 		vAllEProduction.put("Is_Script_Publish_User_To_CRM", "true"); // false
-																		// for
-																		// not
-																		// publish
+
 		vAllEProduction.put("Is_REFERRAL_REPORT_PUBLISH_ENABLED", "true");
 		vAllEProduction.put("AKS_REFER_PUBLISH_URL", salesForceBaseurl + "/services/apexrest/ReferReport");
-		
+
 		vAllEProduction.put("BASE_REFERRAL_LINK",
 				"http://www.projectakshar.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllEProduction.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
-		
+
+		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
+				"bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
 		return vAllEProduction;
 	}
 
@@ -987,7 +1011,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_REFER_DYNAMIC_PUBLISH_URL", "false");
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY", "1440");
 		vAllEAll.put("MAX_ALLOW_USER_SCORE", "40");
-		
+
 		return vAllEAll;
 
 	}
@@ -1015,7 +1039,7 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("JOIN_INVITATION_SMS",
 				"Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
 		// email message for sending invitation to referred user related
-		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "Invitation from @UserFirstName, to join Akshar");
+		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "You have just been referred!");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
 				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 

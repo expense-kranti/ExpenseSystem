@@ -294,8 +294,12 @@ public class ReferralService implements IReferralService {
 	private void sendReferralLinkThroughEmail(ReferalEntity referalEntity) throws NotFoundException, IOException {
 		try {
 			// Trigger back ground job to send referral link through Email
-			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
+
+
+			queueReaderJob.requestBackroundWorkItem(referalEntity,
+					subjectsForSendEmail, "ReferalEntity",
 					"sendReferralLinkThroughEmail");
+
 		} catch (Exception ex) {
 			// if queue is not working we send email on the thread
 			sendEmailToReferredUserObserver.processReferRequest(referalEntity,

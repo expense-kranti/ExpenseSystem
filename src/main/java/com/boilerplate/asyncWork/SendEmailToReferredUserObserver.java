@@ -1,8 +1,10 @@
 package com.boilerplate.asyncWork;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
@@ -16,10 +18,12 @@ import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
 import com.boilerplate.service.interfaces.IContentService;
+import com.boilerplate.service.interfaces.IFileService;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -36,6 +40,15 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+	
+	private static String referTemplate = null;
+	
+	@Autowired
+	private IFileService fileService;
+	
+	public void setFileService(IFileService fileService){
+		this.fileService = fileService;
+	}
 
 	/**
 	 * This is the new instance of queue reader job
@@ -128,6 +141,20 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 */
 	public void setUserDataAccess(IUser iUser) {
 		this.userDataAccess = iUser;
+	}
+	
+	/**
+	 * This is the instance of S3File Entity
+	 */
+	@Autowired 
+	com.boilerplate.databases.s3FileSystem.implementations.S3File file;
+	
+	/**
+	 * This method sets the instance of S3File Entity
+	 * @param file The file
+	 */
+	public void setFile(com.boilerplate.databases.s3FileSystem.implementations.S3File file) {
+		this.file = file;
 	}
 
 	/**
@@ -294,14 +321,31 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			throws Exception {
 		// Get subject of invitation email
 		String subject = contentService.getContent("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT");
-		// Replace @UserFirstName to referring user first name in email subject
-		subject = subject.replace("@UserFirstName", referringUserFirstName);
+
 		// Get the invitation email body
-		String body = contentService.getContent("JOIN_INVITATION_MESSAGE_EMAIL_BODY");
+		if(referTemplate==null){
+			// template from s3
+		
+			FileEntity fileEntity = this.fileService.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
+			 
+			String fileNameInURL = null;
+			//Get file from local if not found then downloads
+			if(!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()){
+				 fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+			}
+			else{
+				fileNameInURL= fileEntity.getFileName();
+			}
+	 
+			
+			//Open the file
+			referTemplate = FileUtils.readFileToString(new File(configurationManager.get("RootFileDownloadLocation")+fileNameInURL));
+		}
+		
+		
+		String body = referTemplate.replace("@UserFirstName", referringUserFirstName);
 		// Replace @UserFirstName with referring user first name in email body
-		body = body.replace("@UserFirstName", referringUserFirstName);
-		// Replace @link with real referral link in the email body
-		body = body.replace("@link", referralLink);
+		body = body.replace("@referLink", referralLink);
 		// Send the email after all preparations
 		EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body, null);
 
