@@ -563,7 +563,6 @@ public class BaseRedisDataAccessLayer {
 
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		
 		// method permissions for ContactController starts here
 
 		// method permission for send email method
@@ -574,7 +573,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		//method permission for contactUs method
+		// method permission for contactUs method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
@@ -647,9 +646,10 @@ public class BaseRedisDataAccessLayer {
 
 		// method permission for send email method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
-		methodPermission
-				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
@@ -923,7 +923,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("BASE_REFERRAL_LINK",
 				"http://www.projectakshar.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllEProduction.put("URL_SHORTENER_API_URL",
-				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
+				"https://exzxzxudn4.execute-api.ap-southeast-1.amazonaws.com/aks/urlshortener");
 
 		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
 				"bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
@@ -1047,8 +1047,13 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("POST_ARTICLE_EMAIL_BODY",
 				"<b><h2>Article Details:<h2></b> <b>Name:</b> @UserName <br> <b>Email:</b> @UserEmail <br> <b>Contact Number:</b> @UserMobileNumber <br> <b>Title:</b> @Title <br> <b>Content:</b> @Content <br> <b>KeyWords:</b> @KeyWords");
 		// sms message for sending invitation to referred user
+		// contentMap.put("JOIN_INVITATION_SMS",
+		// "Hi, @UserFirstName referred you to join AKSHAR! Play exciting
+		// quizzes to boost your financial knowledge and win exciting
+		// rewards!@link");
+
 		contentMap.put("JOIN_INVITATION_SMS",
-				"Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards!@link");
+				"Hi, @UserFirstName has referred you to join Akshar! Play exciting quizzes to boost your financial knowledge & win exciting rewards. Join now! @link");
 		// email message for sending invitation to referred user related
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT", "You have just been referred!");
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",

@@ -376,7 +376,7 @@ public class ReferralService implements IReferralService {
 		// exception
 		if (referralLink != null) {
 			throw new ConflictException("User",
-					"You have already referred this contact before ,this is the referral link :" + referralLink, null);
+					"This contact has already been referred by you using this referral link :" + referralLink, null);
 		}
 		// Check is this contact exists or not in our data store
 		if (!(this.checkReferredContactExistence((String) referalEntity.getReferralContacts().get(0),
