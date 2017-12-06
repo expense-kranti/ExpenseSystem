@@ -901,8 +901,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Secret_Access_Key", "u5jCd7AL6Gl3VK+hQvCoIqgJiT7FINjZAcze8MOQ");
 		vAllEProduction.put("Access_Key", "AKIAI4CMTKY46FFRDFFQ");
 		vAllEProduction.put("S3_Files_Path", "https://s3-ap-southeast-1.amazonaws.com/csrdata-filesprod/");
-		vAllEProduction.put("Contact_Person_Email", "madhurima.bhadury@clearmydues.com");
-		vAllEProduction.put("Post_Article_Contact_Person_Email", "madhurima.bhadury@clearmydues.com");
+		vAllEProduction.put("Contact_Person_Email", "madhurima.bhadury@projectakshar.com");
+		vAllEProduction.put("Post_Article_Contact_Person_Email", "madhurima.bhadury@projectakshar.com");
 		vAllEProduction.put("Salesforce_Authtoken_URL", salesForceBaseurl
 				+ "/services/oauth2/token?grant_type=password&client_id=3MVG9ZL0ppGP5UrDP91Iy_g04TU6IXDdftERV1nrcjs_Waw4TT6OMzxsZTLsECa.yAiavsFuRwST.QiotldN7&client_secret=1742947365004389153&username=aman.bindal@clearmydues.com&password=Jan@2017oUa14f1cSUuJtZtxPVKyC8Og");
 		vAllEProduction.put("tosEmailListForPublishBulkFailure", "aman.bindal@clearmydues.com");
@@ -926,7 +926,7 @@ public class BaseRedisDataAccessLayer {
 				"https://exzxzxudn4.execute-api.ap-southeast-1.amazonaws.com/aks/urlshortener");
 
 		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
-				"bcd4603e-aedf-4437-86ba-a917ebc6041c_referFriendhtml");
+				"ce074691-b258-4c01-afeb-1a17b6afcc8a_referFriendhtml");
 		return vAllEProduction;
 	}
 
