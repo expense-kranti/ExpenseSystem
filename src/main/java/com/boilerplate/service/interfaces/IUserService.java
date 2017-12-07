@@ -126,4 +126,6 @@ public interface IUserService {
 			throws ValidationFailedException, ConflictException,
 			NotFoundException,UnauthorizedException,BadRequestException ;
 
+	public String getReferUserId(String uuid);
+
 }

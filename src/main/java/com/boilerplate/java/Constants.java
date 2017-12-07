@@ -49,6 +49,8 @@ public class Constants {
 	public static final String X_Impersinator = "X-Impersinator";
 	public static final String X_Impersinator_Password = "X-Impersinator-Password";
 	public static final String X_User_LoginId_To_Be_Impersonated = "X-User-LoginId-To-Be-Impersonated";
+	public static final String X_User_LoginId_To_Be_Impersonated_Blog = "X-User-LoginId-To-Be-Impersonated_Blog";
+	
 	
 	/**
 	 * The cookie in which DSA auth token will be specified

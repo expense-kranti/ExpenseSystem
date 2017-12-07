@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -133,6 +134,15 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 
 		return user;
 
+	}
+	
+	/**
+	 * @see IReferral.saveUserReferUUID
+	 */
+	@Override
+	public String getReferUser(String uuid) {
+		// Save user's id and refer UUID in hash map
+		return super.hget(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), uuid);
 	}
 	
 	

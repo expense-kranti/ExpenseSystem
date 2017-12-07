@@ -673,5 +673,11 @@ public class UserService implements IUserService {
 			}
 		}
 	}
+	
+	@Override
+	public String getReferUserId(String uuid) {
+		// Save user's id and refer UUID in hash map
+		return userDataAccess.getReferUser(uuid);
+	}
 
 }

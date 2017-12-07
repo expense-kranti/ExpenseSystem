@@ -176,6 +176,42 @@ public class HttpRequestIdInterceptor extends HandlerInterceptorAdapter{
 	 */
 	private String getSessionId(HttpServletRequest request) throws UnauthorizedException, NotFoundException, BadRequestException{
 		
+		//check for impersionate blog
+		//firstly we check the case of impersination
+		if(request.getHeader(Constants.X_Impersinator)!= null){
+			String impersonator = request.getHeader(Constants.X_Impersinator);
+			String impersinatorPassword = request.getHeader(Constants.X_Impersinator_Password);
+			String impersonatedUserUUId =  request.getHeader(Constants.X_User_LoginId_To_Be_Impersonated_Blog);
+			if(impersonatedUserUUId != null){
+				AuthenticationRequest authenitcationRequest = new AuthenticationRequest();
+				authenitcationRequest.setUserId(impersonator);
+				authenitcationRequest.setPassword(impersinatorPassword);
+				Session session = this.userService.authenticate(authenitcationRequest);
+				boolean isImpersinatorOrAdminFound = false;
+				for(Role role : session.getExternalFacingUser().getRoles()){
+					if(role.getRoleName().toUpperCase().equals("ADMIN")){
+						isImpersinatorOrAdminFound = true;
+						break;
+					}
+					
+					if(role.getRoleName().toUpperCase().equals("IMPERSINATOR")){
+						isImpersinatorOrAdminFound = true;
+						break;
+					}
+				}
+				if(isImpersinatorOrAdminFound == false){
+					throw new UnauthorizedException("User", "User not allowed impersination", null);
+				}
+				//get user id on the basis of uuid
+				String userId = this .userService.getReferUserId(impersonatedUserUUId);
+				ExternalFacingReturnedUser user = this.userService.get(userId);
+				//create a session
+				Session sessionCreated = this.sessionManager.createNewSession(user);
+				return sessionCreated.getSessionId();
+			}
+			//check if the ipersinator is a correct user
+			
+		}
 		//firstly we check the case of impersination
 		if(request.getHeader(Constants.X_Impersinator)!= null){
 			String impersonator = request.getHeader(Constants.X_Impersinator);
