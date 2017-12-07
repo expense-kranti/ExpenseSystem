@@ -40,13 +40,13 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
-	
-	private static String referTemplate = null;
-	
+
+	private static String referTemplate = "";
+
 	@Autowired
 	private IFileService fileService;
-	
-	public void setFileService(IFileService fileService){
+
+	public void setFileService(IFileService fileService) {
 		this.fileService = fileService;
 	}
 
@@ -142,16 +142,18 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	public void setUserDataAccess(IUser iUser) {
 		this.userDataAccess = iUser;
 	}
-	
+
 	/**
 	 * This is the instance of S3File Entity
 	 */
-	@Autowired 
+	@Autowired
 	com.boilerplate.databases.s3FileSystem.implementations.S3File file;
-	
+
 	/**
 	 * This method sets the instance of S3File Entity
-	 * @param file The file
+	 * 
+	 * @param file
+	 *            The file
 	 */
 	public void setFile(com.boilerplate.databases.s3FileSystem.implementations.S3File file) {
 		this.file = file;
@@ -321,28 +323,26 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			throws Exception {
 		// Get subject of invitation email
 		String subject = contentService.getContent("JOIN_INVITATION_MESSAGE_EMAIL_SUBJECT");
-
 		// Get the invitation email body
-		if(referTemplate==null){
+		if (referTemplate.equals("")) {
 			// template from s3
-		
-			FileEntity fileEntity = this.fileService.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
-			 
+			FileEntity fileEntity = this.fileService
+					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
 			String fileNameInURL = null;
-			//Get file from local if not found then downloads
-			if(!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()){
-				 fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+			// Get file from local if not found then downloads
+			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
+				
+				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+				
+			} else {
+				fileNameInURL = fileEntity.getFileName();
 			}
-			else{
-				fileNameInURL= fileEntity.getFileName();
-			}
-	 
-			
-			//Open the file
-			referTemplate = FileUtils.readFileToString(new File(configurationManager.get("RootFileDownloadLocation")+fileNameInURL));
+
+			// Open the file
+			referTemplate = FileUtils
+					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
 		}
-		
-		
+
 		String body = referTemplate.replace("@UserFirstName", referringUserFirstName);
 		// Replace @UserFirstName with referring user first name in email body
 		body = body.replace("@referLink", referralLink);
@@ -366,10 +366,9 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			// Trigger back ground job to send referral link through Email
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForPublishReferralReport, "ReferalEntity",
 					"publishReferralData");
-			throw new Exception();
 		} catch (Exception ex) {
 			logger.logException(
-					"referralService", "publishReferralData", "try-Queue Reader", ex.toString()
+					"SendEmailToReferredUserObserver", "publishReferralData", "try-Queue Reader", ex.toString()
 							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
 					ex);
 		}

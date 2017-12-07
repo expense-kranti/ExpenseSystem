@@ -36,7 +36,7 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 	/**
 	 * This is an instance of the logger
 	 */
-	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+	Logger logger = Logger.getInstance(SendSmsToReferredUserObserver.class);
 
 	/**
 	 * This is the new instance of queue reader job
@@ -327,10 +327,9 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 			// Trigger back ground job to send referral link through Email
 			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForPublishReferralReport, "ReferalEntity",
 					"publishReferralData");
-			throw new Exception();
 		} catch (Exception ex) {
 			logger.logException(
-					"referralService", "publishReferralData", "try-Queue Reader", ex.toString()
+					"SendSmsToReferredUserObserver", "publishReferralData", "try-Queue Reader", ex.toString()
 							+ " ReferalEntity inserting in queue is: " + Base.toJSON(referalEntity) + " Queue Down",
 					ex);
 		}

@@ -19,7 +19,7 @@ public class PublishReferReportObserver implements IAsyncWorkObserver {
 	/**
 	 * This is an instance of the logger
 	 */
-	Logger logger = Logger.getInstance(SendEmailToReferredUserObserver.class);
+	Logger logger = Logger.getInstance(PublishReferReportObserver.class);
 
 	/**
 	 * This is the new instance of queue reader job

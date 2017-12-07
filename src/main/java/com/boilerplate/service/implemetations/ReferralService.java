@@ -295,9 +295,7 @@ public class ReferralService implements IReferralService {
 		try {
 			// Trigger back ground job to send referral link through Email
 
-
-			queueReaderJob.requestBackroundWorkItem(referalEntity,
-					subjectsForSendEmail, "ReferalEntity",
+			queueReaderJob.requestBackroundWorkItem(referalEntity, subjectsForSendEmail, "ReferalEntity",
 					"sendReferralLinkThroughEmail");
 
 		} catch (Exception ex) {
@@ -352,7 +350,7 @@ public class ReferralService implements IReferralService {
 			if (referalEntity.getReferralContacts().size() > todayLeftReferralContacts) {
 				// Throw validation failed exception
 				throw new ValidationFailedException("ReferalEntity",
-						"Today limit reach, you can refer " + todayLeftReferralContacts + "contacts more", null);
+						"Today limit reach, you can refer " + todayLeftReferralContacts + " contacts more", null);
 			}
 		}
 	}
@@ -425,7 +423,7 @@ public class ReferralService implements IReferralService {
 		// Get referral link
 		this.generateReferralLink(referalEntity);
 		// Get short URL
-		//referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
+		// referalEntity.setReferralLink(this.getShortUrl(referalEntity.getReferralLink()));
 		return referalEntity;
 	}
 

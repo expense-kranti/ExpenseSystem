@@ -312,7 +312,7 @@ public class SessionManager {
 		
 		if(this.backroundJobSession == null){
 			try{
-				ExternalFacingReturnedUser backGroundJObUser =userService.get("DEFAULT:BACKGROUND");
+				ExternalFacingReturnedUser backGroundJObUser =userService.get("AKS:BACKGROUND");
 				this.backroundJobSession = new Session(backGroundJObUser);
 			}
 			catch(Exception ex){
