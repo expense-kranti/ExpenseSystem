@@ -45,7 +45,7 @@ public interface IUser {
 	public boolean userExists(String userId);
 
 
-	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user) throws ConflictException;
+	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user);
 
 
 	public String getReferUser(String uuid);

@@ -74,8 +74,16 @@ public class FeedBackEntity extends BaseEntity implements Serializable {
 
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		
+		if(this.isNullOrEmpty(this.getUserSelectedFeature())){
+			throw new ValidationFailedException("FeedBack Entity", "User Selected Feature is null or empty", null);
+		}
+		if(this.isNullOrEmpty(this.getPlatformType())){
+			
+			throw new ValidationFailedException("FeedBack Entity", "User Selected platform type is null or empty", null);
+		}
+		
+		return true;
 	}
 
 	@Override
