@@ -35,7 +35,7 @@ public class BlogActivityController {
 	public @ResponseBody void saveActivity
 				(@RequestBody BlogActivityEntity blogActivityEntity) throws Exception {
 		// Save the user article
-		blogActivityService.saveActivity(blogActivityEntity);
+		//blogActivityService.saveActivity(blogActivityEntity);
 	}
 
 }
