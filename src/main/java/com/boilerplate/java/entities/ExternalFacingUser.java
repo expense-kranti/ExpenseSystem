@@ -567,6 +567,27 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the user refer id
 	 */
 	private String userReferId;
+	
+	/**
+	 * This is used to check if user has sent feedback
+	 */
+	boolean isFeedBackSubmitted;
+
+	/**
+	 * This gets the isFeedback submitted boolean value
+	 * @return
+	 */
+	public boolean isFeedBackSubmitted() {
+		return isFeedBackSubmitted;
+	}
+
+	/**
+	 * This sets the isFeedback submitted boolean value
+	 * @param isFeedBackSubmitted
+	 */
+	public void setFeedBackSubmitted(boolean isFeedBackSubmitted) {
+		this.isFeedBackSubmitted = isFeedBackSubmitted;
+	}
 
 	
 

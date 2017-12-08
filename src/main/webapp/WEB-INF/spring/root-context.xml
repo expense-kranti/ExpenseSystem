@@ -140,8 +140,9 @@
 				<entry key="SendEmailToReferredUser" value-ref="userReferredObserverForEmail"></entry>
 				<entry key="UpdateReferScore" value-ref="updateReferScore"></entry>
 				<entry key="PublishReferReport" value-ref="publishReferReport"></entry>
-				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>
-				
+				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>			
+				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
+
 			</map>
 
 
@@ -355,6 +356,8 @@
 		<property name="file" ref="file"></property>
 	</bean>
 
+
+
 	<bean id="setUserChangePasswordStatusObserver"
 		class="com.boilerplate.asyncWork.SetUserChangePasswordStatusObserver">
 		<property name="redisScript" ref="redisScript"></property>
@@ -478,11 +481,13 @@
 			</list>
 		</property>
 	</bean>
+
 	<bean id="sendSMSOnPasswordChange" class="com.boilerplate.asyncWork.SendSMSOnPasswordChange">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="sendSmsService" ref="sendSmsService"></property>
 	</bean>
+
 	<bean id="fileService" class="com.boilerplate.service.implemetations.FileService">
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="file" ref="file"></property>
@@ -595,8 +600,44 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
 	</bean>
-	
-	<bean id="emiCalculatorService" class="com.boilerplate.service.implemetations.EmiCalculatorService">
+
+	<bean id="emiCalculatorService"
+		class="com.boilerplate.service.implemetations.EmiCalculatorService">
+	</bean>
+
+	<bean id="blogActivityService"
+		class="com.boilerplate.service.implemetations.BlogActivityService">
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
+	</bean>
+	<!-- Bean for redis BlogActivity data access -->
+	<bean id="blogActivityDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisBlogActivity">
+	</bean>
+
+    <!--Feedback related beans  -->
+	<bean id="feedbackSubmittedObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<ref bean="sendEmailOnFeedbackSubmitObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	<bean id="sendEmailOnFeedbackSubmitObserver"
+		class="com.boilerplate.asyncWork.SendEmailOnFeedbackSubmitObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="contentService" ref="contentService"></property>
+		<property name="file" ref="file"></property>
+	</bean>
+
+	<bean id="feedbackService" class="com.boilerplate.service.implemetations.FeedbackService"
+	init-method="initialize">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="sendEmailOnFeedbackSubmitObserver" ref="sendEmailOnFeedbackSubmitObserver"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="contentService" ref="contentService"></property>
 	</bean>
 
 

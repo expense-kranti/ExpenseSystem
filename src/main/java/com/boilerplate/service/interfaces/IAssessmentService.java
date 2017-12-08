@@ -137,4 +137,10 @@ public interface IAssessmentService {
 	 *         assessment name and its status
 	 */
 	public BoilerplateList<AssessmentEntity> getUserAssessmentStatus(String userId);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public AttemptAssessmentListEntity getTopScorrer();
 }

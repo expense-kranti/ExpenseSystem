@@ -665,6 +665,30 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permissions for blogactivitycontroller starts here
+
+		// method permission for saveActivity method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for feedback controller starts here
+
+		// method permission for sendEmailOnFeedbackSubmit method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -876,6 +900,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
+
+		// emailId to whom to send user selected feature got in feedback
+		vAllEDev.put("EMAILIDTO_SEND_SELECTED_FEATURE", "urvij.singh@krantitechservices.in");
+		
 		return vAllEDev;
 
 	}
@@ -1060,6 +1088,9 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
 				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 
+		//subject of email to be sent on getting user's selected feature(in feedback) 
+		contentMap.put("FEATURE_SELECTED_INFO_EMAIL_SUBJECT", "User's selected feature");
+		
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
 
