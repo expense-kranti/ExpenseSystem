@@ -190,23 +190,21 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 			BoilerplateList<String> bccsEmailList, String selectedFeature) throws Exception {
 		String subject = contentService.getContent("FEATURE_SELECTED_INFO_EMAIL_SUBJECT");
 		// Get the feature selection information email body
-//		if (userSelectionTemplate.equals("")) {
-//			FileEntity fileEntity = this.fileService
-//					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
-//			String fileNameInURL = null;
-//			// Get file from local if not found then downloads
-//			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
-//
-//				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
-//			} else {
-//				fileNameInURL = fileEntity.getFileName();
-//			}
-//			// Open the file
-//			userSelectionTemplate = FileUtils
-//					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
-//		}
-		
-		userSelectionTemplate = "@UserFirstName selected the @referLink feature";
+		if (userSelectionTemplate.equals("")) {
+			FileEntity fileEntity = this.fileService
+					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
+			String fileNameInURL = null;
+			// Get file from local if not found then downloads
+			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
+
+				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+			} else {
+				fileNameInURL = fileEntity.getFileName();
+			}
+			// Open the file
+			userSelectionTemplate = FileUtils
+					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
+		}
 		String body = userSelectionTemplate.replace("@UserFirstName", "FeatureSelectingTestUser");
 		/// Replace @selectedFeature with the real selected input value
 		body = body.replace("@referLink", selectedFeature);
