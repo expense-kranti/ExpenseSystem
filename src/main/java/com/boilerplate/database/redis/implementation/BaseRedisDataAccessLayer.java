@@ -859,6 +859,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "eae0c74f-4b0b-4a7e-8a97-4488404d6dac_referFriendhtml");
+		// emailId to whom to send user selected feature got in feedback
+		vAllETest.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.singhal@krantitechservices.in");
+		vAllETest.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		return vAllETest;
 	}
 
@@ -908,8 +911,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 
 		// emailId to whom to send user selected feature got in feedback
-		vAllEDev.put("AXISBANK_EMAILID1_TO_SEND_SELECTED_FEATURE", "urvij.singh@krantitechservices.in");
-		vAllEDev.put("AXISBANK_EMAILID2_TO_SEND_SELECTED_FEATURE", "urvij.pratap21@gmail.com");
+		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.singhal@krantitechservices.in");
+		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in ");
 		return vAllEDev;
 
 	}
@@ -1057,7 +1060,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY", "1440");
 		vAllEAll.put("MAX_ALLOW_USER_SCORE", "40");
 		vAllEAll.put("UPDATE_AKS_USER_SUBJECT", "UPDATE_LOGGED_IN_USER_AKS");
-		
+
 		vAllEAll.put("Top_Scorer_Size", "10");
 
 		return vAllEAll;
@@ -1096,9 +1099,10 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("JOIN_INVITATION_MESSAGE_EMAIL_BODY",
 				"<b><Hi, @UserFirstName referred you to join AKSHAR! Play exciting quizzes to boost your financial knowledge and win exciting rewards! @link/b>");
 
-		//subject of email to be sent on getting user's selected feature(in feedback) 
+		// subject of email to be sent on getting user's selected feature(in
+		// feedback)
 		contentMap.put("FEATURE_SELECTED_INFO_EMAIL_SUBJECT", "User's selected feature");
-		
+
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
 

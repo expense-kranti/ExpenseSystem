@@ -120,7 +120,6 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		FeedBackEntity feedbackEntity = (FeedBackEntity) asyncWorkItem.getPayload();
-
 		try {
 			this.processUserFeedback(feedbackEntity);
 		} catch (Exception exception) {
@@ -142,12 +141,7 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	 */
 	public void processUserFeedback(FeedBackEntity feedbackEntity) throws NotFoundException,ConflictException {
 		// get the user from database
-
 		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
-
-		user.setFeedBackSubmitted(true);
-		// save user
-		userDataAccess.update(user);
 		// list of emailId to whom to send
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		// list of ccemailsIds for this email
@@ -155,10 +149,9 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
 		// email id of receiver
-		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_TO_SEND_SELECTED_FEATURE"));
-		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED"));
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(user.getEmail());
-
 		try {
 			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, feedbackEntity.getUserSelectedFeature());
 		} catch (Exception ex) {
@@ -168,7 +161,6 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 							+ tosEmailList.get(0),
 					ex.toString(), ex);
 		}
-
 	}
 
 	/**
