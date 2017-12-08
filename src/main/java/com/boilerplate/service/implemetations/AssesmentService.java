@@ -24,6 +24,7 @@ import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
 import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.QuestionType;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.TopScorerEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
 /**
@@ -584,6 +585,12 @@ public class AssesmentService implements IAssessmentService {
 			userAssessmentsStatus.add(assessmentsStatusEntity);
 		}
 		return userAssessmentsStatus;
+	}
+
+	@Override
+	public BoilerplateList<TopScorerEntity> getTopScorrer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
