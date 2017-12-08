@@ -623,6 +623,7 @@
 		<property name="sendEmailOnFeedbackSubmitObserver" ref="sendEmailOnFeedbackSubmitObserver"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="contentService" ref="contentService"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 

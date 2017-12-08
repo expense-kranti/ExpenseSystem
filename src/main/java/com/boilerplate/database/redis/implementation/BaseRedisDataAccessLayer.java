@@ -682,11 +682,17 @@ public class BaseRedisDataAccessLayer {
 		// method permission for sendEmailOnFeedbackSubmit method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public void com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
 		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate("");
+		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -902,8 +908,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 
 		// emailId to whom to send user selected feature got in feedback
-		vAllEDev.put("EMAILIDTO_SEND_SELECTED_FEATURE", "urvij.singh@krantitechservices.in");
-		
+		vAllEDev.put("AXISBANK_EMAILID1_TO_SEND_SELECTED_FEATURE", "urvij.singh@krantitechservices.in");
+		vAllEDev.put("AXISBANK_EMAILID2_TO_SEND_SELECTED_FEATURE", "urvij.pratap21@gmail.com");
 		return vAllEDev;
 
 	}

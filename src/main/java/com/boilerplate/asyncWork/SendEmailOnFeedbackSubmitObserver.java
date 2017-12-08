@@ -142,7 +142,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	 */
 	public void processUserFeedback(FeedBackEntity feedbackEntity) throws NotFoundException,ConflictException {
 		// get the user from database
-		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
+
+		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);		
+		//set feedback submitted to true
+
 		user.setFeedBackSubmitted(true);
 		// save user
 		userDataAccess.update(user);
@@ -153,8 +156,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
 		// email id of receiver
-		String emailId = configurationManager.get("EMAILIDTO_SEND_SELECTED_FEATURE");
-		tosEmailList.add(emailId);
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(user.getEmail());
+
 		try {
 			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, feedbackEntity.getUserSelectedFeature());
 		} catch (Exception ex) {
