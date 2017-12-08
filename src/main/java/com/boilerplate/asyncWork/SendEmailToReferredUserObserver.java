@@ -135,7 +135,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 	private IUser userDataAccess;
 
 	/**
-	 * This is the setter for user data acess
+	 * This is the setter for user data access
 	 * 
 	 * @param iUser
 	 */

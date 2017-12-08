@@ -50,6 +50,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setCampaignUUID(user.getCampaignUUID());
 		super.setCampaignType(user.getCampaignType());
 		super.setCampaignSource(user.getCampaignSource());
+		super.setFeedBackSubmitted(user.isFeedBackSubmitted());
 
 	}
 
