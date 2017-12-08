@@ -52,6 +52,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setCampaignSource(user.getCampaignSource());
 		super.setUserReferId(user.getUserReferId());
 		super.setFeedBackSubmitted(user.isFeedBackSubmitted());
+		super.setTotalScore(user.getTotalScore());
 
 	}
 

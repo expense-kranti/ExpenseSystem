@@ -121,7 +121,7 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	private static final String PASSWORD_ENCRYPTED = "PASSWORD ENCRYPTED";
 
 	@Override
-	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user)  throws ConflictException{
+	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user)  {
 		// save user
 		if (user.getPassword().toUpperCase().equals(PASSWORD_ENCRYPTED)) {
 			ExternalFacingReturnedUser userFromDatabase = super.get(User + user.getUserId(),

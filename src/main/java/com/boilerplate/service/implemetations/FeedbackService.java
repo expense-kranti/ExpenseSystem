@@ -105,6 +105,7 @@ public class FeedbackService implements IFeedbackService {
 	public void setContentService(IContentService contentService) {
 		this.contentService = contentService;
 	}
+
 	/**
 	 * The autowired instance of user data access
 	 */
@@ -130,14 +131,13 @@ public class FeedbackService implements IFeedbackService {
 		if (RequestThreadLocal.getSession().getExternalFacingUser().isFeedBackSubmitted()) {
 			throw new ConflictException("FeedBackEntity", "feedback has already been sent", null);
 		}
-		ExternalFacingReturnedUser user = RequestThreadLocal.getSession().getExternalFacingUser();		
-		//set feedback submitted to true
-
+		ExternalFacingReturnedUser user = RequestThreadLocal.getSession().getExternalFacingUser();
+		// set feedback submitted to true
 		user.setFeedBackSubmitted(true);
 		// save user
 		userDataAccess.update(user);
-
-		feedbackEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		// Set user id
+		feedbackEntity.setUserId(user.getUserId());
 		try {
 			// Trigger back ground job to send selected feature through email
 			queueReaderJob.requestBackroundWorkItem(feedbackEntity, subjectsForFeedbackSubmit, "FeedBackEntity",
@@ -151,7 +151,6 @@ public class FeedbackService implements IFeedbackService {
 							+ "FeedbackEntity inserting in queue is : " + Base.toJSON(feedbackEntity) + "Queue Down",
 					ex);
 		}
-		
 		return user;
 	}
 
