@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.FeedBackEntity;
 
 /**
@@ -17,12 +18,14 @@ public interface IFeedbackService {
 	 * 
 	 * @param feedbackEntity
 	 *            The feedback Entity contains the user's selected feature
+	 * @return ExternalFacingReturnUser The external facing user with updated
+	 *         feedback submit status
 	 * @throws ConflictException
 	 *             if feedback has already been sent
 	 * @throws NotFoundException
 	 *             If user is not found whose feedback state is change
 	 */
-	public void sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
+	public ExternalFacingReturnedUser sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
 			throws NotFoundException, ConflictException;
 
 }

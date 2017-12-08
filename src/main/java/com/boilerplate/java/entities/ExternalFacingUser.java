@@ -575,7 +575,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This gets the isFeedback submitted boolean value
-	 * @return
+	 * @return The boolean value of isFeedbacksubmitted
 	 */
 	public boolean isFeedBackSubmitted() {
 		return isFeedBackSubmitted;
@@ -583,7 +583,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This sets the isFeedback submitted boolean value
-	 * @param isFeedBackSubmitted
+	 * @param isFeedBackSubmitted The boolean value of isFeedBackSubmitted
 	 */
 	public void setFeedBackSubmitted(boolean isFeedBackSubmitted) {
 		this.isFeedBackSubmitted = isFeedBackSubmitted;

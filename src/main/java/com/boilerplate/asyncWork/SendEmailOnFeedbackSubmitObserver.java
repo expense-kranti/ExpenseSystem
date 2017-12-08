@@ -142,12 +142,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	 */
 	public void processUserFeedback(FeedBackEntity feedbackEntity) throws NotFoundException,ConflictException {
 		// get the user from database
-<<<<<<< HEAD
+
 		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);		
 		//set feedback submitted to true
-=======
-		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
->>>>>>> aa19974a5eb5550f66360d19cfd58b03f8e4039a
+
 		user.setFeedBackSubmitted(true);
 		// save user
 		userDataAccess.update(user);
@@ -158,8 +156,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
 		// email id of receiver
-		String emailId = configurationManager.get("EMAILIDTO_SEND_SELECTED_FEATURE");
-		tosEmailList.add(emailId);
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(user.getEmail());
+
 		try {
 			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, feedbackEntity.getUserSelectedFeature());
 		} catch (Exception ex) {
@@ -190,21 +190,23 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 			BoilerplateList<String> bccsEmailList, String selectedFeature) throws Exception {
 		String subject = contentService.getContent("FEATURE_SELECTED_INFO_EMAIL_SUBJECT");
 		// Get the feature selection information email body
-		if (userSelectionTemplate.equals("")) {
-			FileEntity fileEntity = this.fileService
-					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
-			String fileNameInURL = null;
-			// Get file from local if not found then downloads
-			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
-
-				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
-			} else {
-				fileNameInURL = fileEntity.getFileName();
-			}
-			// Open the file
-			userSelectionTemplate = FileUtils
-					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
-		}
+//		if (userSelectionTemplate.equals("")) {
+//			FileEntity fileEntity = this.fileService
+//					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
+//			String fileNameInURL = null;
+//			// Get file from local if not found then downloads
+//			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
+//
+//				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+//			} else {
+//				fileNameInURL = fileEntity.getFileName();
+//			}
+//			// Open the file
+//			userSelectionTemplate = FileUtils
+//					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
+//		}
+		
+		userSelectionTemplate = "@UserFirstName selected the @referLink feature";
 		String body = userSelectionTemplate.replace("@UserFirstName", "FeatureSelectingTestUser");
 		/// Replace @selectedFeature with the real selected input value
 		body = body.replace("@referLink", selectedFeature);

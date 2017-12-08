@@ -9,6 +9,7 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.FeedBackEntity;
 import com.boilerplate.service.interfaces.IContentService;
 import com.boilerplate.service.interfaces.IFeedbackService;
@@ -104,17 +105,37 @@ public class FeedbackService implements IFeedbackService {
 	public void setContentService(IContentService contentService) {
 		this.contentService = contentService;
 	}
+	/**
+	 * The autowired instance of user data access
+	 */
+	@Autowired
+	private IUser userDataAccess;
+
+	/**
+	 * This is the setter for user data access
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
+	}
 
 	/**
 	 * @see IFeedBackService.sendEmailOnFeedback
 	 */
 	@Override
-	public void sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
+	public ExternalFacingReturnedUser sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
 			throws NotFoundException, ConflictException {
 		// check if user already has given feedback
 		if (RequestThreadLocal.getSession().getExternalFacingUser().isFeedBackSubmitted()) {
 			throw new ConflictException("FeedBackEntity", "feedback has already been sent", null);
 		}
+		ExternalFacingReturnedUser user = RequestThreadLocal.getSession().getExternalFacingUser();		
+		//set feedback submitted to true
+
+		user.setFeedBackSubmitted(true);
+		// save user
+		userDataAccess.update(user);
 
 		feedbackEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
 		try {
@@ -130,6 +151,8 @@ public class FeedbackService implements IFeedbackService {
 							+ "FeedbackEntity inserting in queue is : " + Base.toJSON(feedbackEntity) + "Queue Down",
 					ex);
 		}
+		
+		return user;
 	}
 
 }
