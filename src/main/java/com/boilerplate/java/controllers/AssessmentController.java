@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.TopScorerEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -192,6 +194,24 @@ public class AssessmentController extends BaseController {
 			@RequestBody AssessmentQuestionSectionEntity assessmentQuestionSectionEntity) throws Exception {
 		// Validate the answer
 		return assessmentService.validateAnswer(assessmentQuestionSectionEntity);
+	}
+	
+	/**
+	 * This API is used to get the user attempted assessment details means all
+	 * those assessment which is attempted by user in past
+	 * 
+	 * @return the user attempted assessment details means all those assessment
+	 *         which was attempt by user in past
+	 * @throws NotFoundException
+	 *             throw this exception if user has never attempt any assessment
+	 *             before
+	 */
+	@ApiOperation(value = "Get the top 10 scorrer")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/topScorrer", method = RequestMethod.GET)
+	public @ResponseBody BoilerplateList<TopScorerEntity> getTopScorrer() throws NotFoundException {
+		// Get the assessment attempt details
+		return assessmentService.getTopScorrer();
 	}
 
 }

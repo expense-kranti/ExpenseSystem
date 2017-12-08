@@ -10,6 +10,7 @@ import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.TopScorerEntity;
 
 /**
  * This class has the services for assessment related operations
@@ -137,4 +138,10 @@ public interface IAssessmentService {
 	 *         assessment name and its status
 	 */
 	public BoilerplateList<AssessmentEntity> getUserAssessmentStatus(String userId);
+
+	/**
+	 * 
+	 * @return
+	 */
+	public BoilerplateList<TopScorerEntity> getTopScorrer();
 }
