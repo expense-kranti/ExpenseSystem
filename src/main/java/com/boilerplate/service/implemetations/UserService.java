@@ -216,6 +216,8 @@ public class UserService implements IUserService {
 	BoilerplateList<String> subjectForCampaign = new BoilerplateList<>();
 
 	BoilerplateList<String> subjectForUpdateRefererScore = new BoilerplateList<>();
+	
+	BoilerplateList<String> subjectForReferUUID = new BoilerplateList<>();
 
 	/**
 	 * This variable define the default status for the current user
@@ -266,6 +268,7 @@ public class UserService implements IUserService {
 		subjectForPasswordChange.add("PasswordChange");
 		subjectForCampaign.add("CampaignRelated");
 		subjectForUpdateRefererScore.add("UpdateReferScore");
+		subjectForReferUUID.add("CheckAndCreateReferUUID");
 	}
 
 	/**
@@ -448,6 +451,19 @@ public class UserService implements IUserService {
 			// if the user is valid create a new session, in the session add
 			// details
 			Session session = sessionManager.createNewSession(user);
+			//push the refer unique id task in queue
+			if (user.getUserReferId() != null) {
+				try{
+					queueReaderJob.requestBackroundWorkItem(user, subjectForReferUUID,
+							"UserService", "Authenticate");
+				}catch (Exception efe) {
+					//log in case of queue failure
+					logger.logException("UserService", "authenticate", "Queue Refer id failure", "UserId"+user.getUserId(), null);
+					
+				}
+				
+				
+			}
 			return session;
 		} catch (NotFoundException nfe) {
 			logger.logException("UserService", "authenticate",
@@ -456,6 +472,7 @@ public class UserService implements IUserService {
 					"Converting this exception to Unauthorized for security", nfe);
 			throw new UnauthorizedException("USER", "User name or password incorrect", null);
 		}
+		
 	}
 
 	/**
