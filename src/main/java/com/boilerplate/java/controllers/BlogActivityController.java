@@ -1,14 +1,13 @@
 package com.boilerplate.java.controllers;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.boilerplate.java.entities.BlogActivityEntity;
-
+import com.boilerplate.service.interfaces.IBlogActivityService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -24,8 +23,8 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Controller
 public class BlogActivityController {
 	
-//	@Autowired
-//	IBlogActivityService blogActivityService;
+	@Autowired
+	IBlogActivityService blogActivityService;
 	
 	/**
 	 * This method saves the user's blog activity
@@ -37,7 +36,7 @@ public class BlogActivityController {
 	public @ResponseBody void saveActivity
 				(@RequestBody BlogActivityEntity blogActivityEntity){
 		// Save the user article
-		//blogActivityService.saveActivity(blogActivityEntity);
+		blogActivityService.saveActivity(blogActivityEntity);
 	}
 
 }

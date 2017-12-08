@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.asyncWork.CalculateTotalScoreObserver;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.exceptions.rest.BadRequestException;
-
-import java.util.ArrayList;
 import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -24,6 +22,7 @@ import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
 import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.QuestionType;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.TopScorerEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
 /**
@@ -584,6 +583,12 @@ public class AssesmentService implements IAssessmentService {
 			userAssessmentsStatus.add(assessmentsStatusEntity);
 		}
 		return userAssessmentsStatus;
+	}
+
+	@Override
+	public BoilerplateList<TopScorerEntity> getTopScorrer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

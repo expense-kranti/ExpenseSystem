@@ -157,7 +157,11 @@ public class CleanupCRMPublishHash {
 			sfUpdateHashEntity.setEmploymentStatus(hashmap.get("employmentStatus"));
 		if ((hashmap.get("referUUID")!=null) && !hashmap.get("referUUID").isEmpty())
 			sfUpdateHashEntity.setReferUUID(hashmap.get("referUUID"));
-
+		if ((hashmap.get("feedbackStatus")!=null) && !hashmap.get("feedbackStatus").isEmpty())
+			sfUpdateHashEntity.setFeedbackStatus(hashmap.get("feedbackStatus"));
+		if ((hashmap.get("totalScore")!=null) && !hashmap.get("totalScore").isEmpty())
+			sfUpdateHashEntity.setTotalScore(hashmap.get("totalScore"));
+		
 		return sfUpdateHashEntity;
 	}
 	

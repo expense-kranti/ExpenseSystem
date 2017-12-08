@@ -198,5 +198,26 @@ public class SFUpdateHashEntity extends BaseEntity implements Serializable{
 	public void setFeedbackStatus(String feedbackStatus) {
 		this.feedbackStatus = feedbackStatus;
 	}
+	/**
+	 * This method get the total score
+	 * @return the totalScore
+	 */
+	public String getTotalScore() {
+		return totalScore;
+	}
+
+	/**
+	 * This method set the total score
+	 * @param totalScore the totalScore to set
+	 */
+	public void setTotalScore(String totalScore) {
+		this.totalScore = totalScore;
+	}
+
+
+	/**
+	 * This is the total score
+	 */
+	private String totalScore;
 
 }

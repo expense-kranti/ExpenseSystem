@@ -106,7 +106,7 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	private void publishToCRM(ExternalFacingReturnedUser user) {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
 		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
+			PublishEntity publishEntity = this.createPublishEntity("CreateReferUniqueIdObserver.publishToCRM",
 					configurationManager.get(""),
 					configurationManager.get("UPDATE_AKS_USER_SUBJECT"),
 						user,

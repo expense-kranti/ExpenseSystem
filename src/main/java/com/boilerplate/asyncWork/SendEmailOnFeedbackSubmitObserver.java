@@ -12,7 +12,6 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.EmailUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.entities.EmailEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.FeedBackEntity;
 import com.boilerplate.java.entities.FileEntity;
@@ -143,23 +142,18 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	 */
 	public void processUserFeedback(FeedBackEntity feedbackEntity) throws NotFoundException,ConflictException {
 		// get the user from database
-		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
-		if(user.isFeedBackSubmitted()){
-		   System.out.println("already sent feedback");
-		}
-		
-		user.setFeedBackSubmitted(true);
 
+		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
+
+		user.setFeedBackSubmitted(true);
 		// save user
 		userDataAccess.update(user);
-
 		// list of emailId to whom to send
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		// list of ccemailsIds for this email
 		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-
 		// email id of receiver
 		String emailId = configurationManager.get("EMAILIDTO_SEND_SELECTED_FEATURE");
 		tosEmailList.add(emailId);
@@ -192,28 +186,22 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	public void sendEmail(BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,
 			BoilerplateList<String> bccsEmailList, String selectedFeature) throws Exception {
 		String subject = contentService.getContent("FEATURE_SELECTED_INFO_EMAIL_SUBJECT");
-
 		// Get the feature selection information email body
 		if (userSelectionTemplate.equals("")) {
 			FileEntity fileEntity = this.fileService
 					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
-
 			String fileNameInURL = null;
 			// Get file from local if not found then downloads
 			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
 
 				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
-
 			} else {
 				fileNameInURL = fileEntity.getFileName();
 			}
-
 			// Open the file
 			userSelectionTemplate = FileUtils
 					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
-
 		}
-
 		String body = userSelectionTemplate.replace("@UserFirstName", "FeatureSelectingTestUser");
 		/// Replace @selectedFeature with the real selected input value
 		body = body.replace("@referLink", selectedFeature);

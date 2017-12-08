@@ -452,7 +452,7 @@ public class UserService implements IUserService {
 			// details
 			Session session = sessionManager.createNewSession(user);
 			//push the refer unique id task in queue
-			if (user.getUserReferId() != null) {
+			if (user.getUserReferId() == null) {
 				try{
 					queueReaderJob.requestBackroundWorkItem(user, subjectForReferUUID,
 							"UserService", "Authenticate");
