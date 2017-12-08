@@ -19,6 +19,26 @@ public class FeedBackEntity extends BaseEntity implements Serializable {
 	 * This is the user id of logged in user
 	 */
 	String userId;
+	/**
+	 * This is the platform type selected by user
+	 */
+	String platformType;
+
+	/**
+	 * Gets the platform type
+	 * @return the platformType
+	 */
+	public String getPlatformType() {
+		return platformType;
+	}
+
+	/**
+	 * Sets the platform type
+	 * @param platformType the platformType to set
+	 */
+	public void setPlatformType(String platformType) {
+		this.platformType = platformType;
+	}
 
 	/**
 	 * Gets the user id
