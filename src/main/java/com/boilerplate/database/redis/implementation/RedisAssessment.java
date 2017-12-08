@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -177,11 +178,11 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	 * @see IRedisAssessment.getTopScorrer
 	 */
 	@Override
-	public BoilerplateList<ScoreEntity> getTopScorrer() {
+	public List getTopScorrer() {
 		// Declare new list to hold top scorer
 		BoilerplateList<ScoreEntity> topScorer = new BoilerplateList<>();
 		// Get all user score
-		Set<String> listOfUserKey = super.keys(TotalScore + "*");
+		Set<String> listOfUserKey = super.keys(TotalScore + "AKS*");
 
 		for (String userKey : listOfUserKey) {
 			// Get score
@@ -206,6 +207,6 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 			maxSize = topScorer.size();
 		}
 		// Return top n scorer n get from configurations
-		return (BoilerplateList<ScoreEntity>) topScorer.subList(0, maxSize);
+		return topScorer.subList(0, maxSize);
 	}
 }

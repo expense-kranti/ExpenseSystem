@@ -1,5 +1,7 @@
 package com.boilerplate.database.interfaces;
 
+import java.util.List;
+
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
@@ -143,5 +145,5 @@ public interface IRedisAssessment {
 	 * 
 	 * @return the list of top scorer
 	 */
-	public BoilerplateList<ScoreEntity> getTopScorrer();
+	public List getTopScorrer();
 }

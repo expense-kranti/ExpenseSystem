@@ -616,7 +616,7 @@ public class AssesmentService implements IAssessmentService {
 		//Declare a new list of top scorer user
 		BoilerplateList<TopScorerEntity> topscorerUser = new BoilerplateList<>();
 		//Get top score from data store
-		BoilerplateList<ScoreEntity> topScorer = redisAssessment.getTopScorrer();
+		List<ScoreEntity> topScorer = redisAssessment.getTopScorrer();
 		//Run for loop to get top score user details
 		for (Object o : topScorer) {
 			ScoreEntity scoreEntity = (ScoreEntity) o;
