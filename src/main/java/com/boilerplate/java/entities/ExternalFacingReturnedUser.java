@@ -50,6 +50,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setCampaignUUID(user.getCampaignUUID());
 		super.setCampaignType(user.getCampaignType());
 		super.setCampaignSource(user.getCampaignSource());
+		super.setUserReferId(user.getUserReferId());
 		super.setFeedBackSubmitted(user.isFeedBackSubmitted());
 
 	}
@@ -129,8 +130,6 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		this.otpList = otpList;
 	}
 
-	
-
 	/**
 	 * This method creates the user data for publishing
 	 * 
@@ -152,9 +151,12 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		retrunValue = retrunValue.replace("@phoneNumber", this.getPhoneNumber() == null ? "" : this.getPhoneNumber());
 		retrunValue = retrunValue.replace("@referalSource",
 				this.getReferalSource() == null ? "" : this.getReferalSource());
-		retrunValue = retrunValue.replace("@campaignSource", this.getCampaignSource()==null?"":this.getCampaignSource());
-		retrunValue = retrunValue.replace("@campaignType", this.getCampaignType()==null?"":this.getCampaignType());
-		retrunValue = retrunValue.replace("@campaignUUID", this.getCampaignUUID()==null?"":this.getCampaignUUID());
+		retrunValue = retrunValue.replace("@campaignSource",
+				this.getCampaignSource() == null ? "" : this.getCampaignSource());
+		retrunValue = retrunValue.replace("@campaignType",
+				this.getCampaignType() == null ? "" : this.getCampaignType());
+		retrunValue = retrunValue.replace("@campaignUUID",
+				this.getCampaignUUID() == null ? "" : this.getCampaignUUID());
 		return retrunValue;
 
 	}

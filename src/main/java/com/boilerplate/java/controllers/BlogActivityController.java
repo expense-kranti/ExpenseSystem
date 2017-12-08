@@ -42,7 +42,7 @@ public class BlogActivityController {
 	public @ResponseBody void saveActivity
 				(@RequestBody BlogActivityEntity blogActivityEntity){
 		// Save the user article
-		//blogActivityService.saveActivity(blogActivityEntity);
+		blogActivityService.saveActivity(blogActivityEntity);
 	}
 
 }
