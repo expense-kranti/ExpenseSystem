@@ -140,8 +140,11 @@ public interface IAssessmentService {
 	public BoilerplateList<AssessmentEntity> getUserAssessmentStatus(String userId);
 
 	/**
+	 * This method is used to get all the top scorer
 	 * 
-	 * @return
+	 * @return the list of top scorer
+	 * @throws NotFoundException
+	 *             throw this exception if we don't found any top scorer
 	 */
 	public BoilerplateList<TopScorerEntity> getTopScorrer();
 }

@@ -140,6 +140,7 @@
 				<entry key="SendEmailToReferredUser" value-ref="userReferredObserverForEmail"></entry>
 				<entry key="UpdateReferScore" value-ref="updateReferScore"></entry>
 				<entry key="PublishReferReport" value-ref="publishReferReport"></entry>
+				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>			
 				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
 
 			</map>
@@ -258,7 +259,16 @@
 			</list>
 		</property>
 	</bean>
-
+	<bean id="checkAndCreateReferUUID"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="checkAndCreateReferUUIDObserver" />
+			</list>
+		</property>
+	</bean>
 	<bean id="userReferredObserverForEmail"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
@@ -326,6 +336,13 @@
 		<property name="referral" ref="referral"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 	</bean>
+	<bean id="checkAndCreateReferUUIDObserver" class="com.boilerplate.asyncWork.CreateReferUniqueIdObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="referral" ref="referral"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+	
 
 	<bean id="sendEmailToReferredUserObserver"
 		class="com.boilerplate.asyncWork.SendEmailToReferredUserObserver">
@@ -405,6 +422,7 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="calculateTotalScoreObserver" ref="calculateTotalScoreObserver"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 	<bean id="assessment"
@@ -425,6 +443,7 @@
 
 	<bean id="redisAssessment"
 		class="com.boilerplate.database.redis.implementation.RedisAssessment">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<bean id="redisScript"
 		class="com.boilerplate.database.redis.implementation.RedisScript">

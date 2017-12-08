@@ -197,7 +197,9 @@ public class PublishObserver extends BaseRedisDataAccessLayer implements IAsyncW
 		sfUpdateHashEntity.setLocation(externalFacingReturnedUser.getLocation()==null?"":externalFacingReturnedUser.getLocation());
 		sfUpdateHashEntity.setEmploymentStatus(externalFacingReturnedUser.getEmploymentStatus()==null?"":externalFacingReturnedUser.getEmploymentStatus().toString());
 		sfUpdateHashEntity.setDob(externalFacingReturnedUser.getDateOfBirth()==null?"":externalFacingReturnedUser.getDateOfBirth());
-		
+		sfUpdateHashEntity.setReferUUID(externalFacingReturnedUser.getUserReferId()==null?"":externalFacingReturnedUser.getUserReferId());
+		sfUpdateHashEntity.setFeedbackStatus(externalFacingReturnedUser.isFeedBackSubmitted()==false?"":String.valueOf(externalFacingReturnedUser.isFeedBackSubmitted()));
+		sfUpdateHashEntity.setTotalScore(externalFacingReturnedUser.getTotalScore()==null?"":externalFacingReturnedUser.getTotalScore());
 		Map<String, String> sfUpdateHashMap = new ObjectMapper().readValue(
 			    sfUpdateHashEntity.toJSON(), new TypeReference<HashMap<String,String>>(){});
 		return sfUpdateHashMap;

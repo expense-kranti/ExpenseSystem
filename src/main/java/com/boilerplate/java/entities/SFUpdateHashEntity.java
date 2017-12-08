@@ -158,5 +158,66 @@ public class SFUpdateHashEntity extends BaseEntity implements Serializable{
 	 * This is the updatedDateAndTime
 	 */
 	private String updatedDateAndTime;
+	/**
+	 * This is the user refer uuid
+	 */
+	private String referUUID;
+	/**
+	 * This is the feedbackstatus
+	 */
+	private String feedbackStatus;
+
+	/**
+	 * This method get the refer uuid
+	 * @return the referUUID
+	 */
+	public String getReferUUID() {
+		return referUUID;
+	}
+
+	/**
+	 * This method set the refer uuid
+	 * @param referUUID the referUUID to set
+	 */
+	public void setReferUUID(String referUUID) {
+		this.referUUID = referUUID;
+	}
+
+	/**
+	 * This method get the feedbackStatus
+	 * @return the feedbackStatus
+	 */
+	public String getFeedbackStatus() {
+		return feedbackStatus;
+	}
+
+	/**
+	 * This method set the feedbackStatus
+	 * @param feedbackStatus the feedbackStatus to set
+	 */
+	public void setFeedbackStatus(String feedbackStatus) {
+		this.feedbackStatus = feedbackStatus;
+	}
+	/**
+	 * This method get the total score
+	 * @return the totalScore
+	 */
+	public String getTotalScore() {
+		return totalScore;
+	}
+
+	/**
+	 * This method set the total score
+	 * @param totalScore the totalScore to set
+	 */
+	public void setTotalScore(String totalScore) {
+		this.totalScore = totalScore;
+	}
+
+
+	/**
+	 * This is the total score
+	 */
+	private String totalScore;
 
 }

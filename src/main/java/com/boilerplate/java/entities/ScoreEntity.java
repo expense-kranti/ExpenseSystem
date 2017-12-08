@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
@@ -179,5 +180,12 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 	 * This is the rank of user
 	 */
 	private String rank;
-
+	
+	public static Comparator<ScoreEntity> COMPARATOR = new Comparator<ScoreEntity>() {
+		// This is where the sorting happens.
+		public int compare(ScoreEntity o1, ScoreEntity o2) {
+			return (int) ((Float.valueOf(o1.getObtainedScore()) + Float.valueOf(o1.getReferScore()))
+					- (Float.valueOf(o2.getObtainedScore()) + Float.valueOf(o2.getReferScore())));
+		}
+	};
 }

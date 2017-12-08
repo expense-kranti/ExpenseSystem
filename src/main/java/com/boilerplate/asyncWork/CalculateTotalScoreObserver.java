@@ -3,11 +3,15 @@ package com.boilerplate.asyncWork;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.exceptions.rest.ConflictException;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
+import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
@@ -36,6 +40,21 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 */
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
+	}
+	
+	/**
+	 * The autowired instance of user data access
+	 */
+	@Autowired
+	private IUser userDataAccess;
+
+	/**
+	 * This is the setter for user data access
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
 	}
 
 	/**
@@ -103,8 +122,9 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 *            this parameter contains the assessment data ,assessment data
 	 *            like assessment id, assessment section,assessment
 	 *            questions,assessment score,obtained score etc.
+	 * @throws NotFoundException throws when user is not found
 	 */
-	private void publishAssessmentStatus(AssessmentEntity assessmentEntity) {
+	private void publishAssessmentStatus(AssessmentEntity assessmentEntity) throws NotFoundException, ConflictException {
 		// Create a new instance of assessment status publish entity
 		AssessmentStatusPubishEntity assessmentPublishData = new AssessmentStatusPubishEntity();
 		// Set the user id
@@ -121,7 +141,22 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		assessmentPublishData.setMonthlyRank(calculateRank(Float.parseFloat(assessmentPublishData.getMonthlyScore())));
 		// Set the assessment status
 		assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(assessmentEntity.getUserId()));
+		//save total score in user
+		this.saveUserTotalScore(assessmentPublishData);
 		this.publishToCRM(assessmentPublishData);
+	}
+	/**
+	 * This method save the user total score in user object
+	 * @param assessmentPublishData This is the assessment publish data.
+	 * @throws NotFoundException throws when user is not found
+	 */
+	private void saveUserTotalScore(
+			AssessmentStatusPubishEntity assessmentPublishData) throws NotFoundException, ConflictException {
+	
+		ExternalFacingReturnedUser user = userDataAccess.getUser(assessmentPublishData.getUserId(), null);
+		user.setTotalScore(assessmentPublishData.getTotalScore());
+		userDataAccess.update(user);
+		this.publishUserToCRM(user);
 	}
 
 	/**
@@ -333,6 +368,31 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
 			} catch (Exception exception) {
 				logger.logError("CalculateTotalScoreObserver", "publishToCRM", "queueReaderJob catch block",
+						"Exception :" + exception);
+			}
+		}
+	}
+	private void publishUserToCRM(ExternalFacingReturnedUser user) {
+		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
+		
+		if (isPublishReport) {
+			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
+					configurationManager.get(""),
+					configurationManager.get("UPDATE_AKS_USER_SUBJECT"),
+						user,
+					configurationManager.get(""),
+					configurationManager.get(""),
+					configurationManager.get(""));
+			if (subjects == null) {
+				subjects = new BoilerplateList<>();
+				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
+			}
+			try {
+				
+				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
+						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
+			} catch (Exception exception) {
+				logger.logError("CreateReferUniqueIdObserver", "publishToCRM", "queueReaderJob catch block",
 						"Exception :" + exception);
 			}
 		}

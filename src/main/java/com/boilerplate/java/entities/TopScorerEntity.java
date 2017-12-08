@@ -24,11 +24,6 @@ public class TopScorerEntity {
 	private String lastName;
 
 	/**
-	 * This the user profile picture URL
-	 */
-	private String profilePicUrl;
-
-	/**
 	 * This is the user total score
 	 */
 	private String totalScore;
@@ -96,25 +91,6 @@ public class TopScorerEntity {
 	}
 
 	/**
-	 * This method is used to get the user profile picture URL
-	 * 
-	 * @return the profilePicUrl
-	 */
-	public String getProfilePicUrl() {
-		return profilePicUrl;
-	}
-
-	/**
-	 * This method is used to set the user profile picture URL
-	 * 
-	 * @param profilePicUrl
-	 *            the profilePicUrl to set
-	 */
-	public void setProfilePicUrl(String profilePicUrl) {
-		this.profilePicUrl = profilePicUrl;
-	}
-
-	/**
 	 * This method is used to get the user total score
 	 * 
 	 * @return the totalScore
@@ -149,6 +125,31 @@ public class TopScorerEntity {
 	 *            the rank to set
 	 */
 	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+	/**
+	 * This constructor is used to construct this entity and set all the
+	 * parameters
+	 * 
+	 * @param firstName
+	 *            this is the first name
+	 * @param middleName
+	 *            this is the middle name
+	 * @param lastName
+	 *            this is the last name
+	 * @param string
+	 *            this the profilePicUrl
+	 * @param totalScore
+	 *            this is the user total score
+	 * @param rank
+	 *            this is the user rank
+	 */
+	public TopScorerEntity(String firstName, String middleName, String lastName, String totalScore, String rank) {
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+		this.totalScore = totalScore;
 		this.rank = rank;
 	}
 

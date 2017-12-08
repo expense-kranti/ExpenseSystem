@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.boilerplate.java.entities.BlogActivityEntity;
 import com.boilerplate.service.interfaces.IBlogActivityService;
 import com.wordnik.swagger.annotations.Api;

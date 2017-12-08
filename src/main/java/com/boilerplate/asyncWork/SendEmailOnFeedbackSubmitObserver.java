@@ -143,8 +143,7 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	public void processUserFeedback(FeedBackEntity feedbackEntity) throws NotFoundException,ConflictException {
 		// get the user from database
 
-		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);		
-		//set feedback submitted to true
+		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
 
 		user.setFeedBackSubmitted(true);
 		// save user

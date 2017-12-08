@@ -588,7 +588,26 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	public void setFeedBackSubmitted(boolean isFeedBackSubmitted) {
 		this.isFeedBackSubmitted = isFeedBackSubmitted;
 	}
+	
+	/**
+	 * This method get the user total score
+	 * @return the totalScore
+	 */
+	public String getTotalScore() {
+		return totalScore;
+	}
 
+	/**
+	 * This method set the user total score
+	 * @param totalScore the totalScore to set
+	 */
+	public void setTotalScore(String totalScore) {
+		this.totalScore = totalScore;
+	}
+	/**
+	 * This is the user total score
+	 */
+	private String totalScore;
 	
 
 }
