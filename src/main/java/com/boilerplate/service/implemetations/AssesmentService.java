@@ -10,8 +10,10 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import java.util.ArrayList;
 import java.util.List;
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
@@ -19,6 +21,7 @@ import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AssessmentSectionEntity;
 import com.boilerplate.java.entities.AssessmentStatus;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
+import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
 import com.boilerplate.java.entities.QuestionEntity;
@@ -34,6 +37,26 @@ import com.boilerplate.service.interfaces.IAssessmentService;
  *
  */
 public class AssesmentService implements IAssessmentService {
+
+	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(AssesmentService.class);
+
+	/**
+	 * The autowired instance of user data access
+	 */
+	@Autowired
+	private IUser userDataAccess;
+
+	/**
+	 * This is the setter for user data acess
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
+	}
 
 	/**
 	 * This is new instance of Calculate Total Score Observer
@@ -587,10 +610,34 @@ public class AssesmentService implements IAssessmentService {
 		return userAssessmentsStatus;
 	}
 
+	/**
+	 * @see IAssessmentService.getTopScorrer
+	 */
 	@Override
 	public BoilerplateList<TopScorerEntity> getTopScorrer() {
-		// TODO Auto-generated method stub
-		return null;
+		//Declare a new list of top scorer user
+		BoilerplateList<TopScorerEntity> topscorerUser = new BoilerplateList<>();
+		//Get top score from data store
+		BoilerplateList<ScoreEntity> topScorer = redisAssessment.getTopScorrer();
+		//Run for loop to get top score user details
+		for (Object o : topScorer) {
+			ScoreEntity scoreEntity = (ScoreEntity) o;
+			try {
+				//Get user data
+				ExternalFacingReturnedUser userData = userDataAccess.getUser(scoreEntity.getUserId(), null);
+				//Add to list
+				topscorerUser.add(new TopScorerEntity(userData.getFirstName(), userData.getMiddleName(),
+						userData.getLastName(), String.valueOf(Float.valueOf(scoreEntity.getReferScore())
+								+ Float.valueOf(scoreEntity.getObtainedScore())),
+						scoreEntity.getRank()));
+			} catch (NotFoundException ex) {
+				//Fail to get the user
+				logger.logException("AssesmentService", "getTopScorrer",
+						"try-catch block to get user data ~ This is the user id " + scoreEntity.getUserId(),
+						"fail to get user data in for loop", ex);
+			}
+		}
+		return topscorerUser;
 	}
 
 }

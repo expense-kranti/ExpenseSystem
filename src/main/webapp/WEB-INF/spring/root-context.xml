@@ -405,6 +405,7 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="calculateTotalScoreObserver" ref="calculateTotalScoreObserver"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 	<bean id="assessment"
@@ -425,6 +426,7 @@
 
 	<bean id="redisAssessment"
 		class="com.boilerplate.database.redis.implementation.RedisAssessment">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<bean id="redisScript"
 		class="com.boilerplate.database.redis.implementation.RedisScript">
@@ -597,7 +599,7 @@
 		class="com.boilerplate.database.redis.implementation.RedisBlogActivity">
 	</bean>
 
-    <!--Feedback related beans  -->
+	<!--Feedback related beans -->
 	<bean id="feedbackSubmittedObserver"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
@@ -616,7 +618,7 @@
 	</bean>
 
 	<bean id="feedbackService" class="com.boilerplate.service.implemetations.FeedbackService"
-	init-method="initialize">
+		init-method="initialize">
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="sendEmailOnFeedbackSubmitObserver" ref="sendEmailOnFeedbackSubmitObserver"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>

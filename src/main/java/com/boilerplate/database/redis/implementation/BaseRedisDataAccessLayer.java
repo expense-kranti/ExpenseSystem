@@ -1050,6 +1050,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AKS_REFER_DYNAMIC_PUBLISH_URL", "false");
 		vAllEAll.put("REFERRED_CONTACT_EXPIRATION_TIME_IN_MINUTE_FOR_ONE_DAY", "1440");
 		vAllEAll.put("MAX_ALLOW_USER_SCORE", "40");
+		vAllEAll.put("Top_Scorer_Size", "10");
 
 		return vAllEAll;
 

@@ -1,5 +1,6 @@
 package com.boilerplate.database.interfaces;
 
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.ScoreEntity;
@@ -111,7 +112,7 @@ public interface IRedisAssessment {
 	 * @return scoreEntity this contains user id and user score
 	 */
 	public ScoreEntity getMonthlyScore(String userId);
-	
+
 	/**
 	 * This method is used to get the assessment data regarding the assessment
 	 * id from the data store
@@ -119,19 +120,28 @@ public interface IRedisAssessment {
 	 * @param assessmentEntity
 	 *            this parameter contains the assessment details like assessment
 	 *            id
-	 * @param userId This is the user id of user
+	 * @param userId
+	 *            This is the user id of user
 	 * @return the assessment data like assessment id, assessment
 	 *         section,assessment questions etc.
 	 */
 	public AssessmentEntity getAssessment(AssessmentEntity assessmentEntity, String userId);
-	
+
 	/**
 	 * This method is used to get the user attempted assessment details means
 	 * all those assessment which is attempted by user in past
 	 * 
-	 * @param userId This is the user id
+	 * @param userId
+	 *            This is the user id
 	 * @return the user attempted assessment details means all those assessment
 	 *         which was attempt by user in past
 	 */
 	public AttemptAssessmentListEntity getAssessmentAttempt(String userId);
+
+	/**
+	 * This method is used to get the top scorer
+	 * 
+	 * @return the list of top scorer
+	 */
+	public BoilerplateList<ScoreEntity> getTopScorrer();
 }
