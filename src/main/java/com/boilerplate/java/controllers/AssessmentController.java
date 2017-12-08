@@ -195,22 +195,19 @@ public class AssessmentController extends BaseController {
 		// Validate the answer
 		return assessmentService.validateAnswer(assessmentQuestionSectionEntity);
 	}
-	
+
 	/**
-	 * This API is used to get the user attempted assessment details means all
-	 * those assessment which is attempted by user in past
+	 * This API is used to get all the top scorer
 	 * 
-	 * @return the user attempted assessment details means all those assessment
-	 *         which was attempt by user in past
+	 * @return the list of top scorer
 	 * @throws NotFoundException
-	 *             throw this exception if user has never attempt any assessment
-	 *             before
+	 *             throw this exception if we don't found any top scorer
 	 */
 	@ApiOperation(value = "Get the top 10 scorrer")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/topScorrer", method = RequestMethod.GET)
 	public @ResponseBody BoilerplateList<TopScorerEntity> getTopScorrer() throws NotFoundException {
-		// Get the assessment attempt details
+		// Get the list of top scorer
 		return assessmentService.getTopScorrer();
 	}
 

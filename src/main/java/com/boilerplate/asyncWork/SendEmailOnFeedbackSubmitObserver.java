@@ -155,8 +155,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
 		// email id of receiver
-		String emailId = configurationManager.get("EMAILIDTO_SEND_SELECTED_FEATURE");
-		tosEmailList.add(emailId);
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_TO_SEND_SELECTED_FEATURE"));
+		tosEmailList.add(user.getEmail());
+
 		try {
 			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, feedbackEntity.getUserSelectedFeature());
 		} catch (Exception ex) {
