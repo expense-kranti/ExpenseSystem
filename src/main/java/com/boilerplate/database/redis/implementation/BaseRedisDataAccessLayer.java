@@ -682,9 +682,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for sendEmailOnFeedbackSubmit method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllersFeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
@@ -862,6 +862,8 @@ public class BaseRedisDataAccessLayer {
 		// emailId to whom to send user selected feature got in feedback
 		vAllETest.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.singhal@krantitechservices.in");
 		vAllETest.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
+		vAllETest.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
+		vAllETest.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
 		return vAllETest;
 	}
 
@@ -911,8 +913,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 
 		// emailId to whom to send user selected feature got in feedback
-		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.singhal@krantitechservices.in");
-		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in ");
+		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "aman.bindal@clearmydues.com");
+		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
+		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
+		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
 		return vAllEDev;
 
 	}
@@ -964,6 +968,11 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
 				"d6085bc0-9827-45e2-b72a-2afe565e7c84_referFriendhtml");
+		vAllEProduction.put("FEEDBACK_EMAIL", "feedback@projectakshar.com");
+		vAllEProduction.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "ravi.kala@axisbank.com");
+		vAllEProduction.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "ashish.sharma@axisbank.com");
+		
+		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "ee20782c-8e7f-4655-ac84-ab721a8ef9b8_feedbackemailerhtml");
 		return vAllEProduction;
 	}
 
@@ -1101,7 +1110,7 @@ public class BaseRedisDataAccessLayer {
 
 		// subject of email to be sent on getting user's selected feature(in
 		// feedback)
-		contentMap.put("FEATURE_SELECTED_INFO_EMAIL_SUBJECT", "User's selected feature");
+		contentMap.put("FEATURE_SELECTED_INFO_EMAIL_SUBJECT", "Project Akshar Appreciation By Customer");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

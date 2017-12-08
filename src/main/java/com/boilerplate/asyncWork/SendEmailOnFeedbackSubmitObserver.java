@@ -140,8 +140,8 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	 *             
 	 */
 	public void processUserFeedback(FeedBackEntity feedbackEntity) throws NotFoundException,ConflictException {
-		// get the user from database
-		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(), null);
+		ExternalFacingReturnedUser user = userDataAccess.getUser(feedbackEntity.getUserId(),
+					null);
 		// list of emailId to whom to send
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		// list of ccemailsIds for this email
@@ -151,9 +151,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		// email id of receiver
 		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED"));
-		tosEmailList.add(user.getEmail());
+		tosEmailList.add(configurationManager.get("FEEDBACK_EMAIL"));
 		try {
-			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, feedbackEntity.getUserSelectedFeature());
+			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, 
+					feedbackEntity,user);
 		} catch (Exception ex) {
 			// Log the exception
 			logger.logException("SendEmailOnFeedbackSubmitObserver", "processUserFeedback",
@@ -178,12 +179,13 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	 *             is thrown if any exception occurs while sending email
 	 */
 	public void sendEmail(BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,
-			BoilerplateList<String> bccsEmailList, String selectedFeature) throws Exception {
+			BoilerplateList<String> bccsEmailList, 
+			FeedBackEntity feedbackEntity,ExternalFacingReturnedUser user) throws Exception {
 		String subject = contentService.getContent("FEATURE_SELECTED_INFO_EMAIL_SUBJECT");
 		// Get the feature selection information email body
 		if (userSelectionTemplate.equals("")) {
 			FileEntity fileEntity = this.fileService
-					.getFile(configurationManager.get("REGISTERATION_REFER_EMAIL_CONTENT"));
+					.getFile(configurationManager.get("REGISTERATION_FEEDBACK_EMAIL_CONTENT"));
 			String fileNameInURL = null;
 			// Get file from local if not found then downloads
 			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
@@ -198,7 +200,9 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		}
 		String body = userSelectionTemplate.replace("@UserFirstName", "FeatureSelectingTestUser");
 		/// Replace @selectedFeature with the real selected input value
-		body = body.replace("@referLink", selectedFeature);
+		body = body.replace("@Creditdig", feedbackEntity.getUserSelectedFeature());
+		body = body.replace("@FinancialPlan", feedbackEntity.getPlatformType());
+		body = body.replace("@username", user.getFirstName());
 		// send email after all preparations
 		EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body, null);
 	}
