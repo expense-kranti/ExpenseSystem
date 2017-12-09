@@ -860,10 +860,10 @@ public class BaseRedisDataAccessLayer {
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
 		vAllETest.put("REGISTERATION_REFER_EMAIL_CONTENT", "eae0c74f-4b0b-4a7e-8a97-4488404d6dac_referFriendhtml");
 		// emailId to whom to send user selected feature got in feedback
-		vAllETest.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.singhal@krantitechservices.in");
+		vAllETest.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
-		vAllETest.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
+		vAllETest.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
 		return vAllETest;
 	}
 
@@ -916,7 +916,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "aman.bindal@clearmydues.com");
 		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
-		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
+		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
 		return vAllEDev;
 
 	}

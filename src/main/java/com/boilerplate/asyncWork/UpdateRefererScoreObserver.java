@@ -325,10 +325,12 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveTotalScore(newScore);
+			//create external facing returned user from the user id of referal entity
+			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
+			updateUserScoreAndPublish(user, String.valueOf(Float.valueOf(newScore.getReferScore())
+					+ Float.valueOf(newScore.getObtainedScore())));
 		}
-		//create external facing returned user from the user id of referal entity
-		ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
-		updateUserScoreAndPublish(user, newScore.getObtainedScore());
+		
 				
 	}
 
