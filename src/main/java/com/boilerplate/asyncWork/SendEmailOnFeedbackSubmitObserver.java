@@ -152,6 +152,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(configurationManager.get("FEEDBACK_EMAIL"));
+		if(configurationManager.get("Enviornment").equals("PRODUCTION")){
+			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED"));
+			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID4_FOR_FEEDBACK_SUBMITTED"));
+		}
 		try {
 			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, 
 					feedbackEntity,user);
@@ -203,6 +207,7 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		body = body.replace("@Creditdig", feedbackEntity.getUserSelectedFeature());
 		body = body.replace("@FinancialPlan", feedbackEntity.getPlatformType());
 		body = body.replace("@username", user.getFirstName());
+		body = body.replace("@userLastname", user.getLastName()==null?"":user.getLastName());
 		// send email after all preparations
 		EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body, null);
 	}
