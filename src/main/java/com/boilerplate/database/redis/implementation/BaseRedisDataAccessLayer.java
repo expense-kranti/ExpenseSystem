@@ -917,6 +917,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
+
 		return vAllEDev;
 
 	}
@@ -1113,7 +1114,7 @@ public class BaseRedisDataAccessLayer {
 
 		// subject of email to be sent on getting user's selected feature(in
 		// feedback)
-		contentMap.put("FEATURE_SELECTED_INFO_EMAIL_SUBJECT", "Project Akshar Appreciation By Customer");
+		contentMap.put("FEEDBACK_EMAIL_SUBJECT", "Project Akshar Appreciation By Customer");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

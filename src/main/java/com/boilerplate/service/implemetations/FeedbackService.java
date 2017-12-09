@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
@@ -126,7 +127,10 @@ public class FeedbackService implements IFeedbackService {
 	 */
 	@Override
 	public ExternalFacingReturnedUser sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
-			throws NotFoundException, ConflictException {
+			throws NotFoundException, ConflictException, ValidationFailedException {
+		//validate the entity
+		feedbackEntity.validate();
+		
 		// check if user already has given feedback
 		if (RequestThreadLocal.getSession().getExternalFacingUser().isFeedBackSubmitted()) {
 			throw new ConflictException("FeedBackEntity", "feedback has already been sent", null);

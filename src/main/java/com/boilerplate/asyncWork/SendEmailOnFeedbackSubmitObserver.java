@@ -185,7 +185,7 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 	public void sendEmail(BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,
 			BoilerplateList<String> bccsEmailList, 
 			FeedBackEntity feedbackEntity,ExternalFacingReturnedUser user) throws Exception {
-		String subject = contentService.getContent("FEATURE_SELECTED_INFO_EMAIL_SUBJECT");
+		String subject = contentService.getContent("FEEDBACK_EMAIL_SUBJECT");
 		// Get the feature selection information email body
 		if (userSelectionTemplate.equals("")) {
 			FileEntity fileEntity = this.fileService
