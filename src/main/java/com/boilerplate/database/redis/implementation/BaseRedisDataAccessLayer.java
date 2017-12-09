@@ -913,13 +913,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
 
 		// emailId to whom to send user selected feature got in feedback
-//		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "aman.bindal@clearmydues.com");
-//		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
-//		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
+		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "aman.bindal@clearmydues.com");
+		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
+		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
 		
-		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "urvij.singh@krantitechservices.in");
-		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "urvij.pratap21@gmail.com");
-		vAllEDev.put("FEEDBACK_EMAIL", "urvij.pratap20@gmail.com");
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
 		return vAllEDev;
 
