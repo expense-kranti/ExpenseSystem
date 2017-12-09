@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.controllers.BaseController;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.FeedBackEntity;
@@ -44,12 +45,13 @@ public class FeedbackController extends BaseController {
 	 *         feedback submit state
 	 * @throws ConflictException
 	 * @throws NotFoundException
+	 * @throws ValidationFailedException thrown when user selected feature is null/empty in submitted feedback
 	 */
 	@ApiOperation(value = "sends email to user with selected feature given in feedback")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/feedBack", method = RequestMethod.POST)
 	public @ResponseBody ExternalFacingReturnedUser sendEmailOnFeedbackSubmit(
-			@RequestBody FeedBackEntity feedbackEntity) throws NotFoundException, ConflictException {
+			@RequestBody FeedBackEntity feedbackEntity) throws NotFoundException, ConflictException, ValidationFailedException {
 		return feedbackService.sendEmailOnFeedbackByBackGroundJob(feedbackEntity);
 	}
 }

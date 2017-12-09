@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.FeedBackEntity;
 
@@ -24,8 +25,9 @@ public interface IFeedbackService {
 	 *             if feedback has already been sent
 	 * @throws NotFoundException
 	 *             If user is not found whose feedback state is change
+	 * @throws ValidationFailedException thrown when user selected feature is null/empty in submitted feedback
 	 */
 	public ExternalFacingReturnedUser sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
-			throws NotFoundException, ConflictException;
+			throws NotFoundException, ConflictException, ValidationFailedException;
 
 }

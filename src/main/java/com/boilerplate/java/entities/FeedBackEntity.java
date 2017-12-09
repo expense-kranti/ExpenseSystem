@@ -25,22 +25,6 @@ public class FeedBackEntity extends BaseEntity implements Serializable {
 	String platformType;
 
 	/**
-	 * Gets the platform type
-	 * @return the platformType
-	 */
-	public String getPlatformType() {
-		return platformType;
-	}
-
-	/**
-	 * Sets the platform type
-	 * @param platformType the platformType to set
-	 */
-	public void setPlatformType(String platformType) {
-		this.platformType = platformType;
-	}
-
-	/**
 	 * Gets the user id
 	 * @return The user id of logged in user
 	 */
@@ -71,7 +55,26 @@ public class FeedBackEntity extends BaseEntity implements Serializable {
 	public void setUserSelectedFeature(String userSelectedFeature) {
 		this.userSelectedFeature = userSelectedFeature;
 	}
+	
+	/**
+	 * Gets the platform type
+	 * @return the platformType
+	 */
+	public String getPlatformType() {
+		return platformType;
+	}
 
+	/**
+	 * Sets the platform type
+	 * @param platformType the platformType to set
+	 */
+	public void setPlatformType(String platformType) {
+		this.platformType = platformType;
+	}
+
+	/**
+	 * This checks if user selected feature and selected platform type is null/empty
+	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		
@@ -86,12 +89,18 @@ public class FeedBackEntity extends BaseEntity implements Serializable {
 		return true;
 	}
 
+	/**
+	 * @see BaseEntity.validate
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * @see BaseEntity.validate
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
 		// TODO Auto-generated method stub
