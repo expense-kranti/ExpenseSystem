@@ -71,18 +71,6 @@ public class UserService implements IUserService {
 	/**
 	 * This is the observer to send email
 	 */
-	@Autowired
-	SendRegistrationEmailObserver sendRegistrationEmailObserver;
-
-	/**
-	 * Sets the observer for sending email
-	 * 
-	 * @param sendRegistrationEmailObserver
-	 *            Sending email observer
-	 */
-	public void setSendRegistrationEmailObserver(SendRegistrationEmailObserver sendRegistrationEmailObserver) {
-		this.sendRegistrationEmailObserver = sendRegistrationEmailObserver;
-	}
 
 	/**
 	 * The setter to set the configuration manager
@@ -347,23 +335,6 @@ public class UserService implements IUserService {
 				// log it and move
 				// forward
 				logger.logException("UserService", "create", "try-Queue Reader - Send SMS", exSms.toString(), exSms);
-			}
-
-			try {
-				BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
-				tosEmailList.add(externalFacingUserClone.getEmail());
-				BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
-				BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-				sendRegistrationEmailObserver.sendEmail(externalFacingUserClone.getFirstName(), tosEmailList,
-						ccsEmailList, bccsEmailList, externalFacingUserClone.getPhoneNumber(),
-						externalFacingUserClone.getUserKey());
-
-			} catch (Exception exEmail) {
-				// if an exception takes place here we cant do much hence just
-				// log it and move
-				// forward
-				logger.logException("UserService", "create", "try-Queue Reader - Send Email", exEmail.toString(),
-						exEmail);
 			}
 
 			logger.logException("UserService", "create", "try-Queue Reader", ex.toString(), ex);

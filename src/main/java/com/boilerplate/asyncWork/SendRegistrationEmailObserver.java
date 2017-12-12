@@ -74,13 +74,8 @@ public class SendRegistrationEmailObserver implements IAsyncWorkObserver {
 	
 	public void sendEmail(String firstName,BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList, BoilerplateList<String> bccsEmailList, String phoneNumber,String userKey) throws Exception{
 		String subject=contentService.getContent("WELCOME_MESSAGE_EMAIL_SUBJECT");
+
 		subject = subject.replace("@FirstName",firstName);
-		
-	
- 
-		
-		
-		
 		String body = contentService.getContent("WELCOME_MESSAGE_EMAIL_BODY");
 		body = body.replace("@FirstName",firstName);
 		body = body.replace("@Email",(String) tosEmailList.get(0));
