@@ -88,7 +88,7 @@ public class UserController extends BaseController {
 	 * @return This returns a session entity of the user. This method also sets a
 	 *         header and cookie for session id.
 	 * @throws UnauthorizedException
-	 *             This excption is thrown if the user name password is incorrect
+	 *             This exception is thrown if the user name password is incorrect
 	 */
 	@ApiOperation(value = "Authenticates a user by passing user name, password for default provider", notes = "The user is unique in the system for a given provider."
 			+ "The user may passed as a user id or as DEFAULT:userId")
