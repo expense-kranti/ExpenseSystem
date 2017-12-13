@@ -40,4 +40,11 @@ public class ScriptController extends BaseController {
 		// call the business layer
 		this.scriptService.setUserChangePasswordStatus();
 	}
+	
+	@ApiOperation(value = "Publishes AKS Report or Refer Report of user")
+	@ApiResponses(value = {  @ApiResponse(code= 200, message = "Ok")  })
+	@RequestMapping(value = "scripts/publishUserAKSOrReferReport", method = RequestMethod.POST)
+	public @ResponseBody void publishUserAKSOrReferReport() throws UnauthorizedException, NotFoundException, BadRequestException{
+		this.scriptService.publishUserAKSOrReferReport();
+	}
 }

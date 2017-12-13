@@ -62,6 +62,11 @@ public class ScriptService implements IScriptsService {
 	 * 
 	 */
 	BoilerplateList<String> subjectsForSetUserChangePasswordStatus = new BoilerplateList<>();
+	
+	/**
+	 * This is publish subject list for AKS Report and Refer User
+	 */
+	BoilerplateList<String> subjectsForAKSOrReferReportPublish = new BoilerplateList<>();
 
 	/**
 	 * Initializes the bean
@@ -69,6 +74,7 @@ public class ScriptService implements IScriptsService {
 	public void initialize() {
 		subjectsForPublishUserReportData.add("PublishUserData");
 		subjectsForSetUserChangePasswordStatus.add("SetUserChangePasswordStatus");
+		subjectsForAKSOrReferReportPublish.add("PublishUserAKSOrReferReport");
 	}
 
 	@Override
@@ -80,8 +86,23 @@ public class ScriptService implements IScriptsService {
 			queueReaderJob.requestBackroundWorkItem("", subjectsForPublishUserReportData, "ScriptService",
 					"publishUserAndAssessmentReport");
 		} catch (Exception ex) {
-			logger.logError("ScriptsService", "publishUserAndAssessmentReport", "Inside try-catch block",
+			logger.logError("ScriptService", "publishUserAndAssessmentReport", "Inside try-catch block",
 					ex.toString());
+		}
+	}
+	
+	/**
+	 * @see IScriptsService.publishUserAKSOrReferReport
+	 */
+	@Override
+	public void publishUserAKSOrReferReport() throws UnauthorizedException, NotFoundException, BadRequestException {
+		if (!checkIsAdmin()) {
+			throw new UnauthorizedException("User", "User is not authorized to perform this action.", null);
+		}
+		try{
+			queueReaderJob.requestBackroundWorkItem("", subjectsForAKSOrReferReportPublish,"ScriptService","publishUserAKSOrReferReport");
+		}catch(Exception ex){
+		   logger.logError("ScriptService", "publishUserAKSOrReferReport", "Inside try-catch block", ex.toString());	
 		}
 	}
 
@@ -133,5 +154,7 @@ public class ScriptService implements IScriptsService {
 			logger.logError("ScriptsService", "setUserChangePasswordStatus", "Inside try-catch block", ex.toString());
 		}
 	}
+	
+	
 
 }

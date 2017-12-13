@@ -9,6 +9,7 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.ArticleEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.GenericListEncapsulationEntity;
 import com.boilerplate.java.entities.MethodPermissions;
@@ -695,6 +696,115 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permissions of remaining api made by urvij
+
+		// method permission for article-apis
+
+		// for approveArticle(ArticleEntity) method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ArticleController.approveArticle(com.boilerplate.java.entities.ArticleEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ArticleController.approveArticle(com.boilerplate.java.entities.ArticleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for attemptAssessment(ArticleEntity) method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ArticleController.attemptAssessment(com.boilerplate.java.entities.ArticleEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ArticleController.attemptAssessment(com.boilerplate.java.entities.ArticleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for getAssesments() method
+		methodPermission = new MethodPermissions();
+		methodPermission
+				.setId("public java.util.List com.boilerplate.java.controllers.ArticleController.getAssesents()");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ArticleController.getAssesments()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for Assessment controller
+
+		// method permission for getTotalScore() method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ScoreEntity com.boilerplate.java.controllers.AssessmentController.getTotalScore()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ScoreEntity com.boilerplate.java.controllers.AssessmentController.getTotalScore()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for method submitAssesment(AssessmentEntity)
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for method survey()
+		methodPermission = new MethodPermissions();
+		methodPermission
+				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getSurveys()");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.AssessmentController.getSurveys()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for method getTopScorrer()
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.AssessmentController.getTopScorrer()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.AssessmentController.getTopScorrer()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permissions for Script Controller
+
+		// for method setUserChangePasswordStatus()
+		methodPermission = new MethodPermissions();
+		methodPermission
+				.setId("public void com.boilerplate.java.controllers.ScriptController.setUserChangePasswordStatus()");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ScriptController.setUserChangePasswordStatus()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for method setUserChangePasswordStatus()
+		methodPermission = new MethodPermissions();
+		methodPermission
+				.setId("public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
+
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
 
@@ -863,7 +973,10 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
-		vAllETest.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
+		vAllETest.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
+				"573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
+		
+		
 		return vAllETest;
 	}
 
@@ -916,8 +1029,13 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "aman.bindal@clearmydues.com");
 		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
+
+		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
+				"f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
 		
-		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
+		//added for publishUserAKSOrReferReport
+		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false for not publish
+		
 		return vAllEDev;
 
 	}
@@ -972,8 +1090,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("FEEDBACK_EMAIL", "feedback@projectakshar.com");
 		vAllEProduction.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "ravi.kala@axisbank.com");
 		vAllEProduction.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "ashish.sharma@axisbank.com");
-		
-		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "ee20782c-8e7f-4655-ac84-ab721a8ef9b8_feedbackemailerhtml");
+
+		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
+				"ee20782c-8e7f-4655-ac84-ab721a8ef9b8_feedbackemailerhtml");
 		return vAllEProduction;
 	}
 

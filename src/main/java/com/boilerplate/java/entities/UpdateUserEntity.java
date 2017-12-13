@@ -70,10 +70,15 @@ public class UpdateUserEntity extends BaseEntity{
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		if(this.getPassword() ==null) throw new ValidationFailedException(
+//		if(this.getPassword() ==null) throw new ValidationFailedException(
+//				"User","Password is null/Empty",null);
+//		if(this.getPassword().equals("")) throw new ValidationFailedException(
+//				"User","Password is null/Empty",null);
+		
+		if(this.isNullOrEmpty(this.getPassword())) throw new ValidationFailedException(
 				"User","Password is null/Empty",null);
-		if(this.getPassword().equals("")) throw new ValidationFailedException(
-				"User","Password is null/Empty",null);
+			
+		
 		return true;
 	}
 

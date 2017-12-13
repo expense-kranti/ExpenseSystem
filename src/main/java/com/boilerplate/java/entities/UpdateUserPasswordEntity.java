@@ -1,5 +1,6 @@
 package com.boilerplate.java.entities;
 
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -36,10 +37,12 @@ public class UpdateUserPasswordEntity {
 	 * Converts an entity to the password entity
 	 * 
 	 * @return The entity
+	 * @throws ValidationFailedException thrown when password is null/empty
 	 */
-	public UpdateUserEntity convertToUpdateUserEntity() {
+	public UpdateUserEntity convertToUpdateUserEntity() throws ValidationFailedException {
 		UpdateUserEntity updateUserEntity = new UpdateUserEntity();
 		updateUserEntity.setPassword(this.getPassword());
+		updateUserEntity.validate();
 		return updateUserEntity;
 	}
 }

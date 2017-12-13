@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IRedisScript;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
@@ -17,21 +18,14 @@ import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.PublishEntity;
+import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.UserReferalMediumType;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
-/**
- * This class run in back ground to publish the user data
- * 
- * @author shiva
- *
- */
-public class PublishUserDataObserver implements IAsyncWorkObserver {
+public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 
-	/**
-	 * PublishUserDataObserver logger
-	 */
-	private static Logger logger = Logger.getInstance(PublishUserDataObserver.class);
+	private static Logger logger = Logger.getInstance(PublishUserAKSOrReferReportObserver.class);
 
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
@@ -40,15 +34,12 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	 * This sets the queue reader job
 	 * 
 	 * @param queueReaderJob
-	 *            The queue reader jon
+	 *            The queue reader job
 	 */
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
 
-	/**
-	 * This is the instance of the configuration manager.
-	 */
 	@Autowired
 	com.boilerplate.configurations.ConfigurationManager configurationManager;
 
@@ -67,18 +58,13 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	IRedisScript redisScript;
 
 	/**
-	 * This is the new instance of assessment service
-	 */
-	IAssessmentService assessmentService;
-
-	/**
-	 * This method set the assessment service
+	 * This method is used to set the user data access
 	 * 
-	 * @param assessmentService
-	 *            the assessmentService to set
+	 * @param userDataAccess
+	 *            the userDataAccess to set
 	 */
-	public void setAssessmentService(IAssessmentService assessmentService) {
-		this.assessmentService = assessmentService;
+	public void setUserDataAccess(IUser userDataAccess) {
+		this.userDataAccess = userDataAccess;
 	}
 
 	/**
@@ -87,13 +73,18 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	IUser userDataAccess;
 
 	/**
-	 * This method is used to set the user data access
-	 * 
-	 * @param userDataAccess
-	 *            the userDataAccess to set
+	 * This is a new instance of Referral
 	 */
-	public void setUserDataAccess(IUser userDataAccess) {
-		this.userDataAccess = userDataAccess;
+	IReferral referral;
+
+	/**
+	 * This method is used to set the referral
+	 * 
+	 * @param referral
+	 *            the referral to set
+	 */
+	public void setReferral(IReferral referral) {
+		this.referral = referral;
 	}
 
 	/**
@@ -105,8 +96,6 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	public void setRedisScript(IRedisScript redisScript) {
 		this.redisScript = redisScript;
 	}
-
-	private BoilerplateList<String> subjects = null;
 
 	/**
 	 * This is the new instance of redis assessment
@@ -124,6 +113,23 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 		this.redisAssessment = redisAssessment;
 	}
 
+	/**
+	 * This is the new instance of assessment service
+	 */
+	IAssessmentService assessmentService;
+
+	/**
+	 * This method set the assessment service
+	 * 
+	 * @param assessmentService
+	 *            the assessmentService to set
+	 */
+	public void setAssessmentService(IAssessmentService assessmentService) {
+		this.assessmentService = assessmentService;
+	}
+
+	private BoilerplateList<String> subjects = null;
+
 	private static final BoilerplateSet<String> defaultUsersSet = new BoilerplateSet<>(
 			Arrays.asList("USER:AKS:BACKGROUND", "USER:AKS:ANNONYMOUS", "USER:AKS:ROLEASSIGNER", "USER:AKS:ADMIN"));
 
@@ -133,6 +139,8 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		Set<String> listOfUserKey = redisScript.getAllUserKeys();
+		
+		
 		// Run for loop to process each user
 		for (String userId : listOfUserKey) {
 			try {
@@ -141,42 +149,22 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 				}
 				// Get user details
 				ExternalFacingReturnedUser user = this.getUserDetails(userId.replace("USER:", ""));
-				// Check is user details not null
+				// Check if user Details not null
 				if (user != null) {
-					// Check is script publish user to CRM is true or not
-					if (Boolean.valueOf(configurationManager.get("Is_Script_Publish_User_To_CRM"))) {
-						this.publishUserToCRM(user);
-					}
-					// Publish user assessment details
+					// publish user assessment details
 					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
+					
+					if(user.getUserReferId() != null){
+					     redisScript.getReferDetails(user.getUserReferId(), UserReferalMediumType.Email.toString());
+					}
 				}
 			} catch (Exception ex) {
-				logger.logException("PublishUserDataObserver", "publishUserToCRM",
-						"Publishing user assessment script date", "", ex);
+				logger.logException("PublishUserAKSOrReferReportObserver", "publishUserAssessmentDetails",
+						"publishing user assessment data", "", ex);
 			}
 		}
-
-	}
-
-	private void publishUserToCRM(ExternalFacingReturnedUser user) {
-		PublishEntity publishEntity = this.createPublishEntity("PublishUserDataObserver.publishUserToCRM",
-				configurationManager.get("AKS_USER_Publish_Method"),
-				configurationManager.get("AKS_USER_Publish_Subject"), user,
-				configurationManager.get("AKS_USER_Publish_URL"), configurationManager.get("AKS_USER_Publish_Template"),
-				configurationManager.get("AKS_USER_Dynamic_Publish_Url"));
-		if (subjects == null) {
-			subjects = new BoilerplateList<>();
-			subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-		}
-		try {
-			logger.logInfo("PublishUserDataObserver", "publishUserToCRM", "Publishing user",
-					"publish user status" + user.getUserId());
-			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishUserDataObserver", "publishToCRM",
-					configurationManager.get("AKS_PUBLISH_QUEUE"));
-		} catch (Exception exception) {
-			logger.logError("PublishUserDataObserver", "publishUserToCRM", "queueReaderJob catch block",
-					"Exception :" + exception);
-		}
+		
+		
 
 	}
 
@@ -185,7 +173,7 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 	 * 
 	 * @param userId
 	 *            this is the userId by which we can get the user assessment
-	 *            status
+	 * 
 	 */
 	private void publishUserAssessmentDetails(String userId) {
 		AttemptAssessmentListEntity attemptAssessment = redisAssessment.getAssessmentAttempt(userId);
@@ -205,38 +193,24 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 			assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(userId));
 			// Publish user assessment status
 			this.publishToCRM(assessmentPublishData);
+
 		}
-
-	}
-
-	/**
-	 * This method is used to get user details
-	 * 
-	 * @param userId
-	 *            this is the userId by which we can get the user information
-	 * @return the user details
-	 * @throws NotFoundException
-	 *             throw this exception if user not found in our data store
-	 */
-	private ExternalFacingReturnedUser getUserDetails(String userId) throws NotFoundException {
-		ExternalFacingReturnedUser userDetails = userDataAccess.getUser(userId, null);
-		return userDetails;
 	}
 
 	/**
 	 * This method is used to publish the user assessment status details to CRM
 	 * 
-	 * @param assessmentStatusPubishEntity
+	 * @param assessmentStatusPublishEntity
 	 *            This parameter contains the user assessment details like user
-	 *            total score ,user rank and list of all assessment,each element
-	 *            of list contain assessment name and its status,
+	 *            total score, user rank and list of all assessment, each
+	 *            element of list contain assessment name and its status
 	 */
-	private void publishToCRM(AssessmentStatusPubishEntity assessmentStatusPubishEntity) {
+	private void publishToCRM(AssessmentStatusPubishEntity assessmentStatusPublishEntity) {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
 		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("PublishUserDataObserver.publishToCRM",
+			PublishEntity publishEntity = this.createPublishEntity("PublishUserAKSOrReferReportObserver.publishToCRM",
 					configurationManager.get("AKS_Assessment_Publish_Method"),
-					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPubishEntity,
+					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPublishEntity,
 					configurationManager.get("AKS_Assessment_Publish_URL"),
 					configurationManager.get("AKS_Assessment_Publish_Template"),
 					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));
@@ -245,15 +219,21 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 			}
 			try {
-				logger.logInfo("PublishUserDataObserver", "publishToCRM", "Publishing report",
-						"publish assessment status" + assessmentStatusPubishEntity.getUserId());
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
-						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
+				logger.logInfo("PublishUserAKSOrReferReportObserver", "publishToCRM", "Publishing Report",
+						"publish assessment status " + assessmentStatusPublishEntity.getUserId());
+				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishUserAKSOrReferReportObserver", "publishToCRM",
+						configurationManager.get("AKS_PUBLISH_QUEUE"));
 			} catch (Exception exception) {
-				logger.logError("PublishUserDataObserver", "publishToCRM", "queueReaderJob catch block",
-						"Exception :" + exception);
+				logger.logError("PublishUserAKSOrReferReportObserver", "publishToCRM", "queueReaderJob catch block",
+						"Exception : " + exception);
 			}
+
 		}
+	}
+
+	private ExternalFacingReturnedUser getUserDetails(String userId) throws NotFoundException {
+		ExternalFacingReturnedUser userDetails = userDataAccess.getUser(userId, null);
+		return userDetails;
 	}
 
 	/**
@@ -284,4 +264,5 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 		publishEntity.setPublishTemplate(publishTemplate);
 		return publishEntity;
 	}
+
 }

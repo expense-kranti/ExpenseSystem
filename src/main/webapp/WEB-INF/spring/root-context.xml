@@ -142,6 +142,7 @@
 				<entry key="PublishReferReport" value-ref="publishReferReport"></entry>
 				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>
 				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
+				<entry key="PublishUserAKSOrReferReport" value-ref="publishUserAKSOrReferReport"></entry>
 
 			</map>
 
@@ -336,7 +337,7 @@
 		<property name="referral" ref="referral"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
-    </bean>
+	</bean>
 	<bean id="checkAndCreateReferUUIDObserver" class="com.boilerplate.asyncWork.CreateReferUniqueIdObserver">
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
@@ -645,4 +646,27 @@
 	</bean>
 
 
+  <!--observers and observer list related to publishing user AKS Or Refer Report  -->
+    <bean id="publishUserAKSOrReferReport"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="publishUserAKSOrReferReportObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="publishUserAKSOrReferReportObserver"
+		class="com.boilerplate.asyncWork.PublishUserAKSOrReferReportObserver">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="redisScript" ref="redisScript"></property>
+		<property name="assessmentService" ref="assessmentService"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
+	</bean>
+
 </beans>
+ 

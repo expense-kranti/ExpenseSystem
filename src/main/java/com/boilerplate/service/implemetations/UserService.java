@@ -524,6 +524,8 @@ public class UserService implements IUserService {
 	public ExternalFacingReturnedUser automaticPasswordReset(ExternalFacingUser externalFacingUser)
 			throws ValidationFailedException, ConflictException, NotFoundException, UnauthorizedException,
 			BadRequestException {
+		
+		
 		// get the user requested for
 		ExternalFacingUser returnedUser = this.get(externalFacingUser.getUserId());
 
@@ -641,7 +643,7 @@ public class UserService implements IUserService {
 				|| RequestThreadLocal.getSession().getUserId().isEmpty()) {
 			throw new UnauthorizedException("User", "User not logged in for update", null);
 		}
-
+		
 		// convert update user password entity to update user entity
 		UpdateUserEntity updateUserEntity = updateUserPasswordEntity.convertToUpdateUserEntity();
 		// Set is password change to true
