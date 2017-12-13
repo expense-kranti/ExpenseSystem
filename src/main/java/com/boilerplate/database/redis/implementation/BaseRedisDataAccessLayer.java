@@ -938,7 +938,7 @@ public class BaseRedisDataAccessLayer {
 		BoilerplateMap<String, String> vAllETest = new BoilerplateMap<String, String>();
 		vAllETest.put("SMS_ROOT_URL", "http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllETest.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
-		vAllETest.put("SMS_SENDER", "CDSSMS");
+		vAllETest.put("SMS_SENDER", "AKSSMS");
 		vAllETest.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllETest.put("S3_Bucket_Name", "csrdata-files");
 		vAllETest.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
@@ -992,7 +992,7 @@ public class BaseRedisDataAccessLayer {
 		// put all configuration
 		vAllEDev.put("SMS_ROOT_URL", "http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllEDev.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
-		vAllEDev.put("SMS_SENDER", "CDSSMS");
+		vAllEDev.put("SMS_SENDER", "AKSSMS");
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllEDev.put("RootFileUploadLocation", "/downloads/");
 		// new config
@@ -1023,19 +1023,18 @@ public class BaseRedisDataAccessLayer {
 				"http://localhost:8080/CSRFrontend/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
 		vAllEDev.put("URL_SHORTENER_API_URL",
 				"https://zetl5ogaq4.execute-api.ap-southeast-1.amazonaws.com/test/urlshortener");
-		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "d5ac3307-9360-476a-8cd0-6aa464381d56_referFriendhtml");
+		vAllEDev.put("REGISTERATION_REFER_EMAIL_CONTENT", "a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
 
 		// emailId to whom to send user selected feature got in feedback
-		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "aman.bindal@clearmydues.com");
+		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.kranti@clearmydues.com");
 		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
-
-		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
-				"f9da0ebd-22bf-498c-9292-f4bd7730beae_feedbackemailerhtml");
 		
 		//added for publishUserAKSOrReferReport
 		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false for not publish
 		
+		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
+
 		return vAllEDev;
 
 	}
@@ -1053,7 +1052,7 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEProduction.put("SMS_ROOT_URL", "http://alerts.solutionsinfini.com/api/v3/index.php");
 		vAllEProduction.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
-		vAllEProduction.put("SMS_SENDER", "CDSSMS");
+		vAllEProduction.put("SMS_SENDER", "AKSSMS");
 		vAllEProduction.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 
 		// new config
@@ -1091,8 +1090,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "ravi.kala@axisbank.com");
 		vAllEProduction.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "ashish.sharma@axisbank.com");
 
-		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
-				"ee20782c-8e7f-4655-ac84-ab721a8ef9b8_feedbackemailerhtml");
+		
+		vAllEProduction.put("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED", "ravikala2000@gmail.com");
+		vAllEProduction.put("AXISBANK_EMAILID4_FOR_FEEDBACK_SUBMITTED", "aashish902@gmail.com");
+		
+		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "7a5f568f-8f16-4642-a3ce-f473fd326d02_feedbackemailerhtml");
 		return vAllEProduction;
 	}
 

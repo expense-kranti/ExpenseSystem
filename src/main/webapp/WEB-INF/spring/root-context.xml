@@ -30,7 +30,6 @@
 		<property name="sessionManager" ref="sessionManager"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="sendRegistrationSMSObserver" ref="sendRegistrationSMSObserver"></property>
-		<property name="sendRegistrationEmailObserver" ref="sendRegistrationEmailObserver"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="referral" ref="referral"></property>
 	</bean>
@@ -117,13 +116,8 @@
 
 				<!-- This is for saving the work to the database async -->
 				<entry key="SaveSessionToDatabase" value-ref="saveSessionToDatabaseObservers" />
-
-
 				<entry key="CreateUser" value-ref="createUserObserver" />
-
-
 				<entry key="ClientSideLog" value-ref="clientSideLogObserver" />
-
 				<entry key="CalculateTotalScore" value-ref="calculateTotalScore" />
 				<entry key="AutomaticPasswordReset" value-ref="passwordResetObserver" />
 				<entry key="PasswordChange" value-ref="passwordChangeObserver" />
@@ -202,7 +196,6 @@
 				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
 				<ref bean="sendRegistrationSMSObserver"></ref>
-				<ref bean="sendRegistrationEmailObserver"></ref>
 			</list>
 		</property>
 	</bean>
@@ -309,6 +302,7 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
 	</bean>
 
 	<bean id="publishUserDataObserver" class="com.boilerplate.asyncWork.PublishUserDataObserver">

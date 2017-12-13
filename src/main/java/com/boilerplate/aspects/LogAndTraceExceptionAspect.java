@@ -108,7 +108,7 @@ public class LogAndTraceExceptionAspect {
 						throw new UnauthorizedException("User",
 								"User is not logged in", null);
 					if (session.getExternalFacingUser().getUserId()
-							.equals("DEFAULT:ANNONYMOUS"))
+							.equals("AKS:ANNONYMOUS"))
 						throw new UnauthorizedException("User",
 								"User is not logged in", null);
 				}

@@ -288,7 +288,7 @@ public class SessionManager {
 	private Session getAnnonymousSession(){
 		if(this.annonymousSession == null){
 			try{
-				ExternalFacingReturnedUser annonymousUser =userService.get("DEFAULT:ANNONYMOUS");
+				ExternalFacingReturnedUser annonymousUser =userService.get("AKS:ANNONYMOUS");
 				this.annonymousSession = new Session(annonymousUser);
 			}
 			catch(Exception ex){
