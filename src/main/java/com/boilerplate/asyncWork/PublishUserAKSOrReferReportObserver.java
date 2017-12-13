@@ -1,26 +1,18 @@
 package com.boilerplate.asyncWork;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IRedisScript;
-import com.boilerplate.database.interfaces.IReferral;
-import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateSet;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
-import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.PublishEntity;
-import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ScoreEntity;
-import com.boilerplate.java.entities.UserReferalMediumType;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
 public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
@@ -56,36 +48,6 @@ public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 	 * This is the new instance of redis script
 	 */
 	IRedisScript redisScript;
-
-	/**
-	 * This method is used to set the user data access
-	 * 
-	 * @param userDataAccess
-	 *            the userDataAccess to set
-	 */
-	public void setUserDataAccess(IUser userDataAccess) {
-		this.userDataAccess = userDataAccess;
-	}
-
-	/**
-	 * This is new instance of user data access
-	 */
-	IUser userDataAccess;
-
-	/**
-	 * This is a new instance of Referral
-	 */
-	IReferral referral;
-
-	/**
-	 * This method is used to set the referral
-	 * 
-	 * @param referral
-	 *            the referral to set
-	 */
-	public void setReferral(IReferral referral) {
-		this.referral = referral;
-	}
 
 	/**
 	 * This method set the redis Script
@@ -134,15 +96,15 @@ public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
-	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		
+	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {		
 		Set<String> listOfUserAttemptkeys = redisScript.getAllUserAttemptKeys();
 		
+
 		// Run for loop to process each user
 		for (String userAttemptKey : listOfUserAttemptkeys) {
 			try {
 				String splitUserId [] = userAttemptKey.split(":");
-				String userId = splitUserId[1]+splitUserId[2];
+				String userId = splitUserId[1]+":"+splitUserId[2];
 				this.publishUserAssessmentDetails(userId);
 			
 			} catch (Exception ex) {
@@ -150,6 +112,7 @@ public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 						"publishing user assessment data", "", ex);
 			}
 		}
+
 	}
 
 	/**

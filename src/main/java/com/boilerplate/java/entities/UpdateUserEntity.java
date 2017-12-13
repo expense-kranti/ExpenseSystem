@@ -69,15 +69,9 @@ public class UpdateUserEntity extends BaseEntity{
 	 * passwords are not allowed in the system.
 	 */
 	@Override
-	public boolean validate() throws ValidationFailedException {
-//		if(this.getPassword() ==null) throw new ValidationFailedException(
-//				"User","Password is null/Empty",null);
-//		if(this.getPassword().equals("")) throw new ValidationFailedException(
-//				"User","Password is null/Empty",null);
-		
+	public boolean validate() throws ValidationFailedException {		
 		if(this.isNullOrEmpty(this.getPassword())) throw new ValidationFailedException(
 				"User","Password is null/Empty",null);
-			
 		
 		return true;
 	}
@@ -252,11 +246,6 @@ public class UpdateUserEntity extends BaseEntity{
 		this.isPasswordChanged = isPasswordChanged;
 	}
 	
-
-	
-
-	
-
 
 
 	
