@@ -130,42 +130,26 @@ public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 
 	private BoilerplateList<String> subjects = null;
 
-	private static final BoilerplateSet<String> defaultUsersSet = new BoilerplateSet<>(
-			Arrays.asList("USER:AKS:BACKGROUND", "USER:AKS:ANNONYMOUS", "USER:AKS:ROLEASSIGNER", "USER:AKS:ADMIN"));
-
 	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		Set<String> listOfUserKey = redisScript.getAllUserKeys();
 		
+		Set<String> listOfUserAttemptkeys = redisScript.getAllUserAttemptKeys();
 		
 		// Run for loop to process each user
-		for (String userId : listOfUserKey) {
+		for (String userAttemptKey : listOfUserAttemptkeys) {
 			try {
-				if (defaultUsersSet.contains(userId)) {
-					continue;
-				}
-				// Get user details
-				ExternalFacingReturnedUser user = this.getUserDetails(userId.replace("USER:", ""));
-				// Check if user Details not null
-				if (user != null) {
-					// publish user assessment details
-					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
-					
-					if(user.getUserReferId() != null){
-					     redisScript.getReferDetails(user.getUserReferId(), UserReferalMediumType.Email.toString());
-					}
-				}
+				String splitUserId [] = userAttemptKey.split(":");
+				String userId = splitUserId[1]+splitUserId[2];
+				this.publishUserAssessmentDetails(userId);
+			
 			} catch (Exception ex) {
 				logger.logException("PublishUserAKSOrReferReportObserver", "publishUserAssessmentDetails",
 						"publishing user assessment data", "", ex);
 			}
 		}
-		
-		
-
 	}
 
 	/**
@@ -229,11 +213,6 @@ public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 			}
 
 		}
-	}
-
-	private ExternalFacingReturnedUser getUserDetails(String userId) throws NotFoundException {
-		ExternalFacingReturnedUser userDetails = userDataAccess.getUser(userId, null);
-		return userDetails;
 	}
 
 	/**

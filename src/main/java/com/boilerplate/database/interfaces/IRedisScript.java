@@ -26,4 +26,7 @@ public interface IRedisScript {
 	 * @return ReferalEntity contains details of referrals
 	 */
 	public ReferalEntity getReferDetails(String userReferId, String referMedium);
+
+
+	public Set<String> getAllUserAttemptKeys();
 }
