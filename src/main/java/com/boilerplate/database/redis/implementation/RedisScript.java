@@ -28,7 +28,7 @@ public class RedisScript  extends BaseRedisDataAccessLayer implements IRedisScri
 	}
 	@Override
 	public ReferalEntity getReferDetails(String userReferId, String referMedium){
-		Map<String, String> referalEntityMap = super.hgetAll(ReferredContact + userReferId);
+		Map<String, String> referalEntityMap = super.hgetAll(ReferredContact + userReferId + ":" + referMedium);
 		ReferalEntity referalEntity = Base.fromMap(referalEntityMap, ReferalEntity.class);
 		return referalEntity;
 	}

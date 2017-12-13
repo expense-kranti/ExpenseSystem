@@ -803,7 +803,14 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		
-		
+		//for method publishUserAKSOrReferReport
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}

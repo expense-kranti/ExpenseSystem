@@ -138,31 +138,34 @@ public class PublishUserAKSOrReferReportObserver implements IAsyncWorkObserver {
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		Set<String> listOfUserKey = redisScript.getAllUserKeys();
+//		Set<String> listOfUserKey = redisScript.getAllUserKeys();
 		
 		
-		// Run for loop to process each user
-		for (String userId : listOfUserKey) {
-			try {
-				if (defaultUsersSet.contains(userId)) {
-					continue;
-				}
-				// Get user details
-				ExternalFacingReturnedUser user = this.getUserDetails(userId.replace("USER:", ""));
-				// Check if user Details not null
-				if (user != null) {
-					// publish user assessment details
-					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
-					
-					if(user.getUserReferId() != null){
-					     redisScript.getReferDetails(user.getUserReferId(), UserReferalMediumType.Email.toString());
-					}
-				}
-			} catch (Exception ex) {
-				logger.logException("PublishUserAKSOrReferReportObserver", "publishUserAssessmentDetails",
-						"publishing user assessment data", "", ex);
-			}
-		}
+//		// Run for loop to process each user
+//		for (String userId : listOfUserKey) {
+//			try {
+//				if (defaultUsersSet.contains(userId)) {
+//					continue;
+//				}
+//				// Get user details
+//				ExternalFacingReturnedUser user = this.getUserDetails(userId.replace("USER:", ""));
+//				// Check if user Details not null
+//				if (user != null) {
+//					// publish user assessment details
+//					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
+//					
+//					if(user.getUserReferId() != null){
+//					     redisScript.getReferDetails(user.getUserReferId(), UserReferalMediumType.Email.toString());
+//					}
+//				}
+//			} catch (Exception ex) {
+//				logger.logException("PublishUserAKSOrReferReportObserver", "publishUserAssessmentDetails",
+//						"publishing user assessment data", "", ex);
+//			}
+//		}
+		
+		
+		
 		
 		
 
