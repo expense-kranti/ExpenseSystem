@@ -213,7 +213,11 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		// set the interest,principal amount,loan left paid,total payment done at the current month
 		// of calculation
 		amortizedScheduleDetailsForEachMonth.setInterest(df.format((interest)));
-		amortizedScheduleDetailsForEachMonth.setLoanLeft(df.format(balanceAtEndOFMonth));
+		if(balanceAtEndOFMonth <= 0){
+			amortizedScheduleDetailsForEachMonth.setLoanLeft(df.format(Math.abs(balanceAtEndOFMonth)));
+		}else{
+			amortizedScheduleDetailsForEachMonth.setLoanLeft(df.format(balanceAtEndOFMonth));
+		}
 		amortizedScheduleDetailsForEachMonth.setPrincipal(df.format(principal));
 		amortizedScheduleDetailsForEachMonth.setMonth(month);
 		amortizedScheduleDetailsForEachMonth.setYear(year);
