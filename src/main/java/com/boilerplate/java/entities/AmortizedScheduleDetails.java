@@ -34,7 +34,14 @@ public class AmortizedScheduleDetails extends BaseEntity implements Serializable
 	 * This is the year of amortized schedule calculation
 	 */
     private String year;
-	
+    /**
+     * This is the loan paid to date in percentage
+     */
+	private String loanPaidInPercentage;
+	/**
+	 * This is the total payment done in a month
+	 */
+	private String totalPaymentPerMonth;
 	
 	/**
 	 * Gets the interest amount paid at each month in EMI
@@ -106,6 +113,35 @@ public class AmortizedScheduleDetails extends BaseEntity implements Serializable
 	public void setYear(String year) {
 		this.year = year;
 	}
+	
+	/**
+	 * Gets loan paid to date in percentage
+	 * @return the loanPaidInPercentage
+	 */
+	public String getLoanPaidInPercentage() {
+		return loanPaidInPercentage;
+	}
+	/**
+	 * Sets loan paid to date in percentage
+	 * @param loanPaidInPercentage the loanPaidInPercentage to set
+	 */
+	public void setLoanPaidInPercentage(String loanPaidInPercentage) {
+		this.loanPaidInPercentage = loanPaidInPercentage;
+	}
+	/**
+	 * Gets the total payment done per month
+	 * @return The total payment per month
+	 */
+	public String getTotalPaymentPerMonth() {
+		return totalPaymentPerMonth;
+	}
+	/**
+	 * Sets the total payment done per month
+	 * @param totalPaymentPerMonth The total payment done per month
+	 */
+	public void setTotalPaymentPerMonth(String totalPaymentPerMonth) {
+		this.totalPaymentPerMonth = totalPaymentPerMonth;
+	}
 	/**
 	 * @see BaseEntity.validate
 	 */
@@ -130,5 +166,6 @@ public class AmortizedScheduleDetails extends BaseEntity implements Serializable
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
 }

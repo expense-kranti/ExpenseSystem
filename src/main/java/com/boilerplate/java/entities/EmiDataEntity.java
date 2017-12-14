@@ -9,7 +9,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 
 /**
  * This entity contains the data related to EMI like loan amount borrowed, it's
- * interest rate, loan period. Data about amortized schedule like interests and
+ * interest rate, loan period. Data about amortized schedule list like interests and
  * principals paid in each month EMI with its year.
  * 
  * @author urvij
@@ -280,7 +280,7 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	public boolean validate() throws ValidationFailedException {
 		// check if loan amount borrowed is 0
 		if (this.getInitialPrincipalBorrowed() == 0) {
-			throw new ValidationFailedException("EmiDataEntity", "Initial principal borrowed is equal to zero", null);
+			throw new ValidationFailedException("EmiDataEntity", "Initial principal borrowed is zero", null);
 		}
 		// check if interest rate per year and interest rate per month is 0
 		if (this.getInterestRatePerYear() == 0 && this.getInterestRatePerMonth() == 0) {
@@ -291,6 +291,9 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 		if (this.getLoanPeriodInYears() == 0 && this.getLoanPeriodInMonths() == 0) {
 			throw new ValidationFailedException("EmiDataEntity",
 					"One of the loan period in years or in months should not be zero", null);
+		}
+		if(this.getInitialPrincipalBorrowed() <= this.getDownPayment()){
+			throw new ValidationFailedException("EmiDataEntity", " Initial principal should be greater than downpayent", null);
 		}
 		return true;
 	}

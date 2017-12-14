@@ -434,7 +434,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for assessment attempt
+		// for method attemptAssessment()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
@@ -443,6 +443,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		//for method getAssesments()
 		methodPermission = new MethodPermissions();
 		methodPermission
 				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
@@ -452,6 +454,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		//for method getAssessmentAttempt()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
@@ -459,9 +462,9 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		//for method saveAssesment()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
@@ -469,9 +472,9 @@ public class BaseRedisDataAccessLayer {
 				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
-
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		//for method submitAssesment()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
@@ -480,15 +483,16 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// logout api
-
+		
+        //for method logout()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// password reset api
+		
+		//for method automaticPasswordReset()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
@@ -548,6 +552,7 @@ public class BaseRedisDataAccessLayer {
 
 		// user update self api
 
+		//for method updateLoggedInUser(UpdateUserEntity)
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
@@ -757,7 +762,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// for method survey()
+		// for method getSurveys()
 		methodPermission = new MethodPermissions();
 		methodPermission
 				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getSurveys()");
@@ -792,7 +797,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// for method setUserChangePasswordStatus()
+		// for method addUserToRole(GenericListEncapsulationEntity)
 		methodPermission = new MethodPermissions();
 		methodPermission
 				.setId("public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");

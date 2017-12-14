@@ -1,5 +1,6 @@
 package com.boilerplate.service.implemetations;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
 
@@ -24,6 +25,8 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(EmiCalculatorService.class);
+	// format of double values in two places decimal
+	DecimalFormat df = new DecimalFormat("#.##");
 
 	/**
 	 * @see IEmiCalculatorService.emiCalculator
@@ -32,74 +35,60 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	public EmiDataEntity emiCalculator(EmiDataEntity emiDataEntity) throws ValidationFailedException {
 		// validating inputs
 		emiDataEntity.validate();
-		// principal of loan
+
+		// actual loan amount left after paying down payment
 		double initialLoanAmount = emiDataEntity.getInitialPrincipalBorrowed() - emiDataEntity.getDownPayment();
-		// loan tenure in years
 		int loanPeriodInYears = (int) emiDataEntity.getLoanPeriodInYears();
-		// loan tenure in months
 		int loanPeriodInMonths;
 		if (loanPeriodInYears != 0) {
-			// Getting loan period in months take closest upper value
+			// Calculate loan period in months 
 			loanPeriodInMonths = loanPeriodInYears * 12;
-			// loanPeriodInMonths = (int)Math.ceil(loanPeriodInYears * 12);
 		} else {
-			// Getting loan period in months filled take closest upper value
+			// Get loan period in months if given
 			loanPeriodInMonths = emiDataEntity.getLoanPeriodInMonths();
-			// loanPeriodInMonths =
-			// (int)Math.ceil(emiDataEntity.getLoanPeriodInMonths());
 		}
 		// loan amount left after paying EMI
 		double balanceAtEndOFMonth = initialLoanAmount;
-		// interest rate per month
 		double interestRatePerMonth;
-		// interest rate per year
 		double interestRatePerYear = emiDataEntity.getInterestRatePerYear();
 		if (interestRatePerYear != 0) {
-			// Getting interest rate per month
+			// Calculate interest rate per month
 			interestRatePerMonth = interestRatePerYear / 12;
 		} else {
-			// Getting interest rate per month filled
+			// Get interest rate per month if given
 			interestRatePerMonth = emiDataEntity.getInterestRatePerMonth();
 		}
-		// interest per month on loan principal
+		// interest per month 
 		double interestPerMonth = interestRatePerMonth / 100;
-		// this is the EMI amount to be paid in Arrear scheme
+		// EMI to be paid
 		double arrearEmiAmount = 0;
-		// checking for loan type for selectively calculating EMIs as required
+		// check for loan type
 		switch (emiDataEntity.getLoanType()) {
 		case CarLoan:
-			// calculate Arrear based EMI
 			arrearEmiAmount = this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
-			// calculate amortized schedule
-			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths,
-					interestPerMonth, arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
+			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths, interestPerMonth,
+					arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
 			break;
 		case HomeLoan:
-			// calculate Arrear based EMI
 			arrearEmiAmount = this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
-			// calculate amortized schedule
 			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths, interestPerMonth,
 					arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
 			break;
 		case PersonalLoan:
-			// calculate Arrear based EMI
 			arrearEmiAmount = this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
-			// calculate amortized schedule
 			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths, interestPerMonth,
 					arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
 			break;
 		default:
-			// calculate Arrear based EMI
-			arrearEmiAmount =  this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
-			// calculate amortized schedule
+			arrearEmiAmount = this.calculateEMI(initialLoanAmount, interestPerMonth, loanPeriodInMonths);
 			this.generateAmortizedSchedule(interestPerMonth, initialLoanAmount, loanPeriodInMonths, interestPerMonth,
 					arrearEmiAmount, balanceAtEndOFMonth, emiDataEntity);
 			break;
 
 		}
 
-		// setting the Arrear EMI to be paid for loan taken to emidataentity
-		emiDataEntity.setEmi(String.valueOf((int) Math.round(arrearEmiAmount)));
+		// set Arrear EMI to be paid to emidataentity
+		emiDataEntity.setEmi(df.format(arrearEmiAmount));
 
 		return emiDataEntity;
 
@@ -115,7 +104,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	 *            The interest to be paid per month
 	 * @param loanPeriodInMonths
 	 *            loan period in months
-	 * @return The EMI calculated
+	 * @return The calculated EMI
 	 */
 	public double calculateEMI(double principalAmount, double interestPerMonth, int loanPeriodInMonths) {
 		// this is the formula for calculating EMI
@@ -146,71 +135,65 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	 *            loan amount remaining after paying EMI at the end of each
 	 *            month
 	 * @param emiDataEntity
-	 *            the emiDataEntity whose some values will be set in the method
+	 *             amortizedSchedule,totalPayment,totalInterest will be calculated and set in emiDataEntity
 	 */
 	public void generateAmortizedSchedule(double interest, double beginningBalance, int loanPeriodInMonths,
 			double interestPerMonth, double arrearEmiAmount, double balanceAtEndOFMonth, EmiDataEntity emiDataEntity) {
-		// this is the total interest, total principal
-		double totalInterest = 0, totalPrincipal = 0, principal = 0;
-		// this is starting month of Emi payment
+
+		double totalInterest = 0, totalPrincipal = 0, principal = 0, initialLoanAmount = beginningBalance;
+		// Starting month of Emi payment
 		LocalDateTime dateOfEmiStart = LocalDateTime.now();
-		// get the month of emi payment start date
 		Month currentMonth = dateOfEmiStart.getMonth();
-		// wrap/box current year integer value
-		Integer currentYearWrappedObject = new Integer(dateOfEmiStart.getYear());
+		int currentYear = dateOfEmiStart.getYear();
 		// list of amortized schedule details for each month
 		BoilerplateList<AmortizedScheduleDetails> amortizedScheduleList = new BoilerplateList<>();
 		// this loop calculates and yields amortized schedule
 		for (int i = 1; i <= loanPeriodInMonths + 1; i++) {
-			// check if loan period about to ended then set EMI principal to pay
-			// to zero
+			// check if loan period is ended 
 			if (i == loanPeriodInMonths + 1) {
 				interest = 0;
 				principal = 0;
-				this.populateAndSetAmortizedScheduleDetailList(amortizedScheduleList, emiDataEntity, interest, principal,
-						balanceAtEndOFMonth, currentMonth.toString(), currentYearWrappedObject.toString());
+				this.calculateAndSetAmortizedScheduleDetailList(initialLoanAmount, amortizedScheduleList,
+						interest, principal, balanceAtEndOFMonth, currentMonth.toString(),
+						String.valueOf(currentYear));
 				break;
 			}
 			// here beginningBalance acts as base loan amount for next month
 			interest = beginningBalance * interestPerMonth;
-			// this is the principal part of EMI
+			// principal part of EMI
 			principal = arrearEmiAmount - interest;
-			// this is the loan amount remaining after each EMI payment
+			// loan amount left after each EMI payment
 			balanceAtEndOFMonth = balanceAtEndOFMonth - principal;
 			// here beginningBalance acts as loan amount for next month
 			beginningBalance = balanceAtEndOFMonth;
-			// populate and set amortized schedule details list per month
-			this.populateAndSetAmortizedScheduleDetailList(amortizedScheduleList, emiDataEntity, interest, principal,
-					balanceAtEndOFMonth, currentMonth.toString(), currentYearWrappedObject.toString());
+			// calculate and set amortized schedule details list per month
+			this.calculateAndSetAmortizedScheduleDetailList(initialLoanAmount, amortizedScheduleList,
+					interest, principal, balanceAtEndOFMonth, currentMonth.toString(),
+					String.valueOf(currentYear));
 
-			// calculate total interest
 			totalInterest += interest;
-			// calculate total principal
 			totalPrincipal += principal;
 
 			if (currentMonth.compareTo(Month.DECEMBER) == 0) {
-				// increase year by one
-				currentYearWrappedObject += 1;
+				currentYear += 1;
 			}
 			// Increasing the value of month by one for next month calculation
 			currentMonth = currentMonth.plus(1);
 		}
 		// set amortized schedule list of emi data entity
 		emiDataEntity.setAmortizedScheduleDetailsList(amortizedScheduleList);
-		// setting the total Interest paid for loan taken
-		emiDataEntity.setTotalInterest(String.valueOf((int) totalInterest));
-		// setting the total payment
-		emiDataEntity.setTotalPayment(String.valueOf((int) Math.round(totalInterest + totalPrincipal)));
+		emiDataEntity.setTotalInterest(df.format(totalInterest));
+		emiDataEntity.setTotalPayment(df.format(totalInterest + totalPrincipal));
 
 	}
 
 	/**
 	 * This method populates and set the amortized schedule details list
 	 * 
+	 * @param initialLoan
+	 *            The initial loan
 	 * @param amortizedScheduleDetailsList
 	 *            Empty list of amortized schedule details
-	 * @param emiDataEntity
-	 *            The emiData Entity
 	 * @param interest
 	 *            The interest amount paid in each EMI
 	 * @param principal
@@ -222,25 +205,22 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 	 * @param year
 	 *            The year of respective amortized schedule month calculation
 	 */
-	public void populateAndSetAmortizedScheduleDetailList(
-			BoilerplateList<AmortizedScheduleDetails> amortizedScheduleDetailsList, EmiDataEntity emiDataEntity,
+	public void calculateAndSetAmortizedScheduleDetailList(double initialLoan,
+			BoilerplateList<AmortizedScheduleDetails> amortizedScheduleDetailsList,
 			double interest, double principal, double balanceAtEndOFMonth, String month, String year) {
-
 		// instance of amortizedScheduledetails
 		AmortizedScheduleDetails amortizedScheduleDetailsForEachMonth = new AmortizedScheduleDetails();
-
-		// set the interest amount paid at the current month of calculation
-		amortizedScheduleDetailsForEachMonth.setInterest(String.valueOf((int)Math.round(interest)));
-		// set the loan amount remaining at the end of current month of
-		// calculation
-		amortizedScheduleDetailsForEachMonth.setLoanLeft(String.valueOf((int)Math.round(balanceAtEndOFMonth)));
-		// set the principal amount paid at the current month of calculation
-		amortizedScheduleDetailsForEachMonth.setPrincipal(String.valueOf((int)Math.round(principal)));
-		// set the month
+		// set the interest,principal amount,loan left paid,total payment done at the current month
+		// of calculation
+		amortizedScheduleDetailsForEachMonth.setInterest(df.format((interest)));
+		amortizedScheduleDetailsForEachMonth.setLoanLeft(df.format(balanceAtEndOFMonth));
+		amortizedScheduleDetailsForEachMonth.setPrincipal(df.format(principal));
 		amortizedScheduleDetailsForEachMonth.setMonth(month);
-		// set the year
 		amortizedScheduleDetailsForEachMonth.setYear(year);
-		// add the amortized schedule details object having all
+		amortizedScheduleDetailsForEachMonth.setTotalPaymentPerMonth(df.format(interest + principal));
+		// calculate and set the loan paid to date in percentage
+		amortizedScheduleDetailsForEachMonth
+				.setLoanPaidInPercentage(df.format(((initialLoan - balanceAtEndOFMonth) / initialLoan) * 100));
 		amortizedScheduleDetailsList.add(amortizedScheduleDetailsForEachMonth);
 	}
 
