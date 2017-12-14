@@ -22,6 +22,10 @@ public class BlogActivityEntity extends BaseEntity implements Serializable {
 	 * This is blog activity action
 	 */
 	private String action;
+	/**
+	 * This is the activity type like share,like etc.
+	 */
+	private String activityType;
 	
 	/**
 	 * This method get the user id
@@ -65,6 +69,21 @@ public class BlogActivityEntity extends BaseEntity implements Serializable {
 	public void setAction(String action) {
 		this.action = action;
 	}
+	/**
+	 * Gets the activity type
+	 * @return the activityType
+	 */
+	public String getActivityType() {
+		return activityType;
+	}
+	/**
+	 * Sets the activity type
+	 * @param activityType the activityType to set
+	 */
+	public void setActivityType(String activityType) {
+		this.activityType = activityType;
+	}
+	
 	/**
 	 * @see BaseEntity.ValidationFailedException
 	 */

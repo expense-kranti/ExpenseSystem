@@ -28,9 +28,8 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 		//create new map of input activity and save
 		Map<String, String> blogActivityMap = new HashMap<>();
 		blogActivityMap.put(blogActivityEntity.getActivity(), blogActivityEntity.getAction());
-	
 		//save blog activity
-		super.hmset(BlogUser + RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), blogActivityMap);
+		super.hmset(BlogUser +  blogActivityEntity.getActivityType() + ":" + RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), blogActivityMap);
 		
 
 	}
