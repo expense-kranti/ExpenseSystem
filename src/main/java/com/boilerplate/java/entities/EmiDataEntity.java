@@ -46,9 +46,15 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 */
 	private double downPayment;
 	/**
-	 * This is the amortized schedule data list
+	 * This is the amortized schedule data list monthly
 	 */
 	private BoilerplateList<AmortizedScheduleDetails> amortizedScheduleDetailsList;
+	/**
+	 * This is the amortized schedule data list yearly
+	 */
+	private BoilerplateList<AmortizedScheduleYearly> amortizedScheduleYearlyList;
+	
+
 	/**
 	 * This is the calculated EMI to be paid
 	 */
@@ -216,6 +222,22 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 		this.amortizedScheduleDetailsList = amortizedScheduleDetailsList;
 	}
 
+	/**
+	 * Gets the amortizedSchedule yearly list
+	 * @return the amortizedScheduleYearlyList
+	 */
+	public BoilerplateList<AmortizedScheduleYearly> getAmortizedScheduleYearlyList() {
+		return amortizedScheduleYearlyList;
+	}
+
+	/**
+	 * Sets the amortizedSchedule yearly list
+	 * @param amortizedScheduleYearlyList the amortizedScheduleYearlyList to set
+	 */
+	public void setAmortizedScheduleYearlyList(BoilerplateList<AmortizedScheduleYearly> amortizedScheduleYearlyList) {
+		this.amortizedScheduleYearlyList = amortizedScheduleYearlyList;
+	}
+	
 	/**
 	 * Gets the EMI to be paid
 	 * 
