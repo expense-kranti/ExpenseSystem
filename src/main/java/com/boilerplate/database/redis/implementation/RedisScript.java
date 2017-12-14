@@ -17,7 +17,10 @@ public class RedisScript  extends BaseRedisDataAccessLayer implements IRedisScri
 	private static final String User = "USER:AKS";
 	
 	private static final String ReferredContact = "ReferredContact:";
-	
+	/**
+	 * This variable is used to a prefix for key of user attempt details
+	 */
+	private static final String Attempt = "Attempt:";
 	/**
 	 * @see IRedisScript.getAllUserKeys
 	 */
@@ -32,6 +35,13 @@ public class RedisScript  extends BaseRedisDataAccessLayer implements IRedisScri
 		ReferalEntity referalEntity = Base.fromMap(referalEntityMap, ReferalEntity.class);
 		return referalEntity;
 	}
+	@Override
+	public Set<String> getAllUserAttemptKeys() {
+		Set<String> listOfUserKey = super.keys(Attempt + "*");
+		return listOfUserKey;
+	}
+	
+	
 	
 
 }
