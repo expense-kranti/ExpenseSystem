@@ -150,7 +150,7 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 		int currentYear = dateOfEmiStart.getYear();
 		// list of amortized schedule details for each month
 		BoilerplateList<AmortizedScheduleDetails> amortizedScheduleList = new BoilerplateList<>();
-		// list of amortized schedule for each year
+		// list of amortized schedule per year
 		BoilerplateList<AmortizedScheduleYearly> amortizedScheduleYearlyList = new BoilerplateList<>();
 		AmortizedScheduleYearly amortizedScheduleOfaYear = new AmortizedScheduleYearly();
 
@@ -189,26 +189,39 @@ public class EmiCalculatorService implements IEmiCalculatorService {
 			principalThisYear += principal;
 
 			if ((currentMonth.compareTo(Month.DECEMBER) == 0)) {
-
+				//calculate set amortized scheduler for each year
 				amortizedScheduleOfaYear.setInterestYearly(df.format(interestThisYear));
 				amortizedScheduleOfaYear.setPrincipalYearly(df.format(principalThisYear));
 				amortizedScheduleOfaYear.setTotalPaymentYearly(df.format(interestThisYear + principalThisYear));
 				amortizedScheduleOfaYear.setLoanPaidInPercentage(
 						df.format(((initialLoanAmount - balanceAtEndOFMonth) / initialLoanAmount) * 100));
+				if (balanceAtEndOFMonth <= 0) {
+					amortizedScheduleOfaYear.setLoanLeftAtYearEnd(df.format(Math.abs(balanceAtEndOFMonth)));			
+				} else {
+					amortizedScheduleOfaYear.setLoanLeftAtYearEnd(df.format(balanceAtEndOFMonth));
+				}
 				amortizedScheduleOfaYear.setYear(String.valueOf(currentYear));
 				amortizedScheduleYearlyList.add(amortizedScheduleOfaYear);
 				amortizedScheduleOfaYear = new AmortizedScheduleYearly();
 				interestThisYear = 0;
 				principalThisYear = 0;
-
+                
 				currentYear += 1;
 			}
+			//this check is for last year which has months less than 12
 			if (i == loanPeriodInMonths) {
+				//calculate set amortized scheduler for each year
 				amortizedScheduleOfaYear.setInterestYearly(df.format(interestThisYear));
 				amortizedScheduleOfaYear.setPrincipalYearly(df.format(principalThisYear));
 				amortizedScheduleOfaYear.setTotalPaymentYearly(df.format(interestThisYear + principalThisYear));
 				amortizedScheduleOfaYear.setLoanPaidInPercentage(
 						df.format(((initialLoanAmount - balanceAtEndOFMonth) / initialLoanAmount) * 100));
+				if (balanceAtEndOFMonth <= 0) {
+					amortizedScheduleOfaYear.setLoanLeftAtYearEnd(df.format(Math.abs(balanceAtEndOFMonth)));			
+				} else {
+					amortizedScheduleOfaYear.setLoanLeftAtYearEnd(df.format(balanceAtEndOFMonth));
+				}
+				
 				amortizedScheduleYearlyList.add(amortizedScheduleOfaYear);
 			}
 

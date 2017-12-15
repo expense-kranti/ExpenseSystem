@@ -33,8 +33,10 @@ public class AmortizedScheduleYearly extends BaseEntity implements Serializable{
 	 * This is the loan paid in percentage
 	 */
 	private String loanPaidInPercentage;
-
-	
+	/**
+	 * This is the loan amount left at the end of a year after EMI payments in that year
+	 */
+	private String loanLeftAtYearEnd;
 
 	/**
 	 * Gets the interest in a year
@@ -114,6 +116,22 @@ public class AmortizedScheduleYearly extends BaseEntity implements Serializable{
 	 */
 	public void setLoanPaidInPercentage(String loanPaidInPercentage) {
 		this.loanPaidInPercentage = loanPaidInPercentage;
+	}
+	
+	/**
+	 * Gets the loan left at year end
+	 * @return the loanLeftAtYearEnd
+	 */
+	public String getLoanLeftAtYearEnd() {
+		return loanLeftAtYearEnd;
+	}
+
+	/**
+	 * Sets the loan left at year end
+	 * @param loanLeftAtYearEnd the loanLeftAtYearEnd to set
+	 */
+	public void setLoanLeftAtYearEnd(String loanLeftAtYearEnd) {
+		this.loanLeftAtYearEnd = loanLeftAtYearEnd;
 	}
 	
 	@Override
