@@ -1,14 +1,17 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.Base;
 /**
  * This entity have information related to blog activity.
  * @author love
  *
  */
-public class BlogActivityEntity extends BaseEntity implements Serializable {
+public class BlogActivityEntity extends BaseEntity implements Serializable,ICRMPublishDynamicURl,ICRMPublishEntity {
 	
 	/**
 	 * This is the user id
@@ -104,6 +107,27 @@ public class BlogActivityEntity extends BaseEntity implements Serializable {
 	@Override
 	public BaseEntity transformToExternal() {
 		return this;
+	}
+	@Override
+	public String createPublishJSON(String template)
+			throws UnauthorizedException {
+		String retrunValue = template;
+		retrunValue = retrunValue.replace("@action", this.getAction() == null ? "" : this.getAction());
+		retrunValue = retrunValue.replace("@activity",
+				this.getActivity() == null ? "" :this.getActivity());
+		retrunValue = retrunValue.replace("@userId", this.getUserId() == null ? "" : this.getUserId());
+		retrunValue = retrunValue.replace("@actType",
+				this.getActivityType() == null ? "" : this.getActivityType());
+		return retrunValue;
+	}
+	/**
+	 * @see ICRMPublishDynamicURl.createPublishUrl
+	 */
+	@Override
+	public String createPublishUrl(String url)
+			throws UnsupportedEncodingException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

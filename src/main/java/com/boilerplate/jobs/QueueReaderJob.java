@@ -381,6 +381,7 @@ public class QueueReaderJob {
 					RequestThreadLocal.sleepThread(Integer.parseInt(configurationManager.get("PublishDispatcherSleepTimeBeforeUser")));
 					publishBulkFromSubject("REPORT_CREATED_AKS");
 					publishBulkFromSubject("REFER_REPORT_CREATED_AKS");	
+					publishBulkFromSubject("BLOG_ACTIVITY");
 					
 									}//end if
 			}catch(Exception ex){

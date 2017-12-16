@@ -676,11 +676,18 @@ public class BaseRedisDataAccessLayer {
 		// method permission for saveActivity method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
+				"public com.boilerplate.java.entities.BlogActivityEntity com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
 		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
+				"public com.boilerplate.java.entities.BlogActivityEntity com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/BlogActivity");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate("{\"action\" : \"@action\",\"activity\" : \"@activity\",\"activityType\" : \"@actType\",\"userId\" : \"@userId\"}");
+		methodPermission.setPublishBusinessSubject("BLOG_ACTIVITY");
+		
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for feedback controller starts here

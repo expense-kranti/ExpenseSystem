@@ -310,5 +310,41 @@ public class AssessmentEntity extends BaseEntity implements Serializable {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	
+	/**
+	 *  This method get the category
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * This method set the category
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	/**
+	 * This method get the level
+	 * @return the level
+	 */
+	public String getLevel() {
+		return level;
+	}
+
+	/**
+	 * This method set the level
+	 * @param level the level to set
+	 */
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
+	private String category;
+	
+	private String level;
 
 }

@@ -33,10 +33,10 @@ public class BlogActivityController {
 	@ApiOperation(value = "This api is used to save the user blog activity , activity basically contain the activity and activity action")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/blog/activity", method = RequestMethod.POST)
-	public @ResponseBody void saveActivity
+	public @ResponseBody BlogActivityEntity saveActivity
 				(@RequestBody BlogActivityEntity blogActivityEntity){
 		// Save the user article
-		blogActivityService.saveActivity(blogActivityEntity);
+		return blogActivityService.saveActivity(blogActivityEntity);
 	}
 
 }

@@ -12,7 +12,8 @@ public interface IBlogActivityService {
 	/**
 	 * This method saves the activity in database by calling database layer method
 	 * @param blogActivityEntity The blogActivityEntity containing the user's blog activity and action
+	 * @return 
 	 */
-	public void saveActivity(BlogActivityEntity blogActivityEntity);
+	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity);
 
 }
