@@ -1,6 +1,7 @@
 package com.boilerplate.service.implemetations;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -425,6 +426,10 @@ public class UserService implements IUserService {
 			//push the refer unique id task in queue
 			if (user.getUserReferId() == null) {
 				try{
+
+					String userUUID = this.createUUID(Integer.valueOf(
+							configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+					user.setUserReferId(userUUID);
 					queueReaderJob.requestBackroundWorkItem(user, subjectForReferUUID,
 							"UserService", "Authenticate");
 				}catch (Exception efe) {
@@ -445,7 +450,26 @@ public class UserService implements IUserService {
 		}
 		
 	}
-
+	
+	/**
+	 * This method is used to create the UUID
+	 * 
+	 * @return the UUID
+	 */
+	private String createUUID(Integer uuidLength) {
+		// New instance of random
+		Random rand = new Random();
+		String userReferId = "";
+		// Run a for loop to generate a configurations define length uuid
+		for (int i = 0; i < uuidLength; i++) {
+			// Get random number
+			int randomNum = rand.nextInt(26 - 0);
+			// Concatenate new char to string
+			userReferId = userReferId + String.valueOf((char) (randomNum + 97));
+		}
+		return userReferId;
+	}
+	
 	/**
 	 * @see IUserService.get
 	 */
