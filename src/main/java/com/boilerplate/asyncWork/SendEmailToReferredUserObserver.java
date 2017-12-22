@@ -332,7 +332,7 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			// Get file from local if not found then downloads
 			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
 				
-				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getId());
 				
 			} else {
 				fileNameInURL = fileEntity.getFileName();
