@@ -128,6 +128,7 @@
 				<entry key="REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 				<entry key="REFER_REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 				<entry key="PublishUserData" value-ref="publishUserData" />
+				<entry key="BLOG_ACTIVITY" value-ref="onBulkPublish" />
 				<entry key="SetUserChangePasswordStatus" value-ref="setUserChangePasswordStatus" />
 
 				<entry key="SendSMSToReferredUser" value-ref="userReferredObserverForSMS" />

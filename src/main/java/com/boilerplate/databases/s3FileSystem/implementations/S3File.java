@@ -126,17 +126,13 @@ public class S3File implements IFile {
 	 * @return fileName The file name
 	 * @throws IOException
 	 */
-	public String downloadFileFromS3ToLocal(String urlString) throws IOException{
+	public String downloadFileFromS3ToLocal(String id) throws IOException{
 		InputStream inputStream = null;
         String contentType = null;
         FileOutputStream outputStream = null;
-        //replace unwanted whitespace
-        urlString = urlString.replace(" ", "%20");
-        // Split url by "/" and get file name in the url
-        String[] splitArray = urlString.split("/");
-        String fileNameInURL = splitArray[splitArray.length - 1];
+        //replace unwanted whitespac
         // Convert string to url
-    	URL url = new URL(urlString);
+    	URL url = new URL(this.getPreSignedS3URL(id));
     	// Make http connection with the url
     	HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
     	// get response code of http url connection
@@ -148,7 +144,7 @@ public class S3File implements IFile {
                 // get inputstream from connection
                 inputStream = httpUrlConnection.getInputStream();
              // opens an output stream to save into file
-                outputStream = new FileOutputStream(configurationManager.get("RootFileDownloadLocation")+fileNameInURL);
+                outputStream = new FileOutputStream(configurationManager.get("RootFileDownloadLocation")+id);
      
                 int bytesRead = -1;
                 byte[] buffer = new byte[4096];
@@ -169,7 +165,7 @@ public class S3File implements IFile {
             }
         	httpUrlConnection.disconnect();
         }
-    	return fileNameInURL;
+    	return id;
 	}
 
 

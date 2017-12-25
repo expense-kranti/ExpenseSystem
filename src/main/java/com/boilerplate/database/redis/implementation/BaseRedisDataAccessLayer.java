@@ -688,11 +688,18 @@ public class BaseRedisDataAccessLayer {
 		// method permission for saveActivity method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
+				"public com.boilerplate.java.entities.BlogActivityEntity com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
 		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
+				"public com.boilerplate.java.entities.BlogActivityEntity com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/BlogActivity");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate("{\"action\" : \"@action\",\"activity\" : \"@activity\",\"activityType\" : \"@actType\",\"userId\" : \"@userId\"}");
+		methodPermission.setPublishBusinessSubject("BLOG_ACTIVITY");
+		
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for feedback controller starts here
@@ -1155,9 +1162,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION",
 				"From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
 		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST",
-				"Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
+				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
 		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST",
-				"Select Name as name, Id as id,MaxScore as maxScore From Assessment Where IsActive = 1 And IsSurvey = 1");
+				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Assessment Where IsActive = 1 And IsSurvey = 1");
 		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION",
 				"Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
 		vAllEAll.put("Maximum_File_Upload_Size", "5");

@@ -1,13 +1,10 @@
 package com.boilerplate.service.implemetations;
 
-import java.io.IOException;
 
 import com.boilerplate.database.interfaces.IBlogActivity;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.BlogActivityEntity;
 import com.boilerplate.service.interfaces.IBlogActivityService;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class implements IBlogActivityService class
@@ -30,11 +27,14 @@ public class BlogActivityService implements IBlogActivityService {
 	}
 
 	/** 
+	 * @return 
 	 * @see IBlogActivityService.saveActivity
 	 */
 	@Override
-	public void saveActivity(BlogActivityEntity blogActivityEntity){
+	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity){
 		//call redis database layer
 		blogActivityDataAccess.saveActivity(blogActivityEntity);
+		blogActivityEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		return blogActivityEntity;
 	}
 }

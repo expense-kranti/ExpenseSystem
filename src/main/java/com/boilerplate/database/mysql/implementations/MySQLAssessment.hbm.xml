@@ -14,6 +14,8 @@
 		<property name="updationDate" column="UpdationDate" />
 		<property name="active" column="IsActive" />
 		<property name="survey" column="IsSurvey" />
+		<property name="category" column="Category" />
+		<property name="level" column="Level" />
 		<bag name="sections" table="AssessmentSection" inverse="true"
 			lazy="false" fetch="select">
 			<key>

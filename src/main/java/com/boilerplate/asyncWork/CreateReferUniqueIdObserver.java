@@ -92,10 +92,6 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	 * @throws ConflictException
 	 */
 	private void CreateReferUUID(ExternalFacingReturnedUser user) throws ConflictException {
-
-		String userUUID = this.createUUID(Integer.valueOf(
-				configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
-		user.setUserReferId(userUUID);
 		// update user
 		userDataAccess.update(user);
 		referral.saveUserReferUUID(
