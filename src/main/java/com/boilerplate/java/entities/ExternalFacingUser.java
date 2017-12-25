@@ -113,16 +113,16 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 			throw new ValidationFailedException("User", "UserId is null/Empty", null);
 		if (this.isNullOrEmpty(this.getFirstName()))
 			throw new ValidationFailedException("User", "First Name is null/Empty", null);
-		if (this.isNullOrEmpty(this.getLastName()))
-			throw new ValidationFailedException("User", "Last Name is null/Empty", null);
-		if (this.isNullOrEmpty(this.getEmail()))
-			throw new ValidationFailedException("User", "Email is null/Empty", null);
-		if (this.getEmail() == null) {
-			throw new ValidationFailedException("User", "Email is null/Empty", null);
-		}
-		Matcher matcher = emailResxPattern.matcher(this.getEmail());
-		if (matcher.matches() == false) {
-			throw new ValidationFailedException("User", "Email format is incorrect", null);
+//		if (this.isNullOrEmpty(this.getLastName()))
+//			throw new ValidationFailedException("User", "Last Name is null/Empty", null);
+		if (!this.isNullOrEmpty(this.getEmail())){
+			if (this.getEmail() == null) {
+				throw new ValidationFailedException("User", "Email is null/Empty", null);
+			}
+			Matcher matcher = emailResxPattern.matcher(this.getEmail());
+			if (matcher.matches() == false) {
+				throw new ValidationFailedException("User", "Email format is incorrect", null);
+			}	
 		}
 		if (this.isNullOrEmpty(this.getPhoneNumber()))
 			throw new ValidationFailedException("User", "Phone Number null/Empty", null);

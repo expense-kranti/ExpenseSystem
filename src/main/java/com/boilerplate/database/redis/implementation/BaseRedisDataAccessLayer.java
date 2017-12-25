@@ -511,6 +511,15 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		//method permission for checkUserExistence
+		methodPermission.setId("public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setMethodName("public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		//method permission for AssessmentController
 		// Validate answer
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
