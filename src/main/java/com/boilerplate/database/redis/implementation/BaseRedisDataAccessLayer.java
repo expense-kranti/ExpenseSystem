@@ -443,8 +443,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//for method getAssesments()
+
+		// for method getAssesments()
 		methodPermission = new MethodPermissions();
 		methodPermission
 				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
@@ -454,7 +454,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		//for method getAssessmentAttempt()
+		// for method getAssessmentAttempt()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
@@ -464,7 +464,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		//for method saveAssesment()
+		// for method saveAssesment()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
@@ -474,7 +474,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		//for method submitAssesment()
+		// for method submitAssesment()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
@@ -483,16 +483,16 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-        //for method logout()
+
+		// for method logout()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.logout()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//for method automaticPasswordReset()
+
+		// for method automaticPasswordReset()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
@@ -552,7 +552,7 @@ public class BaseRedisDataAccessLayer {
 
 		// user update self api
 
-		//for method updateLoggedInUser(UpdateUserEntity)
+		// for method updateLoggedInUser(UpdateUserEntity)
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
@@ -667,6 +667,18 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
 		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permissions for CurrencyConversionController methods
+
+		// for findExchangeRateAndConvertCurrency method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.CurrencyConversionEntity com.boilerplate.java.controllers.CurrencyConversionController.findExchangeRateAndConvertCurrency(com.boilerplate.java.entities.CurrencyConversionEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.CurrencyConversionEntity com.boilerplate.java.controllers.CurrencyConversionController.findExchangeRateAndConvertCurrency(com.boilerplate.java.entities.CurrencyConversionEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
@@ -799,19 +811,21 @@ public class BaseRedisDataAccessLayer {
 
 		// for method addUserToRole(GenericListEncapsulationEntity)
 		methodPermission = new MethodPermissions();
-		methodPermission
-				.setId("public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
 		methodPermission.setMethodName(
 				"public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//for method publishUserAKSOrReferReport
+
+		// for method publishUserAKSOrReferReport
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
+		methodPermission
+				.setId("public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
@@ -987,8 +1001,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
 				"573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
-		
-		
+
 		return vAllETest;
 	}
 
@@ -1041,11 +1054,15 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "love.kranti@clearmydues.com");
 		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
-		
-		//added for publishUserAKSOrReferReport
-		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false for not publish
-		
-		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
+
+		// added for publishUserAKSOrReferReport
+		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false
+																					// for
+																					// not
+																					// publish
+
+		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
+				"a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
 
 		return vAllEDev;
 
@@ -1102,11 +1119,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "ravi.kala@axisbank.com");
 		vAllEProduction.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "ashish.sharma@axisbank.com");
 
-		
 		vAllEProduction.put("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED", "ravikala2000@gmail.com");
 		vAllEProduction.put("AXISBANK_EMAILID4_FOR_FEEDBACK_SUBMITTED", "aashish902@gmail.com");
-		
-		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "7a5f568f-8f16-4642-a3ce-f473fd326d02_feedbackemailerhtml");
+
+		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
+				"7a5f568f-8f16-4642-a3ce-f473fd326d02_feedbackemailerhtml");
 		return vAllEProduction;
 	}
 
@@ -1205,6 +1222,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("UPDATE_AKS_USER_SUBJECT", "UPDATE_LOGGED_IN_USER_AKS");
 
 		vAllEAll.put("Top_Scorer_Size", "10");
+
+		// to be used for currency converter widget
+		vAllEAll.put("CurrencyConversionAPI_URL",
+				"https://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 
 		return vAllEAll;
 

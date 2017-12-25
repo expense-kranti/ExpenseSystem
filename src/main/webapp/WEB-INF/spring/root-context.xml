@@ -602,6 +602,10 @@
 	<bean id="emiCalculatorService"
 		class="com.boilerplate.service.implemetations.EmiCalculatorService">
 	</bean>
+	<bean id="currencyConversionService"
+		class="com.boilerplate.service.implemetations.CurrencyConversionService">
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
 
 	<bean id="blogActivityService"
 		class="com.boilerplate.service.implemetations.BlogActivityService">
@@ -640,8 +644,9 @@
 	</bean>
 
 
-  <!--observers and observer list related to publishing user AKS Or Refer Report  -->
-    <bean id="publishUserAKSOrReferReport"
+	<!--observers and observer list related to publishing user AKS Or Refer 
+		Report -->
+	<bean id="publishUserAKSOrReferReport"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
 			<list>
@@ -651,7 +656,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="publishUserAKSOrReferReportObserver"
 		class="com.boilerplate.asyncWork.PublishUserAKSOrReferReportObserver">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>

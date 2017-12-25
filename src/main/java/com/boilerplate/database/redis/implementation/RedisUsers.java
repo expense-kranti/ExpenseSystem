@@ -65,7 +65,7 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 			user.setRoles(new BoilerplateList<Role>());
 		}
 
-		if (super.get(user.getUserId()) != null) {
+		if (super.get(User+user.getUserId()) != null) {
 			new ConflictException("User", "User with given id already exists", null);
 		}
 
