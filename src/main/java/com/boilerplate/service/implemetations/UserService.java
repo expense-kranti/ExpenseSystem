@@ -25,6 +25,7 @@ import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.AuthenticationRequest;
+import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ManageUserEntity;
@@ -32,6 +33,7 @@ import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
+import com.boilerplate.service.interfaces.IReferralService;
 import com.boilerplate.service.interfaces.IRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
@@ -49,6 +51,7 @@ public class UserService implements IUserService {
 	 */
 	Logger logger = Logger.getInstance(UserService.class);
 
+	private static final String Sfupdatehash = "SFUpdateHash:";
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -184,6 +187,22 @@ public class UserService implements IUserService {
 		this.assessmentService = assessmentService;
 	}
 
+	/**
+	 * This is the instance of referral service
+	 */
+	@Autowired
+	IReferralService referralService;
+
+	/**
+	 * Sets the referral service
+	 * 
+	 * @param referralService
+	 *            the referralService to set
+	 */
+	public void setReferralService(IReferralService referralService) {
+		this.referralService = referralService;
+	}
+
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
 
@@ -315,9 +334,7 @@ public class UserService implements IUserService {
 		 * check if a user with given email exists then throw conflict exception
 		 * otherwise put the email entry in email list hash
 		 */
-		// checking email in hashmap only when email is provided by user for
-		// registration
-		if (!externalFacingUser.isNullOrEmpty(externalFacingUser.getEmail())) {
+		if (!BaseEntity.isNullOrEmpty(externalFacingUser.getEmail())) {
 			this.checkOrCreateEmailInHash(externalFacingUser);
 		}
 
@@ -412,7 +429,7 @@ public class UserService implements IUserService {
 			throw new ValidationFailedException("UserEntity", "UserId is null or empty", null);
 		}
 		if (this.userExists(normalizeUserId(externalFacingUser.getUserId()))) {
-			throw new ConflictException("UserEntity", "User already exists", null);
+			throw new ConflictException("UserEntity", "User already exists with this id", null);
 		}
 		return false;
 	}
@@ -745,6 +762,25 @@ public class UserService implements IUserService {
 		String userId = manageUserEntity.getUserId();
 		userId = normalizeUserId(userId);
 		if (this.userExists(userId)) {
+			ExternalFacingUser user = userDataAccess.getUser(userId, null);
+			// delete user all assessment related data
+			assessmentService.deleteUserAllAssessmentData(userId);
+			// delete user's all referral related data
+			referralService.deleteUserAllReferralData(user.getUserReferId());
+			// delete user email entry in emailhashmap
+			if (!BaseEntity.isNullOrEmpty(user.getEmail())) {
+				this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
+						user.getAuthenticationProvider() + ":" + user.getEmail().toUpperCase());
+			}
+			// delete hash map entries in database
+			this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"),
+					user.getUserId().toUpperCase());
+			this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
+					user.getUserReferId());
+			this.redisSFUpdateHashAccess.del(Sfupdatehash + user.getUserId());
+			
+			// delete user
+			userDataAccess.deleteUser(user);
 
 		} else {
 			throw new NotFoundException("User Entity", "No User Found with this id", null);

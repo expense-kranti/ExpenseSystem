@@ -1,6 +1,7 @@
 package com.boilerplate.database.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
@@ -146,4 +147,60 @@ public interface IRedisAssessment {
 	 * @return the list of top scorer
 	 */
 	public List getTopScorrer();
+
+	/**
+	 * This method deletes all the monthly score data of a user with given
+	 * userId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose monthly score need to be deleted
+	 */
+	public void deleteUserMonthlyScoreData(String userId);
+
+	/**
+	 * This method gets all the monthly score key of the user with given userId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose all monthly score keys are to be
+	 *            retrieved
+	 * @return the Set of all monthly score keys of a user with given userId
+	 */
+	public Set<String> getAllMonthlyScoreKeys(String userId);
+
+	/**
+	 * This method is used to delete the total score of the user with given
+	 * userId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose total score is to be deleted
+	 */
+	public void deleteUserTotalScoreData(String userId);
+
+	/**
+	 * This method is used to delete attempt data of the user with given userId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose attempt data is to be deleted
+	 */
+	public void deleteUserAttemptsData(String userId);
+
+	/**
+	 * This method is used to delete assessment data entry of the user with
+	 * given userId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose assessment data is to be deleted
+	 */
+	public void deleteUserAssessmentsData(String userId);
+
+	/**
+	 * This method is used to used to get all the keys of assessment of the user
+	 * with given usesrId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose all assessment keys are to be
+	 *            retrieved
+	 * @return the Set of all assessment keys of the user with given userId
+	 */
+	public Set<String> getAllAssessmentKeysForUser(String userId);
 }

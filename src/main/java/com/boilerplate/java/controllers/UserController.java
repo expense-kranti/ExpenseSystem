@@ -230,7 +230,7 @@ public class UserController extends BaseController {
 	 * @throws ValidationFailedException
 	 *             thrown if userId is null or empty
 	 */
-	@ApiOperation(value = "/delete")
+	@ApiOperation(value = "Deletes a user with given userId", notes = "only user id is required(which equals phone number)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/delete", method = RequestMethod.POST)
 	public @ResponseBody void deleteUserAndData(@RequestBody ManageUserEntity manageUserEntity)
@@ -250,7 +250,7 @@ public class UserController extends BaseController {
 	 *             thrown when userId is null or empty
 	 * @throws ConflictException  thrown when user with given user id already exists
 	 */
-	@ApiOperation(value = "/checkUserExistence")
+	@ApiOperation(value = "/checkUserExistence", notes = "only user id is required(which equals phone number)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/checkUserExistence", method = RequestMethod.POST)
 	public @ResponseBody boolean checkUserExistence(@RequestBody ExternalFacingUser externalFacingUser)

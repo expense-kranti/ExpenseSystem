@@ -65,7 +65,7 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 			user.setRoles(new BoilerplateList<Role>());
 		}
 
-		if (super.get(User+user.getUserId()) != null) {
+		if (super.get(User + user.getUserId()) != null) {
 			new ConflictException("User", "User with given id already exists", null);
 		}
 
@@ -76,7 +76,6 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		return user;
 	}
 
-	
 	/**
 	 * @see getUser
 	 */
@@ -114,14 +113,14 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	 */
 	@Override
 	public void deleteUser(ExternalFacingUser user) {
-		super.delete(user.getUserId());
+		super.delete(User + user.getUserId());
 
 	}
 
 	private static final String PASSWORD_ENCRYPTED = "PASSWORD ENCRYPTED";
 
 	@Override
-	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user)  {
+	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user) {
 		// save user
 		if (user.getPassword().toUpperCase().equals(PASSWORD_ENCRYPTED)) {
 			ExternalFacingReturnedUser userFromDatabase = super.get(User + user.getUserId(),
@@ -135,7 +134,7 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		return user;
 
 	}
-	
+
 	/**
 	 * @see IReferral.saveUserReferUUID
 	 */
@@ -144,7 +143,5 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		// Save user's id and refer UUID in hash map
 		return super.hget(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), uuid);
 	}
-	
-	
 
 }

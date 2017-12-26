@@ -37,10 +37,9 @@ public class ManageUserEntity extends BaseEntity implements Serializable{
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		if(this.getUserId().isEmpty() || this.getUserId() == null){
+		if(this.isNullOrEmpty(this.getUserId()))
 			throw new ValidationFailedException("ManageUserEntity", "UserId is null or empty", null);
-		}
-		return false;
+		return true;
 	}
 
 	/**

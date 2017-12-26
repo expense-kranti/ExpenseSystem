@@ -476,4 +476,13 @@ public class ReferralService implements IReferralService {
 		return shortUrlEntity.getShortUrl();
 	}
 
+	/**
+	 * @see IReferralService.deleteUserAllReferralData
+	 */
+	@Override
+	public void deleteUserAllReferralData(String userReferId) {
+		referral.deleteUserAllReferredContactsData(userReferId);
+		referral.deleteUserAllReferSignUpCountData(userReferId);
+	}
+
 }

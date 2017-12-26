@@ -639,5 +639,15 @@ public class AssesmentService implements IAssessmentService {
 		}
 		return topscorerUser;
 	}
+	/**
+	 * @see IRedisAssessment.deleteUserAllAssessmentData
+	 */
+	@Override
+	public void deleteUserAllAssessmentData(String userId){
+		redisAssessment.deleteUserAssessmentsData(userId);
+		redisAssessment.deleteUserAttemptsData(userId);
+		redisAssessment.deleteUserTotalScoreData(userId);
+	    redisAssessment.deleteUserMonthlyScoreData(userId);
+	}
 
 }

@@ -5,15 +5,18 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
+import com.boilerplate.java.entities.UserReferalMediumType;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.xstream.core.ReferenceByIdMarshallingStrategy;
 
 /**
  * This class have method to manage user referral details
@@ -176,9 +179,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonParseException
 	 * @see IReferral.saveUserReferContacts
 	 */
 	@Override
@@ -196,7 +196,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
-	 * @return
 	 * @see IReferral.getUserReferredContacts
 	 */
 	@Override
@@ -205,5 +204,81 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		return super.hgetAll(ReferredContact + referalEntity.getUserReferId() + ":"
 				+ referalEntity.getReferralMediumType().toString() + ":" + contact.toUpperCase());
 
+	}
+
+	/**
+	 * @see IReferral.deleteUserAllReferredContacts
+	 */
+	@Override
+	public void deleteUserAllReferredContactsData(String userReferId) {
+		Set<String> keys = this.getUserAllReferredContactsKeys(userReferId);
+		for (String key : keys) {
+			super.del(key);
+		}
+	}
+
+	/**
+	 * @see IReferral.deleteUserAllReferSignUpCount
+	 */
+	@Override
+	public void deleteUserAllReferSignUpCountData(String userReferId) {
+		Set<String> keys = this.getUserAllReferSignUpCountKeys(userReferId);
+		for (String key : keys) {
+			super.del(key);
+		}
+	}
+
+	/**
+	 * @see IReferral.deleteUserAllReferCounterData
+	 */
+	@Override
+	public void deleteUserAllReferCounterData(String userReferId) {
+		Set<String> referCounterKeys = this.getUserAllReferCounterKeys(userReferId);
+		for (String key : referCounterKeys) {
+			super.del(key);
+		}
+	}
+
+	/**
+	 * @see IReferral.deleteUserAllReferredExpireContactsData
+	 */
+	@Override
+	public void deleteUserAllReferredExpireContactsData(String userReferId) {
+		Set<String> referredExpireContactKeys = this.getUserAllReferredExpireContactKeys(userReferId);
+		for (String key : referredExpireContactKeys) {
+			super.keys(key);
+		}
+	}
+
+	/**
+	 * @see IReferral.getUserAllReferSignCountKeys
+	 */
+	@Override
+	public Set<String> getUserAllReferSignUpCountKeys(String userReferId) {
+		return super.keys(ReferSignUpCount + userReferId + "*");
+	}
+
+	/**
+	 * @see IReferral.getUserAllReferCounterKeys
+	 */
+	@Override
+	public Set<String> getUserAllReferCounterKeys(String userReferId) {
+		return super.keys(ReferCounter + userReferId + "*" + "*");
+	}
+
+	/**
+	 * @see IReferral.getUserAllReferredExpireContactKeys
+	 */
+	@Override
+	public Set<String> getUserAllReferredExpireContactKeys(String userReferId) {
+		return super.keys(ReferredExpireContact + userReferId + "*" + "*");
+	}
+
+	/**
+	 * @see IReferral.getUSerAllReferredContactsKeys
+	 */
+	@Override
+	public Set<String> getUserAllReferredContactsKeys(String userReferId) {
+		return super.keys(ReferredContact + userReferId + "*" + "*");
 	}
 }

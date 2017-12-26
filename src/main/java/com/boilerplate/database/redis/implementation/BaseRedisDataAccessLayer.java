@@ -500,9 +500,9 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
-
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// change password
+		
+		// for method change password
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
@@ -512,11 +512,18 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		
-		//method permission for checkUserExistence
+		//for method checkUserExistence
 		methodPermission.setId("public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setMethodName("public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		// for method deleteUserAndData
+		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.deleteUserAndData(com.boilerplate.java.entities.ManageUserEntity)");
+		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.deleteUserAndData(com.boilerplate.java.entities.ManageUserEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		
 		//method permission for AssessmentController

@@ -33,6 +33,7 @@
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="referral" ref="referral"></property>
 		<property name="assessmentService" ref="assessmentService"></property>
+		<property name="referralService" ref="referralService"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
