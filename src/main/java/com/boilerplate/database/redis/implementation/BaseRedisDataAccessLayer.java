@@ -1053,7 +1053,23 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false for not publish
 		
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT", "a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
-
+		
+		//config for experian report
+		vAllEDev.put("Voucher_Count_Alert_Frequency", "250");
+		vAllEDev.put("Experian_Single_Url_Request_Template", "clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
+		vAllEDev.put("Experian_Single_Request_URL", "https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/singleAction.action");		
+		vAllEDev.put("Experian_User_Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		vAllEDev.put("Experian_INITIATE_URL_JAVA", "http://javadev-370467541.ap-southeast-1.elb.amazonaws.com/java/experian/initiateExperian");
+		
+		vAllEDev.put("JAVA_HTTP_REQUEST_TEMPLATE", "{\"url\": \"@url\",\"requestHeaders\": @requestHeaders,\"requestBody\": \"@requestBody\",\"method\": \"@method\"}");
+		vAllEDev.put("JAVA_HTTP_REQUEST_QUESTION_TEMPLATE", "{\"url\": \"@url\",\"requestHeaders\": @requestHeaders,\"requestCookies\": @requestCookies,\"requestBody\": \"@requestBody\",\"method\": \"@method\"}");
+		vAllEDev.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
+		
+		vAllEDev.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllEDev.put("Experian_Question_Body", "answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllEDev.put("Experian_Question_Content_Type", "application/json");
+		vAllEDev.put("Experian_Question_Accept", "*/*");
+		vAllEDev.put("Experian_Question_URL", "https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
 		return vAllEDev;
 
 	}

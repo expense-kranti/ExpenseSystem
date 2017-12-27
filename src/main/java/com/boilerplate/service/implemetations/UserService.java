@@ -693,5 +693,14 @@ public class UserService implements IUserService {
 		// Save user's id and refer UUID in hash map
 		return userDataAccess.getReferUser(uuid);
 	}
+	/**
+	 * This api updates a user
+	 * @param user The user
+	 * @throws ConflictException if there is an error updating the user
+	 */
+	@Override
+	public void update(ExternalFacingReturnedUser user) throws ConflictException{
+		this.userDataAccess.update(user);
+	}
 
 }

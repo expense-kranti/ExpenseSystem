@@ -3,8 +3,10 @@ package com.boilerplate.service.interfaces;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
 
 public interface IFileService {
@@ -22,5 +24,7 @@ public interface IFileService {
 	public String getPreSignedS3URL(String id);
 
 	public FileEntity getFile(String id) throws NotFoundException;
+
+	public BoilerplateMap<String, FileEntity> getAllFileList(String userId) throws UnauthorizedException;
 	
 }

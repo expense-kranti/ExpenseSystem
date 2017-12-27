@@ -9,10 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.boilerplate.database.interfaces.IFile;
 import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.service.interfaces.IFileService;
@@ -163,5 +165,38 @@ public class FileService implements IFileService {
 					null);
 		}
 		return fileEntity;
+	}
+	
+	/**
+	 * @see IFileService.getAllFileList
+	 */
+	@Override
+	public BoilerplateMap<String, FileEntity> getAllFileList(String userId)
+			throws UnauthorizedException {
+		boolean canExecute = false;
+		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser()
+				.getRoles()) {
+			if (role.getRoleName().toUpperCase().equals("ADMIN") || role
+					.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+				canExecute = true;
+			}
+		}
+		if (RequestThreadLocal.getSession().getExternalFacingUser().getId()
+				.equals(userId)) {
+			canExecute = true;
+		}
+
+		if (!canExecute)
+			throw new UnauthorizedException("File",
+					"User doesnt have permissions to get files", null);
+
+		BoilerplateList<FileEntity> files = this.filePointer.getAllFiles(userId,
+				null);
+		BoilerplateMap<String, FileEntity> map = new BoilerplateMap<String, FileEntity>();
+
+		for (Object file : files) {
+			map.put(((FileEntity) file).getId(), (FileEntity) file);
+		}
+		return map;
 	}
 }

@@ -130,6 +130,26 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 	public void setOtpList(BoilerplateList<Integer> otpList) {
 		this.otpList = otpList;
 	}
+	/**
+	 * This method get the report entity.
+	 * @return the report entity
+	 */
+	public ReportInputEntiity getReportInputEntitty() {
+		return reportInputEntitty;
+	}
+	/**
+	 * this method set the report entity
+	 * @param reportInputEntitty the report entity
+	 */
+	public void setReportInputEntitty(ReportInputEntiity reportInputEntitty) {
+		this.reportInputEntitty = reportInputEntitty;
+	}
+	
+	/**
+	 * This is experian report input entity.
+	 */
+	@JsonIgnore
+	private ReportInputEntiity reportInputEntitty;
 
 	/**
 	 * This method creates the user data for publishing
@@ -172,5 +192,26 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		String returnUrl = url;
 		returnUrl = returnUrl.replace("@crmRecordID", this.getCrmid() == null ? "" : this.getCrmid());
 		return returnUrl;
+	}
+	
+	/**
+	 * This is the user experian report url
+	 */
+	private String experianReportUrl;
+	
+	/**
+	 * This method gets the user experian report url
+	 * @return The user experian report url
+	 */
+	public String getExperianReportUrl() {
+		return experianReportUrl;
+	}
+
+	/**
+	 * This method sets the user experian report url
+	 * @param experianReportUrl
+	 */
+	public void setExperianReportUrl(String experianReportUrl) {
+		this.experianReportUrl = experianReportUrl;
 	}
 }

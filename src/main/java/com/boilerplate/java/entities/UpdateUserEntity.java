@@ -245,7 +245,28 @@ public class UpdateUserEntity extends BaseEntity{
 	public void setIsPasswordChanged(boolean isPasswordChanged) {
 		this.isPasswordChanged = isPasswordChanged;
 	}
-	
+	/**
+	 * This method gets the state of the User.
+	 * @return userState The User State
+	 */
+	public MethodState getUserState() {
+		return userState;
+	}
+
+	/**
+	 * This method sets the state of the User.
+	 * @param methodState The User State
+	 */
+	public void setUserState(MethodState methodState) {
+		this.userState = methodState;
+	}
+
+	/**
+	 * This is state of user which tell us about milestones covered by the user.
+	 */
+	@ApiModelProperty(value="This is state of the user"
+			,required=false)
+	private MethodState userState;
 
 
 	

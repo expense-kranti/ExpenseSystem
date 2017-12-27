@@ -138,10 +138,20 @@
 				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>
 				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
 				<entry key="PublishUserAKSOrReferReport" value-ref="publishUserAKSOrReferReport"></entry>
-
+				<entry key="ParseExperianReport" value-ref="parseReportsFromExperianObserver" />
 			</map>
 
 
+		</property>
+	</bean>
+		<bean id="parseReportsFromExperianObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="parseExperianReportObserver"></ref>
+			</list>
 		</property>
 	</bean>
 
@@ -661,6 +671,38 @@
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="redisAssessment" ref="redisAssessment"></property>
 	</bean>
+	<bean id="experianBureauService"
+		class="com.boilerplate.service.implemetations.ExperianBureauService"
+		init-method="initilize">
+		<property name="experianDataAccess" ref="experianDataAccess"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="parseExperianReportObserver" ref="parseExperianReportObserver"></property>
+		<property name="reportService" ref="reportService"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+	</bean>
+	<bean id="experianDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisVoucher"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+	<bean id="parseExperianReportObserver" class="com.boilerplate.asyncWork.ParseExperianReportObserver">
+		<property name="reportService" ref="reportService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+	</bean>
+	
+	<bean id="reportService" class="com.boilerplate.service.implemetations.ReportService">
+		<property name="fileService" ref="fileService"></property>
+		<property name="reportDataAccess" ref="reportDataAccess"></property>
+	</bean>
+	<bean id="reportDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisReport">
 
+	</bean>
+	
 </beans>
  

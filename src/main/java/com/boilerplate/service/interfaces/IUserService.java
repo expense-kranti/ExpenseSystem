@@ -128,4 +128,6 @@ public interface IUserService {
 
 	public String getReferUserId(String uuid);
 
+	void update(ExternalFacingReturnedUser user) throws ConflictException;
+
 }
