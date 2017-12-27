@@ -147,4 +147,15 @@ public interface IAssessmentService {
 	 *             throw this exception if we don't found any top scorer
 	 */
 	public BoilerplateList<TopScorerEntity> getTopScorrer();
+
+	/**
+	 * This method is used to delete all the assessment related data like
+	 * assessments, attempt, monthlScore, totalScore of the user with given
+	 * userId
+	 * 
+	 * @param userId
+	 *            The userId of the user whose assessment related data to be
+	 *            deleted
+	 */
+	public void deleteUserAllAssessmentData(String userId);
 }

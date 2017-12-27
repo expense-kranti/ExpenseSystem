@@ -613,29 +613,41 @@ public class AssesmentService implements IAssessmentService {
 	 */
 	@Override
 	public BoilerplateList<TopScorerEntity> getTopScorrer() {
-		//Declare a new list of top scorer user
+		// Declare a new list of top scorer user
 		BoilerplateList<TopScorerEntity> topscorerUser = new BoilerplateList<>();
-		//Get top score from data store
+		// Get top score from data store
 		List<ScoreEntity> topScorer = redisAssessment.getTopScorrer();
-		//Run for loop to get top score user details
+		// Run for loop to get top score user details
 		for (Object o : topScorer) {
 			ScoreEntity scoreEntity = (ScoreEntity) o;
 			try {
-				//Get user data
+				// Get user data
 				ExternalFacingReturnedUser userData = userDataAccess.getUser(scoreEntity.getUserId(), null);
-				//Add to list
-				topscorerUser.add(new TopScorerEntity(userData.getFirstName(), userData.getMiddleName(),
-						userData.getLastName(), String.valueOf(Float.valueOf(scoreEntity.getReferScore())
+				// Add to list
+				topscorerUser.add(new TopScorerEntity(userData.getFirstName(),
+						userData.getMiddleName() == null ? "" : userData.getMiddleName(),
+						userData.getLastName() == null ? "" : userData.getLastName(),
+						String.valueOf(Float.valueOf(scoreEntity.getReferScore())
 								+ Float.valueOf(scoreEntity.getObtainedScore())),
 						scoreEntity.getRank()));
 			} catch (NotFoundException ex) {
-				//Fail to get the user
+				// Fail to get the user
 				logger.logException("AssesmentService", "getTopScorrer",
 						"try-catch block to get user data ~ This is the user id " + scoreEntity.getUserId(),
 						"fail to get user data in for loop", ex);
 			}
 		}
 		return topscorerUser;
+	}
+	/**
+	 * @see IRedisAssessment.deleteUserAllAssessmentData
+	 */
+	@Override
+	public void deleteUserAllAssessmentData(String userId){
+		redisAssessment.deleteUserAssessmentsData(userId);
+		redisAssessment.deleteUserAttemptsData(userId);
+		redisAssessment.deleteUserTotalScoreData(userId);
+	    redisAssessment.deleteUserMonthlyScoreData(userId);
 	}
 
 }

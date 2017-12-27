@@ -35,9 +35,10 @@ public interface IReferralService {
 	 * @throws ValidationFailedException
 	 * @throws IOException
 	 *             throw this exception in case we failed to get short URL
-	 * @throws ConflictException 
+	 * @throws ConflictException
 	 */
-	public void sendReferralLink(ReferalEntity referalEntity) throws ValidationFailedException, IOException, ConflictException;
+	public void sendReferralLink(ReferalEntity referalEntity)
+			throws ValidationFailedException, IOException, ConflictException;
 
 	/**
 	 * This method is used to validate the contact check is this contact is
@@ -74,8 +75,18 @@ public interface IReferralService {
 	 * This method is used to get the referral link for facebook sharing
 	 * 
 	 * @return the referral link
-	 * @throws IOException 
-	 * @throws ConflictException 
+	 * @throws IOException
+	 * @throws ConflictException
 	 */
 	public ReferalEntity getFaceBookReferralLink() throws IOException, ConflictException;
+
+	/**
+	 * This method is used to delete all the user related referral data like
+	 * referSignUpCounts, ReferreContacts etc
+	 * 
+	 * @param userReferId
+	 *            The userReferId of the user whose all referral data is to be
+	 *            deleted
+	 */
+	public void deleteUserAllReferralData(String userReferId);
 }

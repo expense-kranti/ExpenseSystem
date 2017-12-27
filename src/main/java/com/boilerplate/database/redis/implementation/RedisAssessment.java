@@ -209,4 +209,57 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 		// Return top n scorer n get from configurations
 		return topScorer.subList(0, maxSize);
 	}
+
+	/**
+	 * @see IRedisAssessment.deleteAssessmentsData
+	 */
+	@Override
+	public void deleteUserAssessmentsData(String userId) {
+		Set<String> assessmentKeys = this.getAllAssessmentKeysForUser(userId);
+		for(String key : assessmentKeys){
+			super.del(key);
+		}
+		//super.del(Assessment + userId);
+	}
+
+	/**
+	 * @see IRedisAssessment.deleteUserAttemptsData
+	 */
+	@Override
+	public void deleteUserAttemptsData(String userId) {
+		super.del(Attempt + userId);
+	}
+
+	/**
+	 * @see IRedisAssessment.deleteUserTotalScoreData
+	 */
+	@Override
+	public void deleteUserTotalScoreData(String userId) {
+		super.del(TotalScore + userId);
+	}
+
+	/**
+	 * @see IRedisAssessment.deleteUserMonthlyScoreData
+	 */
+	@Override
+	public void deleteUserMonthlyScoreData(String userId) {
+		// get all the monthly score keys with given userId
+		Set<String> monthlyScoreKeys = getAllMonthlyScoreKeys(userId);
+		for (String key : monthlyScoreKeys) {
+			super.del(key);
+		}
+
+	}
+
+	/**
+	 * @see IRedisAssessment.getAllMonthlyScoreKeys
+	 */
+	@Override
+	public Set<String> getAllMonthlyScoreKeys(String userId) {
+		return super.keys(MonthlyScore + "*" + "*" + userId);
+	}
+	@Override
+	public Set<String> getAllAssessmentKeysForUser(String userId){
+		return super.keys(Assessment + userId + "*");
+	}
 }

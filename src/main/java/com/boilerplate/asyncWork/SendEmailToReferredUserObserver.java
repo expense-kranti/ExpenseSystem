@@ -342,7 +342,6 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 			referTemplate = FileUtils
 					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
 		}
-
 		String body = referTemplate.replace("@UserFirstName", referringUserFirstName);
 		// Replace @UserFirstName with referring user first name in email body
 		body = body.replace("@referLink", referralLink);

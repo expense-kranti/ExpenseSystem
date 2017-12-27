@@ -12,6 +12,7 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.PublishEntity;
@@ -96,7 +97,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-	
+
 	/**
 	 * The autowired instance of user data access
 	 */
@@ -105,7 +106,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 
 	/**
 	 * Sets the user data access
-	 * @param userDataAccess the userDataAccess to set
+	 * 
+	 * @param userDataAccess
+	 *            the userDataAccess to set
 	 */
 	public void setUserDataAccess(IUser userDataAccess) {
 		this.userDataAccess = userDataAccess;
@@ -174,8 +177,12 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		// According to type trigger back ground job
 		switch (referralMediumType) {
 		case Email:
-			// Set contact with email
-			contact = externalFacingUser.getEmail();
+			if (!BaseEntity.isNullOrEmpty(externalFacingUser.getEmail())) {
+				// Set contact with email
+				contact = externalFacingUser.getEmail();
+			} else {
+				contact = externalFacingUser.getPhoneNumber();
+			}
 			break;
 		case Phone_Number:
 			// Set contact with phone number
@@ -258,8 +265,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	 * @param referalEntity
 	 *            this parameter contains the information regarding the refer by
 	 *            user like refer medium type and user id of refer by user
-	 * @throws NotFoundException thrown when user not found
-	 * @throws ConflictException 
+	 * @throws NotFoundException
+	 *             thrown when user not found
+	 * @throws ConflictException
 	 */
 	private void updateReferringUserScore(ReferalEntity referalEntity) throws NotFoundException, ConflictException {
 		// Update user Total score
@@ -267,7 +275,6 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		// Update user monthly score
 		this.updateUserMonthlyScore(referalEntity, this.getReferScore(referalEntity.getReferralMediumType()));
 	}
-	
 
 	/**
 	 * This method is used to update sign up user score
@@ -278,24 +285,32 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	 * @param externalFacingUser
 	 *            this parameter contain the information regarding the coming
 	 *            user
-	 * @throws NotFoundException thrown when user not found
-	 * @throws ConflictException 
+	 * @throws NotFoundException
+	 *             thrown when user not found
+	 * @throws ConflictException
 	 */
-	private void updateSignUpUserScore(ReferalEntity referalEntity, ExternalFacingUser externalFacingUser) throws NotFoundException, ConflictException {
+	private void updateSignUpUserScore(ReferalEntity referalEntity, ExternalFacingUser externalFacingUser)
+			throws NotFoundException, ConflictException {
 		// Clone referral entity
 		ReferalEntity signUpUserReferralDetails = (ReferalEntity) referalEntity.clone();
 		// Set sign up user id
 		signUpUserReferralDetails.setUserId(externalFacingUser.getUserId());
 		// Update user Total score
-		this.updateUserTotalScore(signUpUserReferralDetails, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
+		this.updateUserTotalScore(signUpUserReferralDetails,
+				this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
 		// Update user monthly score
-		this.updateUserMonthlyScore(signUpUserReferralDetails, this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
+		this.updateUserMonthlyScore(signUpUserReferralDetails,
+				this.getSignUpUserReferScore(referalEntity.getReferralMediumType()));
 	}
+
 	/**
 	 * This method sets the external facing users total score and publish user
-	 * @param user the user with updated total score
-	 * @param totalScore the total score
-	 * @throws ConflictException 
+	 * 
+	 * @param user
+	 *            the user with updated total score
+	 * @param totalScore
+	 *            the total score
+	 * @throws ConflictException
 	 */
 	private void updateUserScoreAndPublish(ExternalFacingReturnedUser user, String totalScore) {
 		user.setTotalScore(totalScore);
@@ -309,10 +324,11 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	 * @param referalEntity
 	 *            this parameter contains the information regarding the refer by
 	 *            user like refer medium type and user id of refer by user
-	 * @throws NotFoundException thrown if user not found
-	 * @throws ConflictException 
+	 * @throws NotFoundException
+	 *             thrown if user not found
+	 * @throws ConflictException
 	 */
-	private void updateUserTotalScore(ReferalEntity referalEntity, String referScore) throws NotFoundException{
+	private void updateUserTotalScore(ReferalEntity referalEntity, String referScore) throws NotFoundException {
 		// Get total score
 		ScoreEntity scoreEntity = redisAssessment.getTotalScore(referalEntity.getUserId());
 		ScoreEntity newScore = null;
@@ -325,13 +341,13 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveTotalScore(newScore);
-			//create external facing returned user from the user id of referal entity
+			// create external facing returned user from the user id of referal
+			// entity
 			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
-			updateUserScoreAndPublish(user, String.valueOf(Float.valueOf(newScore.getReferScore())
-					+ Float.valueOf(newScore.getObtainedScore())));
+			updateUserScoreAndPublish(user, String
+					.valueOf(Float.valueOf(newScore.getReferScore()) + Float.valueOf(newScore.getObtainedScore())));
 		}
-		
-				
+
 	}
 
 	/**
@@ -519,9 +535,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 					ex);
 		}
 	}
-	
-	
-	
+
 	/**
 	 * This method creates the publish entity.
 	 * 
@@ -549,32 +563,28 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
 		publishEntity.setPublishTemplate(publishTemplate);
 		return publishEntity;
-	}	
-	
+	}
+
 	private void publishUserToCRM(ExternalFacingReturnedUser user) {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
-		
+
 		if (isPublishReport) {
 			PublishEntity publishEntity = this.createPublishEntity("UpdateRefererScoreObserver.publishToCRM",
-					configurationManager.get(""),
-					configurationManager.get("UPDATE_AKS_USER_SUBJECT"),
-						user,
-					configurationManager.get(""),
-					configurationManager.get(""),
-					configurationManager.get(""));
+					configurationManager.get(""), configurationManager.get("UPDATE_AKS_USER_SUBJECT"), user,
+					configurationManager.get(""), configurationManager.get(""), configurationManager.get(""));
 			if (subjects == null) {
 				subjects = new BoilerplateList<>();
 				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 			}
 			try {
-				
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "UpdateR",
-						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
+
+				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "UpdateR", "publishToCRM",
+						configurationManager.get("AKS_PUBLISH_QUEUE"));
 			} catch (Exception exception) {
 				logger.logError("UpdateRefererScoreObserver", "publishToCRM", "queueReaderJob catch block",
 						"Exception :" + exception);
 			}
 		}
 	}
-	
+
 }

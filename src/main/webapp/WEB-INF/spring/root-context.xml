@@ -32,6 +32,8 @@
 		<property name="sendRegistrationSMSObserver" ref="sendRegistrationSMSObserver"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="referral" ref="referral"></property>
+		<property name="assessmentService" ref="assessmentService"></property>
+		<property name="referralService" ref="referralService"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -138,7 +140,12 @@
 				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>
 				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
 				<entry key="PublishUserAKSOrReferReport" value-ref="publishUserAKSOrReferReport"></entry>
+<<<<<<< HEAD
 				<entry key="ParseExperianReport" value-ref="parseReportsFromExperianObserver" />
+=======
+				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
+
+>>>>>>> 6d63e5753dfcf7f3a3f67a2995eed9fc33fd83fc
 			</map>
 
 
@@ -564,7 +571,7 @@
 		</property>
 	</bean>
 
-	<!-- contactUsObserver -->
+	<!-- "sendEmailArticleObserver" -->
 	<bean id="sendEmailArticleObserver" class="com.boilerplate.asyncWork.SendEmailArticleObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
@@ -613,6 +620,10 @@
 	<bean id="emiCalculatorService"
 		class="com.boilerplate.service.implemetations.EmiCalculatorService">
 	</bean>
+	<bean id="currencyConversionService"
+		class="com.boilerplate.service.implemetations.CurrencyConversionService">
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
 
 	<bean id="blogActivityService"
 		class="com.boilerplate.service.implemetations.BlogActivityService">
@@ -651,8 +662,9 @@
 	</bean>
 
 
-  <!--observers and observer list related to publishing user AKS Or Refer Report  -->
-    <bean id="publishUserAKSOrReferReport"
+	<!--observers and observer list related to publishing user AKS Or Refer 
+		Report -->
+	<bean id="publishUserAKSOrReferReport"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
 			<list>
@@ -662,7 +674,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="publishUserAKSOrReferReportObserver"
 		class="com.boilerplate.asyncWork.PublishUserAKSOrReferReportObserver">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
@@ -702,7 +714,35 @@
 	<bean id="reportDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisReport">
 
+<<<<<<< HEAD
 	</bean>
 	
+=======
+	<!--Dependencies related to rewards -->
+
+	<bean id="rewardService" class="com.boilerplate.service.implemetations.RewardService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+
+	<bean id="sendEmailWithRewardWinningUserDetailsObserver"
+		class="com.boilerplate.asyncWork.SendEmailWithRewardWinningUserDetailsObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+	<!-- Rewards AsyncWorkDispatcherObserverList -->
+	<bean id="rewardObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendEmailWithRewardWinningUserDetailsObserver"></ref>
+			</list>
+		</property>
+	</bean>
+
+>>>>>>> 6d63e5753dfcf7f3a3f67a2995eed9fc33fd83fc
 </beans>
  

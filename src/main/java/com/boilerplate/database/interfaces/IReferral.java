@@ -2,6 +2,7 @@ package com.boilerplate.database.interfaces;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
@@ -142,4 +143,89 @@ public interface IReferral {
 	 * @return referred contact details all like when referred,refer type etc.
 	 */
 	public Map<String, String> getUserReferredContacts(ReferalEntity referalEntity, String contact);
+
+	/**
+	 * This method is used to delete all referred contacts of the user with
+	 * given user referId
+	 * 
+	 * @param userReferId
+	 *            the user refer id of the user whose all referred contacts to
+	 *            be deleted
+	 */
+	public void deleteUserAllReferredContactsData(String userReferId);
+
+	/**
+	 * This method is used to get all the referred contact keys with the given
+	 * userReferId
+	 * 
+	 * @param userReferId
+	 *            The user refer id of the user against which the keys are to be
+	 *            found
+	 * @return the Set of all refer contacts keys with the given user refer Id
+	 */
+	public Set<String> getUserAllReferredContactsKeys(String userReferId);
+
+	/**
+	 * This method is used to delete all refer sign up count data of the user
+	 * with given user refer id
+	 * 
+	 * @param userReferId
+	 *            The userReferId of the user whose refer sign up count to be
+	 *            deleted
+	 */
+	public void deleteUserAllReferSignUpCountData(String userReferId);
+
+	/**
+	 * This method is used to get all refer sign up count keys with the given
+	 * user refer id of the user
+	 * 
+	 * @param userReferId
+	 *            The user Refer Id of the user against which keys are to be
+	 *            found
+	 * @return the Set of all the referSignUpCount keys
+	 */
+	public Set<String> getUserAllReferSignUpCountKeys(String userReferId);
+
+	/**
+	 * This method is used to get all the keys of refer counter with given user
+	 * refer id
+	 * 
+	 * @param userReferId
+	 *            The user refer Id of the user whose refer counter keys to be
+	 *            found
+	 * @return The Set of all the refer counter keys of the user with given
+	 *         userReferId of the user
+	 */
+	public Set<String> getUserAllReferCounterKeys(String userReferId);
+
+	/**
+	 * This method is used to get all the referred expire contact keys with
+	 * given user refer id of the user
+	 * 
+	 * @param userReferId
+	 *            The user refer id of the user
+	 * @return The Set of all the keys of referred expire contacts against given
+	 *         userReferId of the user
+	 */
+	public Set<String> getUserAllReferredExpireContactKeys(String userReferId);
+
+	/**
+	 * This method is used to delete user's all refer counter data
+	 * 
+	 * @param userReferId
+	 *            The user refer id of the user whose refer counter data is to
+	 *            be deleted
+	 */
+	public void deleteUserAllReferCounterData(String userReferId);
+
+	/**
+	 * This method is used to delete user's all the referred expire contacts
+	 * data with userReferId of the user whose referredExpireContactsData to be
+	 * deleted
+	 * 
+	 * @param userReferId
+	 *            The user refer id of the user
+	 */
+	public void deleteUserAllReferredExpireContactsData(String userReferId);
+
 }

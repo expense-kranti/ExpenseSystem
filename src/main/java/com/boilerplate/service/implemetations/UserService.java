@@ -1,5 +1,6 @@
 package com.boilerplate.service.implemetations;
 
+import java.nio.charset.CharacterCodingException;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -24,11 +25,15 @@ import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.AuthenticationRequest;
+import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.ManageUserEntity;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
+import com.boilerplate.service.interfaces.IAssessmentService;
+import com.boilerplate.service.interfaces.IReferralService;
 import com.boilerplate.service.interfaces.IRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
@@ -46,6 +51,7 @@ public class UserService implements IUserService {
 	 */
 	Logger logger = Logger.getInstance(UserService.class);
 
+	private static final String Sfupdatehash = "SFUpdateHash:";
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -164,6 +170,39 @@ public class UserService implements IUserService {
 	 * This is an instance of the queue job, to save the session back on to the
 	 * database async
 	 */
+
+	/**
+	 * This is the instance of the assessment service
+	 */
+	@Autowired
+	IAssessmentService assessmentService;
+
+	/**
+	 * Sets the assessment service
+	 * 
+	 * @param assessmentService
+	 *            the assessmentService to set
+	 */
+	public void setAssessmentService(IAssessmentService assessmentService) {
+		this.assessmentService = assessmentService;
+	}
+
+	/**
+	 * This is the instance of referral service
+	 */
+	@Autowired
+	IReferralService referralService;
+
+	/**
+	 * Sets the referral service
+	 * 
+	 * @param referralService
+	 *            the referralService to set
+	 */
+	public void setReferralService(IReferralService referralService) {
+		this.referralService = referralService;
+	}
+
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
 
@@ -205,7 +244,7 @@ public class UserService implements IUserService {
 	BoilerplateList<String> subjectForCampaign = new BoilerplateList<>();
 
 	BoilerplateList<String> subjectForUpdateRefererScore = new BoilerplateList<>();
-	
+
 	BoilerplateList<String> subjectForReferUUID = new BoilerplateList<>();
 
 	/**
@@ -295,7 +334,10 @@ public class UserService implements IUserService {
 		 * check if a user with given email exists then throw conflict exception
 		 * otherwise put the email entry in email list hash
 		 */
-		this.checkOrCreateEmailInHash(externalFacingUser);
+		if (!BaseEntity.isNullOrEmpty(externalFacingUser.getEmail())) {
+			this.checkOrCreateEmailInHash(externalFacingUser);
+		}
+
 		externalFacingUser
 				.setUserId(externalFacingUser.getAuthenticationProvider() + ":" + externalFacingUser.getUserId());
 
@@ -378,6 +420,21 @@ public class UserService implements IUserService {
 	}
 
 	/**
+	 * @see IUserService.checkUserExistence
+	 */
+	@Override
+	public boolean checkUserExistence(ExternalFacingUser externalFacingUser)
+			throws ValidationFailedException, ConflictException {
+		if ((externalFacingUser.getUserId()) == null || (externalFacingUser.getUserId()).isEmpty()) {
+			throw new ValidationFailedException("UserEntity", "UserId is null or empty", null);
+		}
+		if (this.userExists(normalizeUserId(externalFacingUser.getUserId()))) {
+			throw new ConflictException("UserEntity", "User already exists with this id", null);
+		}
+		return false;
+	}
+
+	/**
 	 * @see IUserService.normalizeUserId
 	 */
 	@Override
@@ -423,22 +480,21 @@ public class UserService implements IUserService {
 			// if the user is valid create a new session, in the session add
 			// details
 			Session session = sessionManager.createNewSession(user);
-			//push the refer unique id task in queue
+			// push the refer unique id task in queue
 			if (user.getUserReferId() == null) {
-				try{
+				try {
 
-					String userUUID = this.createUUID(Integer.valueOf(
-							configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+					String userUUID = this
+							.createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
 					user.setUserReferId(userUUID);
-					queueReaderJob.requestBackroundWorkItem(user, subjectForReferUUID,
-							"UserService", "Authenticate");
-				}catch (Exception efe) {
-					//log in case of queue failure
-					logger.logException("UserService", "authenticate", "Queue Refer id failure", "UserId"+user.getUserId(), null);
-					
+					queueReaderJob.requestBackroundWorkItem(user, subjectForReferUUID, "UserService", "Authenticate");
+				} catch (Exception efe) {
+					// log in case of queue failure
+					logger.logException("UserService", "authenticate", "Queue Refer id failure",
+							"UserId" + user.getUserId(), null);
+
 				}
-				
-				
+
 			}
 			return session;
 		} catch (NotFoundException nfe) {
@@ -448,9 +504,9 @@ public class UserService implements IUserService {
 					"Converting this exception to Unauthorized for security", nfe);
 			throw new UnauthorizedException("USER", "User name or password incorrect", null);
 		}
-		
+
 	}
-	
+
 	/**
 	 * This method is used to create the UUID
 	 * 
@@ -469,7 +525,7 @@ public class UserService implements IUserService {
 		}
 		return userReferId;
 	}
-	
+
 	/**
 	 * @see IUserService.get
 	 */
@@ -519,8 +575,7 @@ public class UserService implements IUserService {
 	public ExternalFacingReturnedUser automaticPasswordReset(ExternalFacingUser externalFacingUser)
 			throws ValidationFailedException, ConflictException, NotFoundException, UnauthorizedException,
 			BadRequestException {
-		
-		
+
 		// get the user requested for
 		ExternalFacingUser returnedUser = this.get(externalFacingUser.getUserId());
 
@@ -638,7 +693,7 @@ public class UserService implements IUserService {
 				|| RequestThreadLocal.getSession().getUserId().isEmpty()) {
 			throw new UnauthorizedException("User", "User not logged in for update", null);
 		}
-		
+
 		// convert update user password entity to update user entity
 		UpdateUserEntity updateUserEntity = updateUserPasswordEntity.convertToUpdateUserEntity();
 		// Set is password change to true
@@ -687,7 +742,7 @@ public class UserService implements IUserService {
 			}
 		}
 	}
-	
+
 	@Override
 	public String getReferUserId(String uuid) {
 		// Save user's id and refer UUID in hash map
@@ -701,6 +756,75 @@ public class UserService implements IUserService {
 	@Override
 	public void update(ExternalFacingReturnedUser user) throws ConflictException{
 		this.userDataAccess.update(user);
+	}
+
+	/**
+	 * @see IUserService.deleteUser
+	 */
+	@Override
+	public void deleteUser(ManageUserEntity manageUserEntity)
+			throws NotFoundException, UnauthorizedException, BadRequestException, ValidationFailedException {
+		if (!checkIsAdmin()) {
+			throw new UnauthorizedException("User", "User is not authorized to perform this action", null);
+		}
+		manageUserEntity.validate();
+		String userId = manageUserEntity.getUserId();
+		userId = normalizeUserId(userId);
+		if (this.userExists(userId)) {
+			ExternalFacingUser user = userDataAccess.getUser(userId, null);
+			// delete user all assessment related data
+			assessmentService.deleteUserAllAssessmentData(userId);
+			// delete user's all referral related data
+			referralService.deleteUserAllReferralData(user.getUserReferId());
+			// delete user email entry in emailhashmap
+			if (!BaseEntity.isNullOrEmpty(user.getEmail())) {
+				this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
+						user.getAuthenticationProvider() + ":" + user.getEmail().toUpperCase());
+			}
+			// delete hash map entries in database
+			this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"),
+					user.getUserId().toUpperCase());
+			this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
+					user.getUserReferId());
+			this.redisSFUpdateHashAccess.del(Sfupdatehash + user.getUserId());
+			
+			// delete user
+			userDataAccess.deleteUser(user);
+
+		} else {
+			throw new NotFoundException("User Entity", "No User Found with this id", null);
+		}
+	}
+
+	/**
+	 * This method checks the roles of the user and tells about whether that
+	 * user have managerial role or not
+	 * 
+	 * @return isAdmin The isAdmin returns true/false
+	 * @throws NotFoundException
+	 *             The NotFoundException
+	 * @throws BadRequestException
+	 *             The BadRequestException
+	 */
+	private boolean checkIsAdmin() throws NotFoundException, BadRequestException {
+		boolean isAdmin = false;
+		if (RequestThreadLocal.getSession() != null) {
+			ExternalFacingReturnedUser user = this
+					.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
+			// check user state exists in input states
+			if (user.getRoles() != null) {
+				for (Role role : user.getRoles()) {
+					if (role.getRoleName().toUpperCase().equals("ADMIN")
+							|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")
+							|| role.getRoleName().toUpperCase().equals("BANKADMIN")
+							|| role.getRoleName().toUpperCase().equals("BANKUSER")) {
+						isAdmin = true;
+						break;
+					}
+				}
+			}
+		}
+		return isAdmin;
 	}
 
 }
