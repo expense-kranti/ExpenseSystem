@@ -140,12 +140,8 @@
 				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>
 				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
 				<entry key="PublishUserAKSOrReferReport" value-ref="publishUserAKSOrReferReport"></entry>
-<<<<<<< HEAD
 				<entry key="ParseExperianReport" value-ref="parseReportsFromExperianObserver" />
-=======
 				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
-
->>>>>>> 6d63e5753dfcf7f3a3f67a2995eed9fc33fd83fc
 			</map>
 
 
@@ -713,11 +709,8 @@
 	</bean>
 	<bean id="reportDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisReport">
-
-<<<<<<< HEAD
 	</bean>
 	
-=======
 	<!--Dependencies related to rewards -->
 
 	<bean id="rewardService" class="com.boilerplate.service.implemetations.RewardService"
@@ -743,6 +736,5 @@
 		</property>
 	</bean>
 
->>>>>>> 6d63e5753dfcf7f3a3f67a2995eed9fc33fd83fc
 </beans>
  
