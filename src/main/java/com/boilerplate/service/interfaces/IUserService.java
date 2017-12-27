@@ -188,6 +188,6 @@ public interface IUserService {
 	 */
 	public boolean checkUserExistence(ExternalFacingUser externalFacingUser)
 			throws ValidationFailedException, ConflictException;
->>>>>>> 6d63e5753dfcf7f3a3f67a2995eed9fc33fd83fc
+
 
 }
