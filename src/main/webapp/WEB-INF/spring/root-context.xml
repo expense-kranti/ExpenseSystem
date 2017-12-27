@@ -140,6 +140,7 @@
 				<entry key="CheckAndCreateReferUUID" value-ref="checkAndCreateReferUUID"></entry>
 				<entry key="FeedbackSubmit" value-ref="feedbackSubmittedObserver"></entry>
 				<entry key="PublishUserAKSOrReferReport" value-ref="publishUserAKSOrReferReport"></entry>
+				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
 
 			</map>
 
@@ -556,7 +557,7 @@
 		</property>
 	</bean>
 
-	<!-- contactUsObserver -->
+	<!-- "sendEmailArticleObserver" -->
 	<bean id="sendEmailArticleObserver" class="com.boilerplate.asyncWork.SendEmailArticleObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
@@ -667,6 +668,31 @@
 		<property name="redisScript" ref="redisScript"></property>
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="redisAssessment" ref="redisAssessment"></property>
+	</bean>
+
+	<!--Dependencies related to rewards -->
+
+	<bean id="rewardService" class="com.boilerplate.service.implemetations.RewardService"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+	</bean>
+
+	<bean id="sendEmailWithRewardWinningUserDetailsObserver"
+		class="com.boilerplate.asyncWork.SendEmailWithRewardWinningUserDetailsObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+	<!-- Rewards AsyncWorkDispatcherObserverList -->
+	<bean id="rewardObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendEmailWithRewardWinningUserDetailsObserver"></ref>
+			</list>
+		</property>
 	</bean>
 
 </beans>
