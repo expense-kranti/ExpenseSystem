@@ -53,8 +53,19 @@ public class SendEmailWithRewardWinningUserDetailsObserver implements IAsyncWork
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		RewardEntity rewardEntity = (RewardEntity) asyncWorkItem.getPayload();
+		prepareForSendingEmail((RewardEntity) asyncWorkItem.getPayload());
+	}
 
+	/**
+	 * This method prepare tosEmailList, bccEmailList, ccEmailList and content
+	 * data values to be sent
+	 * 
+	 * @param rewardEntity
+	 *            it contains the user details to be sent in email
+	 * @throws Exception
+	 *             thrown if exception occurs in sending email
+	 */
+	public void prepareForSendingEmail(RewardEntity rewardEntity) throws Exception {
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		tosEmailList.add(configurationManager.get("Reward_Person_Email"));
 		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
@@ -63,7 +74,6 @@ public class SendEmailWithRewardWinningUserDetailsObserver implements IAsyncWork
 
 		this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, rewardEntity.getName(), rewardEntity.getEmail(),
 				rewardEntity.getPhoneNumber());
-
 	}
 
 	public void sendEmail(BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,

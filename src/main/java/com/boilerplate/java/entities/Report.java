@@ -18,6 +18,12 @@ import com.google.gson.Gson;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+/**
+ * This class represents a report and holds data related to report
+ * 
+ * @author
+ *
+ */
 @ApiModel(value = "A report", description = "A report", parent = BaseEntity.class)
 public class Report extends BaseEntity implements Serializable, ICRMPublishEntity {
 
@@ -125,7 +131,7 @@ public class Report extends BaseEntity implements Serializable, ICRMPublishEntit
 	/**
 	 * Sets report source
 	 * 
-	 * @param reportSourceEnum
+	 * @param reportSource
 	 *            to set
 	 */
 	public void setReportSourceEnum(ReportSource reportSourceEnum) {
@@ -144,7 +150,7 @@ public class Report extends BaseEntity implements Serializable, ICRMPublishEntit
 	/**
 	 * Sets report status
 	 * 
-	 * @param reportStatusEnum
+	 * @param reportStatus
 	 *            to set
 	 */
 	public void setReportStatusEnum(ReportStatus reportStatusEnum) {
@@ -237,9 +243,9 @@ public class Report extends BaseEntity implements Serializable, ICRMPublishEntit
 	}
 
 	/**
-	 * Sets report version Enum
+	 * Sets report version
 	 * 
-	 * @param reportVersionEnum
+	 * @param reportVersion
 	 *            to set
 	 */
 	public void setReportVersionEnum(ReportVersion reportVersionEnum) {
@@ -254,30 +260,49 @@ public class Report extends BaseEntity implements Serializable, ICRMPublishEntit
 		return this;
 	}
 
+	/**
+	 * This is the id of the user for whom the report is generated
+	 */
 	@ApiModelProperty(value = "The id of the user for whom the report is generated")
 	private String userId;
-
+	/**
+	 * This is id of the file for the report
+	 */
 	@ApiModelProperty(value = "The id of the file for the report")
 	private String fileId;
-
+	/**
+	 * This is
+	 */
 	@ApiModelProperty(value = "This is the source of report")
 	private ReportSource reportSourceEnum;
-
+	/**
+	 * This is status of report
+	 */
 	@ApiModelProperty(value = "This is the status of report")
 	private ReportStatus reportStatusEnum;
-
+	/**
+	 * This is bureauScore
+	 */
 	@ApiModelProperty(value = "This is score")
 	private int bureauScore;
-
+	/**
+	 * This is when report was created on the bureau
+	 */
 	@ApiModelProperty(value = "When report was created on the bureau")
 	private String reportDateTime;
-
+	/**
+	 * This is the report number
+	 */
 	@ApiModelProperty(value = "This is the report number")
 	private String reportNumber;
-
+	/**
+	 * This is the credit rating
+	 */
 	@ApiModelProperty(value = "This is the credit rating")
 	private String creditRating;
-
+	/**
+	 * This is the version of report
+	 */
 	@ApiModelProperty(value = "This is the version of report")
 	private ReportVersion reportVersionEnum;
 

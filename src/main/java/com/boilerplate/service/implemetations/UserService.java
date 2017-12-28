@@ -33,6 +33,7 @@ import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
+import com.boilerplate.service.interfaces.IBlogActivityService;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.boilerplate.service.interfaces.IRoleService;
 import com.boilerplate.service.interfaces.IUserService;
@@ -201,6 +202,22 @@ public class UserService implements IUserService {
 	 */
 	public void setReferralService(IReferralService referralService) {
 		this.referralService = referralService;
+	}
+
+	/**
+	 * This is the blog activity service instance
+	 */
+	@Autowired
+	IBlogActivityService blogActivityService;
+
+	/**
+	 * Sets the blog activity service
+	 * 
+	 * @param blogActivityService
+	 *            the blogActivityService to set
+	 */
+	public void setBlogActivityService(IBlogActivityService blogActivityService) {
+		this.blogActivityService = blogActivityService;
 	}
 
 	@Autowired
@@ -748,13 +765,17 @@ public class UserService implements IUserService {
 		// Save user's id and refer UUID in hash map
 		return userDataAccess.getReferUser(uuid);
 	}
+
 	/**
 	 * This api updates a user
-	 * @param user The user
-	 * @throws ConflictException if there is an error updating the user
+	 * 
+	 * @param user
+	 *            The user
+	 * @throws ConflictException
+	 *             if there is an error updating the user
 	 */
 	@Override
-	public void update(ExternalFacingReturnedUser user) throws ConflictException{
+	public void update(ExternalFacingReturnedUser user) throws ConflictException {
 		this.userDataAccess.update(user);
 	}
 
@@ -769,13 +790,14 @@ public class UserService implements IUserService {
 		}
 		manageUserEntity.validate();
 		String userId = manageUserEntity.getUserId();
+		// normalized userId with authentication provider concatenated
 		userId = normalizeUserId(userId);
 		if (this.userExists(userId)) {
 			ExternalFacingUser user = userDataAccess.getUser(userId, null);
 			// delete user all assessment related data
 			assessmentService.deleteUserAllAssessmentData(userId);
-			// delete user's all referral related data
-			referralService.deleteUserAllReferralData(user.getUserReferId());
+			// delete user blog activity related data
+			blogActivityService.deleteUserBlogActivityService(userId);
 			// delete user email entry in emailhashmap
 			if (!BaseEntity.isNullOrEmpty(user.getEmail())) {
 				this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_USER_EMAIL_HASH_BASE_TAG"),
@@ -784,13 +806,17 @@ public class UserService implements IUserService {
 			// delete hash map entries in database
 			this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"),
 					user.getUserId().toUpperCase());
-			this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
-					user.getUserReferId());
-			this.redisSFUpdateHashAccess.del(Sfupdatehash + user.getUserId());
-			
+			// check if user refer id is not null then there might be entries in
+			// database which are using user refer id
+			if (user.getUserReferId() != null) {
+				// delete user's all referral related data
+				referralService.deleteUserAllReferralData(user.getUserReferId());
+				this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
+						user.getUserReferId());
+			}
+			this.redisSFUpdateHashAccess.del(Sfupdatehash + userId);
 			// delete user
 			userDataAccess.deleteUser(user);
-
 		} else {
 			throw new NotFoundException("User Entity", "No User Found with this id", null);
 		}

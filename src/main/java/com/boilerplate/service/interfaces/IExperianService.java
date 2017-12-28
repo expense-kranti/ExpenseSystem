@@ -68,11 +68,12 @@ public interface IExperianService {
 	 * @param questionId
 	 *            the question id of the question
 	 * @param answerPart1
-	 *            answer part 1 of the question
+	 *            answer part 1 of the answer of the question
 	 * @param answerPart2
-	 *            answer part 2 of the question
+	 *            answer part 2 of the answer of the question
 	 * @return the reportInputEntity that contains data produced during this
-	 *         process of experian integration like question data
+	 *         process of experian integration like question data for request,
+	 *         report data got in response
 	 * @throws ConflictException
 	 *             thrown when there is an error in updating the user
 	 * @throws NotFoundException
@@ -88,12 +89,14 @@ public interface IExperianService {
 	 *             the configuration requested.
 	 * @throws SAXException
 	 *             thrown when exception occurs in parsing the xml document
-	 * @throws Exception
-	 *             thrown for some unspecified exceptions like when queue fails
-	 *             while sending queue job for sending sms for kyc update
+	 * @throws UpdateFailedException
+	 *             thrown when saving of experian report data fails
+	 * @throws PreconditionFailedException
+	 *             thrown when successful response of http request to experian
+	 *             server is not received
 	 */
 	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
-			throws ConflictException, NotFoundException, IOException, PreconditionFailedException, BadRequestException,
-			SAXException, Exception;
+			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
+			UpdateFailedException, ParserConfigurationException, PreconditionFailedException;
 
 }

@@ -9,17 +9,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value="A File", description="This is a file entity", parent=BaseEntity.class)
-public class FileEntity extends BaseEntity implements Serializable{
+/**
+ * This class holds the file related data of a file
+ * 
+ * @author
+ *
+ */
+@ApiModel(value = "A File", description = "This is a file entity", parent = BaseEntity.class)
+public class FileEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the name of the file
 	 */
 	@JsonIgnore
 	private String fileName;
-	
+
 	/**
 	 * This gets the file name
+	 * 
 	 * @return The file name
 	 */
 	public String getFileName() {
@@ -28,7 +35,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This sets the file name
-	 * @param fileName The file name
+	 * 
+	 * @param fileName
+	 *            The file name
 	 */
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
@@ -36,6 +45,7 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This gets content type
+	 * 
 	 * @return The content type
 	 */
 	public String getContentType() {
@@ -44,7 +54,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This sets the content type
-	 * @param contentType The content type
+	 * 
+	 * @param contentType
+	 *            The content type
 	 */
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
@@ -52,6 +64,7 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This gets the user id
+	 * 
 	 * @return The user id
 	 */
 	public String getUserId() {
@@ -60,7 +73,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This sets the user id
-	 * @param userId The user id
+	 * 
+	 * @param userId
+	 *            The user id
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -68,6 +83,7 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This gets the master file tag
+	 * 
 	 * @return the master file tag
 	 */
 	public String getFileMasterTag() {
@@ -76,7 +92,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This sets the master file tag
-	 * @param fileMasterTag The master file tag
+	 * 
+	 * @param fileMasterTag
+	 *            The master file tag
 	 */
 	public void setFileMasterTag(String fileMasterTag) {
 		this.fileMasterTag = fileMasterTag;
@@ -84,6 +102,7 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This is the file name on the disk
+	 * 
 	 * @return The file name on disk
 	 */
 	public String getFileNameOnDisk() {
@@ -92,7 +111,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This sets the file name on disk
-	 * @param fileNameOnDisk The file name on disk
+	 * 
+	 * @param fileNameOnDisk
+	 *            The file name on disk
 	 */
 	public void setFileNameOnDisk(String fileNameOnDisk) {
 		this.fileNameOnDisk = fileNameOnDisk;
@@ -100,15 +121,18 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This gets the full file name on disk
+	 * 
 	 * @return The full file name on disk
 	 */
 	public String getFullFileNameOnDisk() {
 		return fullFileNameOnDisk;
 	}
-	
+
 	/**
 	 * This sets the full file name on disk
-	 * @param fullFileNameOnDisk The full file name on disk
+	 * 
+	 * @param fullFileNameOnDisk
+	 *            The full file name on disk
 	 */
 	public void setFullFileNameOnDisk(String fullFileNameOnDisk) {
 		this.fullFileNameOnDisk = fullFileNameOnDisk;
@@ -117,32 +141,32 @@ public class FileEntity extends BaseEntity implements Serializable{
 	/**
 	 * This is the content type of file
 	 */
-	@ApiModelProperty(value="This is the file content type")
+	@ApiModelProperty(value = "This is the file content type")
 	private String contentType;
-	
+
 	/**
 	 * This is the user id of the file
 	 */
-	@ApiModelProperty(value="This is the id of the user who is saving the file")
+	@ApiModelProperty(value = "This is the id of the user who is saving the file")
 	private String userId;
-	
+
 	/**
 	 * This is the file master tag
 	 */
-	@ApiModelProperty(value="This is the file master tag")
+	@ApiModelProperty(value = "This is the file master tag")
 	private String fileMasterTag;
-	
+
 	/**
 	 * This is the file name on disk
 	 */
 	@JsonIgnore
 	private String fileNameOnDisk;
-	
+
 	/**
 	 * This is the full file name on disk
 	 */
 	private String fullFileNameOnDisk;
-	
+
 	/**
 	 * @see base.validate
 	 */
@@ -169,10 +193,11 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * Gets the file
+	 * 
 	 * @return The file
 	 */
 	public java.io.File getFile() {
-		if(this.file == null){
+		if (this.file == null) {
 			this.file = new File(this.fullFileNameOnDisk);
 		}
 		return file;
@@ -180,7 +205,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * Sets the file
-	 * @param file The file
+	 * 
+	 * @param file
+	 *            The file
 	 */
 	public void setFile(java.io.File file) {
 		this.file = file;
@@ -188,22 +215,26 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * This method gets metadata
+	 * 
 	 * @return The metadata
 	 */
-	public BoilerplateMap<String,String> getMetaData() {
+	public BoilerplateMap<String, String> getMetaData() {
 		return metaData;
 	}
 
 	/**
 	 * This method sets metadata
-	 * @param metaData The metadata
+	 * 
+	 * @param metaData
+	 *            The metadata
 	 */
-	public void setMetaData(BoilerplateMap<String,String> metaData) {
+	public void setMetaData(BoilerplateMap<String, String> metaData) {
 		this.metaData = metaData;
 	}
 
 	/**
 	 * Gets the organization Id
+	 * 
 	 * @return The organization id
 	 */
 	public String getOrganizationId() {
@@ -212,7 +243,9 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * Sets the organization id
-	 * @param organizationId The organization id
+	 * 
+	 * @param organizationId
+	 *            The organization id
 	 */
 	public void setOrganizationId(String organizationId) {
 		this.organizationId = organizationId;
@@ -220,14 +253,16 @@ public class FileEntity extends BaseEntity implements Serializable{
 
 	/**
 	 * Gets the relative sftp url
+	 * 
 	 * @return
 	 */
 	public String getRelativeSFTPURL() {
-		return "/"+this.fileNameOnDisk;
+		return "/" + this.fileNameOnDisk;
 	}
 
 	/**
 	 * Sets the relative sftp url
+	 * 
 	 * @param relativeSFTPURL
 	 */
 	public void setRelativeSFTPURL(String relativeSFTPURL) {
@@ -239,22 +274,22 @@ public class FileEntity extends BaseEntity implements Serializable{
 	 */
 	@JsonIgnore
 	private java.io.File file;
-	
+
 	/**
 	 * This is the boiler plate map
 	 */
-	private BoilerplateMap<String,String> metaData = new BoilerplateMap();
-	
+	private BoilerplateMap<String, String> metaData = new BoilerplateMap();
+
 	/**
 	 * This is the orgnization id of the user creating the file
 	 */
 	@JsonIgnore
 	private String organizationId;
-	
+
 	/**
 	 * This is the relative url for accessfrom sftp
 	 */
-	@ApiModelProperty(value="This is the relative url for accessfrom sftp, to access this over sftp add the shared base sftp url")
+	@ApiModelProperty(value = "This is the relative url for accessfrom sftp, to access this over sftp add the shared base sftp url")
 	private String relativeSFTPURL;
-		
+
 }

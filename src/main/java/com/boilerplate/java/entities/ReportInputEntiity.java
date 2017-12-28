@@ -35,6 +35,7 @@ public class ReportInputEntiity extends ExperianDataPublishEntity implements Ser
 	 * This sets the question map
 	 * 
 	 * @param question
+	 *            map to set
 	 */
 	public void setQuestion(BoilerplateMap<String, ExperianQuestionAnswer> question) {
 		this.question = question;
@@ -59,34 +60,78 @@ public class ReportInputEntiity extends ExperianDataPublishEntity implements Ser
 		this.currentQuestion = currentQuestion;
 	}
 
+	/**
+	 * Gets the reportFileEntity
+	 * 
+	 * @return reportFileEntity
+	 */
 	public FileEntity getReportFileEntity() {
 		return reportFileEntity;
 	}
 
+	/**
+	 * Sets the reportFileEntity
+	 * 
+	 * @param reportFileEntity
+	 *            to set
+	 */
 	public void setReportFileEntity(FileEntity reportFileEntity) {
 		this.reportFileEntity = reportFileEntity;
 	}
 
+	/**
+	 * Gets the userId
+	 * 
+	 * @return the userId
+	 */
 	public String getUserId() {
 		return userId;
 	}
 
+	/**
+	 * Sets the userId
+	 * 
+	 * @param userId
+	 *            to set
+	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
+	/**
+	 * Gets the report
+	 * 
+	 * @return the report
+	 */
 	public Report getReport() {
 		return report;
 	}
 
+	/**
+	 * Sets the report
+	 * 
+	 * @param report
+	 *            to set
+	 */
 	public void setReport(Report report) {
 		this.report = report;
 	}
 
+	/**
+	 * Gets the userLoginId
+	 * 
+	 * @return the userLoginId
+	 */
 	public String getUserLoginId() {
 		return userLoginId;
 	}
 
+	/**
+	 * Sets the userLoginId
+	 * 
+	 * @param userLoginId
+	 *            to set
+	 */
 	public void setUserLoginId(String userLoginId) {
 		this.userLoginId = userLoginId;
 	}
@@ -99,12 +144,14 @@ public class ReportInputEntiity extends ExperianDataPublishEntity implements Ser
 	private BoilerplateMap<String, ExperianQuestionAnswer> question = new BoilerplateMap<>();
 
 	/**
-	 * 
+	 * This is the current question
 	 */
 
 	@ApiModelProperty(value = "This is the current question")
 	private ExperianQuestionAnswer currentQuestion;
-
+	/**
+	 * This is the list of proof files like id and address proof
+	 */
 	@ApiModelProperty(value = "This is the list of proof files like id and address proof")
 	private BoilerplateList<String> proofFiles = new BoilerplateList<>();
 
@@ -146,14 +193,23 @@ public class ReportInputEntiity extends ExperianDataPublishEntity implements Ser
 		this.reportNumber = reportNumber;
 	}
 
+	/**
+	 * This is the reportFileEntity containing report's file related data
+	 */
 	@JsonIgnore
 	private FileEntity reportFileEntity;
-
+	/**
+	 * This is the userId against whom experian report is to get
+	 */
 	@JsonIgnore
 	private String userId;
-
+	/**
+	 * This is the report
+	 */
 	private Report report;
-
+	/**
+	 * This is the userLoginId which is trying to get experian report
+	 */
 	private String userLoginId;
 
 	/**
@@ -372,7 +428,9 @@ public class ReportInputEntiity extends ExperianDataPublishEntity implements Ser
 	 */
 	@JsonIgnore
 	private java.util.Date voucherExpiry;
-
+	/**
+	 * This is the question count
+	 */
 	private int questionCount;
 	/**
 	 * This is the boolean check for kyc sms send to customer or not

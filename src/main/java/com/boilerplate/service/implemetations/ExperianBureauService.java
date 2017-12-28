@@ -289,7 +289,7 @@ public class ExperianBureauService implements IExperianService {
 	 *            the user against which experian report to generate thus
 	 *            integration been started
 	 * @return the reportInputEntity containing the returned sessionIds,
-	 *         stageOneId and report etc. in response to requests
+	 *         stageOneId, stageTwoId, report etc. in response to requests
 	 * @throws IOException
 	 *             thrown if IOException occurs in while making http requests to
 	 *             experian server
@@ -299,13 +299,13 @@ public class ExperianBureauService implements IExperianService {
 	 * @throws NotFoundException
 	 *             thrown when user not found in database
 	 * @throws ConflictException
-	 *             when user already exists
+	 *             when there is an error in updating the user
 	 * @throws BadRequestException
 	 *             when userId is not found
 	 */
 	private ReportInputEntiity doStartSingleURLIntegration(ReportInputEntiity reportInputEntiity,
 			ExternalFacingReturnedUser user)
-			throws IOException, PreconditionFailedException, NotFoundException, ConflictException, BadRequestException {
+			throws IOException, PreconditionFailedException, NotFoundException, BadRequestException, ConflictException {
 		// set reportInputEntity current state in experian request making
 		// process
 		reportInputEntiity.setStateEnum(ReportInputEntiity.State.SessionSetup);
@@ -324,7 +324,8 @@ public class ExperianBureauService implements IExperianService {
 		requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
 
 		logger.logInfo("ExperianBureauService", "Single Request", "Request" + reportInputEntiity.getUserId(), request);
-		// make httprequest to our Mediator which turn makes request to experian
+		// make httprequest to our Mediator which in turn will make request to
+		// experian
 		// server APIs
 		HttpResponse httpResponseJava = HttpUtility.makeHttpRequest(
 				configurationManager.get("Experian_INITIATE_URL_JAVA"), requestHeadersJava, null, request, "POST");
@@ -333,7 +334,7 @@ public class ExperianBureauService implements IExperianService {
 				Integer.toString(httpResponseJava.getHttpStatus()));
 		logger.logInfo("ExperianBureauService", "Single Response", "Response" + reportInputEntiity.getUserId(),
 				httpResponseJava.getResponseBody());
-		// extract core experian response wrapped inside our Mediator response
+		// extract the experian response wrapped inside our Mediator response
 		HttpResponse httpResponse = Base.fromJSON(httpResponseJava.getResponseBody(), HttpResponse.class);
 
 		String ecvSessionValue = null;
@@ -363,6 +364,7 @@ public class ExperianBureauService implements IExperianService {
 			// check the case where report comes up
 			if (responseBodyMap.get("errorString") == null
 					&& responseBodyMap.get("showHtmlReportForCreditReport") != null) {
+				// parse report and get report contents which are required
 				reportInputEntiity = parseReportAndGetReportNumber(reportInputEntiity, responseBodyMap);
 				user = observeReport(reportInputEntiity, user);
 				user.setExperianReportUrl(reportInputEntiity.getReportFileEntity().getFullFileNameOnDisk());
@@ -586,11 +588,11 @@ public class ExperianBureauService implements IExperianService {
 	 * This method sets the pan number inside the pan number list hash
 	 * 
 	 * @param reportInputEntiity
-	 *            The reportInputEntiity
+	 *            The reportInputEntiity containing pan number in this context
 	 * @throws NotFoundException
-	 *             The NotFoundException
+	 *             The NotFoundException thrown when pan number not found
 	 * @throws BadRequestException
-	 *             The BadRequestException
+	 *             The BadRequestException if user id is not populated
 	 */
 	private void setPanNumberInHash(ReportInputEntiity reportInputEntiity)
 			throws NotFoundException, BadRequestException {
@@ -605,7 +607,8 @@ public class ExperianBureauService implements IExperianService {
 	 * This method will re inserts the unused vouchers in queue again.
 	 * 
 	 * @param reportInputEntity
-	 *            The reportInputEntity
+	 *            The reportInputEntity containing voucher related data in this
+	 *            context
 	 */
 	private void reInsertUnusedVouchers(ReportInputEntiity reportInputEntity) {
 		logger.logInfo("ExperianBureauService", "reInsertUnusedVouchers", "Starts creating voucher List", "");
@@ -659,7 +662,7 @@ public class ExperianBureauService implements IExperianService {
 	 * 
 	 * @param httpResponse
 	 *            The httpResponse
-	 * @return The error string
+	 * @return The error string or response json field
 	 */
 	private String getErrorStringAndResponseJsonFields(HttpResponse httpResponse) {
 		String errorAndresponseJsonString = "";
@@ -684,9 +687,9 @@ public class ExperianBureauService implements IExperianService {
 	/**
 	 * This method gets the error string from http response
 	 * 
-	 * @param httpResponse
-	 *            The httpResponse
-	 * @return The error string
+	 * @param responseBodyMap
+	 *            the responseBodyMap having response data in a map
+	 * @return The error string or response json field
 	 */
 	private String getErrorStringAndResponseJsonFields(Map<String, Object> responseBodyMap) {
 		String errorAndresponseJsonString = "";
@@ -769,7 +772,7 @@ public class ExperianBureauService implements IExperianService {
 	 *            userId being used here
 	 * @param report
 	 *            The Report whose version is to be set
-	 * @return the report
+	 * @return the report with updated report version
 	 * @throws UnauthorizedException
 	 *             Thrown when logged in user is not authorized to get report
 	 *             metadata
@@ -787,7 +790,8 @@ public class ExperianBureauService implements IExperianService {
 	 */
 	@Override
 	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
-			throws Exception {
+			throws NotFoundException, BadRequestException, ConflictException, IOException, PreconditionFailedException,
+			ParserConfigurationException, SAXException, UpdateFailedException {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		ReportInputEntiity reportInputEntity = user.getReportInputEntitty();
@@ -929,6 +933,7 @@ public class ExperianBureauService implements IExperianService {
 		}
 
 		if (responseBodyMap.get("responseJson").equals("passedReport")) {
+			// parse report and get report contents which are required
 			reportInputEntity = parseReportAndGetReportNumber(reportInputEntity, responseBodyMap);
 			user = observeReport(reportInputEntity, user);
 			user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
@@ -962,11 +967,19 @@ public class ExperianBureauService implements IExperianService {
 	 *            The response map
 	 * @param httpResponse
 	 *            The httpresponse of experian request
-	 * @throws Exception
-	 *             throws in case of any error occurs
+	 * @throws BadRequestException
+	 *             if userId not provided
+	 * @throws NotFoundException
+	 *             if user with given userId not found
+	 * @throws ConflictException
+	 *             when there is an error in updating a user
+	 * @throws PreconditionFailedException
+	 *             thrown when successful response of http request to experian
+	 *             server is not received
 	 */
 	private void handleError(ExternalFacingReturnedUser user, ReportInputEntiity reportInputEntity,
-			Map<String, Object> responseBodyMap, HttpResponse httpResponse) throws Exception {
+			Map<String, Object> responseBodyMap, HttpResponse httpResponse)
+			throws NotFoundException, BadRequestException, PreconditionFailedException, ConflictException {
 		if (responseBodyMap.get("responseJson").equals("systemError") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
@@ -1091,19 +1104,28 @@ public class ExperianBureauService implements IExperianService {
 	 * 
 	 * @param reportInputEntity
 	 *            The reportInputEntity
-	 * @throws Exception
-	 *             throws in case of queue down
+	 * @throws BadRequestException
+	 *             if userId is not provided
+	 * @throws NotFoundException
+	 *             if user with given user id not found
 	 */
-	private void pushIntoQueueToSendKYCUploadSMS(ReportInputEntiity reportInputEntity) throws Exception {
+	private void pushIntoQueueToSendKYCUploadSMS(ReportInputEntiity reportInputEntity)
+			throws NotFoundException, BadRequestException {
 		ReportInputEntiity ReportInputEntiityClone = null;
 		ReportInputEntiityClone = (ReportInputEntiity) reportInputEntity.clone();
 		ExternalFacingReturnedUser externalFacingReturnedUser = this.userService
 				.get(reportInputEntity.getUserLoginId());
 
-		if (reportInputEntity.isDontSendKycSms() == false || !(reportInputEntity.isDontSendKycSms())) {
-			queueReaderJob.requestBackroundWorkItem(externalFacingReturnedUser, subjectsForExperianKYCUpload,
-					"ExperianBureauService", "pushIntoQueueToSendKYCUploadSMS");
+		try {
+			if (reportInputEntity.isDontSendKycSms() == false || !(reportInputEntity.isDontSendKycSms())) {
+				queueReaderJob.requestBackroundWorkItem(externalFacingReturnedUser, subjectsForExperianKYCUpload,
+						"ExperianBureauService", "pushIntoQueueToSendKYCUploadSMS");
 
+			}
+		} catch (Exception exSMSQueue) {
+			// if queue fails just log the exception for exception details
+			logger.logException("ExperianBureauService", "pushIntoQueueToSendKYCUploadSMS",
+					"try-Queue Reader - Send SMS", exSMSQueue.toString(), exSMSQueue);
 		}
 
 	}
@@ -1138,12 +1160,12 @@ public class ExperianBureauService implements IExperianService {
 	 * reportNumber
 	 * 
 	 * @param reportInputEntity
-	 *            the reportInputEntity
+	 *            the reportInputEntity that contains the report to parse
 	 * @param responseBodyMap
 	 * @return the reportInputEntity that contains experian integration state,
 	 *         report number
 	 * @throws UpdateFailedException
-	 *             thrown when saving of experian report fails
+	 *             thrown when saving of experian report data fails
 	 * @throws IOException
 	 *             thrown when exception occurs in reading report file
 	 * @throws BadRequestException

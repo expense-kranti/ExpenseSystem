@@ -27,7 +27,6 @@ public class BlogActivityService implements IBlogActivityService {
 	}
 
 	/** 
-	 * @return 
 	 * @see IBlogActivityService.saveActivity
 	 */
 	@Override
@@ -36,5 +35,12 @@ public class BlogActivityService implements IBlogActivityService {
 		blogActivityDataAccess.saveActivity(blogActivityEntity);
 		blogActivityEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
 		return blogActivityEntity;
+	}
+	/**
+	 * @see IBlogActivityService.deleteUserBlogActivityService
+	 */
+	@Override
+	public void deleteUserBlogActivityService(String userId){
+		blogActivityDataAccess.deleteActivity(userId);
 	}
 }

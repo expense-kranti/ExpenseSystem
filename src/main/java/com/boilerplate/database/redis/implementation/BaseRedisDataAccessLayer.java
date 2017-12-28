@@ -511,8 +511,9 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		methodPermission = new MethodPermissions();
+
 		// for method checkUserExistence
+		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setMethodName(
@@ -520,8 +521,9 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		methodPermission = new MethodPermissions();
+
 		// for method deleteUserAndData
+		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.UserController.deleteUserAndData(com.boilerplate.java.entities.ManageUserEntity)");
 		methodPermission.setMethodName(
@@ -871,19 +873,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//method permissions for Experian integration api
-		
+
+		// method permissions for Experian integration api
+
 		// for startSingle method
 		methodPermission = new MethodPermissions();
-		methodPermission.setId("public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
-		methodPermission.setMethodName("public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		
 
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}
@@ -1111,24 +1113,32 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "shiva.gupta@krantitechservices.in");
 		vAllEDev.put("FEEDBACK_EMAIL", "shiva.gupta@krantitechservices.in");
 
-		//config for experian report
+		// config for experian report
 		vAllEDev.put("Voucher_Count_Alert_Frequency", "250");
-		vAllEDev.put("Experian_Single_Url_Request_Template", "clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
-		vAllEDev.put("Experian_Single_Request_URL", "https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/singleAction.action");		
-		vAllEDev.put("Experian_User_Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
-		vAllEDev.put("Experian_INITIATE_URL_JAVA", "http://javadev-370467541.ap-southeast-1.elb.amazonaws.com/java/experian/initiateExperian");
-		
-		vAllEDev.put("JAVA_HTTP_REQUEST_TEMPLATE", "{\"url\": \"@url\",\"requestHeaders\": @requestHeaders,\"requestBody\": \"@requestBody\",\"method\": \"@method\"}");
-		vAllEDev.put("JAVA_HTTP_REQUEST_QUESTION_TEMPLATE", "{\"url\": \"@url\",\"requestHeaders\": @requestHeaders,\"requestCookies\": @requestCookies,\"requestBody\": \"@requestBody\",\"method\": \"@method\"}");
+		vAllEDev.put("Experian_Single_Url_Request_Template",
+				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
+		vAllEDev.put("Experian_Single_Request_URL",
+				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/singleAction.action");
+		vAllEDev.put("Experian_User_Agent",
+				"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		vAllEDev.put("Experian_INITIATE_URL_JAVA",
+				"http://javadev-370467541.ap-southeast-1.elb.amazonaws.com/java/experian/initiateExperian");
+
+		vAllEDev.put("JAVA_HTTP_REQUEST_TEMPLATE",
+				"{\"url\": \"@url\",\"requestHeaders\": @requestHeaders,\"requestBody\": \"@requestBody\",\"method\": \"@method\"}");
+		vAllEDev.put("JAVA_HTTP_REQUEST_QUESTION_TEMPLATE",
+				"{\"url\": \"@url\",\"requestHeaders\": @requestHeaders,\"requestCookies\": @requestCookies,\"requestBody\": \"@requestBody\",\"method\": \"@method\"}");
 		vAllEDev.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
-		
+
 		vAllEDev.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
-		vAllEDev.put("Experian_Question_Body", "answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllEDev.put("Experian_Question_Body",
+				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllEDev.put("Experian_Question_Content_Type", "application/json");
 		vAllEDev.put("Experian_Question_Accept", "*/*");
-		vAllEDev.put("Experian_Question_URL", "https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
+		vAllEDev.put("Experian_Question_URL",
+				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
 		// added for publishUserAKSOrReferReport
-		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false																			
+		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
 				"a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
 		vAllEDev.put("Reward_Person_Email", "shiva.gupta@krantitechservices.in");
@@ -1320,7 +1330,7 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("POST_ARTICLE_EMAIL_SUBJECT", "Akshar Article : @Subject");
 		contentMap.put("POST_ARTICLE_EMAIL_BODY",
 				"<b><h2>Article Details:<h2></b> <b>Name:</b> @UserName <br> <b>Email:</b> @UserEmail <br> <b>Contact Number:</b> @UserMobileNumber <br> <b>Title:</b> @Title <br> <b>Content:</b> @Content <br> <b>KeyWords:</b> @KeyWords");
-		
+
 		// sms message for sending invitation to referred user
 		// contentMap.put("JOIN_INVITATION_SMS",
 		// "Hi, @UserFirstName referred you to join AKSHAR! Play exciting
@@ -1336,10 +1346,9 @@ public class BaseRedisDataAccessLayer {
 		// feedback)
 		contentMap.put("FEEDBACK_EMAIL_SUBJECT", "Project Akshar Appreciation By Customer");
 		// content related to sinding reward winning user details in email
-				contentMap.put("REWARD_WINNING_USER_DETAILS_EMAIL_SUBJECT", "Reward Redemption");
-				contentMap.put("REWARD_WINNING_USER_DETAILS_EMAIL_BODY",
-						" <b>Name:</b> @RewardWinningUserName <br> <b>Contact Number:</b> @RewardWinnigUserMobileNumber <br> <b>Email:</b> @RewardWinnigUserEmail <br>");
-
+		contentMap.put("REWARD_WINNING_USER_DETAILS_EMAIL_SUBJECT", "Reward Redemption");
+		contentMap.put("REWARD_WINNING_USER_DETAILS_EMAIL_BODY",
+				" <b>Name:</b> @RewardWinningUserName <br> <b>Contact Number:</b> @RewardWinnigUserMobileNumber <br> <b>Email:</b> @RewardWinnigUserEmail <br>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

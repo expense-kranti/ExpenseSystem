@@ -34,6 +34,7 @@
 		<property name="referral" ref="referral"></property>
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="referralService" ref="referralService"></property>
+		<property name="blogActivityService" ref="blogActivityService"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -147,7 +148,7 @@
 
 		</property>
 	</bean>
-		<bean id="parseReportsFromExperianObserver"
+	<bean id="parseReportsFromExperianObserver"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
 			<list>
@@ -702,7 +703,7 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 	</bean>
-	
+
 	<bean id="reportService" class="com.boilerplate.service.implemetations.ReportService">
 		<property name="fileService" ref="fileService"></property>
 		<property name="reportDataAccess" ref="reportDataAccess"></property>
@@ -710,12 +711,14 @@
 	<bean id="reportDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisReport">
 	</bean>
-	
+
 	<!--Dependencies related to rewards -->
 
 	<bean id="rewardService" class="com.boilerplate.service.implemetations.RewardService"
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="sendEmailWithRewardWinningUserDetailsObserver"
+			ref="sendEmailWithRewardWinningUserDetailsObserver"></property>
 	</bean>
 
 	<bean id="sendEmailWithRewardWinningUserDetailsObserver"

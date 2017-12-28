@@ -35,9 +35,9 @@ public class FileService implements IFileService {
 	 * The setter to set the configuration manager
 	 * 
 	 * @param configurationManager
+	 *            to set
 	 */
-	public void setConfigurationManager(
-			com.boilerplate.configurations.ConfigurationManager configurationManager) {
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
 
@@ -57,25 +57,35 @@ public class FileService implements IFileService {
 		this.file = file;
 	}
 
+	/**
+	 * This is the instance of filePointer
+	 */
 	@Autowired
 	IFilePointer filePointer;
 
+	/**
+	 * Sets the file pointer
+	 * 
+	 * @param filePointer
+	 *            to set
+	 */
 	public void setFilePointer(IFilePointer filePointer) {
 		this.filePointer = filePointer;
 	}
 
+	/**
+	 * @see IFileService.saveFile
+	 */
 	@Override
-	public FileEntity saveFile(String fileMasterTag, MultipartFile file)
-			throws UpdateFailedException {
+	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws UpdateFailedException {
 
 		try {
 			// validates the file size, If greater than Maximum_File_Upload_Size
 			// then throws the IOException.
-			if ((file.getSize() / (1024 * 1024)) > Long.parseLong(
-					configurationManager.get("Maximum_File_Upload_Size"))) {
-				throw new IOException("File size is greater than "
-						+ configurationManager.get("Maximum_File_Upload_Size")
-						+ "MB");
+			if ((file.getSize() / (1024 * 1024)) > Long
+					.parseLong(configurationManager.get("Maximum_File_Upload_Size"))) {
+				throw new IOException(
+						"File size is greater than " + configurationManager.get("Maximum_File_Upload_Size") + "MB");
 			}
 			// save file to disk
 			String fileNameOnDisk = this.file.saveFile(file);
@@ -83,18 +93,14 @@ public class FileService implements IFileService {
 
 			FileEntity fileEntity = new FileEntity();
 			// This will get content type of file
-			fileEntity.setContentType(java.nio.file.Files.probeContentType(
-					Paths.get(configurationManager.get("RootFileUploadLocation")
-							+ fileNameOnDisk)));
+			fileEntity.setContentType(java.nio.file.Files
+					.probeContentType(Paths.get(configurationManager.get("RootFileUploadLocation") + fileNameOnDisk)));
 			fileEntity.setFileMasterTag(fileMasterTag);
 			fileEntity.setFileName(fileNameOnDisk);
 			fileEntity.setFileNameOnDisk(fileNameOnDisk);
-			fileEntity.setUserId(RequestThreadLocal.getSession()
-					.getExternalFacingUser().getId());
-			fileEntity.setOrganizationId(RequestThreadLocal.getSession()
-					.getExternalFacingUser().getOrganizationId());
-			fileEntity.setFullFileNameOnDisk(
-					this.getPreSignedS3URL(fileNameOnDisk));
+			fileEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
+			fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
+			fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileNameOnDisk));
 			fileEntity = filePointer.save(fileEntity);
 			return fileEntity;
 		} catch (IOException ex) {
@@ -102,27 +108,31 @@ public class FileService implements IFileService {
 		}
 	}
 
+	/**
+	 * @see IFileService.getAllFileListOnMasterTag
+	 */
 	@Override
-	public BoilerplateList<FileEntity> getAllFileListOnMasterTag(
-			String fileMasterTag) {
-	// set fullfile name on disk with pre signed url
-	BoilerplateList<FileEntity> fileEntityList = new BoilerplateList<>();
-	BoilerplateList<FileEntity> fileList = filePointer.getAllFilesOnMasterTag(
-				RequestThreadLocal.getSession().getExternalFacingUser().getId(),
-				fileMasterTag);
-	for(Object fileObject:fileList){
-		FileEntity fileEntity = (FileEntity) fileObject;
-		fileEntity.setFullFileNameOnDisk(file.getPreSignedS3URL(fileEntity.getId()));
-		fileEntityList.add(fileEntity);
-	}
-	return fileEntityList;
+	public BoilerplateList<FileEntity> getAllFileListOnMasterTag(String fileMasterTag) {
+		// set fullfile name on disk with pre signed url
+		BoilerplateList<FileEntity> fileEntityList = new BoilerplateList<>();
+		BoilerplateList<FileEntity> fileList = filePointer
+				.getAllFilesOnMasterTag(RequestThreadLocal.getSession().getExternalFacingUser().getId(), fileMasterTag);
+		for (Object fileObject : fileList) {
+			FileEntity fileEntity = (FileEntity) fileObject;
+			fileEntity.setFullFileNameOnDisk(file.getPreSignedS3URL(fileEntity.getId()));
+			fileEntityList.add(fileEntity);
+		}
+		return fileEntityList;
 	}
 
+	/**
+	 * @see IFileService.getPreSignedS3URL
+	 */
 	@Override
 	public String getPreSignedS3URL(String id) {
 		return file.getPreSignedS3URL(id);
 	}
-	
+
 	/**
 	 * @see IFileService.getFile
 	 */
@@ -132,66 +142,56 @@ public class FileService implements IFileService {
 		// exists
 		FileEntity fileEntity = filePointer.getFilePointerById(id);
 		if (fileEntity == null) {
-			throw new NotFoundException("File", "Not found or unauthorized",
-					null);
+			throw new NotFoundException("File", "Not found or unauthorized", null);
 		}
 		boolean userHasRightsOnFile = false;
 
 		// validate that the user has the rights to read the file
-		if (fileEntity.getUserId().equals(RequestThreadLocal.getSession()
-				.getExternalFacingUser().getId())) {
+		if (fileEntity.getUserId().equals(RequestThreadLocal.getSession().getExternalFacingUser().getId())) {
 			userHasRightsOnFile = true;
 		}
 
 		if (fileEntity.getOrganizationId() != null) {
-			if (RequestThreadLocal.getSession().getExternalFacingUser()
-					.getOrganizationId()
+			if (RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId()
 					.equals(fileEntity.getOrganizationId())) {
 				userHasRightsOnFile = true;
 			}
 		}
 
-		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser()
-				.getRoles()) {
-			if (role.getRoleName().toUpperCase().equals("ADMIN") || role
-					.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
+			if (role.getRoleName().toUpperCase().equals("ADMIN")
+					|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
 				userHasRightsOnFile = true;
 				break;
 			}
 		}
 
 		if (!userHasRightsOnFile) {
-			throw new NotFoundException("File", "Not found or unauthorized",
-					null);
+			throw new NotFoundException("File", "Not found or unauthorized", null);
 		}
 		return fileEntity;
 	}
-	
+
 	/**
 	 * @see IFileService.getAllFileList
 	 */
 	@Override
-	public BoilerplateMap<String, FileEntity> getAllFileList(String userId)
-			throws UnauthorizedException {
+	public BoilerplateMap<String, FileEntity> getAllFileList(String userId) throws UnauthorizedException {
 		boolean canExecute = false;
-		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser()
-				.getRoles()) {
-			if (role.getRoleName().toUpperCase().equals("ADMIN") || role
-					.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
+			if (role.getRoleName().toUpperCase().equals("ADMIN")
+					|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
 				canExecute = true;
 			}
 		}
-		if (RequestThreadLocal.getSession().getExternalFacingUser().getId()
-				.equals(userId)) {
+		if (RequestThreadLocal.getSession().getExternalFacingUser().getId().equals(userId)) {
 			canExecute = true;
 		}
 
 		if (!canExecute)
-			throw new UnauthorizedException("File",
-					"User doesnt have permissions to get files", null);
+			throw new UnauthorizedException("File", "User doesnt have permissions to get files", null);
 
-		BoilerplateList<FileEntity> files = this.filePointer.getAllFiles(userId,
-				null);
+		BoilerplateList<FileEntity> files = this.filePointer.getAllFiles(userId, null);
 		BoilerplateMap<String, FileEntity> map = new BoilerplateMap<String, FileEntity>();
 
 		for (Object file : files) {
