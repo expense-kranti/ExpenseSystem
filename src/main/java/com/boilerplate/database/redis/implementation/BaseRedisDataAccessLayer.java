@@ -871,6 +871,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		//method permissions for Experian integration api
+		
+		// for startSingle method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
+		methodPermission.setMethodName("public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
 
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
 	}

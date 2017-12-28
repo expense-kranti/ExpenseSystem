@@ -9,150 +9,293 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 
-public class ReportTradeline extends BaseEntity implements Serializable,ICRMPublishDynamicURl,ICRMPublishEntity{
+public class ReportTradeline extends BaseEntity implements Serializable, ICRMPublishDynamicURl, ICRMPublishEntity {
 
-
+	/**
+	 * @see BaseEntity.validate
+	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		return true;
 	}
 
+	/**
+	 * @see BaseEntity.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
 		return this;
 	}
 
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
 		return this;
 	}
-	
+
+	/**
+	 * This is the report id
+	 */
 	String reportId;
-	
+	/**
+	 * This is the accountNumber
+	 */
 	String accountNumber;
-	
+	/**
+	 * This is the highCreditLoanAmount
+	 */
 	double highCreditLoanAmount;
-	
+	/**
+	 * This is the repaymentTenure
+	 */
 	double repaymentTenure;
-	
+	/**
+	 * This is the dateOpened
+	 */
 	java.util.Date dateOpened;
-	
+	/**
+	 * This is the dateClosed
+	 */
 	java.util.Date dateClosed;
-	
+	/**
+	 * This is the dateOfLastPayment
+	 */
 	java.util.Date dateOfLastPayment;
-	
+	/**
+	 * This is the accountNumber
+	 */
 	String accountHolderType;
-	
+
+	/**
+	 * Gets electronic contacts
+	 * 
+	 * @return the electronic contacts
+	 */
 	public BoilerplateList<ElectronicContact> getElectronicContacts() {
 		return electronicContacts;
 	}
 
+	/**
+	 * Sets electronic contacts
+	 * 
+	 * @param electronicContacts
+	 *            to set
+	 */
 	public void setElectronicContacts(BoilerplateList<ElectronicContact> electronicContacts) {
 		this.electronicContacts = electronicContacts;
 	}
 
+	/**
+	 * This is the lastHistoryDate
+	 */
 	java.util.Date lastHistoryDate;
-	
+	/**
+	 * This is the daysPastDue
+	 */
 	int daysPastDue;
-	
+	/**
+	 * This is the address
+	 */
 	String address;
-	
+	/**
+	 * This is the electronicContacts
+	 */
 	BoilerplateList<ElectronicContact> electronicContacts = new BoilerplateList<>();
-	
+	/**
+	 * This is the addresses
+	 */
 	BoilerplateList<Address> addresses = new BoilerplateList<>();
-	
-	
 
+	/**
+	 * Gets the addresses
+	 * 
+	 * @return the addresses
+	 */
 	public BoilerplateList<Address> getAddresses() {
 		return addresses;
 	}
 
-	
-
+	/**
+	 * Sets addresses
+	 * 
+	 * @param addresses
+	 *            to set
+	 */
 	public void setAddresses(BoilerplateList<Address> addresses) {
 		this.addresses = addresses;
 	}
 
+	/**
+	 * Gets the dayspastdue
+	 * 
+	 * @return the days past due
+	 */
 	public int getDaysPastDue() {
 		return daysPastDue;
 	}
 
+	/**
+	 * Sets the daysPastDue
+	 * 
+	 * @param daysPastDue
+	 *            to set
+	 */
 	public void setDaysPastDue(int daysPastDue) {
 		this.daysPastDue = daysPastDue;
 	}
 
+	/**
+	 * This is the phone
+	 */
 	String phone;
-	
+	/**
+	 * This is the settlementAmount
+	 */
 	double settlementAmount;
-	
+	/**
+	 * This is the currentBalance
+	 */
 	double currentBalance;
-	
+	/**
+	 * This is the dateReported
+	 */
 	java.util.Date dateReported;
-	
+	/**
+	 * This is the amountDue
+	 */
 	double amountDue;
-	
+	/**
+	 * This is the valueCollateral
+	 */
 	String valueCollateral;
-	
+	/**
+	 * This is the typeCollateral
+	 */
 	String typeCollateral;
-	
+	/**
+	 * This is the occupation
+	 */
 	String occupation;
-	
+	/**
+	 * This is the rateOfIntererst
+	 */
 	double rateOfIntererst;
-	
+	/**
+	 * This is the income
+	 */
 	double income;
-	
+	/**
+	 * This is the tradeLineXML
+	 */
 	String tradeLineXML;
-	
+	/**
+	 * This is the experianTradelineStatusEnum
+	 */
 	ExperianTradelineStatus experianTradelineStatusEnum;
-	
+	/**
+	 * This is the getTos
+	 */
 	boolean getTos;
-	
-	
-	
+
+	/**
+	 * Gets the getTos
+	 * 
+	 * @return the getTos
+	 */
 	public boolean isGetTos() {
 		return getTos;
 	}
 
+	/**
+	 * Sets the getTos
+	 * 
+	 * @param getTos
+	 *            to set
+	 */
 	public void setGetTos(boolean getTos) {
 		this.getTos = getTos;
 	}
 
+	/**
+	 * This is the organizationId
+	 */
 	String organizationId;
-	
+	/**
+	 * This is the productId
+	 */
 	String productId;
-	
+
+	/**
+	 * Gets the report id
+	 * 
+	 * @return report id
+	 */
 	public String getReportId() {
 		return reportId;
 	}
 
+	/**
+	 * Sets the report id
+	 * 
+	 * @param reportId
+	 *            to set
+	 */
 	public void setReportId(String reportId) {
 		this.reportId = reportId;
 	}
 
+	/**
+	 * Gets the accountNumber
+	 * 
+	 * @return the accountNumber
+	 */
 	public String getAccountNumber() {
 		return accountNumber;
 	}
 
+	/**
+	 * Sets the accountNumber
+	 * 
+	 * @param accountNumber
+	 *            to set
+	 */
 	public void setAccountNumber(String accountNumber) {
 		this.accountNumber = accountNumber;
 	}
-
+	/**
+	 * Gets the highCreditLoanAmount
+	 * @return the highCreditLoanAmount
+	 */
 	public double getHighCreditLoanAmount() {
 		return highCreditLoanAmount;
 	}
-
+	/**
+	 * Sets the highCreditLoanAmount
+	 * @param highCreditLoanAmount to set
+	 */
 	public void setHighCreditLoanAmount(double highCreditLoanAmount) {
 		this.highCreditLoanAmount = highCreditLoanAmount;
 	}
-
+	/**
+	 * Gets the repaymentTenure
+	 * @return the repaymentTenure
+	 */
 	public double getRepaymentTenure() {
 		return repaymentTenure;
 	}
-
+	/**
+	 * Sets the repaymentTenure
+	 * @param repaymentTenure to set
+	 */
 	public void setRepaymentTenure(double repaymentTenure) {
 		this.repaymentTenure = repaymentTenure;
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
 	public java.util.Date getDateOpened() {
 		return dateOpened;
 	}
@@ -320,7 +463,7 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 	public void setProductId(String productId) {
 		this.productId = productId;
 	}
-	
+
 	private String userId;
 
 	public String getUserId() {
@@ -330,8 +473,6 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	
-	
 
 	/**
 	 * This is the ReportTradelineStatus
@@ -340,6 +481,7 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 
 	/**
 	 * This method gets the ReportTradelineStatus
+	 * 
 	 * @return reportTradelineStatus The ReportTradelineStatus
 	 */
 	public ReportTradelineStatus getReportTradelineStatus() {
@@ -348,7 +490,9 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 
 	/**
 	 * This method sets the ReportTradelineStatus
-	 * @param reportTradelineStatus The ReportTradelineStatus
+	 * 
+	 * @param reportTradelineStatus
+	 *            The ReportTradelineStatus
 	 */
 	public void setReportTradelineStatus(ReportTradelineStatus reportTradelineStatus) {
 		this.reportTradelineStatus = reportTradelineStatus;
@@ -356,12 +500,14 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 
 	@Override
 	public String createPublishJSON(String template) throws UnauthorizedException {
-		String retrunValue = template;	
+		String retrunValue = template;
 		retrunValue = retrunValue.replace("@tradelineStatus", this.getReportTradelineStatus().toString());
 		return retrunValue;
 	}
+
 	/**
 	 * This method get the tradeLineFull name
+	 * 
 	 * @return the tradelineFullName
 	 */
 	public String getTradelineFullName() {
@@ -369,8 +515,10 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 	}
 
 	/**
-	 * This method set  the tradeLineFull name
-	 * @param tradelineFullName the tradelineFullName to set
+	 * This method set the tradeLineFull name
+	 * 
+	 * @param tradelineFullName
+	 *            the tradelineFullName to set
 	 */
 	public void setTradelineFullName(String tradelineFullName) {
 		this.tradelineFullName = tradelineFullName;
@@ -382,12 +530,14 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 		returnUrl = returnUrl.replace("@tradeLineID", URLEncoder.encode(this.getId(), "UTF-8"));
 		return returnUrl;
 	}
-	
+
 	String tradelineFullName;
-	
+
 	private String crmReportId;
+
 	/**
 	 * This method get the crm report id
+	 * 
 	 * @return the crmReportId
 	 */
 	public String getCrmReportId() {
@@ -396,12 +546,14 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 
 	/**
 	 * This method set the crm report id
-	 * @param crmReportId the crmReportId to set
+	 * 
+	 * @param crmReportId
+	 *            the crmReportId to set
 	 */
 	public void setCrmReportId(String crmReportId) {
 		this.crmReportId = crmReportId;
 	}
-	
+
 	/**
 	 * @return the paymentSource
 	 */
@@ -410,7 +562,8 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 	}
 
 	/**
-	 * @param paymentSource the paymentSource to set
+	 * @param paymentSource
+	 *            the paymentSource to set
 	 */
 	public void setPaymentSource(String paymentSource) {
 		this.paymentSource = paymentSource;
@@ -424,17 +577,15 @@ public class ReportTradeline extends BaseEntity implements Serializable,ICRMPubl
 	}
 
 	/**
-	 * @param leadEmail the leadEmail to set
+	 * @param leadEmail
+	 *            the leadEmail to set
 	 */
 	public void setLeadEmail(String leadEmail) {
 		this.leadEmail = leadEmail;
 	}
 
-	
-
 	private String paymentSource;
-	
+
 	private String leadEmail;
-	
 
 }

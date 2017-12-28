@@ -42,6 +42,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.HttpEntity;
 import com.boilerplate.java.entities.MethodState;
@@ -58,6 +59,13 @@ import com.boilerplate.service.interfaces.IReportService;
 import com.boilerplate.service.interfaces.IUserService;
 
 /**
+ * This class has methods for starting experian integration like starting
+ * communication with experian server and fetching an experian report against a
+ * user.(These all requests are communicated to experian server through a
+ * mediator(called as Java) which gets our requests and makes communication to
+ * the experian server and then sends the experian server responses back to our
+ * APIs. Using this mediator we donot need to make a seperate, new, and hard to
+ * make direct connection to the experian server APIs.)
  * 
  * @author love
  *
@@ -111,8 +119,7 @@ public class ExperianBureauService implements IExperianService {
 	 * @param queueReaderJob
 	 *            The queue reader jon
 	 */
-	public void setQueueReaderJob(
-			com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
 
@@ -159,8 +166,7 @@ public class ExperianBureauService implements IExperianService {
 	 * 
 	 * @param configurationManager
 	 */
-	public void setConfigurationManager(
-			com.boilerplate.configurations.ConfigurationManager configurationManager) {
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
 
@@ -206,8 +212,7 @@ public class ExperianBureauService implements IExperianService {
 	 * 
 	 * @param parseExperianReportObserver
 	 */
-	public void setParseExperianReportObserver(
-			ParseExperianReportObserver parseExperianReportObserver) {
+	public void setParseExperianReportObserver(ParseExperianReportObserver parseExperianReportObserver) {
 		this.parseExperianReportObserver = parseExperianReportObserver;
 	}
 
@@ -216,41 +221,35 @@ public class ExperianBureauService implements IExperianService {
 	 */
 	@Override
 	public ReportInputEntiity startSingle(ReportInputEntiity reportInputEntiity)
-			throws ConflictException, UnauthorizedException,
-			ValidationFailedException, NotFoundException, BadRequestException,
-			IOException, PreconditionFailedException {
-		// check if pan exist
+			throws ConflictException, UnauthorizedException, ValidationFailedException, NotFoundException,
+			BadRequestException, IOException, PreconditionFailedException {
+		// check if pan number exists
 		this.panNumberValidation(reportInputEntiity);
 
-		reportInputEntiity
-				.setExperianAttemptDate(new java.util.Date().toString());
-		reportInputEntiity.setUserId(RequestThreadLocal.getSession()
-				.getExternalFacingUser().getId());
-		reportInputEntiity.setUserLoginId(RequestThreadLocal.getSession()
-				.getExternalFacingUser().getUserId());
+		reportInputEntiity.setExperianAttemptDate(new java.util.Date().toString());
+		reportInputEntiity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
+		reportInputEntiity.setUserLoginId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
 		reportInputEntiity.validate();
 
 		// Save this information into the current users metadata for future
 		// reference
-		ExternalFacingReturnedUser user = userService.get(RequestThreadLocal
-				.getSession().getExternalFacingUser().getUserId(), false);
+		ExternalFacingReturnedUser user = userService
+				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		user.setExperianRequestUniqueKey(reportInputEntiity.getMobileNumber());
 		user.setReportInputEntitty(reportInputEntiity);
 		userService.update(user);
 
 		// now get the voucher code for this user
-		if (reportInputEntiity.getVoucherCode() == null
-				|| reportInputEntiity.getVoucherCode().equals("")) {
+		if (reportInputEntiity.getVoucherCode() == null || reportInputEntiity.getVoucherCode().equals("")) {
 			Voucher voucher = experianDataAccess.getVoucherCode(user.getId(),
 					RequestThreadLocal.getSession().getSessionId());
 			reportInputEntiity.setVoucherCode(voucher.getVoucherCode());
 			reportInputEntiity.setVoucherExpiry(voucher.getExpiryDate());
 		}
 		// Save this into the session for easy access
-		RequestThreadLocal.getSession().addSessionAttribute("ExperianData",
-				reportInputEntiity);
-		reportInputEntiity = this
-				.doStartSingleURLIntegration(reportInputEntiity, user);
+		RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
+		// make experian integration request
+		reportInputEntiity = this.doStartSingleURLIntegration(reportInputEntiity, user);
 
 		user.setReportInputEntitty(reportInputEntiity);
 		userService.update(user);
@@ -264,58 +263,86 @@ public class ExperianBureauService implements IExperianService {
 	 * exists or not
 	 * 
 	 * @param reportInputEntiity
-	 *            The reportInputEntiity
+	 *            The reportInputEntiity contains the pan number to check
+	 *            existence for
 	 * @throws ConflictException
-	 *             The ConflictException
+	 *             The ConflictException thrown when report for this pan number
+	 *             user already been generated and exists
 	 */
-	private void panNumberValidation(ReportInputEntiity reportInputEntiity)
-			throws ConflictException {
+	private void panNumberValidation(ReportInputEntiity reportInputEntiity) throws ConflictException {
 		if (reportInputEntiity.getPanNumber() != null) {
-			if (this.redisSFUpdateHashAccess.hget(
-					configurationManager.get("PanNumberHash_Base_Tag"),
+			if (this.redisSFUpdateHashAccess.hget(configurationManager.get("PanNumberHash_Base_Tag"),
 					reportInputEntiity.getPanNumber().toUpperCase()) != null) {
-				throw new ConflictException("Report",
-						"Report with given pan number already exists", null);
+				throw new ConflictException("Report", "Report with given pan number already exists", null);
 			}
 		}
 
 	}
 
-	private ReportInputEntiity doStartSingleURLIntegration(
-			ReportInputEntiity reportInputEntiity,
+	/**
+	 * This method is used to start experian integration request
+	 * 
+	 * @param reportInputEntiity
+	 *            it contains the data required to send request to server for
+	 *            experian integration
+	 * @param user
+	 *            the user against which experian report to generate thus
+	 *            integration been started
+	 * @return the reportInputEntity containing the returned sessionIds,
+	 *         stageOneId and report etc. in response to requests
+	 * @throws IOException
+	 *             thrown if IOException occurs in while making http requests to
+	 *             experian server
+	 * @throws PreconditionFailedException
+	 *             thrown when successful response of http request to experian
+	 *             server is not received
+	 * @throws NotFoundException
+	 *             thrown when user not found in database
+	 * @throws ConflictException
+	 *             when user already exists
+	 * @throws BadRequestException
+	 *             when userId is not found
+	 */
+	private ReportInputEntiity doStartSingleURLIntegration(ReportInputEntiity reportInputEntiity,
 			ExternalFacingReturnedUser user)
-			throws IOException, PreconditionFailedException, NotFoundException,
-			ConflictException, BadRequestException {
+			throws IOException, PreconditionFailedException, NotFoundException, ConflictException, BadRequestException {
+		// set reportInputEntity current state in experian request making
+		// process
 		reportInputEntiity.setStateEnum(ReportInputEntiity.State.SessionSetup);
-		String requestData = createExperianSingleURLRequestBody(
-				reportInputEntiity);
+		String requestData = createExperianSingleURLRequestBody(reportInputEntiity);
 
 		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = createExperianSingleUrlRequestHeaders();
 
 		String request = createExperianRequest(requestHeaders, requestData);
 
+		// prepare request headers and request body for our experian request
+		// Mediator(named Java)
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
 		BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
 		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
 		contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
 		requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
 
-		logger.logInfo("ExperianBureauService", "Single Request","Request" + reportInputEntiity.getUserId(), request);
+		logger.logInfo("ExperianBureauService", "Single Request", "Request" + reportInputEntiity.getUserId(), request);
+		// make httprequest to our Mediator which turn makes request to experian
+		// server APIs
 		HttpResponse httpResponseJava = HttpUtility.makeHttpRequest(
-				configurationManager.get("Experian_INITIATE_URL_JAVA"),
-				requestHeadersJava, null, request, "POST");
-		logger.logInfo("ExperianBureauService", "Single Response","Response Status code" + reportInputEntiity.getUserId(),Integer.toString(httpResponseJava.getHttpStatus()));
-		logger.logInfo("ExperianBureauService", "Single Response","Response" + reportInputEntiity.getUserId(),httpResponseJava.getResponseBody());
-
-		HttpResponse httpResponse = Base.fromJSON(
-				httpResponseJava.getResponseBody(), HttpResponse.class);
+				configurationManager.get("Experian_INITIATE_URL_JAVA"), requestHeadersJava, null, request, "POST");
+		logger.logInfo("ExperianBureauService", "Single Response",
+				"Response Status code" + reportInputEntiity.getUserId(),
+				Integer.toString(httpResponseJava.getHttpStatus()));
+		logger.logInfo("ExperianBureauService", "Single Response", "Response" + reportInputEntiity.getUserId(),
+				httpResponseJava.getResponseBody());
+		// extract core experian response wrapped inside our Mediator response
+		HttpResponse httpResponse = Base.fromJSON(httpResponseJava.getResponseBody(), HttpResponse.class);
 
 		String ecvSessionValue = null;
 		if (httpResponse.getResponseCookies() != null) {
-
+			// get jsession id if response cookie is not null
 			for (HttpCookie cookie : httpResponse.getResponseCookies()) {
 				if (cookie.getName().equals("JSESSIONID")) {
-					logger.logInfo("ExperianBureauService","Single Response Cookie ecv","Response" + reportInputEntiity.getUserId(),cookie.getValue());
+					logger.logInfo("ExperianBureauService", "Single Response Cookie ecv",
+							"Response" + reportInputEntiity.getUserId(), cookie.getValue());
 					ecvSessionValue = cookie.getValue();
 				}
 			}
@@ -323,69 +350,47 @@ public class ExperianBureauService implements IExperianService {
 		if (httpResponse.getHttpStatus() != 200) {
 			// updates the experianStatus:(15-11-2016)
 			experianStatusUpdate(reportInputEntiity,
-					"--- Method Name: " + " Single Action --- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: Issue in accessing server - Experian_Single_Request ",
+					"--- Method Name: Single Action --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: Issue in accessing server - Experian_Single_Request ",
 					true);
-			throw new PreconditionFailedException("Experian Server","Issue in accessing server - Experian_Single_Request",null);
+			throw new PreconditionFailedException("Experian Server",
+					"Issue in accessing server - Experian_Single_Request", null);
 		}
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
-			Map<String, Object> responseBodyMap = objectMapper
-					.readValue(httpResponse.getResponseBody(), Map.class);
+			Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 
 			// check the case where report comes up
-			if (responseBodyMap.get("errorString") == null && responseBodyMap
-					.get("showHtmlReportForCreditReport") != null) {
-				// we have a report
-				// save this to the users context
-				// and change state to next question
-
-				reportInputEntiity.setStateEnum(State.Report);
-				String report = (String) responseBodyMap
-						.get("showHtmlReportForCreditReport");
-				MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html","text/html", report.getBytes());
-				FileEntity fileEntity = fileService.saveFile("ExperianReport",
-						file);
-				reportInputEntiity.setReportFileEntity(fileEntity);
-				// saves the experian report url in the corresponding user
-
-				// Open the file
-				String htmlFile = FileUtils.readFileToString(new File(
-						configurationManager.get("RootFileDownloadLocation")
-								+ fileEntity.getFileName()));
-
-				// cut out the xml part from it
-				int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
-				String xmlFile = htmlFile.substring(startingPOsition,
-						htmlFile.length());
-				String reportNumber = getReportNumber(xmlFile);
-				reportInputEntiity.setReportNumber(reportNumber);
-
+			if (responseBodyMap.get("errorString") == null
+					&& responseBodyMap.get("showHtmlReportForCreditReport") != null) {
+				reportInputEntiity = parseReportAndGetReportNumber(reportInputEntiity, responseBodyMap);
 				user = observeReport(reportInputEntiity, user);
-				user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
+				user.setExperianReportUrl(reportInputEntiity.getReportFileEntity().getFullFileNameOnDisk());
 				user.setUserState(MethodState.ReportGenerated);
 				// updates the experianStatus:(15-11-2016)
-				experianStatusUpdate(reportInputEntiity, "--- Method Name: fetchNextItem " + "--- Response status: "+ httpResponse.getHttpStatus()+"--- Error String and Response Json: "
-						+ getErrorStringAndResponseJsonFields(responseBodyMap),
+				experianStatusUpdate(reportInputEntiity,
+						"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+								+ "--- Error String and Response Json: "
+								+ getErrorStringAndResponseJsonFields(responseBodyMap),
 						false);
 
 				user.setReportInputEntitty(reportInputEntiity);
 				userService.update(user);
 				// publishUserStateToCRM(user);
-				RequestThreadLocal.getSession().addSessionAttribute(
-						"ExperianData", reportInputEntiity);
+				RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
 				return reportInputEntiity;
 
 			}
 
 			if (responseBodyMap.get("errorString") != null) {
-				logger.logInfo("ExperianBureauService","Single Response errorstring",responseBodyMap.get("errorString").toString(), "");
-				if (responseBodyMap.get("errorString").toString()
-						.contains("consumer record not found") == true) {
+				logger.logInfo("ExperianBureauService", "Single Response errorstring",
+						responseBodyMap.get("errorString").toString(), "");
+				if (responseBodyMap.get("errorString").toString().contains("consumer record not found") == true) {
 					// updates the experianStatus:(15-11-2016)
 					experianStatusUpdate(reportInputEntiity,
-							"--- Method Name: " + " singleAction --- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
-									+ getErrorStringAndResponseJsonFields(
-											responseBodyMap),
+							"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
+									+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
+									+ getErrorStringAndResponseJsonFields(responseBodyMap),
 							true);
 					// sets the pan number in pan number hash
 					setPanNumberInHash(reportInputEntiity);
@@ -393,41 +398,39 @@ public class ExperianBureauService implements IExperianService {
 							"User not found in Bureau database - Dual Integration No record found. Please re-submit your request. ",
 							null);
 				}
-				if (responseBodyMap.get("errorString").toString()
-						.contains("Voucher Code is invalid") == true) {
+				if (responseBodyMap.get("errorString").toString().contains("Voucher Code is invalid") == true) {
 					// updates the experianStatus:(15-11-2016)
 					experianStatusUpdate(reportInputEntiity,
-							"--- Method Name: " + " singleAction --- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
-									+ getErrorStringAndResponseJsonFields(
-											responseBodyMap),
+							"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
+									+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
+									+ getErrorStringAndResponseJsonFields(responseBodyMap),
 							true);
 					throw new PreconditionFailedException("Experian Server",
 							"Voucher code invalid - Dual Integration Voucher code invalid. Please re-submit your request. ",
 							null);
 				}
-				
 
 			}
 
-			if (responseBodyMap.get("stageOneId_") != null
-					&& responseBodyMap.get("stageTwoId_") != null
+			if (responseBodyMap.get("stageOneId_") != null && responseBodyMap.get("stageTwoId_") != null
 					&& ecvSessionValue != null) {
 				// set parameters in reportinputentity
-				reportInputEntiity.setStage1Id(
-						responseBodyMap.get("stageOneId_").toString());
-				reportInputEntiity.setStage2Id(
-						responseBodyMap.get("stageTwoId_").toString());
+				reportInputEntiity.setStage1Id(responseBodyMap.get("stageOneId_").toString());
+				reportInputEntiity.setStage2Id(responseBodyMap.get("stageTwoId_").toString());
 				reportInputEntiity.setjSessionId2(ecvSessionValue);
-				reportInputEntiity
-						.setStateEnum(ReportInputEntiity.State.SessionSetup);
-				logger.logInfo("ExperianBureauService", "Single Action","set response parameters"+ reportInputEntiity.getUserId(),"");
+				reportInputEntiity.setStateEnum(ReportInputEntiity.State.SessionSetup);
+				logger.logInfo("ExperianBureauService", "Single Action",
+						"set response parameters" + reportInputEntiity.getUserId(), "");
 			} // in case of any error
 			else {
 				// updates the experianStatus:(15-11-2016)
-				experianStatusUpdate(reportInputEntiity, "--- Method Name: singleAction " + "--- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: Stageone id or stage2 id or cookie not returned - singleAction data not returned --- Error String and Response Json: "
-						+ getErrorStringAndResponseJsonFields(responseBodyMap),
+				experianStatusUpdate(reportInputEntiity,
+						"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
+								+ "--- Generic Error Message: Stageone id or stage2 id or cookie not returned - singleAction data not returned --- Error String and Response Json: "
+								+ getErrorStringAndResponseJsonFields(responseBodyMap),
 						true);
-				throw new PreconditionFailedException("Experian Server","Data not returned - singleAction url not returned",null);
+				throw new PreconditionFailedException("Experian Server",
+						"Data not returned - singleAction url not returned", null);
 			}
 
 		} catch (NotFoundException nfe) {
@@ -436,7 +439,12 @@ public class ExperianBureauService implements IExperianService {
 			throw pfe;
 		} catch (Throwable th) {
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntiity, "--- Method Name: singleAction " + "--- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: Data  not returned - singleAction_Form_Action "+ th.toString() + "--- Error String and Response Json: "+ getErrorStringAndResponseJsonFields(httpResponse), true);
+			experianStatusUpdate(reportInputEntiity,
+					"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: Data  not returned - singleAction_Form_Action "
+							+ th.toString() + "--- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(httpResponse),
+					true);
 			throw new PreconditionFailedException("Experian Server",
 					"Data not returned - singleAction " + th.toString(), null);
 		}
@@ -444,21 +452,19 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This method create the request for sending the data to experian server.
+	 * This method creates the request for sending the data to experian server.
 	 * 
 	 * @param requestHeaders
 	 *            The request headers which is use for sending the experian
 	 *            request.
 	 * @param requestBody
-	 *            The request body
-	 * @return The request body
+	 *            The request body of the request
+	 * @return The request body to be used in making request
 	 */
-	private String createExperianRequest(
-			BoilerplateMap<String, BoilerplateList<String>> requestHeaders,
+	private String createExperianRequest(BoilerplateMap<String, BoilerplateList<String>> requestHeaders,
 			String requestBody) {
 		String request = configurationManager.get("JAVA_HTTP_REQUEST_TEMPLATE");
-		request = request.replace("@url",
-				configurationManager.get("Experian_Single_Request_URL"));
+		request = request.replace("@url", configurationManager.get("Experian_Single_Request_URL"));
 		request = request.replace("@requestHeaders", requestHeaders.toString());
 		request = request.replace("@requestBody", requestBody);
 		request = request.replace("@method", "POST");
@@ -466,7 +472,7 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This method create the request headers for experian request
+	 * This method creates the request headers for experian request
 	 * 
 	 * @return The required request headers
 	 */
@@ -483,72 +489,50 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This method create the request body for experian request.
+	 * This method creates the request body for experian request.
 	 * 
 	 * @param reportInputEntiity
-	 *            The report input entity
+	 *            The report input entity containing required data for making
+	 *            request body for request
 	 * @return The required request body
 	 */
-	private String createExperianSingleURLRequestBody(
-			ReportInputEntiity reportInputEntiity) {
-		String requestBody = configurationManager
-				.get("Experian_Single_Url_Request_Template");
-		requestBody = requestBody.replace("{voucherCode}",
-				reportInputEntiity.getVoucherCode());
-		requestBody = requestBody.replace("{firstName}",
-				reportInputEntiity.getFirstName());
-		requestBody = requestBody.replace("{surName}",
-				reportInputEntiity.getSurname());
-		requestBody = requestBody.replace("{dob}",
-				reportInputEntiity.getDateOfBirth());
-		requestBody = requestBody.replace("{gender}",
-				Integer.toString(reportInputEntiity.getGenderEnum().ordinal()));
-		requestBody = requestBody.replace("{mobileNo}",
-				reportInputEntiity.getMobileNumber());
-		requestBody = requestBody.replace("{email}",
-				reportInputEntiity.getEmail().replace("@", "%40"));
+	private String createExperianSingleURLRequestBody(ReportInputEntiity reportInputEntiity) {
+		String requestBody = configurationManager.get("Experian_Single_Url_Request_Template");
+		requestBody = requestBody.replace("{voucherCode}", reportInputEntiity.getVoucherCode());
+		requestBody = requestBody.replace("{firstName}", reportInputEntiity.getFirstName());
+		requestBody = requestBody.replace("{surName}", reportInputEntiity.getSurname());
+		requestBody = requestBody.replace("{dob}", reportInputEntiity.getDateOfBirth());
+		requestBody = requestBody.replace("{gender}", Integer.toString(reportInputEntiity.getGenderEnum().ordinal()));
+		requestBody = requestBody.replace("{mobileNo}", reportInputEntiity.getMobileNumber());
+		requestBody = requestBody.replace("{email}", reportInputEntiity.getEmail().replace("@", "%40"));
 		String flatPlotHouseNo = reportInputEntiity.getAddressLine1();
 		if (reportInputEntiity.getAddressLine2() != null) {
 			if (reportInputEntiity.getAddressLine2().equals("") == false) {
 				flatPlotHouseNo += " " + reportInputEntiity.getAddressLine2();
 			}
 		}
-		requestBody = requestBody.replace("{flatno}",
-				reportInputEntiity.getAddressLine1().replace(" ", "+"));
-		requestBody = requestBody.replace("{road}",
-				reportInputEntiity.getAddressLine2() == null ? ""
-						: reportInputEntiity.getAddressLine2().replace(" ",
-								"+"));
-		requestBody = requestBody.replace("{city}",
-				reportInputEntiity.getCity());
-		requestBody = requestBody.replace("{state}",
-				reportInputEntiity.getStateId());
-		requestBody = requestBody.replace("{pincode}",
-				reportInputEntiity.getPinCode());
+		requestBody = requestBody.replace("{flatno}", reportInputEntiity.getAddressLine1().replace(" ", "+"));
+		requestBody = requestBody.replace("{road}", reportInputEntiity.getAddressLine2() == null ? ""
+				: reportInputEntiity.getAddressLine2().replace(" ", "+"));
+		requestBody = requestBody.replace("{city}", reportInputEntiity.getCity());
+		requestBody = requestBody.replace("{state}", reportInputEntiity.getStateId());
+		requestBody = requestBody.replace("{pincode}", reportInputEntiity.getPinCode());
 		requestBody = requestBody.replace("{panNo}",
-				reportInputEntiity.getPanNumber() == null ? ""
-						: reportInputEntiity.getPanNumber());
+				reportInputEntiity.getPanNumber() == null ? "" : reportInputEntiity.getPanNumber());
 		requestBody = requestBody.replace("{middleName}",
-				reportInputEntiity.getMiddleName() == null ? ""
-						: reportInputEntiity.getMiddleName());
+				reportInputEntiity.getMiddleName() == null ? "" : reportInputEntiity.getMiddleName());
 		requestBody = requestBody.replace("{telePhoneNo}",
-				reportInputEntiity.getTelephoneNumber() == null ? ""
-						: reportInputEntiity.getTelephoneNumber());
+				reportInputEntiity.getTelephoneNumber() == null ? "" : reportInputEntiity.getTelephoneNumber());
 		requestBody = requestBody.replace("{telePhoneType}",
-				reportInputEntiity.getTelephoneTypeId() == null ? ""
-						: reportInputEntiity.getTelephoneTypeId());
+				reportInputEntiity.getTelephoneTypeId() == null ? "" : reportInputEntiity.getTelephoneTypeId());
 		requestBody = requestBody.replace("{passportNo}",
-				reportInputEntiity.getPassportNumber() == null ? ""
-						: reportInputEntiity.getPassportNumber());
+				reportInputEntiity.getPassportNumber() == null ? "" : reportInputEntiity.getPassportNumber());
 		requestBody = requestBody.replace("{voterIdNo}",
-				reportInputEntiity.getVoterIdNumber() == null ? ""
-						: reportInputEntiity.getVoterIdNumber());
+				reportInputEntiity.getVoterIdNumber() == null ? "" : reportInputEntiity.getVoterIdNumber());
 		requestBody = requestBody.replace("{universalIdNo}",
-				reportInputEntiity.getUniversalIdNumber() == null ? ""
-						: reportInputEntiity.getUniversalIdNumber());
+				reportInputEntiity.getUniversalIdNumber() == null ? "" : reportInputEntiity.getUniversalIdNumber());
 		requestBody = requestBody.replace("{driverLicenseNo}",
-				reportInputEntiity.getDriverLicenseNumber() == null ? ""
-						: reportInputEntiity.getDriverLicenseNumber());
+				reportInputEntiity.getDriverLicenseNumber() == null ? "" : reportInputEntiity.getDriverLicenseNumber());
 		return requestBody;
 
 	}
@@ -611,10 +595,8 @@ public class ExperianBureauService implements IExperianService {
 	private void setPanNumberInHash(ReportInputEntiity reportInputEntiity)
 			throws NotFoundException, BadRequestException {
 		if (reportInputEntiity.getPanNumber() != null) {
-			this.redisSFUpdateHashAccess.hset(
-					configurationManager.get("PanNumberHash_Base_Tag"),
-					reportInputEntiity.getPanNumber().toUpperCase(),
-					reportInputEntiity.getUserId());
+			this.redisSFUpdateHashAccess.hset(configurationManager.get("PanNumberHash_Base_Tag"),
+					reportInputEntiity.getPanNumber().toUpperCase(), reportInputEntiity.getUserId());
 		}
 
 	}
@@ -626,8 +608,7 @@ public class ExperianBureauService implements IExperianService {
 	 *            The reportInputEntity
 	 */
 	private void reInsertUnusedVouchers(ReportInputEntiity reportInputEntity) {
-		logger.logInfo("ExperianBureauService", "reInsertUnusedVouchers",
-				"Starts creating voucher List", "");
+		logger.logInfo("ExperianBureauService", "reInsertUnusedVouchers", "Starts creating voucher List", "");
 		Voucher voucher = new Voucher();
 		voucher.setVoucherCode(reportInputEntity.getVoucherCode());
 		voucher.setExpiryDate(reportInputEntity.getVoucherExpiry());
@@ -635,8 +616,7 @@ public class ExperianBureauService implements IExperianService {
 		vouchersList.add(voucher);
 		experianDataAccess.create(vouchersList);
 		logger.logInfo("ExperianBureauService", "reInsertUnusedVouchers",
-				"Susccessfully inserted voucher List in Voucher queue",
-				"Voucher:" + Base.toJSON(vouchersList));
+				"Susccessfully inserted voucher List in Voucher queue", "Voucher:" + Base.toJSON(vouchersList));
 	}
 
 	/**
@@ -644,26 +624,29 @@ public class ExperianBureauService implements IExperianService {
 	 * attempt status and also publish to CRM
 	 * 
 	 * @param reportInputEntity
+	 *            the reportInputEntity whose experian attempt status will be
+	 *            set or updated
 	 * @throws ConflictException
+	 *             when there is an error in updating a user
 	 * @throws BadRequestException
+	 *             when userId is not populated
 	 * @throws NotFoundException
+	 *             user with given userId not found
 	 */
-	private void experianStatusUpdate(ReportInputEntiity reportInputEntity,
-			String experianStatus, boolean isVoucherUnUsed)
-			throws ConflictException, NotFoundException, BadRequestException {
+	private void experianStatusUpdate(ReportInputEntiity reportInputEntity, String experianStatus,
+			boolean isVoucherUnUsed) throws ConflictException, NotFoundException, BadRequestException {
 		if (isVoucherUnUsed) {
 			reInsertUnusedVouchers(reportInputEntity);
 		}
 		reportInputEntity.setExperianStatus(experianStatus);
 		// Save this information into the current users metadata for future
 		// reference
-		ExternalFacingReturnedUser user = userService.get(RequestThreadLocal
-				.getSession().getExternalFacingUser().getUserId(), false);
+		ExternalFacingReturnedUser user = userService
+				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
 		user.setReportInputEntitty(reportInputEntity);
 		userService.update(user);
-		if (reportInputEntity.getStage1Id() != null
-				&& reportInputEntity.getStage1Id() != "") {
+		if (reportInputEntity.getStage1Id() != null && reportInputEntity.getStage1Id() != "") {
 			// publishUserStateToCRM(user);
 		}
 
@@ -678,28 +661,22 @@ public class ExperianBureauService implements IExperianService {
 	 *            The httpResponse
 	 * @return The error string
 	 */
-	private String getErrorStringAndResponseJsonFields(
-			HttpResponse httpResponse) {
+	private String getErrorStringAndResponseJsonFields(HttpResponse httpResponse) {
 		String errorAndresponseJsonString = "";
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
-			Map<String, Object> responseBodyMap = objectMapper
-					.readValue(httpResponse.getResponseBody(), Map.class);
-			if (responseBodyMap.get("errorString") != null && responseBodyMap
-					.get("errorString").toString().equals("") == false) {
-				errorAndresponseJsonString = responseBodyMap.get("errorString")
-						.toString();
+			Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
+			if (responseBodyMap.get("errorString") != null
+					&& responseBodyMap.get("errorString").toString().equals("") == false) {
+				errorAndresponseJsonString = responseBodyMap.get("errorString").toString();
 			}
-			if (responseBodyMap.get("responseJson") != null && responseBodyMap
-					.get("responseJson").toString().equals("") == false) {
-				errorAndresponseJsonString += responseBodyMap
-						.get("responseJson").toString();
+			if (responseBodyMap.get("responseJson") != null
+					&& responseBodyMap.get("responseJson").toString().equals("") == false) {
+				errorAndresponseJsonString += responseBodyMap.get("responseJson").toString();
 			}
 		} catch (Exception e) {
-			logger.logInfo("ExperianBureauService",
-					"getErrorStringAndResponseJsonFields", "",
-					"while getting error string from http response:"
-							+ e.toString());
+			logger.logInfo("ExperianBureauService", "getErrorStringAndResponseJsonFields", "",
+					"while getting error string from http response:" + e.toString());
 		}
 		return errorAndresponseJsonString;
 	}
@@ -711,40 +688,46 @@ public class ExperianBureauService implements IExperianService {
 	 *            The httpResponse
 	 * @return The error string
 	 */
-	private String getErrorStringAndResponseJsonFields(
-			Map<String, Object> responseBodyMap) {
+	private String getErrorStringAndResponseJsonFields(Map<String, Object> responseBodyMap) {
 		String errorAndresponseJsonString = "";
 		try {
-			if (responseBodyMap.get("errorString") != null && responseBodyMap
-					.get("errorString").toString().equals("") == false) {
-				errorAndresponseJsonString = errorAndresponseJsonString
-						+ " errorString- "
+			if (responseBodyMap.get("errorString") != null
+					&& responseBodyMap.get("errorString").toString().equals("") == false) {
+				errorAndresponseJsonString = errorAndresponseJsonString + " errorString- "
 						+ responseBodyMap.get("errorString").toString();
 			}
-			if (responseBodyMap.get("responseJson") != null && responseBodyMap
-					.get("responseJson").toString().equals("") == false) {
-				errorAndresponseJsonString = errorAndresponseJsonString
-						+ " responseJson- "
+			if (responseBodyMap.get("responseJson") != null
+					&& responseBodyMap.get("responseJson").toString().equals("") == false) {
+				errorAndresponseJsonString = errorAndresponseJsonString + " responseJson- "
 						+ responseBodyMap.get("responseJson").toString();
 			}
-			if (responseBodyMap.get("errorMessage") != null && responseBodyMap
-					.get("errorMessage").toString().equals("") == false) {
-				errorAndresponseJsonString = errorAndresponseJsonString
-						+ " errorMessage- "
+			if (responseBodyMap.get("errorMessage") != null
+					&& responseBodyMap.get("errorMessage").toString().equals("") == false) {
+				errorAndresponseJsonString = errorAndresponseJsonString + " errorMessage- "
 						+ responseBodyMap.get("errorMessage").toString();
 			}
 		} catch (Exception e) {
 			logger.logInfo("ExperianBureauService", "isErrorStringExists", "",
-					"while getting error string from http response:"
-							+ e.toString());
+					"while getting error string from http response:" + e.toString());
 		}
 		return errorAndresponseJsonString;
 	}
 
-	private ExternalFacingReturnedUser observeReport(
-			ReportInputEntiity reportInputEntity,
-			ExternalFacingReturnedUser user)
-			throws IOException, ConflictException {
+	/**
+	 * This method is used to parse experian report for fetching all the
+	 * required data in it
+	 * 
+	 * @param reportInputEntity
+	 *            the report input entity for storing report and its metadata
+	 * @param user
+	 *            the user against whom report data is fetched and saved in its
+	 *            metadata in database
+	 * @return the updated user having fetched report and report metadata
+	 * @throws ConflictException
+	 *             if report cannot be parsed
+	 */
+	private ExternalFacingReturnedUser observeReport(ReportInputEntiity reportInputEntity,
+			ExternalFacingReturnedUser user) throws ConflictException {
 		try {
 			// make an entry for the report
 			Report report = new Report();
@@ -756,6 +739,7 @@ public class ExperianBureauService implements IExperianService {
 			report.setReportStatusEnum(ReportStatus.InProgress);
 			report.setQuestionCount(reportInputEntity.getQuestionCount());
 			report.setReportNumber(reportInputEntity.getReportNumber());
+			// save report data
 			reportService.save(report);
 			reportInputEntity.setReport(report);
 			user = userService.get(reportInputEntity.getUserLoginId(), false);
@@ -763,8 +747,7 @@ public class ExperianBureauService implements IExperianService {
 			userService.update(user);
 			// create a report entity
 
-			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity,
-					subjectsForParseExperianReportObserver,
+			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity, subjectsForParseExperianReportObserver,
 					"ExperianBureauService", "observeReport");
 
 		} catch (Exception ex) {
@@ -782,37 +765,37 @@ public class ExperianBureauService implements IExperianService {
 	 * This method set the report version.
 	 * 
 	 * @param reportInputEntiity
-	 *            The report input Entity
+	 *            The report input Entity it contains data to be used like
+	 *            userId being used here
 	 * @param report
-	 *            The Report
+	 *            The Report whose version is to be set
 	 * @return the report
 	 * @throws UnauthorizedException
-	 *             The unauthorized exception.
+	 *             Thrown when logged in user is not authorized to get report
+	 *             metadata
 	 */
-	private Report checkOrSetReportVersion(
-			ReportInputEntiity reportInputEntiity, Report report)
+	private Report checkOrSetReportVersion(ReportInputEntiity reportInputEntiity, Report report)
 			throws UnauthorizedException {
-		BoilerplateMap<String, Report> reportMap = this.reportService
-				.getReports(reportInputEntiity.getUserId());
+		BoilerplateMap<String, Report> reportMap = this.reportService.getReports(reportInputEntiity.getUserId());
 		int size = reportMap.size();
 		report.setReportVersionEnum(ReportVersion.values()[size + 1]);
 		return report;
 	}
+
 	/**
 	 * @see IExperianService.fetchNextItem
 	 */
 	@Override
-	public ReportInputEntiity fetchNextItem(String questionId,
-			String answerPart1, String answerPart2)
-			throws FactoryConfigurationError, Exception {
-		ExternalFacingReturnedUser user = userService.get(RequestThreadLocal
-				.getSession().getExternalFacingUser().getUserId(), false);
+	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
+			throws Exception {
+		ExternalFacingReturnedUser user = userService
+				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		ReportInputEntiity reportInputEntity = user.getReportInputEntitty();
 		if (reportInputEntity == null) {
 			// updates the experianStatus:(15-11-2016)
 			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: " + " fetchNextItem --- Generic Error Message: No Experian Session found ",false);
-			throw new NotFoundException("ReportInputEntity","No Experian Session found", null);
+					"--- Method Name: fetchNextItem --- Generic Error Message: No Experian Session found ", false);
+			throw new NotFoundException("ReportInputEntity", "No Experian Session found", null);
 		}
 		reportInputEntity.setStateEnum(State.Question);
 		ExperianQuestionAnswer experianQuestionAnswer = null;
@@ -823,22 +806,22 @@ public class ExperianBureauService implements IExperianService {
 				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 				// updates the experianStatus:(15-11-2016)
 				experianStatusUpdate(reportInputEntity,
-						"--- Method Name: " + " fetchNextItem  --- Generic Error Message: Question id is empty ",false);
-				throw new ConflictException("Question", "Question id is empty",
-						null);
+						"--- Method Name: fetchNextItem  --- Generic Error Message: Question id is empty ", false);
+				throw new ConflictException("Question", "Question id is empty", null);
 			}
 		} else {
-			// You can only call a question and set of answers which exist in
+			// You can only call with a question and set of answers which exist
+			// in
 			// the map.
-			experianQuestionAnswer = reportInputEntity.getQuestion()
-					.get(questionId);
+			experianQuestionAnswer = reportInputEntity.getQuestion().get(questionId);
 			if (experianQuestionAnswer == null) {
 				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 				// updates the experianStatus:(15-11-2016)
-				experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem " + "--- Generic Error Message: Question with id " + questionId + " not found",
+				experianStatusUpdate(reportInputEntity,
+						"--- Method Name: fetchNextItem --- Generic Error Message: Question with id " + questionId
+								+ " not found",
 						false);
-				throw new NotFoundException("Question",
-						"Question with id " + questionId + " not found", null);
+				throw new NotFoundException("Question", "Question with id " + questionId + " not found", null);
 			}
 
 		}
@@ -846,105 +829,83 @@ public class ExperianBureauService implements IExperianService {
 		// fill the answer to the question
 		String questionTemplate = null;
 		if (questionId == null || questionId.equals("")) {
-			questionTemplate = configurationManager
-					.get("Experian_Question_First_Time_Body");
+			questionTemplate = configurationManager.get("Experian_Question_First_Time_Body");
 		} else {
-			questionTemplate = configurationManager
-					.get("Experian_Question_Body");
+			questionTemplate = configurationManager.get("Experian_Question_Body");
 			experianQuestionAnswer.setOptionSet1Answer(answerPart1);
 			experianQuestionAnswer.setOptionSet2Answer(answerPart2);
 		}
 		user.setReportInputEntitty(reportInputEntity);
 		userService.update(user);
-		
-		String answerTemplate = (answerPart1 == null ? ""
-				: answerPart1.replace(" ", "+")) + "%3A"
+
+		String answerTemplate = (answerPart1 == null ? "" : answerPart1.replace(" ", "+")) + "%3A"
 				+ (answerPart2 == null ? "" : answerPart2.replace(" ", "+"));
 		questionTemplate = questionTemplate.replace("{answer}", answerTemplate);
-		questionTemplate = questionTemplate.replace("{questionId}",
-				questionId == null ? "" : questionId);
-		questionTemplate = questionTemplate.replace("{stgOneHitId}",
-				reportInputEntity.getStage1Id());
-		questionTemplate = questionTemplate.replace("{stgTwoHitId}",
-				reportInputEntity.getStage2Id());
-		
+		questionTemplate = questionTemplate.replace("{questionId}", questionId == null ? "" : questionId);
+		questionTemplate = questionTemplate.replace("{stgOneHitId}", reportInputEntity.getStage1Id());
+		questionTemplate = questionTemplate.replace("{stgTwoHitId}", reportInputEntity.getStage2Id());
 
 		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = createExperianQuestionRequestHeaders();
 
-		HttpCookie jSessionIdCookie = new HttpCookie("JSESSIONID",
-				reportInputEntity.getSessionId2());
+		HttpCookie jSessionIdCookie = new HttpCookie("JSESSIONID", reportInputEntity.getSessionId2());
 		BoilerplateList<HttpCookie> requestCookies = new BoilerplateList();
 		requestCookies.add(jSessionIdCookie);
 		logger.logInfo("ExperianBureauService", "Experian_Question",
-				"Request" + reportInputEntity.getUserId()
-						+ reportInputEntity.getStage1Id(),
+				"Request" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(), questionTemplate);
+
+		String requestBodyJava = createExperianQuestionRequest(
+				configurationManager.get("Experian_Question_URL") + questionTemplate, requestHeaders, requestCookies,
 				questionTemplate);
-	
-		String requestBodyJava = createExperianQuestionRequest(configurationManager.get("Experian_Question_URL")+ questionTemplate, requestHeaders, requestCookies, questionTemplate);
-		
+
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
 		BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
 		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
 		contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
 		requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
 
-		
 		HttpResponse httpResponseJava = HttpUtility.makeHttpRequest(
-				configurationManager.get("Experian_INITIATE_URL_JAVA"),
-				requestHeadersJava, null, requestBodyJava, "POST");
-		
-		HttpResponse httpResponse = Base.fromJSON(
-				httpResponseJava.getResponseBody(), HttpResponse.class);
+				configurationManager.get("Experian_INITIATE_URL_JAVA"), requestHeadersJava, null, requestBodyJava,
+				"POST");
+
+		HttpResponse httpResponse = Base.fromJSON(httpResponseJava.getResponseBody(), HttpResponse.class);
 
 		logger.logInfo("ExperianBureauService", "Experian_Question",
-				"Response Status Code" + reportInputEntity.getUserId()
-						+ reportInputEntity.getStage1Id(),
+				"Response Status Code" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(),
 				Integer.toString(httpResponse.getHttpStatus()));
-		
+
 		if (httpResponse.getHttpStatus() != 200) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
 			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: " + " fetchNextItem --- Response status: "+ httpResponse.getHttpStatus()
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
 							+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request ",
 					false);
-			throw new PreconditionFailedException("Experian Server",
-					"Issue in accessing server - Experian_CRQ_Request", null);
+			throw new PreconditionFailedException("Experian Server", "Issue in accessing server - Experian_CRQ_Request",
+					null);
 		}
 
-
 		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, Object> responseBodyMap = objectMapper
-				.readValue(httpResponse.getResponseBody(), Map.class);
+		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 		// throws exception in case responseJson is not returned
 		if (responseBodyMap.get("responseJson") == null) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(23-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: "
-					+ " fetchNextItem " + "--- Response status: "
-					+ httpResponse.getHttpStatus()
-					+ "--- Generic Error Message: "
-					+ " responseJson is not returned"
-					+ "--- Error String and Response Json: "
-					+ getErrorStringAndResponseJsonFields(responseBodyMap),
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: responseJson is not returned --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
 					true);
 			throw new PreconditionFailedException("Experian Server",
-					"responseJson is not returned "
-							+ getErrorStringAndResponseJsonFields(
-									responseBodyMap),
-					null);
+					"responseJson is not returned " + getErrorStringAndResponseJsonFields(responseBodyMap), null);
 		}
 		if (responseBodyMap.get("responseJson").equals("next") == true) {
 			ExperianQuestionAnswer newExperianQuestionAnswer = new ExperianQuestionAnswer();
-			Map<String, Object> questionToCustomerMap = (Map<String, Object>) responseBodyMap
-					.get("questionToCustomer");
-			List<String> optionSet1 = (List<String>) questionToCustomerMap
-					.get("optionsSet1");
+			Map<String, Object> questionToCustomerMap = (Map<String, Object>) responseBodyMap.get("questionToCustomer");
+			List<String> optionSet1 = (List<String>) questionToCustomerMap.get("optionsSet1");
 			for (String question : optionSet1) {
 				newExperianQuestionAnswer.getOptionSet1().add(question);
 			}
-			List<String> optionSet2 = (List<String>) questionToCustomerMap
-					.get("optionsSet2");
+			List<String> optionSet2 = (List<String>) questionToCustomerMap.get("optionsSet2");
 			for (String question : optionSet2) {
 				newExperianQuestionAnswer.getOptionSet2().add(question);
 			}
@@ -952,150 +913,143 @@ public class ExperianBureauService implements IExperianService {
 			newExperianQuestionAnswer.setQuestionText(question);
 			String nextQuestionId = questionToCustomerMap.get("qid").toString();
 			newExperianQuestionAnswer.setQuestionId(nextQuestionId);
-			reportInputEntity.getQuestion().put(nextQuestionId,
-					newExperianQuestionAnswer);
+			reportInputEntity.getQuestion().put(nextQuestionId, newExperianQuestionAnswer);
 			reportInputEntity.setCurrentQuestion(newExperianQuestionAnswer);
-			reportInputEntity
-					.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
+			reportInputEntity.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
 			user.setReportInputEntitty(reportInputEntity);
 			user.setUserState(MethodState.AuthQuestions);
 			userService.update(user);
-			RequestThreadLocal.getSession().addSessionAttribute("ExperianData",
-					reportInputEntity);
+			RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: "
-					+ " fetchNextItem " + "--- Response status: "
-					+ httpResponse.getHttpStatus()
-					+ "--- Error String and Response Json: "
-					+ getErrorStringAndResponseJsonFields(responseBodyMap),
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
 					false);
 		}
 
 		if (responseBodyMap.get("responseJson").equals("passedReport")) {
-			// we have a report
-			// save this to the users context
-			// and change state to next question
-			reportInputEntity.setStateEnum(State.Report);
-			String report = (String) responseBodyMap
-					.get("showHtmlReportForCreditReport");
-			MockMultipartFile file = new MockMultipartFile(
-					"experianreport.html", "experianreport.html", "text/html",
-					report.getBytes());
-			FileEntity fileEntity = fileService.saveFile("ExperianReport",
-					file);
-			reportInputEntity.setReportFileEntity(fileEntity);
-			// saves the experian report url in the corresponding user
-
-			// Open the file
-			String htmlFile = FileUtils.readFileToString(new File(
-					configurationManager.get("RootFileDownloadLocation")
-							+ fileEntity.getFileName()));
-
-			// cut out the xml part from it
-			int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
-			String xmlFile = htmlFile.substring(startingPOsition,
-					htmlFile.length());
-			String reportNumber = getReportNumber(xmlFile);
-			reportInputEntity.setReportNumber(reportNumber);
-
+			reportInputEntity = parseReportAndGetReportNumber(reportInputEntity, responseBodyMap);
 			user = observeReport(reportInputEntity, user);
-			user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
+			user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
 			user.setUserState(MethodState.ReportGenerated);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: "
-					+ " fetchNextItem " + "--- Response status: "
-					+ httpResponse.getHttpStatus()
-					+ "--- Error String and Response Json: "
-					+ getErrorStringAndResponseJsonFields(responseBodyMap),
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
 					false);
 		}
 
-		handleError(user, reportInputEntity,responseBodyMap,httpResponse);
+		handleError(user, reportInputEntity, responseBodyMap, httpResponse);
 
 		user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
 		user.setReportInputEntitty(reportInputEntity);
 		userService.update(user);
 		// publishUserStateToCRM(user);
-		RequestThreadLocal.getSession().addSessionAttribute("ExperianData",
-				reportInputEntity);
+		RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
 		return reportInputEntity;
 	}
-	
+
 	/**
 	 * This method handle the errors in response of experian request.
-	 * @param user The user
-	 * @param reportInputEntity The reportinput entity
-	 * @param responseBodyMap The response map
-	 * @param httpResponse The httpresponse of experian request
-	 * @throws Exception throws in case of any error occurs
+	 * 
+	 * @param user
+	 *            The user whose experian integration process is going on
+	 * @param reportInputEntity
+	 *            The reportinput entity
+	 * @param responseBodyMap
+	 *            The response map
+	 * @param httpResponse
+	 *            The httpresponse of experian request
+	 * @throws Exception
+	 *             throws in case of any error occurs
 	 */
-	private void handleError(ExternalFacingReturnedUser user,ReportInputEntiity reportInputEntity, 
-			Map<String, Object> responseBodyMap, HttpResponse httpResponse) throws Exception{
+	private void handleError(ExternalFacingReturnedUser user, ReportInputEntiity reportInputEntity,
+			Map<String, Object> responseBodyMap, HttpResponse httpResponse) throws Exception {
 		if (responseBodyMap.get("responseJson").equals("systemError") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem " + "--- Response status: "
-					+ httpResponse.getHttpStatus()
-					+ "--- Generic Error Message:  Issue in accessing server - Experian_CRQ_Request -  systemError --- Error String and Response Json: "+ getErrorStringAndResponseJsonFields(responseBodyMap),false);
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message:  Issue in accessing server - Experian_CRQ_Request -  systemError --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
+					false);
 			throw new PreconditionFailedException("Experian Server",
-					"Issue in accessing server - Experian_CRQ_Request -  systemError",
-					null);
+					"Issue in accessing server - Experian_CRQ_Request -  systemError", null);
 		}
 
 		if (responseBodyMap.get("responseJson").equals("error") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem " + "--- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request -  error --- Error String and Response Json: "
-					+ getErrorStringAndResponseJsonFields(responseBodyMap),false);
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request -  error --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
+					false);
 			throw new PreconditionFailedException("Experian Server",
-					"Issue in accessing server - Experian_CRQ_Request -  systemError",
-					null);
+					"Issue in accessing server - Experian_CRQ_Request -  systemError", null);
 		}
 
-		if (responseBodyMap.get("responseJson")
-				.equals("creditReportEmpty") == true) {
+		if (responseBodyMap.get("responseJson").equals("creditReportEmpty") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			reportInputEntity.setStateEnum(State.CreditReportEmpty);
 			user.setUserState(MethodState.KYCPending);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem " + "--- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: " + " creditReportEmpty --- Error String and Response Json: "
-					+ getErrorStringAndResponseJsonFields(responseBodyMap),
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: creditReportEmpty --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
 					false);
 		}
 
-		if (responseBodyMap.get("responseJson")
-				.equals("inCorrectAnswersGiven") == true) {
+		if (responseBodyMap.get("responseJson").equals("inCorrectAnswersGiven") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			reportInputEntity.setStateEnum(State.IncorrectAnswerGiven);
 			user.setUserState(MethodState.KYCPending);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: "
-					+ " fetchNextItem " + "--- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: " + " inCorrectAnswersGiven --- Error String and Response Json: "
-					+ getErrorStringAndResponseJsonFields(responseBodyMap),
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: inCorrectAnswersGiven --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
 					false);
 		}
 
-		if (responseBodyMap.get("responseJson")
-				.equals("insufficientQuestion") == true) {
+		if (responseBodyMap.get("responseJson").equals("insufficientQuestion") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			reportInputEntity.setStateEnum(State.InsufficientQuestions);
 			user.setUserState(MethodState.KYCPending);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity, "--- Method Name: "
-					+ " fetchNextItem " + "--- Response status: "+ httpResponse.getHttpStatus()+ "--- Generic Error Message: " + " insufficientQuestion --- Error String and Response Json: "+ getErrorStringAndResponseJsonFields(responseBodyMap),
+			experianStatusUpdate(reportInputEntity,
+					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: insufficientQuestion --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap),
 					false);
 		}
 	}
 
-	private String getReportNumber(String xmlFile)
-			throws ParserConfigurationException, SAXException, IOException {
+	/**
+	 * This method is used to fetch report number from xml document(experian
+	 * report file xml data)
+	 * 
+	 * @param xmlFile
+	 *            the xml document(experian report file xml data)
+	 * @return the fetched report number
+	 * @throws ParserConfigurationException
+	 *             thrown if a DocumentBuilder cannot be created which satisfies
+	 *             the configuration requested.
+	 * @throws SAXException
+	 *             thrown when exception occurs in parsing the xml document
+	 * @throws IOException
+	 *             thrown when exception occurs in reading report file
+	 */
+	private String getReportNumber(String xmlFile) throws ParserConfigurationException, SAXException, IOException {
 		xmlFile = xmlFile.replace("\"/>", "");
 		xmlFile = xmlFile.replace("</body>", "");
 		xmlFile = xmlFile.replace("</html>", "");
 		xmlFile = StringEscapeUtils.unescapeHtml(xmlFile);
 
-		DocumentBuilder documentBuilder = DocumentBuilderFactory
-				.newInstance().newDocumentBuilder();
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		InputSource inputSource = new InputSource();
 		inputSource.setCharacterStream(new StringReader(xmlFile));
 
@@ -1104,17 +1058,16 @@ public class ExperianBureauService implements IExperianService {
 		// Normalize the XML Structure; It's just too important !!
 		NodeList root = doc.getChildNodes();
 		Node rootNode = getNode("InProfileResponse", root);
-		Node creditProfileHeader = getNode("CreditProfileHeader",
-				rootNode.getChildNodes());
-		NodeList creditProfileHeaderNodes = creditProfileHeader
-				.getChildNodes();
+		Node creditProfileHeader = getNode("CreditProfileHeader", rootNode.getChildNodes());
+		NodeList creditProfileHeaderNodes = creditProfileHeader.getChildNodes();
 		// get report number
-		String reportNumber = getNodeValue("ReportNumber",
-				creditProfileHeaderNodes);
+		String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
 		return reportNumber;
 	}
+
 	/**
 	 * This method create the headers for experian fetch next item request
+	 * 
 	 * @return The required request headers
 	 */
 	private BoilerplateMap<String, BoilerplateList<String>> createExperianQuestionRequestHeaders() {
@@ -1128,8 +1081,7 @@ public class ExperianBureauService implements IExperianService {
 		requestHeaders.put("Accept", headerValue);
 
 		headerValue = new BoilerplateList<String>();
-		headerValue.add(
-				configurationManager.get("Experian_Question_Content_Type"));
+		headerValue.add(configurationManager.get("Experian_Question_Content_Type"));
 		requestHeaders.put("Content-Type", headerValue);
 		return requestHeaders;
 	}
@@ -1139,44 +1091,94 @@ public class ExperianBureauService implements IExperianService {
 	 * 
 	 * @param reportInputEntity
 	 *            The reportInputEntity
-	 * @throws Exception  throws in case of queue down
+	 * @throws Exception
+	 *             throws in case of queue down
 	 */
-	private void pushIntoQueueToSendKYCUploadSMS(
-			ReportInputEntiity reportInputEntity)
-			throws Exception {
+	private void pushIntoQueueToSendKYCUploadSMS(ReportInputEntiity reportInputEntity) throws Exception {
 		ReportInputEntiity ReportInputEntiityClone = null;
-		ReportInputEntiityClone = (ReportInputEntiity) reportInputEntity
-				.clone();
+		ReportInputEntiityClone = (ReportInputEntiity) reportInputEntity.clone();
 		ExternalFacingReturnedUser externalFacingReturnedUser = this.userService
 				.get(reportInputEntity.getUserLoginId());
 
-		if (reportInputEntity.isDontSendKycSms() == false
-				|| !(reportInputEntity.isDontSendKycSms())) {
-			queueReaderJob.requestBackroundWorkItem(externalFacingReturnedUser,
-					subjectsForExperianKYCUpload, "ExperianBureauService",
-					"pushIntoQueueToSendKYCUploadSMS");
+		if (reportInputEntity.isDontSendKycSms() == false || !(reportInputEntity.isDontSendKycSms())) {
+			queueReaderJob.requestBackroundWorkItem(externalFacingReturnedUser, subjectsForExperianKYCUpload,
+					"ExperianBureauService", "pushIntoQueueToSendKYCUploadSMS");
 
 		}
 
 	}
+
 	/**
 	 * This method create the request for experian question api
-	 * @param url The experian question api url
-	 * @param requestHeaders The request headers
-	 * @param requestCookies The request cookies
-	 * @param questionTemplate The question template
+	 * 
+	 * @param url
+	 *            The experian question api url
+	 * @param requestHeaders
+	 *            The request headers
+	 * @param requestCookies
+	 *            The request cookies
+	 * @param questionTemplate
+	 *            The question template
 	 * @return the required request
 	 */
-	public String createExperianQuestionRequest(String url,BoilerplateMap<String, 
-			BoilerplateList<String>> requestHeaders,BoilerplateList<HttpCookie> 
-	requestCookies,String questionTemplate){
+	public String createExperianQuestionRequest(String url,
+			BoilerplateMap<String, BoilerplateList<String>> requestHeaders, BoilerplateList<HttpCookie> requestCookies,
+			String questionTemplate) {
 		String request = configurationManager.get("JAVA_HTTP_REQUEST_TEMPLATE");
-		request = request.replace("@url",url);
+		request = request.replace("@url", url);
 		request = request.replace("@requestHeaders", requestHeaders.toString());
 		request = request.replace("@requestBody", questionTemplate);
 		request = request.replace("@requestCookies", requestCookies.toString());
 		request = request.replace("@method", "POST");
 		return request;
+	}
+
+	/**
+	 * This method parses report data and gets required information like
+	 * reportNumber
+	 * 
+	 * @param reportInputEntity
+	 *            the reportInputEntity
+	 * @param responseBodyMap
+	 * @return the reportInputEntity that contains experian integration state,
+	 *         report number
+	 * @throws UpdateFailedException
+	 *             thrown when saving of experian report fails
+	 * @throws IOException
+	 *             thrown when exception occurs in reading report file
+	 * @throws BadRequestException
+	 *             thrown when input is not provided properly
+	 * @throws ParserConfigurationException
+	 *             thrown if a DocumentBuilder cannot be created which satisfies
+	 *             the configuration requested.
+	 * @throws SAXException
+	 *             thrown when exception occurs in parsing the xml document
+	 */
+	private ReportInputEntiity parseReportAndGetReportNumber(ReportInputEntiity reportInputEntity,
+			Map<String, Object> responseBodyMap) throws UpdateFailedException, IOException, ConflictException,
+			BadRequestException, ParserConfigurationException, SAXException {
+		// we have a report
+		// save this to the users context
+		// and change state to next question
+		reportInputEntity.setStateEnum(State.Report);
+		String report = (String) responseBodyMap.get("showHtmlReportForCreditReport");
+		MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html", "text/html",
+				report.getBytes());
+		FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
+		reportInputEntity.setReportFileEntity(fileEntity);
+		// saves the experian report url in the corresponding user
+
+		// Open the file
+		String htmlFile = FileUtils.readFileToString(
+				new File(configurationManager.get("RootFileDownloadLocation") + fileEntity.getFileName()));
+
+		// cut out the xml part from it
+		int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
+		String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
+		String reportNumber = getReportNumber(xmlFile);
+		reportInputEntity.setReportNumber(reportNumber);
+		return reportInputEntity;
+
 	}
 
 }

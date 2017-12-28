@@ -35,9 +35,9 @@ public class ExperianController extends BaseController {
 	
 	/**
 	 * This stars the experian integration process
-	 * @param reportInputEntity
+	 * @param reportInputEntity It contains initial inputs for fetching the report
 	 * @throws NotFoundException 
-	 * @throws BadRequestException 
+	 * @throws BadRequestException thrown when input is not provided properly
 	 */
 	@ApiOperation(	value="Starts the experian session"
 		 )
