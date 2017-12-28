@@ -511,7 +511,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
+		methodPermission = new MethodPermissions();
 		// for method checkUserExistence
 		methodPermission.setId(
 				"public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
@@ -520,7 +520,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
+		methodPermission = new MethodPermissions();
 		// for method deleteUserAndData
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.UserController.deleteUserAndData(com.boilerplate.java.entities.ManageUserEntity)");
