@@ -29,7 +29,7 @@ public class CurrencyConversionService implements ICurrencyConversionService {
 	/**
 	 * formatting the currency to two decimal places
 	 */
-	private static DecimalFormat df = new DecimalFormat("#.##");
+	private static DecimalFormat df = new DecimalFormat("#.00");
 	/**
 	 * The instance of configuration manager
 	 */
@@ -54,7 +54,8 @@ public class CurrencyConversionService implements ICurrencyConversionService {
 			CurrencyConversionEntity currencyConversionEntity) throws ValidationFailedException, IOException {
 		currencyConversionEntity.validate();
 
-		//Get currency amount to convert, its currency code and currency code of currency to convert to
+		// Get currency amount to convert, its currency code and currency code
+		// of currency to convert to
 		int amount = currencyConversionEntity.getCurrencyToConvert();
 		String currencyTosCurrencyCode = currencyConversionEntity.getConvertTosCurrencyCode().toUpperCase();
 		String currencyFromsCurrencyCode = currencyConversionEntity.getConvertFromsCurrencyCode().toUpperCase();
@@ -66,29 +67,32 @@ public class CurrencyConversionService implements ICurrencyConversionService {
 		requestUrl = requestUrl.replace("{currencyTosCurrencyCode}", currencyTosCurrencyCode);
 		// make GET request to third party api to get latest exchange rate
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(requestUrl, null, null, null, "GET");
-        
+
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			// parse json response by mapping the response
 			Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 			if (responseBodyMap.get("rates") != null) {
 				Map<String, Double> rates = (Map<String, Double>) responseBodyMap.get("rates");
-				
-				//check if there is data in response in rates
-				if( rates.containsKey(currencyTosCurrencyCode) && rates.containsKey(currencyFromsCurrencyCode)){
+
+				// check if there is data in response in rates
+				if (rates.containsKey(currencyTosCurrencyCode) && rates.containsKey(currencyFromsCurrencyCode)) {
 					// logic of converting currency
-					currencyConversionEntity.setConvertedCurrency(new Double(df
-							.format((rates.get(currencyTosCurrencyCode) / rates.get(currencyFromsCurrencyCode)) * amount)));
-				}else{
-					//TODO do whatever needed to do if no exchange rates got from response
+					currencyConversionEntity.setConvertedCurrency(new Double(df.format(
+							(rates.get(currencyTosCurrencyCode) / rates.get(currencyFromsCurrencyCode)) * amount)));
+				} else {
+					// TODO do whatever needed to do if no exchange rates got
+					// from response
 					currencyConversionEntity.setCurrencyToConvert(0);
 					currencyConversionEntity.setConvertedCurrency(0);
 				}
-					
+
 			}
 		} catch (Exception ex) {
 			// log the exception
-			logger.logException("CurrencyConversionService", "findExchangeRateAndConvertCurrency", null,ex.toString(), ex);
+			logger.logException("CurrencyConversionService", "findExchangeRateAndConvertCurrency", null, ex.toString(),
+					ex);
+			throw ex;
 		}
 		return currencyConversionEntity;
 	}

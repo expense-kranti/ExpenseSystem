@@ -670,6 +670,26 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for linkedIn refer link
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getLinkedInReferralLink()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getLinkedInReferralLink()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		// methodPermission.setPublishMethod("POST");
+		// methodPermission.setPublishRequired(true);
+		// methodPermission.setUrlToPublish(salesForceBaseurl +
+		// "/services/apexrest/ReferReport");
+		// methodPermission.setDynamicPublishURl(false);
+		// methodPermission.setPublishTemplate(
+		// "{\"userId\": \"@userId\",\"referralUUID\":
+		// \"@referralUUID\",\"type\": \"@type\",\"referralContacts\":
+		// @referralContacts}");
+		// methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permissions for ContactController starts here
 
 		// method permission for send email method
@@ -887,7 +907,32 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permissions for CheckList Controller
+
+		// for saveCheckList method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.saveCheckList(com.boilerplate.java.entities.CheckListEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.saveCheckList(com.boilerplate.java.entities.CheckListEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// for getCheckList() method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.getCheckList()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.getCheckList()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// save the method permission map in configuration
+		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
+
 	}
 
 	/**
@@ -1204,6 +1249,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
 				"7a5f568f-8f16-4642-a3ce-f473fd326d02_feedbackemailerhtml");
 		vAllEProduction.put("Reward_Person_Email", "madhurima.bhadury@projectakshar.com");
+
 		return vAllEProduction;
 	}
 
@@ -1285,9 +1331,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("REFER_SCORE_FOR_EMAIL", "10");
 		vAllEAll.put("REFER_SCORE_FOR_PHONE", "10");
 		vAllEAll.put("REFER_SCORE_FOR_FACEBOOK", "10");
+		vAllEAll.put("REFER_SCORE_FOR_LINKEDIN", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_EMAIL", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_PHONE", "10");
 		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_FACEBOOK", "10");
+		vAllEAll.put("SIGNUP_USER_REFER_SCORE_FOR_LINKEDIN", "10");
 		vAllEAll.put("AKS_USER_UUID_HASH_BASE_TAG", "AKS_USER_UUID_HASH_MAP");
 		vAllEAll.put("AKS_UUID_USER_HASH_BASE_TAG", "AKS_UUID_USER_HASH_MAP");
 		vAllEAll.put("IS_SIGN_UP_USER_GET_REFER_SCORE", "true");
@@ -1302,11 +1350,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("UPDATE_AKS_USER_SUBJECT", "UPDATE_LOGGED_IN_USER_AKS");
 
 		vAllEAll.put("Top_Scorer_Size", "10");
-
 		// to be used for currency converter widget
 		vAllEAll.put("CurrencyConversionAPI_URL",
-				"https://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
+				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 
+		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
 		return vAllEAll;
 
 	}

@@ -78,7 +78,7 @@ public interface IReferralService {
 	 * @throws IOException
 	 * @throws ConflictException
 	 */
-	public ReferalEntity getFaceBookReferralLink() throws IOException, ConflictException;
+	public ReferalEntity getFaceBookReferralLink();
 
 	/**
 	 * This method is used to delete all the user related referral data like
@@ -89,4 +89,14 @@ public interface IReferralService {
 	 *            deleted
 	 */
 	public void deleteUserAllReferralData(String userReferId);
+
+	/**
+	 * This method is used to get the referral link for linked In sharing to a
+	 * referred user
+	 * 
+	 * @return the referral link the generated referral link to post to referred
+	 *         users
+	 * @throws ConflictException
+	 */
+	public ReferalEntity getLinkedInReferralLink();
 }

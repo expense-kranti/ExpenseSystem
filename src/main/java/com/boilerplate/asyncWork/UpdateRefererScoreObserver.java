@@ -192,6 +192,10 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// Set contact with phone number
 			contact = externalFacingUser.getPhoneNumber();
 			break;
+		case LinkedIn:
+			// Set contact with phone number
+			contact = externalFacingUser.getPhoneNumber();
+			break;
 		default:
 			// Set contact with phone number
 			contact = externalFacingUser.getPhoneNumber();
@@ -445,6 +449,10 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// Get the refer score for faceBook
 			referScore = configurationManager.get("REFER_SCORE_FOR_FACEBOOK");
 			break;
+		case LinkedIn:
+			// Get the refer score for faceBook
+			referScore = configurationManager.get("REFER_SCORE_FOR_LINKEDIN");
+			break;
 		default:
 			break;
 		}
@@ -474,6 +482,10 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		case Facebook:
 			// Get the refer score for faceBook
 			referScore = configurationManager.get("SIGNUP_USER_REFER_SCORE_FOR_FACEBOOK");
+			break;
+		case LinkedIn:
+			// Get the refer score for faceBook
+			referScore = configurationManager.get("SIGNUP_USER_REFER_SCORE_FOR_LINKEDIN");
 			break;
 		default:
 			break;

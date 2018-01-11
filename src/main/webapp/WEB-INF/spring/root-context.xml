@@ -739,5 +739,15 @@
 		</property>
 	</bean>
 
+	<!-- Dependencies for CheckList APIs Related classes -->
+	<bean id="checkListService" class="com.boilerplate.service.implemetations.CheckListService">
+		<property name="checkListDataAccess" ref="checkListDataAccess">
+		</property>
+	</bean>
+
+	<bean id="checkListDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisCheckList">
+	</bean>
+
 </beans>
  

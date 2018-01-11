@@ -9,8 +9,8 @@ import com.boilerplate.java.collections.BoilerplateList;
 
 /**
  * This entity contains the data related to EMI like loan amount borrowed, it's
- * interest rate, loan period. Data about amortized schedule list like interests and
- * principals paid in each month EMI with its year.
+ * interest rate, loan period. Data about amortized schedule list like interests
+ * and principals paid in each month EMI with its year.
  * 
  * @author urvij
  *
@@ -53,7 +53,6 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 * This is the amortized schedule data list yearly
 	 */
 	private BoilerplateList<AmortizedScheduleYearly> amortizedScheduleYearlyList;
-	
 
 	/**
 	 * This is the calculated EMI to be paid
@@ -224,6 +223,7 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * Gets the amortizedSchedule yearly list
+	 * 
 	 * @return the amortizedScheduleYearlyList
 	 */
 	public BoilerplateList<AmortizedScheduleYearly> getAmortizedScheduleYearlyList() {
@@ -232,12 +232,14 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * Sets the amortizedSchedule yearly list
-	 * @param amortizedScheduleYearlyList the amortizedScheduleYearlyList to set
+	 * 
+	 * @param amortizedScheduleYearlyList
+	 *            the amortizedScheduleYearlyList to set
 	 */
 	public void setAmortizedScheduleYearlyList(BoilerplateList<AmortizedScheduleYearly> amortizedScheduleYearlyList) {
 		this.amortizedScheduleYearlyList = amortizedScheduleYearlyList;
 	}
-	
+
 	/**
 	 * Gets the EMI to be paid
 	 * 
@@ -300,22 +302,33 @@ public class EmiDataEntity extends BaseEntity implements Serializable {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// check if loan amount borrowed is 0
-		if (this.getInitialPrincipalBorrowed() == 0) {
-			throw new ValidationFailedException("EmiDataEntity", "Initial principal borrowed is zero", null);
-		}
-		// check if interest rate per year and interest rate per month is 0
-		if (this.getInterestRatePerYear() == 0 && this.getInterestRatePerMonth() == 0) {
+		// check if loan amount borrowed should not less than or equal to 0
+		if (this.getInitialPrincipalBorrowed() <= 0) {
 			throw new ValidationFailedException("EmiDataEntity",
-					"One of the interest rates per year or interest rate per month should not be zero", null);
+					"Initial principal borrowed should not be less than or equal to zero", null);
 		}
-		// checks if loan period in years and loan period in months is 0
-		if (this.getLoanPeriodInYears() == 0 && this.getLoanPeriodInMonths() == 0) {
+		// check if interest rate per year and interest rate per month should
+		// not less than or equal to 0
+		if (this.getInterestRatePerYear() <= 0 && this.getInterestRatePerMonth() <= 0) {
 			throw new ValidationFailedException("EmiDataEntity",
-					"One of the loan period in years or in months should not be zero", null);
+					"One of the interest rates per year or interest rate per month should not be less than or equal to zero",
+					null);
 		}
-		if(this.getInitialPrincipalBorrowed() <= this.getDownPayment()){
-			throw new ValidationFailedException("EmiDataEntity", " Initial principal should be greater than downpayent", null);
+		// checks if loan period in years and loan period in months should not
+		// less than or equal to 0
+		if (this.getLoanPeriodInYears() <= 0 && this.getLoanPeriodInMonths() <= 0) {
+			throw new ValidationFailedException("EmiDataEntity",
+					"One of the loan period in years or in months should not be less than or equal to zero", null);
+		}
+		// check if downpayment is less than zero
+		if (this.getDownPayment() < 0) {
+			throw new ValidationFailedException("EmiDataEntity", "Downpayment should not be less than zero", null);
+		}
+		// check if initial principal borrowed should not be less than
+		// downpayment
+		if (this.getInitialPrincipalBorrowed() <= this.getDownPayment()) {
+			throw new ValidationFailedException("EmiDataEntity", " Initial principal should be greater than downpayent",
+					null);
 		}
 		return true;
 	}

@@ -241,6 +241,10 @@ public class ReferralService implements IReferralService {
 				// get referral link
 				// TODO need to discuss
 				break;
+			case LinkedIn:
+				// get referral link
+				// TODO need to discuss
+				break;
 			default:
 				throw new NotFoundException("ReferalEntity", "Not a valid Referral medium type", null);
 			}
@@ -409,11 +413,10 @@ public class ReferralService implements IReferralService {
 	}
 
 	/**
-	 * @throws ConflictException
 	 * @see IReferralService.getFaceBookReferralLink
 	 */
 	@Override
-	public ReferalEntity getFaceBookReferralLink() throws IOException, ConflictException {
+	public ReferalEntity getFaceBookReferralLink() {
 
 		String userReferId = this.getReferUserId();
 		// Create a new instance of referral entity
@@ -427,7 +430,23 @@ public class ReferralService implements IReferralService {
 		return referalEntity;
 	}
 
-	private String getReferUserId() throws ConflictException {
+	/**
+	 * @see IReferralService.getLinkedInReferralLink
+	 */
+	@Override
+	public ReferalEntity getLinkedInReferralLink() {
+		String userReferId = this.getReferUserId();
+		// Create a new instance of referral entity
+		ReferalEntity referalEntity = new ReferalEntity(UserReferalMediumType.LinkedIn,
+				RequestThreadLocal.getSession().getUserId());
+		referalEntity.setUserReferId(userReferId);
+		// Get referal link
+		this.generateReferralLink(referalEntity);
+
+		return referalEntity;
+	}
+
+	private String getReferUserId() {
 		// Get user details
 		ExternalFacingReturnedUser user = RequestThreadLocal.getSession().getExternalFacingUser();
 		// Check is user contains its user refer id if not then create

@@ -112,12 +112,14 @@ public class CurrencyConversionEntity extends BaseEntity implements Serializable
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-        //if the currency code of currency to convert from, is null or empty throw validationfailedexception
+		// if the currency code of currency to convert from, is null or empty
+		// throw validationfailedexception
 		if (this.isNullOrEmpty(this.getConvertFromsCurrencyCode())) {
 			throw new ValidationFailedException("CurrencyConversionEntity",
 					"Currency code of currency to convert from is null/Empty", null);
 		}
-        //if the currency code of currency to convert to, is null or empty throw validationfailedexception
+		// if the currency code of currency to convert to, is null or empty
+		// throw validationfailedexception
 		if (this.isNullOrEmpty(this.getConvertTosCurrencyCode())) {
 			throw new ValidationFailedException("CurrencyConversionEntity",
 					"Currency code of currency to convert to is null/Empty", null);

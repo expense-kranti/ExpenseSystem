@@ -101,4 +101,17 @@ public class ReferralController extends BaseController {
 		return referralService.getFaceBookReferralLink();
 	}
 
+	/**
+	 * This API is used to get the LinkedIn referral link for the user referred
+	 * in current date
+	 * 
+	 * @return referralEntity that contains the referral link
+	 */
+	@ApiOperation(value = "Get the LinkedIn referral link for the referred user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/userLinkedInReferralLink", method = RequestMethod.GET)
+	public @ResponseBody ReferalEntity getLinkedInReferralLink() throws Exception {
+		return referralService.getLinkedInReferralLink();
+	}
+
 }

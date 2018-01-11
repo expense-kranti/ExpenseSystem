@@ -17,5 +17,9 @@ public enum UserReferalMediumType {
 	  /**
 	   * This means the user was referred through facebook
 	   */
-	  Facebook
+	  Facebook,
+	  /**
+	   * This means the user was referred through Linked In
+	   */
+	  LinkedIn
 }

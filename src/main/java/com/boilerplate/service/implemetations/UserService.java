@@ -52,7 +52,7 @@ public class UserService implements IUserService {
 	 */
 	Logger logger = Logger.getInstance(UserService.class);
 
-	private static final String Sfupdatehash = "SFUpdateHash:";
+	
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -814,7 +814,7 @@ public class UserService implements IUserService {
 				this.redisSFUpdateHashAccess.hdel(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"),
 						user.getUserReferId());
 			}
-			this.redisSFUpdateHashAccess.del(Sfupdatehash + userId);
+			this.redisSFUpdateHashAccess.del(configurationManager.get("SF_Update_Hash_Name") + ":" + userId);
 			// delete user
 			userDataAccess.deleteUser(user);
 		} else {
