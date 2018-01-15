@@ -12,6 +12,7 @@ import com.boilerplate.database.interfaces.ISFUpdateHash;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
@@ -22,9 +23,11 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.CampaignType;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ShortUrlEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
+import com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -493,6 +496,41 @@ public class ReferralService implements IReferralService {
 		ShortUrlEntity shortUrlEntity = Base.fromJSON(httpResponse.getResponseBody(), ShortUrlEntity.class);
 		// Return short URL
 		return shortUrlEntity.getShortUrl();
+	}
+
+	/**
+	 * @see IReferral.getLoggedInUserReferredSignedUpUsersCount
+	 */
+	@Override
+	public UserReferredSignedUpUsersCountEntity getLoggedInUserReferredSignedUpUsersCount()
+			throws UnauthorizedException {
+
+		// get currently logged in user from session
+		// here we are not checking for session is null as we have put
+		// authentication required to true in method permission
+		ExternalFacingUser user = RequestThreadLocal.getSession().getExternalFacingUser();
+		UserReferredSignedUpUsersCountEntity userReferredSignedUpUsersCountEntity = new UserReferredSignedUpUsersCountEntity();
+		int totalSignedUpCount = 0;
+		// loop through all referral medium type and get sign-up count for each
+		// referral medium
+		for (UserReferalMediumType referMediumType : UserReferalMediumType.values()) {
+			// get sign up count for the referral medium from data store
+			String signedUpCountString = referral.getSignUpCount(
+					new ReferalEntity(referMediumType.toString(), user.getUserId(), user.getUserReferId()));
+			// if referral sign-up count is null then do nothing and loop
+			// forward
+			if (signedUpCountString == null || signedUpCountString.isEmpty()) {
+
+			} else {
+				// if count available parse it to integer and add it to total
+				// count
+				totalSignedUpCount += Integer.parseInt(signedUpCountString);
+			}
+		}
+		userReferredSignedUpUsersCountEntity.setUserId(user.getUserId());
+		// set total sign-up count to entity we are returning
+		userReferredSignedUpUsersCountEntity.setReferredUsersTotalSignUpCount(totalSignedUpCount);
+		return userReferredSignedUpUsersCountEntity;
 	}
 
 	/**

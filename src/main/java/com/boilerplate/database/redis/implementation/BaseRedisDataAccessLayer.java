@@ -690,6 +690,16 @@ public class BaseRedisDataAccessLayer {
 		// methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for getUserReferredSignedUpUsersCount method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCount()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCount()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permissions for ContactController starts here
 
 		// method permission for send email method
@@ -927,6 +937,26 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.getCheckList()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permissions for Handbook Controller
+
+		// for saveAndPublishHandbook method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.Handbook com.boilerplate.java.controllers.HandbookController.publishHandbook(com.boilerplate.java.entities.Handbook)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.Handbook com.boilerplate.java.controllers.HandbookController.publishHandbook(com.boilerplate.java.entities.Handbook)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/MyHandBook");
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishTemplate(
+				"{\"userId\" : \"@userId\",\"category\" : \"@category\",\"categoryType\" : \"@categoryType\",\"employmentType\" : \"@employmentType\"}");
+		methodPermission.setPublishBusinessSubject("HANDBOOK_AKS");
+
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// save the method permission map in configuration

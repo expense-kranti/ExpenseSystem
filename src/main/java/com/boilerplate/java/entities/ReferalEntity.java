@@ -18,7 +18,7 @@ import scala.util.parsing.combinator.testing.Str;
 /**
  * This entity represents the reference of user
  * 
- * @author kranti123
+ * @author 
  *
  */
 public class ReferalEntity extends BaseEntity implements Serializable, ICRMPublishDynamicURl, ICRMPublishEntity {
@@ -206,7 +206,8 @@ public class ReferalEntity extends BaseEntity implements Serializable, ICRMPubli
 	public String createPublishJSON(String template) throws UnauthorizedException {
 		String retrunValue = template;
 		retrunValue = retrunValue.replace("@userId", this.getUserId() == null ? "{}" : this.getUserId());
-		retrunValue = retrunValue.replace("@referralUUID", this.getUserReferId() == null ? "{}" : this.getUserReferId());
+		retrunValue = retrunValue.replace("@referralUUID",
+				this.getUserReferId() == null ? "{}" : this.getUserReferId());
 		String referralLink = this.getReferralLink() == null ? "" : this.getReferralLink();
 		retrunValue = retrunValue.replace("@referralLink", referralLink);
 		retrunValue = retrunValue.replace("@referralContacts",

@@ -132,6 +132,7 @@
 				<entry key="REFER_REPORT_CREATED_AKS" value-ref="onBulkPublish" />
 				<entry key="PublishUserData" value-ref="publishUserData" />
 				<entry key="BLOG_ACTIVITY" value-ref="onBulkPublish" />
+				<entry key="HANDBOOK_AKS" value-ref="onBulkPublish" />
 				<entry key="SetUserChangePasswordStatus" value-ref="setUserChangePasswordStatus" />
 
 				<entry key="SendSMSToReferredUser" value-ref="userReferredObserverForSMS" />
@@ -748,6 +749,12 @@
 	<bean id="checkListDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisCheckList">
 	</bean>
+
+	<!-- Dependencies related to Handbook apis -->
+	<bean id="handbookService" class="com.boilerplate.service.implemetations.HandbookService">
+	</bean>
+
+
 
 </beans>
  

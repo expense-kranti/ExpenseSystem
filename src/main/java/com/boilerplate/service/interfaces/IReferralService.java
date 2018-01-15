@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
+import com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity;
 
 /**
  * This class has the services for referral related operations
@@ -99,4 +101,17 @@ public interface IReferralService {
 	 * @throws ConflictException
 	 */
 	public ReferalEntity getLinkedInReferralLink();
+
+	/**
+	 * This method is used to get the current logged in user referred signed-up
+	 * users total count of all medium
+	 * 
+	 * @return the userReferredSignedUpUsersCountEntity with userId of logged in
+	 *         user and total count of referred signed-up users of all mediums
+	 * @throws UnauthorizedException
+	 *             thrown when user is not found in session means is not logged
+	 *             in
+	 */
+	public UserReferredSignedUpUsersCountEntity getLoggedInUserReferredSignedUpUsersCount()
+			throws UnauthorizedException;
 }

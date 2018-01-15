@@ -382,6 +382,7 @@ public class QueueReaderJob {
 					publishBulkFromSubject("REPORT_CREATED_AKS");
 					publishBulkFromSubject("REFER_REPORT_CREATED_AKS");	
 					publishBulkFromSubject("BLOG_ACTIVITY");
+					publishBulkFromSubject("HANDBOOK_AKS");
 					
 									}//end if
 			}catch(Exception ex){

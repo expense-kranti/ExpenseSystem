@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boilerplate.exceptions.rest.ConflictException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity;
 import com.boilerplate.service.interfaces.IReferralService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -112,6 +114,24 @@ public class ReferralController extends BaseController {
 	@RequestMapping(value = "/userLinkedInReferralLink", method = RequestMethod.GET)
 	public @ResponseBody ReferalEntity getLinkedInReferralLink() throws Exception {
 		return referralService.getLinkedInReferralLink();
+	}
+
+	/**
+	 * This API is used to get the logged in user's referred signed up users
+	 * count
+	 * 
+	 * @return UserReferredSignedUpUsersCountEntity with user
+	 *         refferedSignedupUsersCount and logged in users userId against
+	 *         whom count is given
+	 * @throws UnauthorizedException
+	 *             thrown when user is logged in
+	 */
+	@ApiOperation(value = "Gets the logged in user's total count of referred signed-up users and logged in users userId")
+	@ApiResponses({ @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/userReferredSignedUpUsersCount", method = RequestMethod.GET)
+	public @ResponseBody UserReferredSignedUpUsersCountEntity getUserReferredSignedUpUsersCount()
+			throws UnauthorizedException {
+		return referralService.getLoggedInUserReferredSignedUpUsersCount();
 	}
 
 }
