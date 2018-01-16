@@ -959,6 +959,12 @@ public class BaseRedisDataAccessLayer {
 
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permissions for IncomTaxCalculatorController
+
+		// method permission for calculateSimpleTax method
+		methodPermission.setId("");
+		
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1134,6 +1140,14 @@ public class BaseRedisDataAccessLayer {
 				"573822c7-23ea-4690-98cb-772127e3d888_feedbackemailerhtml");
 		vAllETest.put("Reward_Person_Email", "shiva.gupta@krantitechservices.in");
 
+		// values for Incometax controller
+		vAllETest.put("Max_Travel_Allowance_Deduction", "19200");
+		vAllETest.put("Max_Medical_Allowance_Deduction", "15000");
+		vAllETest.put("Max_80C_Allowed_Deduction", "150000");
+		vAllETest.put("Max_80D_Allowed_Deduction", "25000");
+		vAllETest.put("Max_80CCD_Allowed_Deduction", "50000");
+		vAllETest.put("INCOMETAX_UUID_LENGTH", "8");
+
 		return vAllETest;
 	}
 
@@ -1218,6 +1232,14 @@ public class BaseRedisDataAccessLayer {
 				"a105aeb5-faf6-40ee-8439-c4651764010f_feedbackemailerhtml");
 		vAllEDev.put("Reward_Person_Email", "shiva.gupta@krantitechservices.in");
 
+		// values for Incometax controller
+		vAllEDev.put("Max_Travel_Allowance_Deduction", "19200");
+		vAllEDev.put("Max_Medical_Allowance_Deduction", "15000");
+		vAllEDev.put("Max_80C_Allowed_Deduction", "150000");
+		vAllEDev.put("Max_80D_Allowed_Deduction", "25000");
+		vAllEDev.put("Max_80CCD_Allowed_Deduction", "50000");
+		vAllEDev.put("INCOMETAX_UUID_LENGTH", "8");
+
 		return vAllEDev;
 
 	}
@@ -1279,6 +1301,14 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
 				"7a5f568f-8f16-4642-a3ce-f473fd326d02_feedbackemailerhtml");
 		vAllEProduction.put("Reward_Person_Email", "madhurima.bhadury@projectakshar.com");
+
+		// values for Incometax controller
+		vAllEProduction.put("Max_Travel_Allowance_Deduction", "19200");
+		vAllEProduction.put("Max_Medical_Allowance_Deduction", "15000");
+		vAllEProduction.put("Max_80C_Allowed_Deduction", "150000");
+		vAllEProduction.put("Max_80D_Allowed_Deduction", "25000");
+		vAllEProduction.put("Max_80CCD_Allowed_Deduction", "50000");
+		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
 
 		return vAllEProduction;
 	}
@@ -1385,6 +1415,7 @@ public class BaseRedisDataAccessLayer {
 				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
+
 		return vAllEAll;
 
 	}

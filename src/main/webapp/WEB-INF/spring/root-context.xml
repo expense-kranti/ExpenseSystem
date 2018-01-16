@@ -755,6 +755,15 @@
 	</bean>
 
 
+	<!-- Dependencies related to IncomeTax related apis -->
+
+	<bean id="incomeTaxService" class="com.boilerplate.service.implemetations.IncomeTaxService">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="incomeTaxDataAccess" ref="incomeTaxDataAccess"></property>
+	</bean>
+	<bean id="incomeTaxDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisIncomeTax">
+	</bean>
 
 </beans>
  
