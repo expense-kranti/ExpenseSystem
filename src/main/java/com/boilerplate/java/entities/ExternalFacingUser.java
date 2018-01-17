@@ -113,16 +113,17 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 			throw new ValidationFailedException("User", "UserId is null/Empty", null);
 		if (this.isNullOrEmpty(this.getFirstName()))
 			throw new ValidationFailedException("User", "First Name is null/Empty", null);
-//		if (this.isNullOrEmpty(this.getLastName()))
-//			throw new ValidationFailedException("User", "Last Name is null/Empty", null);
-		if (!this.isNullOrEmpty(this.getEmail())){
+		// if (this.isNullOrEmpty(this.getLastName()))
+		// throw new ValidationFailedException("User", "Last Name is
+		// null/Empty", null);
+		if (!this.isNullOrEmpty(this.getEmail())) {
 			if (this.getEmail() == null) {
 				throw new ValidationFailedException("User", "Email is null/Empty", null);
 			}
 			Matcher matcher = emailResxPattern.matcher(this.getEmail());
 			if (matcher.matches() == false) {
 				throw new ValidationFailedException("User", "Email format is incorrect", null);
-			}	
+			}
 		}
 		if (this.isNullOrEmpty(this.getPhoneNumber()))
 			throw new ValidationFailedException("User", "Phone Number null/Empty", null);
@@ -567,7 +568,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the user refer id
 	 */
 	private String userReferId;
-	
+
 	/**
 	 * This is used to check if user has sent feedback
 	 */
@@ -575,6 +576,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This gets the isFeedback submitted boolean value
+	 * 
 	 * @return The boolean value of isFeedbacksubmitted
 	 */
 	public boolean isFeedBackSubmitted() {
@@ -583,14 +585,17 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This sets the isFeedback submitted boolean value
-	 * @param isFeedBackSubmitted The boolean value of isFeedBackSubmitted
+	 * 
+	 * @param isFeedBackSubmitted
+	 *            The boolean value of isFeedBackSubmitted
 	 */
 	public void setFeedBackSubmitted(boolean isFeedBackSubmitted) {
 		this.isFeedBackSubmitted = isFeedBackSubmitted;
 	}
-	
+
 	/**
 	 * This method get the user total score
+	 * 
 	 * @return the totalScore
 	 */
 	public String getTotalScore() {
@@ -599,15 +604,40 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * This method set the user total score
-	 * @param totalScore the totalScore to set
+	 * 
+	 * @param totalScore
+	 *            the totalScore to set
 	 */
 	public void setTotalScore(String totalScore) {
 		this.totalScore = totalScore;
 	}
+
+	/**
+	 * Gets the incometaxuuid
+	 * 
+	 * @return the incomeTaxUuid
+	 */
+	public String getIncomeTaxUuid() {
+		return incomeTaxUuid;
+	}
+
+	/**
+	 * Sets the incometaxuuid
+	 * 
+	 * @param incomeTaxUuid
+	 *            the incomeTaxUuid to set
+	 */
+	public void setIncomeTaxUuid(String incomeTaxUuid) {
+		this.incomeTaxUuid = incomeTaxUuid;
+	}
+
 	/**
 	 * This is the user total score
 	 */
 	private String totalScore;
-	
+	/**
+	 * This is the income tax uuid used to refer to income tax data for the user
+	 */
+	private String incomeTaxUuid;
 
 }

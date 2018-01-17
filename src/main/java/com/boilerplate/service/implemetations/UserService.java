@@ -52,7 +52,6 @@ public class UserService implements IUserService {
 	 */
 	Logger logger = Logger.getInstance(UserService.class);
 
-	
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -345,6 +344,16 @@ public class UserService implements IUserService {
 
 		// check if a user with given Id exists
 		if (this.userExists(externalFacingUser.getAuthenticationProvider() + ":" + externalFacingUser.getUserId())) {
+			// check if income tax uuid is present means need to set in existing
+			// user
+			if (externalFacingUser.getIncomeTaxUuid() != null) {
+				ExternalFacingReturnedUser existingUser = userDataAccess
+						.getUser(normalizeUserId(externalFacingUser.getUserId()), null);
+				existingUser.setIncomeTaxUuid(externalFacingUser.getIncomeTaxUuid());
+				// SAVE USER HERE
+				userDataAccess.update(existingUser);
+				return existingUser;
+			}
 			throw new ConflictException("User", "User already exist with this mobile", null);
 		}
 		/*

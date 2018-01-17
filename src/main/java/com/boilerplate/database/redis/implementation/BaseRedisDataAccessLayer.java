@@ -962,8 +962,48 @@ public class BaseRedisDataAccessLayer {
 		// method permissions for IncomTaxCalculatorController
 
 		// method permission for calculateSimpleTax method
-		methodPermission.setId("");
-		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateSimpleTax(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateSimpleTax(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for calculateIncomeTaxWithInvestments method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateIncomeTaxWithInvestments(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateIncomeTaxWithInvestments(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for getIncomeTaxData method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.getIncomeTaxData(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.getIncomeTaxData(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for saveIncomeTaxUserDetails method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.IncomeTaxCalculatorController.saveIncomeTaxUserDetails(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.IncomeTaxCalculatorController.saveIncomeTaxUserDetails(com.boilerplate.java.entities.IncomeTaxEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// save the method permission map in configuration
 		// in database
@@ -1146,6 +1186,10 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Max_80C_Allowed_Deduction", "150000");
 		vAllETest.put("Max_80D_Allowed_Deduction", "25000");
 		vAllETest.put("Max_80CCD_Allowed_Deduction", "50000");
+		vAllETest.put("Max_80D_Allowed_Deduction_ON_INVESTMENT", "55000");
+		vAllETest.put("Max_80E_Allowed_Deduction_ON_INVESTMENT", "1000000");
+		vAllETest.put("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT", "200000");
+		vAllETest.put("Education_Cess", "1.03");
 		vAllETest.put("INCOMETAX_UUID_LENGTH", "8");
 
 		return vAllETest;
@@ -1238,6 +1282,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Max_80C_Allowed_Deduction", "150000");
 		vAllEDev.put("Max_80D_Allowed_Deduction", "25000");
 		vAllEDev.put("Max_80CCD_Allowed_Deduction", "50000");
+		vAllEDev.put("Max_80D_Allowed_Deduction_ON_INVESTMENT", "55000");
+		vAllEDev.put("Max_80E_Allowed_Deduction_ON_INVESTMENT", "1000000");
+		vAllEDev.put("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT", "200000");
+		vAllEDev.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
+		vAllEDev.put("Education_Cess", "1.03");
 		vAllEDev.put("INCOMETAX_UUID_LENGTH", "8");
 
 		return vAllEDev;
@@ -1308,6 +1357,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Max_80C_Allowed_Deduction", "150000");
 		vAllEProduction.put("Max_80D_Allowed_Deduction", "25000");
 		vAllEProduction.put("Max_80CCD_Allowed_Deduction", "50000");
+		vAllEProduction.put("Max_80D_Allowed_Deduction_ON_INVESTMENT", "55000");
+		vAllEProduction.put("Max_80E_Allowed_Deduction_ON_INVESTMENT", "1000000");
+		vAllEProduction.put("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT", "200000");
+		vAllEProduction.put("Education_Cess", "1.03");
 		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
 
 		return vAllEProduction;
@@ -1458,6 +1511,10 @@ public class BaseRedisDataAccessLayer {
 		contentMap.put("REWARD_WINNING_USER_DETAILS_EMAIL_SUBJECT", "Reward Redemption");
 		contentMap.put("REWARD_WINNING_USER_DETAILS_EMAIL_BODY",
 				" <b>Name:</b> @RewardWinningUserName <br> <b>Contact Number:</b> @RewardWinnigUserMobileNumber <br> <b>Email:</b> @RewardWinnigUserEmail <br>");
+
+		// email content related to income tax data email to be sent
+		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Details of income tax calculation");
+		contentMap.put("INCOME_TAX_DETAILS_EMAIL_BODY", "<b>CTC</b> @ctc <br> <b> estimated tax</b> @estimatedTax");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

@@ -18,6 +18,7 @@ import com.boilerplate.service.interfaces.IContentService;
 
 /**
  * This class sends a Email when user registers
+ * 
  * @author gaurav.verma.icloud
  *
  */
@@ -28,63 +29,64 @@ public class SendRegistrationEmailObserver implements IAsyncWorkObserver {
 	 */
 	@Autowired
 	IContentService contentService;
-	
+
 	/**
 	 * This sets the content service
-	 * @param contentService This is the content service
+	 * 
+	 * @param contentService
+	 *            This is the content service
 	 */
-	public void setContentService(IContentService contentService){
+	public void setContentService(IContentService contentService) {
 		this.contentService = contentService;
 	}
-	
+
 	/**
 	 * This is the configuration manager
 	 */
 	@Autowired
 	ConfigurationManager configurationManager;
-	
+
 	/**
 	 * This sets the configuration Manager
+	 * 
 	 * @param configurationManager
 	 */
-	public void setConfigurationManager(ConfigurationManager configurationManager){
+	public void setConfigurationManager(ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-	
-	
-	
-	
+
 	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		ExternalFacingUser externalFacingUser = (ExternalFacingUser)asyncWorkItem.getPayload();
-		
+		ExternalFacingUser externalFacingUser = (ExternalFacingUser) asyncWorkItem.getPayload();
+
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		tosEmailList.add(externalFacingUser.getEmail());
 		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
 
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
-		
-		this.sendEmail(externalFacingUser.getFirstName(),tosEmailList, ccsEmailList, bccsEmailList
-				,externalFacingUser.getPhoneNumber(),externalFacingUser.getUserKey());
+
+		this.sendEmail(externalFacingUser.getFirstName(), tosEmailList, ccsEmailList, bccsEmailList,
+				externalFacingUser.getPhoneNumber(), externalFacingUser.getUserKey());
 
 	}
-	
-	public void sendEmail(String firstName,BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList, BoilerplateList<String> bccsEmailList, String phoneNumber,String userKey) throws Exception{
-		String subject=contentService.getContent("WELCOME_MESSAGE_EMAIL_SUBJECT");
 
-		subject = subject.replace("@FirstName",firstName);
+	public void sendEmail(String firstName, BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,
+			BoilerplateList<String> bccsEmailList, String phoneNumber, String userKey) throws Exception {
+		String subject = contentService.getContent("WELCOME_MESSAGE_EMAIL_SUBJECT");
+
+		subject = subject.replace("@FirstName", firstName);
+		// get email body template and prepare email
 		String body = contentService.getContent("WELCOME_MESSAGE_EMAIL_BODY");
-		body = body.replace("@FirstName",firstName);
-		body = body.replace("@Email",(String) tosEmailList.get(0));
-		body = body.replace("@PhoneNumber",phoneNumber);
-		body = body.replace("@UserKey",userKey==null?"":userKey);
-		if(!Boolean.valueOf(configurationManager.get("Db_Migrate"))){
-			EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body,null);
-		}
-		
+		body = body.replace("@FirstName", firstName);
+		body = body.replace("@Email", (String) tosEmailList.get(0));
+		body = body.replace("@PhoneNumber", phoneNumber);
+		body = body.replace("@UserKey", userKey == null ? "" : userKey);
+		// send email to the receiver(s)
+		EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body, null);
+
 	}
 
 }

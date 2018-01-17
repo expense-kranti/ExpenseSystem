@@ -1,7 +1,11 @@
 package com.boilerplate.database.interfaces;
 
+import java.io.IOException;
+
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.IncomeTaxEntity;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This interface has methods to manage incometax related data in data store
@@ -18,8 +22,12 @@ public interface IIncomeTax {
 	 * @param incomeTaxEntity
 	 *            contains all the income tax data need to be saved
 	 * @return incomeTaxEntity with uuid against which data is saved
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
-	public IncomeTaxEntity saveIncomeTaxData(IncomeTaxEntity incomeTaxEntity);
+	public IncomeTaxEntity saveIncomeTaxData(IncomeTaxEntity incomeTaxEntity)
+			throws JsonParseException, JsonMappingException, IOException;
 
 	/**
 	 * This method is used to get income tax details against a uuid
@@ -31,5 +39,20 @@ public interface IIncomeTax {
 	 *             this exception is thrown when no income tax data is not found
 	 */
 	public IncomeTaxEntity getIncomeTaxData(String uuid) throws NotFoundException;
+
+	/**
+	 * This method is used to save user contacts in income tax details with
+	 * matching uuid
+	 * 
+	 * @param uuid
+	 *            the uuid of income tax details against which contacts are to
+	 *            be saved
+	 * @param field
+	 *            the contanct fields to be saved like emailId, firsName,
+	 *            phoneNumber
+	 * @param value
+	 *            the contact values to be saved
+	 */
+	public void saveUserContacts(String uuid, String field, String value);
 
 }
