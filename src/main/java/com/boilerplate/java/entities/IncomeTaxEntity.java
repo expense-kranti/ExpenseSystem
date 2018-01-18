@@ -453,9 +453,9 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-
+		//here cause message is made with requirements
 		if (this.getCtc() <= 0)
-			throw new ValidationFailedException("TaxEntity", "Ctc should not be zero", null);
+			throw new ValidationFailedException("TaxEntity", "0", null);
 		if (this.getCtc() > 100000000)
 			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than 10Crore Rupees", null);
 		if (this.getAge() < 18)

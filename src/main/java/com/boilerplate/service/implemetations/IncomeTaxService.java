@@ -77,19 +77,35 @@ public class IncomeTaxService implements IIncomeTaxService {
 		taxableIncome = (incomeTaxEntity.getCtc() - maxAllowedDeductions) < 0 ? 0
 				: (incomeTaxEntity.getCtc() - maxAllowedDeductions);
 
-		// CALCULATE ESTIMATED TAX AND SET IT
-
-		incomeTaxEntity.setEstimatedTax((long) ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
-				* Double.parseDouble(configurationManager.get("Education_Cess"))));
-
-		incomeTaxEntity.setTakeHomeSalaryMonthly(
-				(long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(), incomeTaxEntity.getEstimatedTax()));
-		// maintaining uuid is crucial for maintaining session
-		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
-			incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+		// added for chatbot handling
+		if (taxableIncome == 0) {
+			incomeTaxEntity.setEstimatedTax((long) 0);
+			incomeTaxEntity.setTakeHomeSalaryMonthly(
+					(long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(), incomeTaxEntity.getEstimatedTax()));
+		} else {
+			incomeTaxEntity.setEstimatedTax((long) ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
+					* Double.parseDouble(configurationManager.get("Education_Cess"))));
+			incomeTaxEntity.setTakeHomeSalaryMonthly(
+					(long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(), incomeTaxEntity.getEstimatedTax()));
 		}
 
-		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		// // CALCULATE ESTIMATED TAX AND SET IT
+		// incomeTaxEntity.setEstimatedTax((long)
+		// ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
+		// * Double.parseDouble(configurationManager.get("Education_Cess"))));
+
+		// incomeTaxEntity.setTakeHomeSalaryMonthly(
+		// (long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(),
+		// incomeTaxEntity.getEstimatedTax()));
+		// maintaining uuid is crucial for maintaining session
+		// COMMENTED FOR CHATBOT ONLY DEPLOYMENT
+		// if (incomeTaxEntity.getUuid() == null ||
+		// incomeTaxEntity.getUuid().equals("")) {
+		// incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+		// }
+
+		// COMMENTED FOR CHATBOTONLY DEPLOYMENT
+		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
 		return incomeTaxEntity;
 	}
@@ -99,29 +115,32 @@ public class IncomeTaxService implements IIncomeTaxService {
 	 */
 	@Override
 	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity)
-			throws NotFoundException, JsonParseException, JsonMappingException, IOException {
+			throws NotFoundException, JsonParseException, JsonMappingException, IOException, ValidationFailedException {
 
+		incomeTaxEntity.validate();
 		long taxableIncome = 0;
 		// check user input investments if larger than max allowed then assign
 		// max allowed otherwise input investment
-		long exempted80C = (incomeTaxEntity.getInvestmentIn80C() <= Integer
-				.parseInt(configurationManager.get("Max_80C_Allowed_Deduction"))) ? incomeTaxEntity.getInvestmentIn80C()
+		long exempted80C = (incomeTaxEntity.getInvestmentIn80C() < Integer
+				.parseInt(configurationManager.get("Max_80C_Allowed_Deduction")))
+						? (incomeTaxEntity.getInvestmentIn80C() < 0 ? 0 : incomeTaxEntity.getInvestmentIn80C())
 						: Integer.parseInt(configurationManager.get("Max_80C_Allowed_Deduction"));
-		long exempted80D = (incomeTaxEntity.getInvestmentIn80D() <= Integer
+		long exempted80D = (incomeTaxEntity.getInvestmentIn80D() < Integer
 				.parseInt(configurationManager.get("Max_80D_Allowed_Deduction_ON_INVESTMENT")))
-						? incomeTaxEntity.getInvestmentIn80D()
+						? (incomeTaxEntity.getInvestmentIn80D() < 0 ? 0 : incomeTaxEntity.getInvestmentIn80D())
 						: Integer.parseInt(configurationManager.get("Max_80D_Allowed_Deduction_ON_INVESTMENT"));
-		long exempted80E = (incomeTaxEntity.getInvestmentIn80E() <= Integer
+		long exempted80E = (incomeTaxEntity.getInvestmentIn80E() < Integer
 				.parseInt(configurationManager.get("Max_80E_Allowed_Deduction_ON_INVESTMENT")))
-						? incomeTaxEntity.getInvestmentIn80E()
+						? (incomeTaxEntity.getInvestmentIn80E() < 0 ? 0 : incomeTaxEntity.getInvestmentIn80E())
 						: Integer.parseInt(configurationManager.get("Max_80E_Allowed_Deduction_ON_INVESTMENT"));
-		long exemptedSection24 = (incomeTaxEntity.getInvestmentInSection24() <= Integer
+		long exemptedSection24 = (incomeTaxEntity.getInvestmentInSection24() < Integer
 				.parseInt(configurationManager.get("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT")))
-						? incomeTaxEntity.getInvestmentInSection24()
+						? (incomeTaxEntity.getInvestmentInSection24() < 0 ? 0
+								: incomeTaxEntity.getInvestmentInSection24())
 						: Integer.parseInt(configurationManager.get("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT"));
-		long exempted80CCD1B = (incomeTaxEntity.getInvestmentIn80CCD1B() <= Integer
+		long exempted80CCD1B = (incomeTaxEntity.getInvestmentIn80CCD1B() < Integer
 				.parseInt(configurationManager.get("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT")))
-						? incomeTaxEntity.getInvestmentIn80CCD1B()
+						? (incomeTaxEntity.getInvestmentIn80CCD1B() < 0 ? 0 : incomeTaxEntity.getInvestmentIn80CCD1B())
 						: Integer.parseInt(configurationManager.get("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT"));
 
 		double ctc = incomeTaxEntity.getCtc();
@@ -130,7 +149,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		incomeTaxEntity.setTravelAllowance(Long.parseLong(configurationManager.get("Max_Travel_Allowance_Deduction")));
 		// calculate total deduction based on investments done
 		long totalDeduction = exempted80C + exempted80D + exempted80E + exemptedSection24 + exempted80CCD1B
-				+ incomeTaxEntity.getTravelAllowance() + incomeTaxEntity.getMedicalAllowance();
+				+ Integer.parseInt(configurationManager.get("Max_Travel_Allowance_Deduction"))
+				+ Integer.parseInt(configurationManager.get("Max_Medical_Allowance_Deduction"));
 
 		double basicSalary = ctc * 0.5;
 		double hra = 0;
@@ -147,6 +167,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		} else {
 			hra = basicSalary * 0.4;
 		}
+		incomeTaxEntity.setHouseRentPaidMonthly(
+				incomeTaxEntity.getHouseRentPaidMonthly() < 0 ? 0 : incomeTaxEntity.getHouseRentPaidMonthly());
 		if (incomeTaxEntity.getHouseRentPaidMonthly() != 0) {
 			hraFromRentPaid = ((incomeTaxEntity.getHouseRentPaidMonthly() * 12) - (basicSalary * 0.1));
 			hraFromRentPaid = hraFromRentPaid < 0 ? 0 : hraFromRentPaid;
@@ -157,13 +179,21 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// add hra in total deduction
 		totalDeduction += incomeTaxEntity.getHraExempted();
 
-		taxableIncome = (long) ctc - totalDeduction;
-		// calculate estimated tax by calculating estimated tax from tax slab
-		// and then adding education cess on it
-		incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
-				* Double.parseDouble(configurationManager.get("Education_Cess"))));
-		// save income tax details in datastore
-		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		taxableIncome = (long) ((ctc - totalDeduction) < 0 ? 0 : (ctc - totalDeduction));
+
+		if (taxableIncome == 0) {
+			incomeTaxEntity.setEstimatedTax((long) 0);
+		} else {
+			// calculate estimated tax by calculating estimated tax from tax
+			// slab
+			// and then adding education cess on it
+			incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
+					* Double.parseDouble(configurationManager.get("Education_Cess"))));
+		}
+
+		// COMMENTED FOR MAKING CHATBOT WORKING
+		// // save income tax details in datastore
+		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
 		return incomeTaxEntity;
 
