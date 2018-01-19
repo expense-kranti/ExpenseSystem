@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IIncomeTax;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.IncomeTaxEntity;
 import com.boilerplate.service.interfaces.IIncomeTaxService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -20,6 +21,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class IncomeTaxService implements IIncomeTaxService {
+
+	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(IncomeTaxService.class);
 
 	/**
 	 * These are the user contact details fields to be used to save contact
@@ -65,6 +71,9 @@ public class IncomeTaxService implements IIncomeTaxService {
 	public IncomeTaxEntity calculateSimpleTax(IncomeTaxEntity incomeTaxEntity)
 			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException {
 
+		incomeTaxEntity.convertEntityPropertiesStringValuesToLong();
+		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "First Statement in method",
+				"about to validate input");
 		incomeTaxEntity.validate();
 		long taxableIncome = 0;
 		// getting pre-assumed deductions allowed for income tax calculation
@@ -83,6 +92,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 			incomeTaxEntity.setTakeHomeSalaryMonthly(
 					(long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(), incomeTaxEntity.getEstimatedTax()));
 		} else {
+			logger.logInfo("IncomeTaxService", "calculateSimpleTax", "Inside else block",
+					"about to calculate tax from slab");
 			incomeTaxEntity.setEstimatedTax((long) ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 			incomeTaxEntity.setTakeHomeSalaryMonthly(
@@ -107,6 +118,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// COMMENTED FOR CHATBOTONLY DEPLOYMENT
 		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
+		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "before return statement",
+				"about to return response");
 		return incomeTaxEntity;
 	}
 
@@ -116,6 +129,12 @@ public class IncomeTaxService implements IIncomeTaxService {
 	@Override
 	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity)
 			throws NotFoundException, JsonParseException, JsonMappingException, IOException, ValidationFailedException {
+		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "First Statement in method",
+				"about to validate input");
+		
+		incomeTaxEntity.convertEntityPropertiesStringValuesToLong();
+		// this is set 0 as is not used in chatbot
+		incomeTaxEntity.setInvestmentIn80CCD1B(0);
 
 		incomeTaxEntity.validate();
 		long taxableIncome = 0;
@@ -149,8 +168,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		incomeTaxEntity.setTravelAllowance(Long.parseLong(configurationManager.get("Max_Travel_Allowance_Deduction")));
 		// calculate total deduction based on investments done
 		long totalDeduction = exempted80C + exempted80D + exempted80E + exemptedSection24 + exempted80CCD1B
-				+ Integer.parseInt(configurationManager.get("Max_Travel_Allowance_Deduction"))
-				+ Integer.parseInt(configurationManager.get("Max_Medical_Allowance_Deduction"));
+				+ Long.parseLong(configurationManager.get("Max_Medical_Allowance_Deduction"))
+				+ Long.parseLong(configurationManager.get("Max_Travel_Allowance_Deduction"));
 
 		double basicSalary = ctc * 0.5;
 		double hra = 0;
@@ -184,6 +203,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		if (taxableIncome == 0) {
 			incomeTaxEntity.setEstimatedTax((long) 0);
 		} else {
+			logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "Inside else block",
+					"about to calculate tax from slab");
 			// calculate estimated tax by calculating estimated tax from tax
 			// slab
 			// and then adding education cess on it
@@ -195,6 +216,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// // save income tax details in datastore
 		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
+		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "before return statement",
+				"about to return response");
 		return incomeTaxEntity;
 
 	}

@@ -1189,6 +1189,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Max_80D_Allowed_Deduction_ON_INVESTMENT", "55000");
 		vAllETest.put("Max_80E_Allowed_Deduction_ON_INVESTMENT", "1000000");
 		vAllETest.put("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT", "200000");
+		vAllETest.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllETest.put("Education_Cess", "1.03");
 		vAllETest.put("INCOMETAX_UUID_LENGTH", "8");
 
@@ -1360,6 +1361,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Max_80D_Allowed_Deduction_ON_INVESTMENT", "55000");
 		vAllEProduction.put("Max_80E_Allowed_Deduction_ON_INVESTMENT", "1000000");
 		vAllEProduction.put("Max_SECTION24_Allowed_Deduction_ON_INVESTMENT", "200000");
+		vAllEProduction.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllEProduction.put("Education_Cess", "1.03");
 		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
 

@@ -94,6 +94,35 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	private String firstName;
 
 	/**
+	 * This is the ctc in string
+	 */
+	private String ctcInString;
+	/**
+	 * This is the ageInString
+	 */
+	private String ageInString;
+	/**
+	 * This is the home rent paid
+	 */
+	private String homeRentPaidMonthlyInString;
+	/**
+	 * This is the 80C investment done
+	 */
+	private String investmentIn80CInString;
+	/**
+	 * This is the 80D investment done
+	 */
+	private String investmentIn80DInString;
+	/**
+	 * This is the 80E investment done
+	 */
+	private String investmentIn80EInString;
+	/**
+	 * This is the section24 investment done
+	 */
+	private String investmentInSection24InString;
+
+	/**
 	 * Gets the uuid
 	 * 
 	 * @return the uuid
@@ -266,6 +295,7 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * Gets the medical allowance
+	 * 
 	 * @return the medicalAllowance
 	 */
 	public long getMedicalAllowance() {
@@ -274,7 +304,9 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * Sets the medical allowance
-	 * @param medicalAllowance the medicalAllowance to set
+	 * 
+	 * @param medicalAllowance
+	 *            the medicalAllowance to set
 	 */
 	public void setMedicalAllowance(long medicalAllowance) {
 		this.medicalAllowance = medicalAllowance;
@@ -282,6 +314,7 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * Gets the travel allowance
+	 * 
 	 * @return the travelAllowance
 	 */
 	public long getTravelAllowance() {
@@ -290,7 +323,9 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * Sets the travel allowance
-	 * @param travelAllowance the travelAllowance to set
+	 * 
+	 * @param travelAllowance
+	 *            the travelAllowance to set
 	 */
 	public void setTravelAllowance(long travelAllowance) {
 		this.travelAllowance = travelAllowance;
@@ -449,11 +484,140 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * Gets the ctc in string
+	 * 
+	 * @return the ctcInString
+	 */
+	public String getCtcInString() {
+		return ctcInString;
+	}
+
+	/**
+	 * Sets the ctc in string
+	 * 
+	 * @param ctcInString
+	 *            the ctcInString to set
+	 */
+	public void setCtcInString(String ctcInString) {
+		this.ctcInString = ctcInString;
+	}
+
+	/**
+	 * gets age in string
+	 * 
+	 * @return the ageInString
+	 */
+	public String getAgeInString() {
+		return ageInString;
+	}
+
+	/**
+	 * Sets age in string
+	 * 
+	 * @param ageInString
+	 *            the ageInString to set
+	 */
+	public void setAgeInString(String ageInString) {
+		this.ageInString = ageInString;
+	}
+
+	/**
+	 * @return the homeRentPaidMonthlyInString
+	 */
+	public String getHomeRentPaidMonthlyInString() {
+		return homeRentPaidMonthlyInString;
+	}
+
+	/**
+	 * @param homeRentPaidMonthlyInString
+	 *            the homeRentPaidMonthlyInString to set
+	 */
+	public void setHomeRentPaidMonthlyInString(String homeRentPaidMonthlyInString) {
+		this.homeRentPaidMonthlyInString = homeRentPaidMonthlyInString;
+	}
+
+	/**
+	 * Gets the investmentIn80CInString
+	 * 
+	 * @return the investmentIn80CInString
+	 */
+	public String getInvestmentIn80CInString() {
+		return investmentIn80CInString;
+	}
+
+	/**
+	 * Sets the investmentIn80CInString
+	 * 
+	 * @param investmentIn80CInString
+	 *            the investmentIn80CInString to set
+	 */
+	public void setInvestmentIn80CInString(String investmentIn80CInString) {
+		this.investmentIn80CInString = investmentIn80CInString;
+	}
+
+	/**
+	 * Gets the investmentIn80DInString
+	 * 
+	 * @return the investmentIn80DInString
+	 */
+	public String getInvestmentIn80DInString() {
+		return investmentIn80DInString;
+	}
+
+	/**
+	 * Sets the investmentIn80DInString
+	 * 
+	 * @param investmentIn80DInString
+	 *            the investmentIn80DInString to set
+	 */
+	public void setInvestmentIn80DInString(String investmentIn80DInString) {
+		this.investmentIn80DInString = investmentIn80DInString;
+	}
+
+	/**
+	 * Gets the investmentIn80EInString
+	 * 
+	 * @return the investmentIn80EInString
+	 */
+	public String getInvestmentIn80EInString() {
+		return investmentIn80EInString;
+	}
+
+	/**
+	 * Sets the investmentIn80EInString
+	 * 
+	 * @param investmentIn80EInString
+	 *            the investmentIn80EInString to set
+	 */
+	public void setInvestmentIn80EInString(String investmentIn80EInString) {
+		this.investmentIn80EInString = investmentIn80EInString;
+	}
+
+	/**
+	 * Gets the investmentInSection24InString
+	 * 
+	 * @return the investmentInSection24InString
+	 */
+	public String getInvestmentInSection24InString() {
+		return investmentInSection24InString;
+	}
+
+	/**
+	 * Sets the investmentInSection24InString
+	 * 
+	 * @param investmentInSection24InString
+	 *            the investmentInSection24InString to set
+	 */
+	public void setInvestmentInSection24InString(String investmentInSection24InString) {
+		this.investmentInSection24InString = investmentInSection24InString;
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		//here cause message is made with requirements
+		// here cause message is made with requirements
 		if (this.getCtc() <= 0)
 			throw new ValidationFailedException("TaxEntity", "0", null);
 		if (this.getCtc() > 100000000)
@@ -462,6 +626,46 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 			throw new ValidationFailedException("TaxEntity", "Age should be atleast 18 years", null);
 
 		return true;
+	}
+
+	public void convertEntityPropertiesStringValuesToLong() {
+
+		if (this.isNullOrEmpty(this.getInvestmentIn80CInString())) {
+			this.setInvestmentIn80C(0);
+		} else {
+			this.setInvestmentIn80C(Long.valueOf(this.getInvestmentIn80CInString()));
+		}
+		if (this.isNullOrEmpty(this.getInvestmentIn80DInString())) {
+			this.setInvestmentIn80D(0);
+		} else {
+			this.setInvestmentIn80D(Long.valueOf(this.getInvestmentIn80DInString()));
+		}
+		if (this.isNullOrEmpty(this.getInvestmentInSection24InString())) {
+			this.setInvestmentInSection24(0);
+		} else {
+			this.setInvestmentInSection24(Long.valueOf(this.getInvestmentInSection24InString()));
+		}
+		if (this.isNullOrEmpty(this.getInvestmentIn80EInString())) {
+			this.setInvestmentIn80E(0);
+		} else {
+			this.setInvestmentIn80E(Long.valueOf(this.getInvestmentIn80EInString()));
+		}
+		if (this.isNullOrEmpty(this.getCtcInString())) {
+			this.setCtc(0);
+		} else {
+			this.setCtc(Long.valueOf(this.getCtcInString()));
+		}
+		if (this.isNullOrEmpty(this.getAgeInString())) {
+			this.setAge(0);
+		} else {
+			this.setAge(Integer.valueOf(this.getAgeInString()));
+		}
+		if (this.isNullOrEmpty(this.getHomeRentPaidMonthlyInString())) {
+			this.setHouseRentPaidMonthly(0);
+		} else {
+			this.setHouseRentPaidMonthly(Integer.valueOf(this.getHomeRentPaidMonthlyInString()));
+		}
+
 	}
 
 	/**
