@@ -144,6 +144,7 @@
 				<entry key="PublishUserAKSOrReferReport" value-ref="publishUserAKSOrReferReport"></entry>
 				<entry key="ParseExperianReport" value-ref="parseReportsFromExperianObserver" />
 				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
+				<entry key="SendIncomeTaxDetails" value-ref="emailWithIncomeTaxDetailsObserver"></entry>
 			</map>
 
 
@@ -757,12 +758,36 @@
 
 	<!-- Dependencies related to IncomeTax related apis -->
 
-	<bean id="incomeTaxService" class="com.boilerplate.service.implemetations.IncomeTaxService">
+	<bean id="incomeTaxService" class="com.boilerplate.service.implemetations.IncomeTaxService"
+		init-method="initialize">
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="incomeTaxDataAccess" ref="incomeTaxDataAccess"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
+		<property name="sendEmailWithIncomeTaxDetailsObserver" ref="sendEmailWithIncomeTaxDetailsObserver"></property>
 	</bean>
+
 	<bean id="incomeTaxDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisIncomeTax">
+	</bean>
+
+	<bean id="sendEmailWithIncomeTaxDetailsObserver"
+		class="com.boilerplate.asyncWork.SendEmailWithIncomeTaxDetailsObserver">
+		<property name="fileService" ref="fileService"></property>
+		<property name="file" ref="file"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="incomeTaxDataAccess" ref="incomeTaxDataAccess"></property>
+		<property name="contentService" ref="contentService"></property>
+	</bean>
+
+	<bean id="emailWithIncomeTaxDetailsObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendEmailWithIncomeTaxDetailsObserver"></ref>
+			</list>
+		</property>
 	</bean>
 
 </beans>

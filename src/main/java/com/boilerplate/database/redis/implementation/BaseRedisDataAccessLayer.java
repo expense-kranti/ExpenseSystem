@@ -1192,6 +1192,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllETest.put("Education_Cess", "1.03");
 		vAllETest.put("INCOMETAX_UUID_LENGTH", "8");
+		// the below config is real
+		vAllETest.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
+				"641977ea-22af-4bba-9966-6c187dbc5a26_FinalTaxCalculatorE-mailerhtml");
 
 		return vAllETest;
 	}
@@ -1289,6 +1292,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllEDev.put("Education_Cess", "1.03");
 		vAllEDev.put("INCOMETAX_UUID_LENGTH", "8");
+		vAllEDev.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
+				"26eb9c0a-adf8-4e2d-b21c-72ce72a7f637_FinalTaxCalculatorE-mailerhtml");
 
 		return vAllEDev;
 
@@ -1364,6 +1369,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllEProduction.put("Education_Cess", "1.03");
 		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
+		vAllEProduction.put("INCOME_TAX_DETAILS_EMAIL_CONTENT", "PLEASE_ENTER_KEY");
 
 		return vAllEProduction;
 	}

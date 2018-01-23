@@ -53,22 +53,29 @@ public interface IIncomeTaxService {
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
-	 * @throws ValidationFailedException thrown when required input is not provided or have discrepancies
+	 * @throws ValidationFailedException
+	 *             thrown when required input is not provided or have
+	 *             discrepancies
 	 */
 	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity)
 			throws NotFoundException, JsonParseException, JsonMappingException, IOException, ValidationFailedException;
 
 	/**
 	 * This method saves user details against income tax data in data store with
-	 * matched uuid
+	 * matched uuid and sends email to the user emailId
 	 * 
 	 * @param incomeTaxEntity
 	 *            contains user details like emailId, phonenumber, firstname
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
+	 * @throws NotFoundException
+	 *             thrown when income tax details not found with given uuid
+	 * @throws Exception
+	 *             thrown when exception occurs in saving user details and
+	 *             sending email to user emailid
 	 */
-	public void saveIncomeTaxUserDetails(IncomeTaxEntity incomeTaxEntity)
-			throws JsonParseException, JsonMappingException, IOException;
+	public void saveIncomeTaxUserDetailsAndEmail(IncomeTaxEntity incomeTaxEntity)
+			throws JsonParseException, JsonMappingException, IOException, NotFoundException, Exception;
 
 }

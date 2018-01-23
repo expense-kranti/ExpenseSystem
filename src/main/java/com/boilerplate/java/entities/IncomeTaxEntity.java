@@ -121,6 +121,10 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 * This is the section24 investment done
 	 */
 	private String investmentInSection24InString;
+	/**
+	 * This is the ctc for lac abbreviation
+	 */
+	private double ctcForLacAbreviation;
 
 	/**
 	 * Gets the uuid
@@ -613,23 +617,51 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * Gets the ctc for abreviation
+	 * 
+	 * @return the ctcForLacAbreviation
+	 */
+	public double getCtcForLacAbreviation() {
+		return ctcForLacAbreviation;
+	}
+
+	/**
+	 * Sets the ctc for abreviation
+	 * 
+	 * @param ctcForLacAbreviation
+	 *            the ctcForLacAbreviation to set
+	 */
+	public void setCtcForLacAbreviation(double ctcForLacAbreviation) {
+		this.ctcForLacAbreviation = ctcForLacAbreviation;
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// here cause message is made with requirements
-		if (this.getCtc() <= 0)
-			throw new ValidationFailedException("TaxEntity", "0", null);
-		if (this.getCtc() > 100000000)
-			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than 10Crore Rupees", null);
+		// if (this.getCtc() <= 0)
+		// throw new ValidationFailedException("TaxEntity", "Ctc shouold not be
+		// zero", null);
+		// if (this.getCtc() > 100000000)
+		// throw new ValidationFailedException("TaxEntity", "Ctc should not be
+		// greater than 10Crore Rupees", null);
+		if (this.getCtcForLacAbreviation() <= 0)
+			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than zero", null);
+		if (this.getCtcForLacAbreviation() > 100000000)
+			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than 10Crore ", null);
 		if (this.getAge() < 18)
 			throw new ValidationFailedException("TaxEntity", "Age should be atleast 18 years", null);
 
 		return true;
 	}
 
-	public void convertEntityPropertiesStringValuesToLong() {
+	public void convertEntityPropertiesStringValuesToPrimitiveTypes() {
 
+		if (this.isNullOrEmpty(this.getCtcInString())) {
+			this.setCtcInString("0");
+		}
 		if (this.isNullOrEmpty(this.getInvestmentIn80CInString())) {
 			this.setInvestmentIn80C(0);
 		} else {
@@ -650,11 +682,14 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		} else {
 			this.setInvestmentIn80E(Long.valueOf(this.getInvestmentIn80EInString()));
 		}
-		if (this.isNullOrEmpty(this.getCtcInString())) {
-			this.setCtc(0);
-		} else {
-			this.setCtc(Long.valueOf(this.getCtcInString()));
-		}
+		// this line of code is commented in favor of requirement for lac
+		// abbreviation
+		// if (this.isNullOrEmpty(this.getCtcInString())) {
+		// this.setCtc(0);
+		// } else {
+		// this.setCtc(Long.valueOf(this.getCtcInString()));
+		// }
+
 		if (this.isNullOrEmpty(this.getAgeInString())) {
 			this.setAge(0);
 		} else {
@@ -666,6 +701,14 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 			this.setHouseRentPaidMonthly(Integer.valueOf(this.getHomeRentPaidMonthlyInString()));
 		}
 
+	}
+
+	/**
+	 * This method gets and converts ctc value form string to double and then
+	 * make it to lac value
+	 */
+	public void convertCTCTolacValueFromAbbreviatedInput() {
+		this.setCtcForLacAbreviation((Double.valueOf(this.getCtcInString())) * 100000);
 	}
 
 	/**
