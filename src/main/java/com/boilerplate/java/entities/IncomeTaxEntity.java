@@ -657,6 +657,9 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		return true;
 	}
 
+	/**
+	 * This method converts input string values to primitive type values
+	 */
 	public void convertEntityPropertiesStringValuesToPrimitiveTypes() {
 
 		if (this.isNullOrEmpty(this.getCtcInString())) {
@@ -684,11 +687,9 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		}
 		// this line of code is commented in favor of requirement for lac
 		// abbreviation
-		// if (this.isNullOrEmpty(this.getCtcInString())) {
-		// this.setCtc(0);
-		// } else {
-		// this.setCtc(Long.valueOf(this.getCtcInString()));
-		// }
+		if (this.isNullOrEmpty(this.getCtcInString())) {
+			this.setCtcInString("0");
+		}
 
 		if (this.isNullOrEmpty(this.getAgeInString())) {
 			this.setAge(0);
@@ -708,6 +709,13 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 * make it to lac value
 	 */
 	public void convertCTCTolacValueFromAbbreviatedInput() {
+//		//this while loop is to remove all the leading
+//		while (this.getCtcInString().charAt(0) == 0) {
+//			this.setCtcInString(this.getCtcInString().replaceFirst("0", ""));
+//		}
+//		if (this.getCtcInString().equals("")) {
+//			this.setCtcInString("0");
+//		}
 		this.setCtcForLacAbreviation((Double.valueOf(this.getCtcInString())) * 100000);
 	}
 

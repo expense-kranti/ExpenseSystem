@@ -123,7 +123,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "First Statement in method",
 				"about to validate input");
 		// validate incometax input values
-		incomeTaxEntity.validate();
+		// validation has been handled at front end
+		// incomeTaxEntity.validate();
 		long taxableIncome = 0;
 		// getting pre-assumed deductions allowed for income tax calculation
 		long maxAllowedDeductions = Integer.parseInt(configurationManager.get("Max_Travel_Allowance_Deduction"))
