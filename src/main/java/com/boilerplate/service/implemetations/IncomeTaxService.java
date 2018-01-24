@@ -120,7 +120,7 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// make it to full value from abbreviation
 		incomeTaxEntity.convertCTCTolacValueFromAbbreviatedInput();
 
-		// convert negative values to zeros to prevent miss calculations
+		// convert negative values to zeros to prevent miss calculations not handling for 80CCD1B as it is not input in chatbot hence not required
 		incomeTaxEntity.makeNegativeValuesToZero();
 
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "First Statement in method",

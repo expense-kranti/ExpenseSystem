@@ -1369,7 +1369,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllEProduction.put("Education_Cess", "1.03");
 		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
-		vAllEProduction.put("INCOME_TAX_DETAILS_EMAIL_CONTENT", "PLEASE_ENTER_KEY");
+		vAllEProduction.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
+				"de36de4a-70e8-4369-9ad5-0e4306941da9_FinalTaxCalculatorE-mailerhtml");
 
 		return vAllEProduction;
 	}
