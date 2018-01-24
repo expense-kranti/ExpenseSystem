@@ -648,7 +648,7 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		// throw new ValidationFailedException("TaxEntity", "Ctc should not be
 		// greater than 10Crore Rupees", null);
 		if (this.getCtcForLacAbreviation() <= 0)
-			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than zero", null);
+			throw new ValidationFailedException("TaxEntity", "Ctc should not be less than zero", null);
 		if (this.getCtcForLacAbreviation() > 100000000)
 			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than 10Crore ", null);
 		if (this.getAge() < 18)
@@ -665,22 +665,22 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		if (this.isNullOrEmpty(this.getInvestmentIn80CInString())) {
 			this.setInvestmentIn80C(0);
 		} else {
-			this.setInvestmentIn80C(Long.valueOf(this.getInvestmentIn80CInString()));
+			this.setInvestmentIn80C(Double.valueOf(this.getInvestmentIn80CInString()).longValue());
 		}
 		if (this.isNullOrEmpty(this.getInvestmentIn80DInString())) {
 			this.setInvestmentIn80D(0);
 		} else {
-			this.setInvestmentIn80D(Long.valueOf(this.getInvestmentIn80DInString()));
+			this.setInvestmentIn80D(Double.valueOf(this.getInvestmentIn80DInString()).longValue());
 		}
 		if (this.isNullOrEmpty(this.getInvestmentInSection24InString())) {
 			this.setInvestmentInSection24(0);
 		} else {
-			this.setInvestmentInSection24(Long.valueOf(this.getInvestmentInSection24InString()));
+			this.setInvestmentInSection24(Double.valueOf(this.getInvestmentInSection24InString()).longValue());
 		}
 		if (this.isNullOrEmpty(this.getInvestmentIn80EInString())) {
 			this.setInvestmentIn80E(0);
 		} else {
-			this.setInvestmentIn80E(Long.valueOf(this.getInvestmentIn80EInString()));
+			this.setInvestmentIn80E(Double.valueOf(this.getInvestmentIn80EInString()).longValue());
 		}
 		// this line of code is commented in favor of requirement for lac
 		// abbreviation
@@ -693,12 +693,12 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		if (this.isNullOrEmpty(this.getAgeInString())) {
 			this.setAge(0);
 		} else {
-			this.setAge(Integer.valueOf(this.getAgeInString()));
+			this.setAge((Double.valueOf(this.getAgeInString())).intValue());
 		}
 		if (this.isNullOrEmpty(this.getHomeRentPaidMonthlyInString())) {
 			this.setHouseRentPaidMonthly(0);
 		} else {
-			this.setHouseRentPaidMonthly(Integer.valueOf(this.getHomeRentPaidMonthlyInString()));
+			this.setHouseRentPaidMonthly(Double.valueOf(this.getHomeRentPaidMonthlyInString()).intValue());
 		}
 
 	}

@@ -122,64 +122,6 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 
 	}
 
-	// /**
-	// * This method sends the email to the given tosEmaillist, bccsEmaillist
-	// with
-	// * prepared message to be send to the user who calculated tax
-	// *
-	// * @param tosEmailList
-	// * The list of emailIds to whom email to be sent
-	// * @param ccsEmailList
-	// * The list of ccemailIds to whom email to be sent
-	// * @param bccsEmailList
-	// * The list of bccsemailIds to whom email to be sent
-	// * @param referralLink
-	// * the referral Link sent by referring user to referred user
-	// * @throws Exception
-	// * is thrown if any exception occurs while sending email
-	// * @param incomeTaxEntity
-	// * contains income tax details to send to the receivers
-	// */
-	// public void sendEmail(BoilerplateList<String> tosEmailList,
-	// BoilerplateList<String> ccsEmailList,
-	// BoilerplateList<String> bccsEmailList, IncomeTaxEntity incomeTaxEntity)
-	// throws Exception {
-	//
-	// String subject =
-	// contentService.getContent("INCOME_TAX_DETAILS_EMAIL_SUBJECT");
-	// String body = contentService.getContent("INCOME_TAX_DETAILS_EMAIL_BODY");
-	//
-	// body = body.replace("@estimatedTax",
-	// String.valueOf(incomeTaxEntity.getEstimatedTax()));
-	// body = body.replace("@investmenmtUnderSection80C",
-	// String.valueOf(incomeTaxEntity.getInvestmentIn80C()));
-	// body = body.replace("@contributionUnderSection80CCD1B",
-	// String.valueOf(incomeTaxEntity.getInvestmentIn80CCD1B()));
-	// body = body.replace("@claimUnderSection80D",
-	// String.valueOf(incomeTaxEntity.getInvestmentIn80D()));
-	// body = body.replace("@claimUnderSection80E",
-	// String.valueOf(incomeTaxEntity.getInvestmentIn80E()));
-	// body = body.replace("@claimUnderSection24",
-	// String.valueOf(incomeTaxEntity.getInvestmentInSection24()));
-	// body = body.replace("@hraExempted",
-	// String.valueOf(incomeTaxEntity.getHraExempted()));
-	// body = body.replace("@medicalAllowance",
-	// String.valueOf(incomeTaxEntity.getMedicalAllowance()));
-	// body = body.replace("@travelAllowance",
-	// String.valueOf(incomeTaxEntity.getTravelAllowance()));
-	// body = body.replace("@basicSalary",
-	// String.valueOf(incomeTaxEntity.getBasicSalary()));
-	// body = body.replace("@ctc",
-	// String.valueOf(incomeTaxEntity.getCtcForLacAbreviation()));
-	// body = body.replace("@rentPaidPerMonth",
-	// String.valueOf(incomeTaxEntity.getHouseRentPaidMonthly()));
-	//
-	//
-	// EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject,
-	// body, null);
-	//
-	// }
-
 	public void prepareEmailContentAndSendToEmailReceiver(IncomeTaxEntity incomeTaxEntity) throws Exception {
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
 		tosEmailList.add(incomeTaxEntity.getEmailId());
@@ -233,6 +175,7 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 			incomeTaxDetailsTemplate = FileUtils
 					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
 		}
+		// prepare email content
 		String body = incomeTaxDetailsTemplate.replace("@ctc",
 				String.valueOf((long) Math.round(incomeTaxEntity.getCtcForLacAbreviation())));
 
