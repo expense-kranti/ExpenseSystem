@@ -120,6 +120,9 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// make it to full value from abbreviation
 		incomeTaxEntity.convertCTCTolacValueFromAbbreviatedInput();
 
+		// convert negative values to zeros to prevent miss calculations
+		incomeTaxEntity.makeNegativeValuesToZero();
+
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "First Statement in method",
 				"about to validate input");
 		// validate incometax input values
@@ -180,6 +183,9 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// this method is used to convert entered ctc in string to double then
 		// make it to full value from abbreviation
 		incomeTaxEntity.convertCTCTolacValueFromAbbreviatedInput();
+
+		// convert negative values to zeros to prevent miss calculations
+		incomeTaxEntity.makeNegativeValuesToZero();
 
 		incomeTaxEntity.setInvestmentIn80CCD1B(incomeTaxEntity.getInvestmentIn80CCD1B());
 		// validation has been handled at front end

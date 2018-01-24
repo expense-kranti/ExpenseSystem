@@ -709,14 +709,43 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 * make it to lac value
 	 */
 	public void convertCTCTolacValueFromAbbreviatedInput() {
-//		//this while loop is to remove all the leading
-//		while (this.getCtcInString().charAt(0) == 0) {
-//			this.setCtcInString(this.getCtcInString().replaceFirst("0", ""));
-//		}
-//		if (this.getCtcInString().equals("")) {
-//			this.setCtcInString("0");
-//		}
+		// //this while loop is to remove all the leading
+		// while (this.getCtcInString().charAt(0) == 0) {
+		// this.setCtcInString(this.getCtcInString().replaceFirst("0", ""));
+		// }
+		// if (this.getCtcInString().equals("")) {
+		// this.setCtcInString("0");
+		// }
 		this.setCtcForLacAbreviation((Double.valueOf(this.getCtcInString())) * 100000);
+	}
+
+	// this method is used to convert negative inputs to zeros as we are not
+	// handling negative input values in chatbot
+	public void makeNegativeValuesToZero() {
+		if (this.getCtcForLacAbreviation() < 0) {
+			this.setCtcForLacAbreviation(0);
+		}
+		if (this.getInvestmentIn80C() < 0) {
+			this.setInvestmentIn80C(0);
+		}
+		if (this.getInvestmentIn80D() < 0) {
+			this.setInvestmentIn80D(0);
+		}
+		if (this.getInvestmentInSection24() < 0) {
+			this.setInvestmentInSection24(0);
+		}
+		if (this.getInvestmentIn80E() < 0) {
+			this.setInvestmentIn80E(0);
+		}
+		if (this.getInvestmentIn80CCD1B() < 0) {
+			this.setInvestmentIn80CCD1B(0);
+		}
+		if (this.getAge() < 0) {
+			this.setAge(18);
+		}
+		if (this.getHouseRentPaidMonthly() < 0) {
+			this.setHouseRentPaidMonthly(0);
+		}
 	}
 
 	/**
