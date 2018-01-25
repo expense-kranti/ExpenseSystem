@@ -77,7 +77,6 @@ public class IncomeTaxCalculatorController extends BaseController {
 		return incomeTaxService.getIncomeTaxData(incomeTaxEntity);
 	}
 
-	
 	/**
 	 * This method is used to calculate income tax with investments made in
 	 * categories of rebate
@@ -101,23 +100,22 @@ public class IncomeTaxCalculatorController extends BaseController {
 		return incomeTaxService.calculateTaxWithInvestments(incomeTaxEntity);
 	}
 
-	
 	/**
 	 * This method is used to save user details against whom income tax data was
-	 * being calculated by matching uuid of income tax
+	 * being calculated by matching uuid of income tax and send the email to
+	 * user with income tax details
 	 * 
 	 * @param incomeTaxEntity
 	 *            contains all user details to be saved
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonParseException
+	 * @throws Exception
+	 *             thrown when exception occurs in saving and sending email to
+	 *             user emailId
 	 */
-	@ApiOperation(value = "Saves the user contact details against whom income tax data was being calculated by matching uuid of income tax")
+	@ApiOperation(value = "Saves the user contact details against whom income tax data was being calculated by matching uuid of income tax and sends email to user emailId with income tax details")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/saveUserDetails", method = RequestMethod.POST)
-	public @ResponseBody void saveIncomeTaxUserDetails(@RequestBody IncomeTaxEntity incomeTaxEntity)
-			throws JsonParseException, JsonMappingException, IOException {
-		incomeTaxService.saveIncomeTaxUserDetails(incomeTaxEntity);
+	@RequestMapping(value = "/saveUserDetailsAndSendIncomeTaxDetailsInEmail", method = RequestMethod.POST)
+	public @ResponseBody void saveIncomeTaxUserDetails(@RequestBody IncomeTaxEntity incomeTaxEntity) throws Exception {
+		incomeTaxService.saveIncomeTaxUserDetailsAndEmail(incomeTaxEntity);
 	}
 
 }

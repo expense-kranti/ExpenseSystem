@@ -121,6 +121,10 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 * This is the section24 investment done
 	 */
 	private String investmentInSection24InString;
+	/**
+	 * This is the ctc for lac abbreviation
+	 */
+	private double ctcForLacAbreviation;
 
 	/**
 	 * Gets the uuid
@@ -613,59 +617,135 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * Gets the ctc for abreviation
+	 * 
+	 * @return the ctcForLacAbreviation
+	 */
+	public double getCtcForLacAbreviation() {
+		return ctcForLacAbreviation;
+	}
+
+	/**
+	 * Sets the ctc for abreviation
+	 * 
+	 * @param ctcForLacAbreviation
+	 *            the ctcForLacAbreviation to set
+	 */
+	public void setCtcForLacAbreviation(double ctcForLacAbreviation) {
+		this.ctcForLacAbreviation = ctcForLacAbreviation;
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// here cause message is made with requirements
-		if (this.getCtc() <= 0)
-			throw new ValidationFailedException("TaxEntity", "0", null);
-		if (this.getCtc() > 100000000)
-			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than 10Crore Rupees", null);
+		// if (this.getCtc() <= 0)
+		// throw new ValidationFailedException("TaxEntity", "Ctc shouold not be
+		// zero", null);
+		// if (this.getCtc() > 100000000)
+		// throw new ValidationFailedException("TaxEntity", "Ctc should not be
+		// greater than 10Crore Rupees", null);
+		if (this.getCtcForLacAbreviation() <= 0)
+			throw new ValidationFailedException("TaxEntity", "Ctc should not be less than zero", null);
+		if (this.getCtcForLacAbreviation() > 100000000)
+			throw new ValidationFailedException("TaxEntity", "Ctc should not be greater than 10Crore ", null);
 		if (this.getAge() < 18)
 			throw new ValidationFailedException("TaxEntity", "Age should be atleast 18 years", null);
 
 		return true;
 	}
 
-	public void convertEntityPropertiesStringValuesToLong() {
+	/**
+	 * This method converts input string values to primitive type values
+	 */
+	public void convertEntityPropertiesStringValuesToPrimitiveTypes() {
 
+		if (this.isNullOrEmpty(this.getCtcInString())) {
+			this.setCtcInString("0");
+		}
 		if (this.isNullOrEmpty(this.getInvestmentIn80CInString())) {
 			this.setInvestmentIn80C(0);
 		} else {
-			this.setInvestmentIn80C(Long.valueOf(this.getInvestmentIn80CInString()));
+			this.setInvestmentIn80C(Double.valueOf(this.getInvestmentIn80CInString()).longValue());
 		}
 		if (this.isNullOrEmpty(this.getInvestmentIn80DInString())) {
 			this.setInvestmentIn80D(0);
 		} else {
-			this.setInvestmentIn80D(Long.valueOf(this.getInvestmentIn80DInString()));
+			this.setInvestmentIn80D(Double.valueOf(this.getInvestmentIn80DInString()).longValue());
 		}
 		if (this.isNullOrEmpty(this.getInvestmentInSection24InString())) {
 			this.setInvestmentInSection24(0);
 		} else {
-			this.setInvestmentInSection24(Long.valueOf(this.getInvestmentInSection24InString()));
+			this.setInvestmentInSection24(Double.valueOf(this.getInvestmentInSection24InString()).longValue());
 		}
 		if (this.isNullOrEmpty(this.getInvestmentIn80EInString())) {
 			this.setInvestmentIn80E(0);
 		} else {
-			this.setInvestmentIn80E(Long.valueOf(this.getInvestmentIn80EInString()));
+			this.setInvestmentIn80E(Double.valueOf(this.getInvestmentIn80EInString()).longValue());
 		}
+		// this line of code is commented in favor of requirement for lac
+		// abbreviation
 		if (this.isNullOrEmpty(this.getCtcInString())) {
-			this.setCtc(0);
-		} else {
-			this.setCtc(Long.valueOf(this.getCtcInString()));
+			this.setCtcInString("0");
 		}
+
 		if (this.isNullOrEmpty(this.getAgeInString())) {
 			this.setAge(0);
 		} else {
-			this.setAge(Integer.valueOf(this.getAgeInString()));
+			this.setAge((Double.valueOf(this.getAgeInString())).intValue());
 		}
 		if (this.isNullOrEmpty(this.getHomeRentPaidMonthlyInString())) {
 			this.setHouseRentPaidMonthly(0);
 		} else {
-			this.setHouseRentPaidMonthly(Integer.valueOf(this.getHomeRentPaidMonthlyInString()));
+			this.setHouseRentPaidMonthly(Double.valueOf(this.getHomeRentPaidMonthlyInString()).intValue());
 		}
 
+	}
+
+	/**
+	 * This method gets and converts ctc value form string to double and then
+	 * make it to lac value
+	 */
+	public void convertCTCTolacValueFromAbbreviatedInput() {
+		// //this while loop is to remove all the leading
+		// while (this.getCtcInString().charAt(0) == 0) {
+		// this.setCtcInString(this.getCtcInString().replaceFirst("0", ""));
+		// }
+		// if (this.getCtcInString().equals("")) {
+		// this.setCtcInString("0");
+		// }
+		this.setCtcForLacAbreviation((Double.valueOf(this.getCtcInString())) * 100000);
+	}
+
+	// this method is used to convert negative inputs to zeros as we are not
+	// handling negative input values in chatbot
+	public void makeNegativeValuesToZero() {
+		if (this.getCtcForLacAbreviation() < 0) {
+			this.setCtcForLacAbreviation(0);
+		}
+		if (this.getInvestmentIn80C() < 0) {
+			this.setInvestmentIn80C(0);
+		}
+		if (this.getInvestmentIn80D() < 0) {
+			this.setInvestmentIn80D(0);
+		}
+		if (this.getInvestmentInSection24() < 0) {
+			this.setInvestmentInSection24(0);
+		}
+		if (this.getInvestmentIn80E() < 0) {
+			this.setInvestmentIn80E(0);
+		}
+		if (this.getInvestmentIn80CCD1B() < 0) {
+			this.setInvestmentIn80CCD1B(0);
+		}
+		if (this.getAge() < 0) {
+			this.setAge(18);
+		}
+		if (this.getHouseRentPaidMonthly() < 0) {
+			this.setHouseRentPaidMonthly(0);
+		}
 	}
 
 	/**

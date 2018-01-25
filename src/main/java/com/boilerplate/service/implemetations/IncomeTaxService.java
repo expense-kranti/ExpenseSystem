@@ -5,10 +5,12 @@ import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.asyncWork.SendEmailWithIncomeTaxDetailsObserver;
 import com.boilerplate.database.interfaces.IIncomeTax;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.IncomeTaxEntity;
 import com.boilerplate.service.interfaces.IIncomeTaxService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -34,6 +36,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 	public static final String emailIdField = "emailId";
 	public static final String phoneNumberField = "phoneNumber";
 	public static final String firstNameField = "firstName";
+
+	BoilerplateList<String> subjectsForSendingIncomeTaxDetails = new BoilerplateList<>();
 
 	/**
 	 * This is an instance of IIncomeTax
@@ -65,16 +69,65 @@ public class IncomeTaxService implements IIncomeTaxService {
 	}
 
 	/**
+	 * This is an instance of queue reader job
+	 */
+	@Autowired
+	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
+
+	/**
+	 * This sets the queue reader job
+	 * 
+	 * @param queueReaderJob
+	 *            The queue reader job
+	 */
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
+		this.queueReaderJob = queueReaderJob;
+	}
+
+	/**
+	 * This is the instance of sendEmailWithIncomeTaxDetails
+	 */
+	SendEmailWithIncomeTaxDetailsObserver sendEmailWithIncomeTaxDetailsObserver;
+
+	/**
+	 * Sets the sendEmailWithIncomeTaxDetailsObserver
+	 * 
+	 * @param sendEmailWithIncomeTaxDetailsObserver
+	 *            the sendEmailWithIncomeTaxDetailsObserver to set
+	 */
+	public void setSendEmailWithIncomeTaxDetailsObserver(
+			SendEmailWithIncomeTaxDetailsObserver sendEmailWithIncomeTaxDetailsObserver) {
+		this.sendEmailWithIncomeTaxDetailsObserver = sendEmailWithIncomeTaxDetailsObserver;
+	}
+
+	/**
+	 * Initializes the bean
+	 */
+	public void initialize() {
+		subjectsForSendingIncomeTaxDetails.add("SendIncomeTaxDetails");
+	}
+
+	/**
 	 * @see IIncomeTaxService.calculateSimpleTax
 	 */
 	@Override
 	public IncomeTaxEntity calculateSimpleTax(IncomeTaxEntity incomeTaxEntity)
 			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException {
 
-		incomeTaxEntity.convertEntityPropertiesStringValuesToLong();
+		incomeTaxEntity.convertEntityPropertiesStringValuesToPrimitiveTypes();
+
+		// this method is used to convert entered ctc in string to double then
+		// make it to full value from abbreviation
+		incomeTaxEntity.convertCTCTolacValueFromAbbreviatedInput();
+
+		// convert negative values to zeros to prevent miss calculations not handling for 80CCD1B as it is not input in chatbot hence not required
+		incomeTaxEntity.makeNegativeValuesToZero();
+
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "First Statement in method",
 				"about to validate input");
-		incomeTaxEntity.validate();
+		// validate incometax input values
+		// validation has been handled at front end
+		// incomeTaxEntity.validate();
 		long taxableIncome = 0;
 		// getting pre-assumed deductions allowed for income tax calculation
 		long maxAllowedDeductions = Integer.parseInt(configurationManager.get("Max_Travel_Allowance_Deduction"))
@@ -83,60 +136,60 @@ public class IncomeTaxService implements IIncomeTaxService {
 				+ Integer.parseInt(configurationManager.get("Max_80D_Allowed_Deduction"))
 				+ Integer.parseInt(configurationManager.get("Max_80CCD_Allowed_Deduction"));
 
-		taxableIncome = (incomeTaxEntity.getCtc() - maxAllowedDeductions) < 0 ? 0
-				: (incomeTaxEntity.getCtc() - maxAllowedDeductions);
+		// calculate taxable income
+		taxableIncome = (((long) incomeTaxEntity.getCtcForLacAbreviation()) - maxAllowedDeductions) < 0 ? 0
+				: (((long) incomeTaxEntity.getCtcForLacAbreviation()) - maxAllowedDeductions);
 
-		// added for chatbot handling
+		// calculate estimated tax and set it
 		if (taxableIncome == 0) {
 			incomeTaxEntity.setEstimatedTax((long) 0);
-			incomeTaxEntity.setTakeHomeSalaryMonthly(
-					(long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(), incomeTaxEntity.getEstimatedTax()));
+			incomeTaxEntity.setTakeHomeSalaryMonthly((long) getTakeHomeSalaryPerMonth(
+					incomeTaxEntity.getCtcForLacAbreviation(), incomeTaxEntity.getEstimatedTax()));
 		} else {
 			logger.logInfo("IncomeTaxService", "calculateSimpleTax", "Inside else block",
 					"about to calculate tax from slab");
 			incomeTaxEntity.setEstimatedTax((long) ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
-			incomeTaxEntity.setTakeHomeSalaryMonthly(
-					(long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(), incomeTaxEntity.getEstimatedTax()));
+			incomeTaxEntity.setTakeHomeSalaryMonthly((long) getTakeHomeSalaryPerMonth(
+					incomeTaxEntity.getCtcForLacAbreviation(), incomeTaxEntity.getEstimatedTax()));
 		}
 
-		// // CALCULATE ESTIMATED TAX AND SET IT
-		// incomeTaxEntity.setEstimatedTax((long)
-		// ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
-		// * Double.parseDouble(configurationManager.get("Education_Cess"))));
+		// maintaining uuid is important for maintaining user session from
+		// chatbot to akshar website
+		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
+			incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+		}
 
-		// incomeTaxEntity.setTakeHomeSalaryMonthly(
-		// (long) getTakeHomeSalaryPerMonth(incomeTaxEntity.getCtc(),
-		// incomeTaxEntity.getEstimatedTax()));
-		// maintaining uuid is crucial for maintaining session
-		// COMMENTED FOR CHATBOT ONLY DEPLOYMENT
-		// if (incomeTaxEntity.getUuid() == null ||
-		// incomeTaxEntity.getUuid().equals("")) {
-		// incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
-		// }
+		// save data in datastore to be retrieved
+		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
-		// COMMENTED FOR CHATBOTONLY DEPLOYMENT
-		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
-
-		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "before return statement",
-				"about to return response");
+		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "before return statement", "about to return response");
 		return incomeTaxEntity;
 	}
 
 	/**
 	 * @see IIncomeTaxService.calculateTaxWithInvestments
 	 */
+	// this method currently requires uuid,frommetropolitan,ageInString to be
+	// input
 	@Override
 	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity)
 			throws NotFoundException, JsonParseException, JsonMappingException, IOException, ValidationFailedException {
 		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "First Statement in method",
 				"about to validate input");
-		
-		incomeTaxEntity.convertEntityPropertiesStringValuesToLong();
-		// this is set 0 as is not used in chatbot
-		incomeTaxEntity.setInvestmentIn80CCD1B(0);
 
-		incomeTaxEntity.validate();
+		incomeTaxEntity.convertEntityPropertiesStringValuesToPrimitiveTypes();
+
+		// this method is used to convert entered ctc in string to double then
+		// make it to full value from abbreviation
+		incomeTaxEntity.convertCTCTolacValueFromAbbreviatedInput();
+
+		// convert negative values to zeros to prevent miss calculations
+		incomeTaxEntity.makeNegativeValuesToZero();
+
+		incomeTaxEntity.setInvestmentIn80CCD1B(incomeTaxEntity.getInvestmentIn80CCD1B());
+		// validation has been handled at front end
+		// incomeTaxEntity.validate();
 		long taxableIncome = 0;
 		// check user input investments if larger than max allowed then assign
 		// max allowed otherwise input investment
@@ -162,7 +215,9 @@ public class IncomeTaxService implements IIncomeTaxService {
 						? (incomeTaxEntity.getInvestmentIn80CCD1B() < 0 ? 0 : incomeTaxEntity.getInvestmentIn80CCD1B())
 						: Integer.parseInt(configurationManager.get("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT"));
 
-		double ctc = incomeTaxEntity.getCtc();
+		// here ctc is used from lac abbreviation because of chatbots flow
+		// requirements
+		double ctc = incomeTaxEntity.getCtcForLacAbreviation();
 		incomeTaxEntity
 				.setMedicalAllowance(Long.parseLong(configurationManager.get("Max_Medical_Allowance_Deduction")));
 		incomeTaxEntity.setTravelAllowance(Long.parseLong(configurationManager.get("Max_Travel_Allowance_Deduction")));
@@ -198,23 +253,23 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// add hra in total deduction
 		totalDeduction += incomeTaxEntity.getHraExempted();
 
+		// calculate taxable income
 		taxableIncome = (long) ((ctc - totalDeduction) < 0 ? 0 : (ctc - totalDeduction));
 
+		// calculate estimated tax and set it
 		if (taxableIncome == 0) {
 			incomeTaxEntity.setEstimatedTax((long) 0);
 		} else {
 			logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "Inside else block",
 					"about to calculate tax from slab");
 			// calculate estimated tax by calculating estimated tax from tax
-			// slab
-			// and then adding education cess on it
+			// slab and then adding education cess on it
 			incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 		}
 
-		// COMMENTED FOR MAKING CHATBOT WORKING
-		// // save income tax details in datastore
-		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		// save income tax details in datastore
+		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
 		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "before return statement",
 				"about to return response");
@@ -289,13 +344,26 @@ public class IncomeTaxService implements IIncomeTaxService {
 	/**
 	 * @see IIncomeTaxService.saveIncomeTaxUserDetails
 	 */
+	// here emailid, phonenumber,firstname values are required
+	// TODO add file location url in configurations for production and test
+	// servers
 	@Override
-	public void saveIncomeTaxUserDetails(IncomeTaxEntity incomeTaxEntity)
-			throws JsonParseException, JsonMappingException, IOException {
+	public void saveIncomeTaxUserDetailsAndEmail(IncomeTaxEntity incomeTaxEntity) throws Exception {
 		incomeTaxDataAccess.saveUserContacts(incomeTaxEntity.getUuid(), emailIdField, incomeTaxEntity.getEmailId());
 		incomeTaxDataAccess.saveUserContacts(incomeTaxEntity.getUuid(), phoneNumberField,
 				incomeTaxEntity.getPhoneNumber());
 		incomeTaxDataAccess.saveUserContacts(incomeTaxEntity.getUuid(), firstNameField, incomeTaxEntity.getFirstName());
+
+		try {
+			// add send email job to queue
+			queueReaderJob.requestBackroundWorkItem(incomeTaxEntity, subjectsForSendingIncomeTaxDetails,
+					"IncomeTaxService", "saveIncomeTaxUserDetails");
+		} catch (Exception ex) {
+			// when queue is not working send email manually
+			sendEmailWithIncomeTaxDetailsObserver
+					.prepareEmailContentAndSendToEmailReceiver(this.getIncomeTaxData(incomeTaxEntity));
+		}
+
 	}
 
 	/**
