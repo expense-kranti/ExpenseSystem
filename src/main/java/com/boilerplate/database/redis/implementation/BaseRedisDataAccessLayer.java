@@ -1194,7 +1194,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("INCOMETAX_UUID_LENGTH", "8");
 		// the below config is real
 		vAllETest.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
-				"641977ea-22af-4bba-9966-6c187dbc5a26_FinalTaxCalculatorE-mailerhtml");
+				"257b5f4c-7b9f-4b04-ab22-2546cfb6d076_FinalTaxCalculatorE-mailerhtml");
 
 		return vAllETest;
 	}
@@ -1293,7 +1293,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Education_Cess", "1.03");
 		vAllEDev.put("INCOMETAX_UUID_LENGTH", "8");
 		vAllEDev.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
-				"26eb9c0a-adf8-4e2d-b21c-72ce72a7f637_FinalTaxCalculatorE-mailerhtml");
+				"b44fee2d-a993-4d20-833d-263985d4e076_FinalTaxCalculatorE-mailerhtml");
 
 		return vAllEDev;
 
@@ -1370,7 +1370,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Education_Cess", "1.03");
 		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
 		vAllEProduction.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
-				"de36de4a-70e8-4369-9ad5-0e4306941da9_FinalTaxCalculatorE-mailerhtml");
+				"ed11141a-1c4b-4a2b-88ae-694a9589362b_FinalTaxCalculatorE-mailerhtml");
 
 		return vAllEProduction;
 	}
@@ -1522,8 +1522,8 @@ public class BaseRedisDataAccessLayer {
 				" <b>Name:</b> @RewardWinningUserName <br> <b>Contact Number:</b> @RewardWinnigUserMobileNumber <br> <b>Email:</b> @RewardWinnigUserEmail <br>");
 
 		// email content related to income tax data email to be sent
-		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Details of income tax calculation");
-		contentMap.put("INCOME_TAX_DETAILS_EMAIL_BODY", "<b>CTC</b> @ctc <br> <b> estimated tax</b> @estimatedTax");
+		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Akshar: Your Income Tax Details");
+		
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
