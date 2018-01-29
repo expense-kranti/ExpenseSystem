@@ -21,20 +21,22 @@ import com.wordnik.swagger.annotations.ApiResponses;
  */
 @Api(description = "This controller has api for operate the blog activities", value = "Blog API's", basePath = "/blog")
 @Controller
-public class BlogActivityController {
-	
+public class BlogActivityController extends BaseController {
+
 	@Autowired
 	IBlogActivityService blogActivityService;
-	
+
 	/**
 	 * This method saves the user's blog activity
-	 * @param blogActivityEntity This contains the blog activity and blog action
+	 * 
+	 * @param blogActivityEntity
+	 *            This contains the blog activity and blog action
 	 */
 	@ApiOperation(value = "This api is used to save the user blog activity , activity basically contain the activity and activity action")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/blog/activity", method = RequestMethod.POST)
-	public @ResponseBody BlogActivityEntity saveActivity
-				(@RequestBody BlogActivityEntity blogActivityEntity){
+	public @ResponseBody BlogActivityEntity saveActivity(@RequestBody BlogActivityEntity blogActivityEntity)
+			throws Exception {
 		// Save the user article
 		return blogActivityService.saveActivity(blogActivityEntity);
 	}
