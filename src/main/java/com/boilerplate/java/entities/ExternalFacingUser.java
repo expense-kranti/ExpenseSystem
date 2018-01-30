@@ -572,14 +572,14 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	/**
 	 * This is used to check if user has sent feedback
 	 */
-	boolean isFeedBackSubmitted;
+	private boolean isFeedBackSubmitted;
 
 	/**
 	 * This gets the isFeedback submitted boolean value
 	 * 
 	 * @return The boolean value of isFeedbacksubmitted
 	 */
-	public boolean isFeedBackSubmitted() {
+	public boolean getIsFeedBackSubmitted() {
 		return isFeedBackSubmitted;
 	}
 
@@ -589,7 +589,7 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * @param isFeedBackSubmitted
 	 *            The boolean value of isFeedBackSubmitted
 	 */
-	public void setFeedBackSubmitted(boolean isFeedBackSubmitted) {
+	public void setIsFeedBackSubmitted(boolean isFeedBackSubmitted) {
 		this.isFeedBackSubmitted = isFeedBackSubmitted;
 	}
 
@@ -632,6 +632,25 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
+	 * Gets the role name
+	 * 
+	 * @return the roleName
+	 */
+	public String getRoleName() {
+		return roleName;
+	}
+
+	/**
+	 * Sets the role name
+	 * 
+	 * @param roleName
+	 *            the roleName to set
+	 */
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	/**
 	 * This is the user total score
 	 */
 	private String totalScore;
@@ -639,5 +658,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the income tax uuid used to refer to income tax data for the user
 	 */
 	private String incomeTaxUuid;
+	/**
+	 * This is the role name of user
+	 */
+	private String roleName;
 
 }

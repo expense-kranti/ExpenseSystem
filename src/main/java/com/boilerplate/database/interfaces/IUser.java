@@ -1,5 +1,7 @@
 package com.boilerplate.database.interfaces;
 
+import java.util.Set;
+
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -55,5 +57,27 @@ public interface IUser {
 	public ExternalFacingReturnedUser update(ExternalFacingReturnedUser user);
 
 	public String getReferUser(String uuid);
+
+	/**
+	 * This method is used to add user in Mysql db
+	 * 
+	 * @param user
+	 *            the user to add
+	 */
+	public void addInRedisSet(ExternalFacingUser user);
+
+	/**
+	 * This method is used to fetch items from redis set
+	 * 
+	 * @param key
+	 *            the key against which the Set is to get
+	 * @return the set of members/items
+	 */
+	public Set<String> fetchUserIdsFromRedisSet();
+
+	/**
+	 * This method is used to delete the userId from redis set
+	 */
+	public void deleteItemFromRedisUserIdSet(String userId);
 
 }

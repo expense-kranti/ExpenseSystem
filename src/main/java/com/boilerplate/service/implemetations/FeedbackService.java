@@ -128,16 +128,16 @@ public class FeedbackService implements IFeedbackService {
 	@Override
 	public ExternalFacingReturnedUser sendEmailOnFeedbackByBackGroundJob(FeedBackEntity feedbackEntity)
 			throws NotFoundException, ConflictException, ValidationFailedException {
-		//validate the entity
+		// validate the entity
 		feedbackEntity.validate();
-		
+
 		// check if user already has given feedback
-		if (RequestThreadLocal.getSession().getExternalFacingUser().isFeedBackSubmitted()) {
+		if (RequestThreadLocal.getSession().getExternalFacingUser().getIsFeedBackSubmitted()) {
 			throw new ConflictException("FeedBackEntity", "feedback has already been sent", null);
 		}
 		ExternalFacingReturnedUser user = RequestThreadLocal.getSession().getExternalFacingUser();
 		// set feedback submitted to true
-		user.setFeedBackSubmitted(true);
+		user.setIsFeedBackSubmitted(true);
 		// save user
 		userDataAccess.update(user);
 		// Set user id
@@ -146,7 +146,7 @@ public class FeedbackService implements IFeedbackService {
 			// Trigger back ground job to send selected feature through email
 			queueReaderJob.requestBackroundWorkItem(feedbackEntity, subjectsForFeedbackSubmit, "FeedBackEntity",
 					"sendEmailOnFeedbackByBackGroundJob");
-         throw new Exception();
+			throw new Exception();
 		} catch (Exception ex) {
 			// send email on failing of queue
 			sendEmailOnFeedbackSubmitObserver.processUserFeedback(feedbackEntity);
