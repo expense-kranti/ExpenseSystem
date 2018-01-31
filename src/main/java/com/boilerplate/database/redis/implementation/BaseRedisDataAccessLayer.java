@@ -1192,9 +1192,13 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Max_80CCD1B_Allowed_Deduction_ON_INVESTMENT", "50000");
 		vAllETest.put("Education_Cess", "1.03");
 		vAllETest.put("INCOMETAX_UUID_LENGTH", "8");
-		// the below config is real
 		vAllETest.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
 				"257b5f4c-7b9f-4b04-ab22-2546cfb6d076_FinalTaxCalculatorE-mailerhtml");
+
+		// config for SaveInMySQL
+		vAllETest.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
+		vAllETest.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+		vAllETest.put("IsMySQLPublishQueueEnabled", "false");
 
 		return vAllETest;
 	}
@@ -1296,6 +1300,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
 				"b44fee2d-a993-4d20-833d-263985d4e076_FinalTaxCalculatorE-mailerhtml");
 
+		// config for SaveInMySQL
+		vAllEDev.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
+		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+		vAllEDev.put("IsMySQLPublishQueueEnabled", "true");
+
 		return vAllEDev;
 
 	}
@@ -1372,6 +1381,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("INCOMETAX_UUID_LENGTH", "8");
 		vAllEProduction.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
 				"ed11141a-1c4b-4a2b-88ae-694a9589362b_FinalTaxCalculatorE-mailerhtml");
+
+		// config for SaveInMySQL
+		vAllEProduction.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
+		vAllEProduction.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+		vAllEProduction.put("IsMySQLPublishQueueEnabled", "false");
 
 		return vAllEProduction;
 	}
@@ -1524,7 +1538,6 @@ public class BaseRedisDataAccessLayer {
 
 		// email content related to income tax data email to be sent
 		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Akshar: Your Income Tax Details");
-		
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}
@@ -1686,6 +1699,26 @@ public class BaseRedisDataAccessLayer {
 		try {
 			jedis = this.getConnection();
 			jedis.sadd(key, members);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	/**
+	 * This method removes the members from set with the given key
+	 * 
+	 * @param key
+	 *            The set key
+	 * @param members
+	 *            The members to delete
+	 */
+	public void srem(String key, String members) {
+		Jedis jedis = null;
+		try {
+			jedis = this.getConnection();
+			jedis.srem(key, members);
 		} finally {
 			if (jedis != null) {
 				jedis.close();

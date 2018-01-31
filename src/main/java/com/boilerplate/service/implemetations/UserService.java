@@ -111,6 +111,15 @@ public class UserService implements IUserService {
 	private IUser userDataAccess;
 
 	/**
+	 * This is the setter for user data acess
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
+	}
+
+	/**
 	 * This is the instance of the role service
 	 */
 	@Autowired
@@ -124,15 +133,6 @@ public class UserService implements IUserService {
 	 */
 	public void setRoleService(IRoleService roleService) {
 		this.roleService = roleService;
-	}
-
-	/**
-	 * This is the setter for user data acess
-	 * 
-	 * @param iUser
-	 */
-	public void setUserDataAccess(IUser iUser) {
-		this.userDataAccess = iUser;
 	}
 
 	/**
@@ -167,9 +167,19 @@ public class UserService implements IUserService {
 	}
 
 	/**
-	 * This is an instance of the queue job, to save the session back on to the
-	 * database async
+	 * This is the instance of IUser
 	 */
+	IUser mySqlUser;
+
+	/**
+	 * This method set the mysqluser
+	 * 
+	 * @param mySqlUser
+	 *            the mySqlUser to set
+	 */
+	public void setMySqlUser(IUser mySqlUser) {
+		this.mySqlUser = mySqlUser;
+	}
 
 	/**
 	 * This is the instance of the assessment service
@@ -219,6 +229,10 @@ public class UserService implements IUserService {
 		this.blogActivityService = blogActivityService;
 	}
 
+	/**
+	 * This is an instance of the queue job, to save the session back on to the
+	 * database async
+	 */
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
 
@@ -352,6 +366,11 @@ public class UserService implements IUserService {
 				existingUser.setIncomeTaxUuid(externalFacingUser.getIncomeTaxUuid());
 				// SAVE USER HERE
 				userDataAccess.update(existingUser);
+
+				// add the user id in redis set to be later fetched and saved in
+				// MysqlDB using job
+				userDataAccess.addInRedisSet(existingUser);
+
 				return existingUser;
 			}
 			throw new ConflictException("User", "User already exist with this mobile", null);
@@ -385,6 +404,13 @@ public class UserService implements IUserService {
 
 		// call the database to save the user
 		externalFacingUser = (ExternalFacingUser) userDataAccess.create(externalFacingUser).transformToExternal();
+
+		// // USER ADDED IN MYSQL Database DIRECTLY MEANS MAPPING IS WORKING
+		// mySqlUser.create(externalFacingUser);
+
+		// add the user id in redis set to be later fetched and saved in MysqlDB
+		// using job
+		userDataAccess.addInRedisSet(externalFacingUser);
 
 		// publish the created user
 		ExternalFacingUser externalFacingUserClone = null;
@@ -614,6 +640,7 @@ public class UserService implements IUserService {
 		// update the entity
 		ExternalFacingReturnedUser externalFacingReturnedUser = this.update(externalFacingUser.getUserId(),
 				updatePasswordEntity.convertToUpdateUserEntity());
+
 		// Send a message
 		ExternalFacingUser externalFacingUserClone = null;
 		try {
@@ -696,6 +723,9 @@ public class UserService implements IUserService {
 			returnedUser.setRoles(new BoilerplateList<Role>());
 		// update the user in the database
 		this.userDataAccess.update(returnedUser);
+
+		// update user in MySQLdatabase
+		userDataAccess.addInRedisSet(returnedUser);
 		// if we deleted the user we will not get it back
 		if (returnedUser.getUserStatus() == 0) {
 			return null;

@@ -1,16 +1,12 @@
 package com.boilerplate.database.redis.implementation;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
@@ -54,6 +50,8 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 
 	private static final String User = "USER:";
 
+	private static final String UserKeyForSet = "USER_MYSQL";
+
 	/**
 	 * @see create
 	 */
@@ -63,6 +61,11 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		ExternalFacingReturnedUser user = new ExternalFacingReturnedUser(externalFacingUser);
 		if (user.getRoles() == null) {
 			user.setRoles(new BoilerplateList<Role>());
+		}
+		if (user.getRoles().isEmpty()) {
+
+		} else {
+			user.setRoleName(user.getRoles().get(0).getRoleName());
 		}
 
 		if (super.get(User + user.getUserId()) != null) {
@@ -136,12 +139,36 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	}
 
 	/**
-	 * @see IReferral.saveUserReferUUID
+	 * @see IUser.saveUserReferUUID
 	 */
 	@Override
 	public String getReferUser(String uuid) {
 		// Save user's id and refer UUID in hash map
 		return super.hget(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), uuid);
+	}
+
+	/**
+	 * @see IUser.addInSadd
+	 */
+	@Override
+	public void addInRedisSet(ExternalFacingUser user) {
+		super.sadd(UserKeyForSet, user.getUserId());
+	}
+
+	/**
+	 * @see IUser.fetchUserIdsFromRedisSet
+	 */
+	@Override
+	public Set<String> fetchUserIdsFromRedisSet() {
+		return super.smembers(UserKeyForSet);
+	}
+
+	/**
+	 * @see IUser.deleteRedisUserIdSet
+	 */
+	@Override
+	public void deleteItemFromRedisUserIdSet(String userId) {
+		super.srem(UserKeyForSet, userId);
 	}
 
 }

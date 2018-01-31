@@ -51,8 +51,9 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setCampaignType(user.getCampaignType());
 		super.setCampaignSource(user.getCampaignSource());
 		super.setUserReferId(user.getUserReferId());
-		super.setFeedBackSubmitted(user.isFeedBackSubmitted());
+		super.setIsFeedBackSubmitted(user.getIsFeedBackSubmitted());
 		super.setTotalScore(user.getTotalScore());
+		super.setRoleName(user.getRoleName());
 
 	}
 
@@ -130,21 +131,26 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 	public void setOtpList(BoilerplateList<Integer> otpList) {
 		this.otpList = otpList;
 	}
+
 	/**
 	 * This method get the report entity.
+	 * 
 	 * @return the report entity
 	 */
 	public ReportInputEntiity getReportInputEntitty() {
 		return reportInputEntitty;
 	}
+
 	/**
 	 * this method set the report entity
-	 * @param reportInputEntitty the report entity
+	 * 
+	 * @param reportInputEntitty
+	 *            the report entity
 	 */
 	public void setReportInputEntitty(ReportInputEntiity reportInputEntitty) {
 		this.reportInputEntitty = reportInputEntitty;
 	}
-	
+
 	/**
 	 * This is experian report input entity.
 	 */
@@ -193,14 +199,15 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		returnUrl = returnUrl.replace("@crmRecordID", this.getCrmid() == null ? "" : this.getCrmid());
 		return returnUrl;
 	}
-	
+
 	/**
 	 * This is the user experian report url
 	 */
 	private String experianReportUrl;
-	
+
 	/**
 	 * This method gets the user experian report url
+	 * 
 	 * @return The user experian report url
 	 */
 	public String getExperianReportUrl() {
@@ -209,6 +216,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 
 	/**
 	 * This method sets the user experian report url
+	 * 
 	 * @param experianReportUrl
 	 */
 	public void setExperianReportUrl(String experianReportUrl) {
