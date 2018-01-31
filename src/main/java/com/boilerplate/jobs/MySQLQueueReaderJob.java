@@ -52,7 +52,7 @@ public class MySQLQueueReaderJob implements IAsyncWorkObserver {
 
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		saveUserInMySQL((ExternalFacingUser) asyncWorkItem.getPayload());
+		saveOrUpdateUserInMySQL((ExternalFacingUser) asyncWorkItem.getPayload());
 	}
 
 	/**
@@ -64,14 +64,14 @@ public class MySQLQueueReaderJob implements IAsyncWorkObserver {
 	 *             thrown if the user already exists in the database for the
 	 *             given provider.
 	 */
-	private void saveUserInMySQL(ExternalFacingUser externalFacingUser) throws ConflictException {
+	private void saveOrUpdateUserInMySQL(ExternalFacingUser externalFacingUser) throws ConflictException {
 
-//		try {
-			// add user to the mysql database
-			mySqlUser.create(externalFacingUser);
-//		} catch (Exception cev) {
-//			userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
-//		}
+		// try {
+		// add user to the mysql database
+		mySqlUser.create(externalFacingUser);
+		// } catch (Exception cev) {
+		// userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
+		// }
 		// after getting work done by using userId delete that user id from set
 		userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
 	}
