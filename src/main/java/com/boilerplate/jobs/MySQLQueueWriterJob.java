@@ -92,7 +92,8 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 			// Redis to MySQL
 			this.fetchUserIdsAndAddInQueue();
 
-			// fetch other ids from Redis Set
+			// fetch other ids like for blog activity, file api, assessments api
+			// from Redis Set
 
 		}
 
