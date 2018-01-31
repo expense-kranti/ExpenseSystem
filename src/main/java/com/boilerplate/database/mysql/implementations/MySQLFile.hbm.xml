@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.boilerplate.java.entities.FileEntity"
+		table="File">
+		<id name="id" column="Id">
+			<generator class="identity" />
+		</id>
+		<property name="fileName" column="FileName" />
+		<property name="contentType" column="ContentType" />
+		<property name="userId" column="UserId" />
+		<property name="fileMasterTag" column="FileMasterTag" />
+		<property name="fileNameOnDisk" column="FileNameOnDisk" />
+		<property name="fullFileNameOnDisk" column="FullFileNameOnDisk" />
+	</class>
+</hibernate-mapping>

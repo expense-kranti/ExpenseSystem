@@ -40,5 +40,7 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLQuestionType.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLArticle.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLBlogActivity.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

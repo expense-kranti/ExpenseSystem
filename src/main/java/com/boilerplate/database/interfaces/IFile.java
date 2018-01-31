@@ -15,4 +15,11 @@ public interface IFile {
 
 	public String getPreSignedS3URL(String id);
 	
+	/**
+	 * this method is used to save file in MYSQL Database
+	 * @param file
+	 * @return the file Entity
+	 * @throws IOException If there is any error accessing the file
+	 */
+	public void mySqlSaveFile(MultipartFile file) throws IOException;
 }

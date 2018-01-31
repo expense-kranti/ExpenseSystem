@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IBlogActivity;
+import com.boilerplate.database.mysql.implementations.MySQLBlogActivity;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.BlogActivityEntity;
 
@@ -20,19 +21,23 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	 * This is the blog user mapping for storing user's blog activity
 	 */
 	private static final String BlogUser = "BLOGUSER:";
+	
+	public static final String BlogUserKeyForSet = "BLOGUSER";
 
 	/**
 	 * @see IBlogActivity.saveActivity
 	 */
 	@Override
 	public void saveActivity(BlogActivityEntity blogActivityEntity) {
+		
+		
 		// create new map of input activity and save
 		Map<String, String> blogActivityMap = new HashMap<>();
 		blogActivityMap.put(blogActivityEntity.getActivity(), blogActivityEntity.getAction());
 		// save blog activity
 		super.hmset(BlogUser + blogActivityEntity.getActivityType() + ":"
-				+ RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), blogActivityMap);
-
+				+ blogActivityEntity.getUserId(), blogActivityMap);
+		addInRedisSet(blogActivityEntity);
 	}
 
 	/**
@@ -52,6 +57,21 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	@Override
 	public Set<String> getAllBlogUserKeys(String userId) {
 		return super.keys(BlogUser + "*" + userId);
+	}
+
+	@Override
+	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) {
+		// TODO Auto-generated method stub
+		MySQLBlogActivity obj = new MySQLBlogActivity();
+		obj.mySqlSaveBlogActivity(blogActivityEntity);
+	}
+	
+	/**
+	* @see IBlogActivity.addInRedisSet
+	*/
+	@Override
+	public void addInRedisSet(BlogActivityEntity blogActivity) {
+	super.sadd(BlogUserKeyForSet, blogActivity.getUserId());
 	}
 
 }
