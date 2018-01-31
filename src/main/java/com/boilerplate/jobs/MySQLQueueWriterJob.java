@@ -88,19 +88,28 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 */
 	public void addElementsInQueue() throws NotFoundException {
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
-			// fetch userIds Set from redis
-			Set<String> elements = userDataAccess.fetchUserIdsFromRedisSet();
-			// if set is empty then do nothing
-			if (elements.isEmpty()) {
+			// fetch and process userIds from Redis Set for migrating Users from
+			// Redis to MySQL
+			this.fetchUserIdsAndAddInQueue();
 
-			} else {
-				// add the users into queue against each userId found in redis
-				// database
-				addUsersInQueue(elements);
-			}
+			// fetch other ids like for blog activity, file api, assessments api
+			// from Redis Set
 
 		}
 
+	}
+
+	private void fetchUserIdsAndAddInQueue() throws NotFoundException {
+		// fetch userIds Set from redis
+		Set<String> elements = userDataAccess.fetchUserIdsFromRedisSet();
+		// if set is empty then do nothing
+		if (elements.isEmpty()) {
+
+		} else {
+			// add the users into queue against each userId found in redis
+			// database
+			addUsersInQueue(elements);
+		}
 	}
 
 	/**
@@ -113,7 +122,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 *             thrown if user is not found in redis database
 	 */
 	public void addUsersInQueue(Set<String> userIdSet) throws NotFoundException {
-		// fetch user against each userId in Set
+		// fetch user against each userId present in Set
 		for (String userId : userIdSet) {
 			try {
 				// add the users into queue against each userId found in redis
