@@ -205,10 +205,4 @@ public class S3File implements IFile {
 	}
 
 
-	@Override
-	public void mySqlSaveFile(MultipartFile file) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

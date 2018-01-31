@@ -14,5 +14,6 @@
 		<property name="fileMasterTag" column="FileMasterTag" />
 		<property name="fileNameOnDisk" column="FileNameOnDisk" />
 		<property name="fullFileNameOnDisk" column="FullFileNameOnDisk" />
+		<property name="creationDate" column="CreationDate" />
 	</class>
 </hibernate-mapping>

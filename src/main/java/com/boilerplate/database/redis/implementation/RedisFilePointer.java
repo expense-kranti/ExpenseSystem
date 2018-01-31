@@ -2,7 +2,10 @@ package com.boilerplate.database.redis.implementation;
 
 import com.boilerplate.framework.Logger;
 
+import java.io.IOException;
+
 import com.boilerplate.database.interfaces.IFilePointer;
+import com.boilerplate.database.mysql.implementations.MySQLFile;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -138,6 +141,14 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 			}
 		}
 		return files;
+	}
+
+	@Override
+	public void mySqlSaveFile(FileEntity file) throws IOException {
+		// call MySQLFile method to save the in MySqlDatabase
+		MySQLFile obj = new MySQLFile();
+		obj.mySqlSaveFile(file);
+		
 	}
 
 }
