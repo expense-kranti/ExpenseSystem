@@ -12,7 +12,7 @@ import com.boilerplate.java.entities.ExternalFacingUser;
  * @author urvij
  *
  */
-public class MySQLCreateUserObserver implements IAsyncWorkObserver {
+public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 
 	/**
 	 * This is the instance of IUser
