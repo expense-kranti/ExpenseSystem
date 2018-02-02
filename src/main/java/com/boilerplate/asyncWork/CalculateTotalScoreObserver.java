@@ -353,7 +353,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		if (isPublishReport) {
 			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
 					configurationManager.get("AKS_Assessment_Publish_Method"),
-					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPubishEntity,
+					configurationManager.get("AKS_Assessment_Publish_Subject"),
+					assessmentStatusPubishEntity,
 					configurationManager.get("AKS_Assessment_Publish_URL"),
 					configurationManager.get("AKS_Assessment_Publish_Template"),
 					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));

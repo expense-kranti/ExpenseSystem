@@ -1,17 +1,30 @@
 package com.boilerplate.service.implemetations;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.DecimalFormat;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.database.interfaces.IAssessment;
+import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
+import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.Role;
+import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.service.interfaces.IAssessmentService;
 import com.boilerplate.service.interfaces.IScriptsService;
 import com.boilerplate.service.interfaces.IUserService;
+import com.opencsv.CSVReader;
 
 public class ScriptService implements IScriptsService {
 
@@ -19,6 +32,17 @@ public class ScriptService implements IScriptsService {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(ScriptService.class);
+
+	/**
+	 * These variables are used in checking the operation type to be done on
+	 * TotalScore with given score points
+	 */
+	public static final String SUBTRACT = "SUBTRACT";
+
+	public static final String ADD = "ADD";
+
+	// format of double values in two places decimal
+	DecimalFormat df = new DecimalFormat("#.##");
 
 	/**
 	 * This is the user service
@@ -54,6 +78,69 @@ public class ScriptService implements IScriptsService {
 	}
 
 	/**
+	 * This is the instance of the configuration manager.
+	 */
+	@Autowired
+	com.boilerplate.configurations.ConfigurationManager configurationManager;
+
+	/**
+	 * The setter to set the configuration manager
+	 * 
+	 * @param configurationManager
+	 *            The configuration manager
+	 */
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
+		this.configurationManager = configurationManager;
+	}
+
+	/**
+	 * This is the instance of S3File Entity
+	 */
+	@Autowired
+	com.boilerplate.databases.s3FileSystem.implementations.S3File file;
+
+	/**
+	 * This method sets the instance of S3File Entity
+	 * 
+	 * @param file
+	 *            The file
+	 */
+	public void setFile(com.boilerplate.databases.s3FileSystem.implementations.S3File file) {
+		this.file = file;
+	}
+
+	/**
+	 * The autowired instance of user data access
+	 */
+	@Autowired
+	private IUser userDataAccess;
+
+	/**
+	 * This is the setter for user data acess
+	 * 
+	 * @param iUser
+	 */
+	public void setUserDataAccess(IUser iUser) {
+		this.userDataAccess = iUser;
+	}
+
+	/**
+	 * This is the new instance of redis assessment
+	 */
+	@Autowired
+	IRedisAssessment redisAssessment;
+
+	/**
+	 * This method set the redisAssessment
+	 * 
+	 * @param redisAssessment
+	 *            the redisAssessment to set
+	 */
+	public void setRedisAssessment(IRedisAssessment redisAssessment) {
+		this.redisAssessment = redisAssessment;
+	}
+
+	/**
 	 * This is the publish subject list.
 	 */
 	BoilerplateList<String> subjectsForPublishUserReportData = new BoilerplateList<>();
@@ -62,11 +149,16 @@ public class ScriptService implements IScriptsService {
 	 * 
 	 */
 	BoilerplateList<String> subjectsForSetUserChangePasswordStatus = new BoilerplateList<>();
-	
+
 	/**
 	 * This is publish subject list for AKS Report and Refer User
 	 */
 	BoilerplateList<String> subjectsForAKSOrReferReportPublish = new BoilerplateList<>();
+
+	/**
+	 * Subject for publishing to crm
+	 */
+	private BoilerplateList<String> subjects = null;
 
 	/**
 	 * Initializes the bean
@@ -86,11 +178,10 @@ public class ScriptService implements IScriptsService {
 			queueReaderJob.requestBackroundWorkItem("", subjectsForPublishUserReportData, "ScriptService",
 					"publishUserAndAssessmentReport");
 		} catch (Exception ex) {
-			logger.logError("ScriptService", "publishUserAndAssessmentReport", "Inside try-catch block",
-					ex.toString());
+			logger.logError("ScriptService", "publishUserAndAssessmentReport", "Inside try-catch block", ex.toString());
 		}
 	}
-	
+
 	/**
 	 * @see IScriptsService.publishUserAKSOrReferReport
 	 */
@@ -99,10 +190,11 @@ public class ScriptService implements IScriptsService {
 		if (!checkIsAdmin()) {
 			throw new UnauthorizedException("User", "User is not authorized to perform this action.", null);
 		}
-		try{
-			queueReaderJob.requestBackroundWorkItem("", subjectsForAKSOrReferReportPublish,"ScriptService","publishUserAKSOrReferReport");
-		}catch(Exception ex){
-		   logger.logError("ScriptService", "publishUserAKSOrReferReport", "Inside try-catch block", ex.toString());	
+		try {
+			queueReaderJob.requestBackroundWorkItem("", subjectsForAKSOrReferReportPublish, "ScriptService",
+					"publishUserAKSOrReferReport");
+		} catch (Exception ex) {
+			logger.logError("ScriptService", "publishUserAKSOrReferReport", "Inside try-catch block", ex.toString());
 		}
 	}
 
@@ -154,7 +246,129 @@ public class ScriptService implements IScriptsService {
 			logger.logError("ScriptsService", "setUserChangePasswordStatus", "Inside try-catch block", ex.toString());
 		}
 	}
-	
-	
+
+	@Override
+	public void fetchScorePointsFromFileAndUpdateUserTotalScore(String fileId)
+			throws UnauthorizedException, NotFoundException, BadRequestException, IOException {
+		// checks for user role if not admin then throw unauthorized exception
+		if (!checkIsAdmin()) {
+			throw new UnauthorizedException("User",
+					"Currently logged in User is not allowed to change User's score points from CSV", null);
+		}
+		String csvFileName = null;
+		String[] row = null;
+		File file;
+		// Get file from local if not found then downloads
+		if (!(new File(configurationManager.get("RootFileDownloadLocation"), fileId)).exists()) {
+			csvFileName = this.file.downloadFileFromS3ToLocal(configurationManager.get("S3_Files_Path") + fileId);
+		} else {
+			csvFileName = fileId;
+		}
+		// Reading CSv File and setting vouchersList from CSV Data
+		CSVReader csvReader = new CSVReader(
+				new FileReader(configurationManager.get("RootFileDownloadLocation") + csvFileName));
+
+		String[] headerLine = csvReader.readNext();
+		while ((row = csvReader.readNext()) != null) {
+
+			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(row[0]));
+
+			if (row[2].equals(SUBTRACT)) {
+				// update the TotalScore key entry for given userId
+				// here row[1] is expected to be the score points to subtract
+				scoreEntity.setObtainedScore(
+						df.format(Float.parseFloat(scoreEntity.getObtainedScore()) - Float.parseFloat(row[1])));
+				// update and save user total score
+				updateAndSaveUserTotalScore(scoreEntity, row[0]);
+
+			} else if (row[2].equals(ADD)) {
+				// update the TotalScore key entry for given userId
+				// here row[1] is expected to be the score points to add
+				scoreEntity.setObtainedScore(
+						df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(row[1])));
+				// update and save user total score
+				updateAndSaveUserTotalScore(scoreEntity, row[0]);
+			}
+		}
+
+	}
+
+	/**
+	 * This method is used to update and save user total score
+	 * 
+	 * @param scoreEntity
+	 *            the score entity that contains the updated score to be saved
+	 *            and updated in User's TotalScore
+	 * @param userPhoneNumber
+	 *            the phone number to get user from data store to update its
+	 *            total score
+	 * @throws NotFoundException
+	 *             thrown when user is not found
+	 */
+	private void updateAndSaveUserTotalScore(ScoreEntity scoreEntity, String userPhoneNumber) throws NotFoundException {
+		// save updated score in data store
+		redisAssessment.saveTotalScore(scoreEntity);
+
+		// update the Total Score in saved User in data store
+		ExternalFacingReturnedUser savedUser = userDataAccess.getUser(userService.normalizeUserId(userPhoneNumber),
+				null);
+		savedUser.setTotalScore(df.format(
+				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
+		// save the user with updated score
+		userDataAccess.update(savedUser);
+		publishToCRM(savedUser);
+
+	}
+
+	/**
+	 * This method creates the publish entity.
+	 * 
+	 * @param method
+	 *            the publish method
+	 * @param publishMethod
+	 *            the publish method
+	 * @param publishSubject
+	 *            the publish subject
+	 * @param returnValue
+	 *            the object
+	 * @param url
+	 *            the publish url
+	 * @return the publish entity
+	 */
+	private PublishEntity createPublishEntity(String method, String publishMethod, String publishSubject,
+			Object returnValue, String url, String publishTemplate, String isDynamicPublishURl) {
+		PublishEntity publishEntity = new PublishEntity();
+		publishEntity.setInput(new Object[0]);
+		publishEntity.setMethod(method);
+		publishEntity.setPublishMethod(publishMethod);
+		publishEntity.setPublishSubject(publishSubject);
+		publishEntity.setReturnValue(returnValue);
+		publishEntity.setUrl(url);
+		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
+		publishEntity.setPublishTemplate(publishTemplate);
+		return publishEntity;
+	}
+
+	private void publishToCRM(ExternalFacingReturnedUser externalFacingUserEntity) {
+		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
+		if (isPublishReport) {
+			PublishEntity publishEntity = this.createPublishEntity("ScriptService.publishToCRM",
+					configurationManager.get("AKS_Assessment_Publish_Method"),
+					configurationManager.get("UPDATE_AKS_USER_SUBJECT"), externalFacingUserEntity, null, null, null);
+			if (subjects == null) {
+				subjects = new BoilerplateList<>();
+				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
+			}
+			try {
+				logger.logInfo("ScriptService", "publishToCRM", "Publishing updated user",
+						"publish update user score " + externalFacingUserEntity.getUserId());
+				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "ScriptService", "publishToCRM",
+						configurationManager.get("AKS_PUBLISH_QUEUE"));
+			} catch (Exception exception) {
+				logger.logError("ScriptService", "publishToCRM", "queueReaderJob catch block",
+						"Exception :" + exception);
+			}
+		}
+	}
 
 }

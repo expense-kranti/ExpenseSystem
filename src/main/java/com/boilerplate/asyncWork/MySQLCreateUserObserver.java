@@ -1,13 +1,8 @@
-package com.boilerplate.jobs;
-
-import javax.validation.ConstraintViolationException;
+package com.boilerplate.asyncWork;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.asyncWork.AsyncWorkItem;
-import com.boilerplate.asyncWork.IAsyncWorkObserver;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.database.mysql.implementations.MySQLUsers;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.java.entities.ExternalFacingUser;
 
@@ -17,7 +12,7 @@ import com.boilerplate.java.entities.ExternalFacingUser;
  * @author urvij
  *
  */
-public class MySQLQueueReaderJob implements IAsyncWorkObserver {
+public class MySQLCreateUserObserver implements IAsyncWorkObserver {
 
 	/**
 	 * This is the instance of IUser
@@ -50,9 +45,15 @@ public class MySQLQueueReaderJob implements IAsyncWorkObserver {
 		this.userDataAccess = userDataAccess;
 	}
 
+	/**
+	 * This method get the user from Redis data store using supplied userId and
+	 * save it in MySQL Database
+	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		saveOrUpdateUserInMySQL((ExternalFacingUser) asyncWorkItem.getPayload());
+
+		// get the user from Redis data store and save it in MySQL data base
+		saveOrUpdateUserInMySQL((ExternalFacingUser) userDataAccess.getUser((String) asyncWorkItem.getPayload(), null));
 	}
 
 	/**

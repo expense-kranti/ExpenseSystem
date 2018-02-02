@@ -146,7 +146,7 @@
 				<entry key="ParseExperianReport" value-ref="parseReportsFromExperianObserver" />
 				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
 				<entry key="SendIncomeTaxDetails" value-ref="emailWithIncomeTaxDetailsObserver"></entry>
-				<entry key="CreateUserInMySQL" value-ref="mySQLQueueReaderJobObserver"></entry>
+				<entry key="CreateOrUpdateUserInMySQL" value-ref="mySQLQueueReaderJobObserver"></entry>
 			</map>
 
 
@@ -616,6 +616,10 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="file" ref="file"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
 	</bean>
 
 	<bean id="emiCalculatorService"
@@ -804,7 +808,7 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
-	<bean id="mySQLQueueReaderJob" class="com.boilerplate.jobs.MySQLQueueReaderJob">
+	<bean id="mySQLUserObserver" class="com.boilerplate.asyncWork.MySQLCreateUserObserver">
 		<property name="mySqlUser" ref="mySqlUser" />
 		<property name="userDataAccess" ref="userDataAccess" />
 	</bean>
@@ -815,7 +819,7 @@
 			<list>
 				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
-				<ref bean="mySQLQueueReaderJob"></ref>
+				<ref bean="mySQLUserObserver"></ref>
 			</list>
 		</property>
 	</bean>

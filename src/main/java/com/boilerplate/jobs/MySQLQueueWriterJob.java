@@ -77,7 +77,9 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	BoilerplateList<String> subjectsForCreateUser = new BoilerplateList();
 
 	public void initialize() {
-		subjectsForCreateUser.add("CreateUserInMySQL");
+		subjectsForCreateUser.add("CreateOrUpdateUserInMySQL");
+		// add subject for another task like for assessment, referral, blog,
+		// file
 	}
 
 	/**
@@ -103,12 +105,18 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 		// fetch userIds Set from redis
 		Set<String> elements = userDataAccess.fetchUserIdsFromRedisSet();
 		// if set is empty then do nothing
-		if (elements.isEmpty()) {
+		if (!elements.isEmpty()) {
 
-		} else {
-			// add the users into queue against each userId found in redis
-			// database
-			addUsersInQueue(elements);
+			// add the userIds into queue from user set
+			addTaskInQueue(elements, subjectsForCreateUser);
+			// // add the assessmentIds into queue from assessment set
+			// addTaskInQueue(elements,subjectsForassessment);
+			// // add the userReferralIds into queue from referral set
+			// addTaskInQueue(elements,subjectsForReferal);
+			// // add the blogIds into queue from blog set
+			// addTaskInQueue(elements,subjectsForBlog);
+			// //add file
+
 		}
 	}
 
@@ -121,46 +129,23 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 * @throws NotFoundException
 	 *             thrown if user is not found in redis database
 	 */
-	public void addUsersInQueue(Set<String> userIdSet) throws NotFoundException {
+	public void addTaskInQueue(Set<String> dataSet, BoilerplateList<String> subjectsForPerformingTask)
+			throws NotFoundException {
 		// fetch user against each userId present in Set
-		for (String userId : userIdSet) {
+		for (String dataId : dataSet) {
 			try {
 				// add the users into queue against each userId found in redis
 				// database
-				queueReaderJob.requestBackroundWorkItem(
-						(ExternalFacingUser) userDataAccess.getUser(normalizeUserId(userId), null),
-						subjectsForCreateUser, "MySQLQueueWriterJob", "addUsersInQueue",
-						configurationManager.get("MYSQL_PUBLISH_QUEUE"));
+				queueReaderJob.requestBackroundWorkItem(dataId, subjectsForPerformingTask, "MySQLQueueWriterJob",
+						"addUsersInQueue", configurationManager.get("MYSQL_PUBLISH_QUEUE"));
 
 			} catch (Exception ex) {
 				// if queue fails then log the exception
-				ex.printStackTrace();
 				logger.logException("MySQLQueueWriterJob", "addUsersInQueue", "try-catch block of queue",
 						ex.getMessage(), ex);
 			}
 
 		}
-	}
-
-	/**
-	 * This method is used to normalize the user Id
-	 * 
-	 * @param userId
-	 *            the userId to normalize
-	 * @return the normalized user Id
-	 */
-	private String normalizeUserId(String userId) {
-		userId = userId.toUpperCase();
-		// check if user id contains :
-		if (userId.contains(":") == false) {
-			// check if the user starts with DEFAULT:, if not then put in
-			// Default: before it
-			if (!userId
-					.startsWith(this.configurationManager.get("DefaultAuthenticationProvider").toUpperCase() + ":")) {
-				userId = this.configurationManager.get("DefaultAuthenticationProvider") + ":" + userId;
-			}
-		}
-		return userId;
 	}
 
 }
