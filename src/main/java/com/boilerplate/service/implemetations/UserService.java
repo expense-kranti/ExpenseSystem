@@ -407,9 +407,6 @@ public class UserService implements IUserService {
 		// call the database to save the user
 		externalFacingUser = (ExternalFacingUser) userDataAccess.create(externalFacingUser).transformToExternal();
 
-		// // USER ADDED IN MYSQL Database DIRECTLY MEANS MAPPING IS WORKING
-		// mySqlUser.create(externalFacingUser);
-
 		// add the user id in redis set to be later fetched and saved in MysqlDB
 		// using job
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
