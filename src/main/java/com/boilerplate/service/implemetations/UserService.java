@@ -369,7 +369,9 @@ public class UserService implements IUserService {
 
 				// add the user id in redis set to be later fetched and saved in
 				// MysqlDB using job
-				userDataAccess.addInRedisSet(existingUser);
+				if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+					userDataAccess.addInRedisSet(existingUser);
+				}
 
 				return existingUser;
 			}
@@ -410,7 +412,9 @@ public class UserService implements IUserService {
 
 		// add the user id in redis set to be later fetched and saved in MysqlDB
 		// using job
-		userDataAccess.addInRedisSet(externalFacingUser);
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			userDataAccess.addInRedisSet(externalFacingUser);
+		}
 
 		// publish the created user
 		ExternalFacingUser externalFacingUserClone = null;
@@ -725,7 +729,10 @@ public class UserService implements IUserService {
 		this.userDataAccess.update(returnedUser);
 
 		// update user in MySQLdatabase
-		userDataAccess.addInRedisSet(returnedUser);
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			userDataAccess.addInRedisSet(returnedUser);
+		}
+
 		// if we deleted the user we will not get it back
 		if (returnedUser.getUserStatus() == 0) {
 			return null;
