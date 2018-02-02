@@ -44,6 +44,7 @@ public class MySQLBaseDataAccessLayer {
 			return t;
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
+			ex.printStackTrace();
 			throw ex;
 		} finally {
 			if (session != null && session.isOpen()) {
