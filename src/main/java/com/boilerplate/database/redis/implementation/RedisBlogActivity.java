@@ -22,6 +22,9 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	 */
 	private static final String BlogUser = "BLOGUSER:";
 	
+	/**
+	 * This is the blogUser key used to migrate redis data to mySql
+	 */
 	public static final String BlogUserKeyForSet = "BLOGUSER";
 
 	/**
@@ -37,7 +40,7 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 		// save blog activity
 		super.hmset(BlogUser + blogActivityEntity.getActivityType() + ":"
 				+ blogActivityEntity.getUserId(), blogActivityMap);
-		addInRedisSet(blogActivityEntity);
+		
 	}
 
 	/**
@@ -65,13 +68,14 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 		MySQLBlogActivity obj = new MySQLBlogActivity();
 		obj.mySqlSaveBlogActivity(blogActivityEntity);
 	}
-	
+
 	/**
-	* @see IBlogActivity.addInRedisSet
-	*/
+	 * @see IBlogActivity.addInRedisSet
+	 */
 	@Override
 	public void addInRedisSet(BlogActivityEntity blogActivity) {
-	super.sadd(BlogUserKeyForSet, blogActivity.getUserId());
+		super.sadd(BlogUserKeyForSet,
+				blogActivity.getUserId() + ":" + blogActivity.getActivityType() + ":" + blogActivity.getActivity());
 	}
 
 }

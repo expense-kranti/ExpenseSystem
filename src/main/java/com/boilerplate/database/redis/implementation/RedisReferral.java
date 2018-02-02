@@ -9,6 +9,9 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.database.mysql.implementations.MySQLReferal;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
@@ -60,6 +63,12 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 * This variable is used to a prefix for key of user Referral
 	 */
 	private static final String ReferCounter = "ReferCounter:";
+	
+	/**
+	 * This is the blogUser key used to migrate redis data to mySql to 
+	 * to save in redis.sadd()
+	 */
+	public static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
 
 	/**
 	 * @see IReferral.saveUserReferredContacts
@@ -192,7 +201,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		super.hmset(ReferredContact + referalEntity.getUserReferId() + ":"
 				+ referalEntity.getReferralMediumType().toString() + ":"
 				+ (referredContactDetailEntity.getContact()).toUpperCase(), expressEntityHashMap);
-
+		
 	}
 
 	/**
@@ -280,5 +289,37 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	@Override
 	public Set<String> getUserAllReferredContactsKeys(String userReferId) {
 		return super.keys(ReferredContact + userReferId + "*" + "*");
+	}
+
+	@Override
+	public void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact) {
+		// TODO Auto-generated method stub
+		MySQLReferal obj = new MySQLReferal();{
+			obj.mySqlSaveReferalData(referalEntity, referalContact);
+		}
+	}
+	
+	/**
+	 * @see IReferral.addInRedisSet
+	 */
+	@Override
+	public void addInRedisSet(ReferalEntity referalEntity) {
+		super.sadd(ReferalKeyForSet, referalEntity.getUserReferId());
+	}
+
+	/**
+	 * @see IReferral.fetchUserIdsFromRedisSet
+	 */
+	@Override
+	public Set<String> fetchUserReferIdsFromRedisSet() {
+		return super.smembers(ReferalKeyForSet);
+	}
+
+	/**
+	 * @see IReferral.deleteRedisUserIdSet
+	 */
+	@Override
+	public void deleteItemFromRedisUserReferIdSet(String userReferId) {
+		super.srem(ReferalKeyForSet, userReferId);
 	}
 }
