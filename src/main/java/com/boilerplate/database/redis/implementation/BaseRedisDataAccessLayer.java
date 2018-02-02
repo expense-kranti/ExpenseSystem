@@ -891,6 +891,17 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// for method updateUserTotalScore
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ScriptController.updateUserTotalScore(java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ScriptController.updateUserTotalScore(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permissions for RewardController
 
 		// for sendRewardWinningUserDetailsInEmail method
@@ -1217,8 +1228,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
 		vAllEDev.put("SMS_SENDER", "AKSSMS");
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
-		vAllEDev.put("RootFileUploadLocation", "C:/Users/Yash/Desktop/downloads");
-		//vAllEDev.put("RootFileUploadLocation", "/downloads/");
+		vAllEDev.put("RootFileUploadLocation", "/downloads/");
 		// new config
 		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
 		vAllEDev.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");

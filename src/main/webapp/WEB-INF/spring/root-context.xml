@@ -616,6 +616,10 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="file" ref="file"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
 	</bean>
 
 	<bean id="emiCalculatorService"

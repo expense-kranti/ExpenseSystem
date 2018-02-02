@@ -42,14 +42,14 @@
 
 	<class name="com.boilerplate.java.entities.ExternalFacingReturnedUser"
 		table="Users">
-		<id name="id" column="Id">
+		<id name="userId" column="UserId">
 			<generator class="assigned" />
 		</id>
 		<property name="firstName" column="FirstName" />
 		<property name="lastName" column="LastName" />
 		<property name="email" column="Email" />
 		<property name="phoneNumber" column="PhoneNumber" />
-		<property name="userId" column="UserId" />
+		<property name="id" column="Id" />
 		<property name="middleName" column="MiddleName" />
 		<property name="referalSource" column="ReferalSource" />
 		<property name="campaignType" column="CampaignType" />

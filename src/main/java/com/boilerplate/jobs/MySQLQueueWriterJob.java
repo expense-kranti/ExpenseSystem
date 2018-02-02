@@ -134,7 +134,6 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 
 			} catch (Exception ex) {
 				// if queue fails then log the exception
-				ex.printStackTrace();
 				logger.logException("MySQLQueueWriterJob", "addUsersInQueue", "try-catch block of queue",
 						ex.getMessage(), ex);
 			}
