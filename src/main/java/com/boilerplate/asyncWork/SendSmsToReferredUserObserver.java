@@ -278,6 +278,13 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 				LocalDate.now().toString());
 
 		referral.saveUserReferContacts(referralEntity, updateReferral);
+		
+		// check in configuration to add in redisset
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add key in redis database to migrate data to MySQL
+			referral.addInRedisSet(referralEntity);
+		}
+		
 	}
 
 	/**

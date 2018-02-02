@@ -40,11 +40,11 @@ public class BlogActivityService implements IBlogActivityService {
 		//call redis database layer
 		blogActivityDataAccess.saveActivity(blogActivityEntity);
 		
-		// Set creation time to current time
-		blogActivityEntity.setCreationDate(Date.valueOf(LocalDate.now()));
+		// add blog key in redis.sadd 
+		blogActivityDataAccess.addInRedisSet(blogActivityEntity);
 		
 		// save blog activity in MySql
-		blogActivityDataAccess.mySqlSaveBlogActivity(blogActivityEntity);
+		//blogActivityDataAccess.mySqlSaveBlogActivity(blogActivityEntity);
 		return blogActivityEntity;
 	}
 	/**

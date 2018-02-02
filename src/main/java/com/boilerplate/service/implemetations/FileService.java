@@ -106,8 +106,8 @@ public class FileService implements IFileService {
 			// method to save file entity in redis database
 			fileEntity = filePointer.save(fileEntity);
 			// method to save file in MySql database
-			fileEntity.setId(null);
-			filePointer.mySqlSaveFile(fileEntity);
+			//fileEntity.setId(null);
+			//filePointer.mySqlSaveFile(fileEntity);
 			return fileEntity;
 		} catch (IOException ex) {
 			throw new UpdateFailedException("File", ex.toString(), ex);

@@ -345,6 +345,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveTotalScore(newScore);
+			
+			// TODO use redis.sadd() here
+			
 			// create external facing returned user from the user id of referal
 			// entity
 			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
@@ -374,6 +377,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveMonthlyScore(newScore);
+			
+			// TODO use redis.sadd() here
+			
 		}
 	}
 
