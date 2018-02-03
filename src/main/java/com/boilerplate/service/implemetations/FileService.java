@@ -3,6 +3,7 @@ package com.boilerplate.service.implemetations;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -101,7 +102,12 @@ public class FileService implements IFileService {
 			fileEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
 			fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
 			fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileNameOnDisk));
+			
+			// method to save file entity in redis database
 			fileEntity = filePointer.save(fileEntity);
+//			// method to save file in MySql database
+//			fileEntity.setId(null);
+//			filePointer.mySqlSaveFile(fileEntity);
 			return fileEntity;
 		} catch (IOException ex) {
 			throw new UpdateFailedException("File", ex.toString(), ex);

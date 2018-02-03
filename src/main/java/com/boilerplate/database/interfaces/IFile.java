@@ -14,5 +14,4 @@ public interface IFile {
 	public String saveFile(MultipartFile file) throws IOException;
 
 	public String getPreSignedS3URL(String id);
-	
 }

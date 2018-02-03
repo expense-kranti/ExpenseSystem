@@ -37,5 +37,16 @@ public interface IBlogActivity {
 	 * @return the set of the user blog keys
 	 */
 	Set<String> getAllBlogUserKeys(String userId);
+	
+	/*
+	 * Save Blog Activity to MySQL Database
+	 */
+	void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity);
+
+	/**
+	 * thi method is used to add key in redis databases
+	 * @param blogActivity
+	 */
+	void addInRedisSet(BlogActivityEntity blogActivity);
 
 }

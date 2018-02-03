@@ -35,6 +35,7 @@
 		<property name="assessmentService" ref="assessmentService"></property>
 		<property name="referralService" ref="referralService"></property>
 		<property name="blogActivityService" ref="blogActivityService"></property>
+		<property name="mySqlUser" ref="mySqlUser"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -145,6 +146,7 @@
 				<entry key="ParseExperianReport" value-ref="parseReportsFromExperianObserver" />
 				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
 				<entry key="SendIncomeTaxDetails" value-ref="emailWithIncomeTaxDetailsObserver"></entry>
+				<entry key="CreateOrUpdateUserInMySQL" value-ref="mySQLCreateOrUpdateUserObserverList"></entry>
 			</map>
 
 
@@ -614,6 +616,10 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="userService" ref="userService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="file" ref="file"></property>
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
 	</bean>
 
 	<bean id="emiCalculatorService"
@@ -789,6 +795,36 @@
 			</list>
 		</property>
 	</bean>
+
+	<!--Dependencies for saving user in mysql database -->
+	<bean id="mySqlUser"
+		class="com.boilerplate.database.mysql.implementations.MySQLUsers">
+	</bean>
+
+	<bean id="mySQLQueueWriterJob" class="com.boilerplate.jobs.MySQLQueueWriterJob"
+		init-method="initialize">
+		<property name="queueReaderJob" ref="queueReaderJob" />
+		<property name="userDataAccess" ref="userDataAccess" />
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+	<bean id="mySQLCreateOrUpdateUserObserver"
+	class="com.boilerplate.asyncWork.MySQLCreateOrUpdateUserObserver">
+		<property name="mySqlUser" ref="mySqlUser" />
+		<property name="userDataAccess" ref="userDataAccess" />
+	</bean>
+
+	<bean id="mySQLCreateOrUpdateUserObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="mySQLCreateOrUpdateUserObserver"></ref>
+			</list>
+		</property>
+	</bean>
+
 
 </beans>
  

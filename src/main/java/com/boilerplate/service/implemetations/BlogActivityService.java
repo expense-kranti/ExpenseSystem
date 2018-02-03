@@ -1,6 +1,9 @@
 package com.boilerplate.service.implemetations;
 
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 import com.boilerplate.database.interfaces.IBlogActivity;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.BlogActivityEntity;
@@ -31,9 +34,17 @@ public class BlogActivityService implements IBlogActivityService {
 	 */
 	@Override
 	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity){
+		
+		blogActivityEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		
 		//call redis database layer
 		blogActivityDataAccess.saveActivity(blogActivityEntity);
-		blogActivityEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		
+		// add blog key in redis.sadd 
+		blogActivityDataAccess.addInRedisSet(blogActivityEntity);
+		
+		// save blog activity in MySql
+		//blogActivityDataAccess.mySqlSaveBlogActivity(blogActivityEntity);
 		return blogActivityEntity;
 	}
 	/**
