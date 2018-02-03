@@ -8,18 +8,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.boilerplate.database.interfaces.IReferral;
-import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.database.mysql.implementations.MySQLReferal;
-import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
-import com.boilerplate.java.entities.UserReferalMediumType;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.core.ReferenceByIdMarshallingStrategy;
 
 /**
  * This class have method to manage user referral details
@@ -63,10 +59,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 * This variable is used to a prefix for key of user Referral
 	 */
 	private static final String ReferCounter = "ReferCounter:";
-	
+
 	/**
-	 * This is the blogUser key used to migrate redis data to mySql to 
-	 * to save in redis.sadd()
+	 * This is the blogUser key used to migrate redis data to mySql to to save
+	 * in redis.sadd()
 	 */
 	public static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
 
@@ -201,7 +197,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		super.hmset(ReferredContact + referalEntity.getUserReferId() + ":"
 				+ referalEntity.getReferralMediumType().toString() + ":"
 				+ (referredContactDetailEntity.getContact()).toUpperCase(), expressEntityHashMap);
-		
+
 	}
 
 	/**
@@ -293,12 +289,9 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 
 	@Override
 	public void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact) {
-		// TODO Auto-generated method stub
-		MySQLReferal obj = new MySQLReferal();{
-			obj.mySqlSaveReferalData(referalEntity, referalContact);
-		}
+
 	}
-	
+
 	/**
 	 * @see IReferral.addInRedisSet
 	 */
