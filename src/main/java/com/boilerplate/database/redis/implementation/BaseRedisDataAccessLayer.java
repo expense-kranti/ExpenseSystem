@@ -1165,7 +1165,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("tosEmailListForPublishBulkFailure", "love.kranti@clearmydues.com");
 		vAllETest.put("ccsEmailListForPublishBulkFailure", "shiva.gupta@krantitechservices.in");
 		vAllETest.put("RootFileDownloadLocation", "/downloads/");
-
+		vAllETest.put("RootFileUploadLocation", "/downloads/");
 		vAllETest.put("SF_Update_Account_Publish_Method", "POST");
 		vAllETest.put("SF_Update_Account_Publish_Subject", "Publish_Bulk_HashData");
 		vAllETest.put("SF_Update_Account_Publish_URL", salesForceBaseurl + "/services/apexrest/UpdateAccount");
@@ -1335,7 +1335,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
 		vAllEProduction.put("SMS_SENDER", "AKSSMS");
 		vAllEProduction.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
-
+		vAllEProduction.put("RootFileUploadLocation", "/downloads/");
 		// new config
 		vAllEProduction.put("S3_Bucket_Name", "csrdata-filesprod");
 		vAllEProduction.put("Secret_Access_Key", "u5jCd7AL6Gl3VK+hQvCoIqgJiT7FINjZAcze8MOQ");
