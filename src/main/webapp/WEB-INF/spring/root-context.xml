@@ -147,6 +147,9 @@
 				<entry key="SendRewardWinningUserDetailsInEmail" value-ref="rewardObserver"></entry>
 				<entry key="SendIncomeTaxDetails" value-ref="emailWithIncomeTaxDetailsObserver"></entry>
 				<entry key="CreateOrUpdateUserInMySQL" value-ref="mySQLCreateOrUpdateUserObserverList"></entry>
+				<entry key="CreateUserFileInMySQL" value-ref="mySQLCreateUserFileObserverList"></entry>
+				<entry key="CreateBlogActivityInMySQL" value-ref="mySQLCreateBlogActivityObserverList" ></entry>
+				<entry key="CreateReferalReferlContact" value-ref="mySQLCreateReferalContactObserverList"></entry>
 			</map>
 
 
@@ -796,7 +799,7 @@
 		</property>
 	</bean>
 
-	<!--Dependencies for saving user in mysql database -->
+	<!--Dependencies for saving userBlog in mysql database -->
 	<bean id="mySqlUser"
 		class="com.boilerplate.database.mysql.implementations.MySQLUsers">
 	</bean>
@@ -805,6 +808,9 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob" />
 		<property name="userDataAccess" ref="userDataAccess" />
+		<property name="filePointer" ref="filePointer" />
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
+		<property name="referral" ref="referral"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
@@ -824,7 +830,75 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!-- Dependecies for saving user file in mysql database -->
+	<bean id="mySqlUserFile"
+		class="com.boilerplate.database.mysql.implementations.MySQLFile">
+	</bean>
 
-
+	<bean id="mySQLCreateUserFileObserver" 
+		class="com.boilerplate.asyncWork.MySQLCreateUserFileObserver">
+			<property name="mySqlUserFile" ref="mySqlUserFile" />
+			<property name="filePointer" ref="filePointer" />
+	</bean>
+	
+	<bean id="mySQLCreateUserFileObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="mySQLCreateUserFileObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Dependencies for saving BlogActivity in mySql database-->
+	<bean id="mySqlBlogActivity"
+		class="com.boilerplate.database.mysql.implementations.MySQLBlogActivity">
+	</bean>
+	
+	<bean id="mySQLCreateBlogActivityObserver"
+	class="com.boilerplate.asyncWork.MySQLCreateBlogActivityObserver">
+		<property name="mySqlBlogActivity" ref="mySqlBlogActivity" />
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess" />
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+	
+	<bean id="mySQLCreateBlogActivityObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="mySQLCreateBlogActivityObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Dependencies for saving BlogActivity in mySql database -->
+	<bean id="mySqlRefralContact"
+		class="com.boilerplate.database.mysql.implementations.MySQLReferralContacts">
+	</bean>
+	
+	<bean id="mySQLCreateReferalContactObserver"
+	class="com.boilerplate.asyncWork.MySQLCreateReferalContactObserver">
+		<property name="mySqlRefralContact" ref="mySqlRefralContact" />
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="referral" ref="referral" />
+	</bean>
+	
+	<bean id="mySQLCreateReferalContactObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="mySQLCreateReferalContactObserver"></ref>
+			</list>
+		</property>
+	</bean>
+	
+	
 </beans>
  

@@ -40,27 +40,6 @@ public class ReferredContactDetailEntity extends BaseEntity
 	private String comingUserId;
 	
 	/**
-	 * this is the referalId
-	 */
-	private String refralId;
-	
-	/**
-	 * this method is used to get referral id
-	 * @return
-	 */
-	public String getReferalId(){
-		return refralId;
-	}
-	
-	/**
-	 * this method is to set the referalId
-	 * @param referalId
-	 */
-	public void setReferalId(String referalId){
-		this.refralId = referalId;
-	}
-
-	/**
 	 * This method is used to get the contact
 	 * 
 	 * @return the contact

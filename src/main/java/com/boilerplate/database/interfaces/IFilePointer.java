@@ -1,6 +1,7 @@
 package com.boilerplate.database.interfaces;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,6 +9,7 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
+import com.boilerplate.java.entities.ReferalEntity;
 
 /**
  * This is for file data integration
@@ -64,5 +66,26 @@ public interface IFilePointer {
 	 * @throws IOException If there is any error accessing the file
 	 */
 	public void mySqlSaveFile(FileEntity file) throws IOException;
+	
+	
+	/**
+	 * This method is used to add key in Redis
+	 * @param referalEntity
+	 */
+	void addInRedisSet(FileEntity fileEntity);
+
+	/**
+	 * This method is used to fetch UserFile key which is stored in redis
+	 * @return
+	 */
+	 public Set<String> fetchUserFileAndAddInQueue();
+
+	/**
+	 * This method is used to delete this UserFile Name in User file Name
+	 * @param fileName
+	 */
+	void deleteItemFromRedisUserFileSet(String fileName);
+
+	
 	
 }

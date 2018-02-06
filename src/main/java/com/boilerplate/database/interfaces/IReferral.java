@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -232,8 +234,9 @@ public interface IReferral {
 	 * This method is used to save referal in mySql
 	 * @param referalEntity
 	 * @param referalContact
+	 * @throws Exception 
 	 */
-	void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact);
+	public void mySqlSaveReferalData(ReferralContactEntity referalContact) throws Exception;
 
 	/**
 	 * This method is used to add key in Redis
@@ -252,5 +255,19 @@ public interface IReferral {
 	 * @param userReferId
 	 */
 	void deleteItemFromRedisUserReferIdSet(String userReferId);
+
+	/**
+	 * This method is use to get ReferredContactDetailEntity from redis database by its key
+	 * @param redisReferalKey
+	 * @return
+	 */
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey);
+	
+	/**
+	 * This method is used to get User referral link from redis database
+	 * @param redisReferalExpiredKey
+	 * @return
+	 */
+	public String getUserReferralLink(String redisReferalExpiredKey);
 
 }

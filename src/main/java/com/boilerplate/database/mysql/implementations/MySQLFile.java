@@ -3,6 +3,7 @@ package com.boilerplate.database.mysql.implementations;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -22,6 +23,7 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 	public void mySqlSaveFile(FileEntity file) throws IOException {
 		// Set creation time to current time
 		file.setCreationDate(Date.valueOf(LocalDate.now()));
+		file.setId(null);
 		// save file in MySql Database
 		super.create(file);
 		
@@ -29,8 +31,10 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 
 	@Override
 	public FileEntity save(FileEntity fileEntity) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		// save file in MySql Database
+		super.create(fileEntity);
+		return fileEntity;
 	}
 
 	@Override
@@ -62,5 +66,25 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void addInRedisSet(FileEntity fileEntity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<String> fetchUserFileAndAddInQueue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteItemFromRedisUserFileSet(String fileName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }

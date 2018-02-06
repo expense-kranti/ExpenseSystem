@@ -4,6 +4,9 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.database.interfaces.IBlogActivity;
+import com.boilerplate.database.interfaces.IFilePointer;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.database.redis.implementation.BaseRedisDataAccessLayer;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -21,6 +24,23 @@ import com.boilerplate.java.entities.ExternalFacingUser;
 public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 
 	public static final String UserKeyForSet = "USER_MYSQL";
+	/**
+	 * This is the userReferral key used to migrate redis data to mySql to 
+	 * to save in redis.sadd()
+	 */
+	public static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
+	
+	/**
+	 * This is the user file key used to migrate redis data to mySql to 
+	 * to save in redis.sadd()
+	 */
+	private static final String UserFileKeyForSet = "USERFILE_MYSQL:";
+	
+	/**
+	 * This is the userReferral key used to migrate redis data to mySql to 
+	 * to save in redis.sadd()
+	 */
+	public static final String BlogUserKeyForSet = "BLOGUSER_MYSQL";
 
 	/**
 	 * This is an instance of the logger
@@ -63,6 +83,35 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 */
 	@Autowired
 	private IUser userDataAccess;
+	
+	@Autowired
+	//private IBlogActivity blogDataAcess;
+	
+	private IFilePointer filePointer;
+	
+	private IBlogActivity blogActivityDataAccess;
+	
+	private IReferral referral;
+
+	public void setReferral(IReferral referral) {
+		this.referral = referral;
+	}
+
+	/**
+	 * Sets the blogActivityDataAccess
+	 * @param blogActivityDataAccess
+	 */
+	public void setBlogActivityDataAccess(IBlogActivity blogActivityDataAccess) {
+		this.blogActivityDataAccess = blogActivityDataAccess;
+	}
+
+	/**
+	 * Sets the filePointer
+	 * @param filePointer
+	 */
+	public void setFilePointer(IFilePointer filePointer) {
+		this.filePointer = filePointer;
+	}
 
 	/**
 	 * Sets the user data access
@@ -73,13 +122,18 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	public void setUserDataAccess(IUser userDataAccess) {
 		this.userDataAccess = userDataAccess;
 	}
-
+		
 	BoilerplateList<String> subjectsForCreateUser = new BoilerplateList();
+	BoilerplateList<String> subjectsForCreateBlogActivity = new BoilerplateList<>();
+	BoilerplateList<String> subjectsForCreateUserFile = new BoilerplateList<>();
+	BoilerplateList<String> subjectsForCreateReferalContact = new BoilerplateList<>();
 
 	public void initialize() {
+		// add subject for task like for assessment, referral, blog, file
 		subjectsForCreateUser.add("CreateOrUpdateUserInMySQL");
-		// add subject for another task like for assessment, referral, blog,
-		// file
+		subjectsForCreateUserFile.add("CreateUserFileInMySQL");
+		subjectsForCreateBlogActivity.add("CreateBlogActivityInMySQL");
+		subjectsForCreateReferalContact.add("CreateReferalReferlContact");
 	}
 
 	/**
@@ -92,13 +146,55 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set for migrating Users from
 			// Redis to MySQL
-			this.fetchUserIdsAndAddInQueue();
+			//this.fetchUserIdsAndAddInQueue();
 
-			// fetch other ids like for blog activity, file api, assessments api
-			// from Redis Set
+			// fetch and process BlogActivity from Redis set for migrating user
+			// from
+			// redis to MySQL
+			this.fetchBlogActivityAndAddInQueue();
 
+			// fetch and process User uploaded File from Redis set for migrating
+			// user from
+			// redis to MySQL
+			this.fetchUserFileAndAddInQueue();
+			
+			// fetch and process Referal Contcts from Redis set for migrating
+			// Referal from
+			// redis to MySQL
+			this.fetchReferalContactAndAddInQueue();
 		}
 
+	}
+
+	private void fetchReferalContactAndAddInQueue() throws NotFoundException {
+		// TODO Auto-generated method stub
+		// fetch the Referal from redis
+		Set<String> elements = referral.fetchUserReferIdsFromRedisSet();
+		if (!elements.isEmpty()) {
+			// add the BlogUsers into queue from BlogActivity Set
+			addTaskInQueue(elements, subjectsForCreateReferalContact);
+		}
+
+	}
+
+	private void fetchUserFileAndAddInQueue() throws NotFoundException {
+		// fetch the BlogActivity from redis
+		Set<String> elements = filePointer.fetchUserFileAndAddInQueue();
+		if (!elements.isEmpty()) {
+			// add the BlogUsers into queue from BlogActivity Set
+			addTaskInQueue(elements, subjectsForCreateUserFile);
+		}
+
+	}
+
+	private void fetchBlogActivityAndAddInQueue() throws NotFoundException {
+		// fetch the BlogActivity from redis
+		Set<String> elements = blogActivityDataAccess.fetchBlogActivityAndAddInQueue();
+		if (!elements.isEmpty()) {
+			// add the BlogUsers into queue from BlogActivity Set
+			addTaskInQueue(elements, subjectsForCreateBlogActivity);
+		}
+		
 	}
 
 	private void fetchUserIdsAndAddInQueue() throws NotFoundException {
@@ -108,15 +204,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 		if (!elements.isEmpty()) {
 
 			// add the userIds into queue from user set
-			addTaskInQueue(elements, subjectsForCreateUser);
-			// // add the assessmentIds into queue from assessment set
-			// addTaskInQueue(elements,subjectsForassessment);
-			// // add the userReferralIds into queue from referral set
-			// addTaskInQueue(elements,subjectsForReferal);
-			// // add the blogIds into queue from blog set
-			// addTaskInQueue(elements,subjectsForBlog);
-			// //add file
-
+			addTaskInQueue(elements, subjectsForCreateUser);			
 		}
 	}
 
@@ -137,11 +225,11 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 				// add the users into queue against each userId found in redis
 				// database
 				queueReaderJob.requestBackroundWorkItem(dataId, subjectsForPerformingTask, "MySQLQueueWriterJob",
-						"addUsersInQueue", configurationManager.get("MYSQL_PUBLISH_QUEUE"));
+						"addTaskInQueue", configurationManager.get("MYSQL_PUBLISH_QUEUE"));
 
 			} catch (Exception ex) {
 				// if queue fails then log the exception
-				logger.logException("MySQLQueueWriterJob", "addUsersInQueue", "try-catch block of queue",
+				logger.logException("MySQLQueueWriterJob", "addTaskInQueue", "try-catch block of queue",
 						ex.getMessage(), ex);
 			}
 

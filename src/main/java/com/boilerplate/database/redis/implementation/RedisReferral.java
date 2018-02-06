@@ -7,12 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.activemq.filter.function.splitFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.database.mysql.implementations.MySQLReferal;
+import com.boilerplate.java.Base;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.boilerplate.java.entities.UserReferalMediumType;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -291,13 +295,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		return super.keys(ReferredContact + userReferId + "*" + "*");
 	}
 
-	@Override
-	public void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact) {
-		// TODO Auto-generated method stub
-		MySQLReferal obj = new MySQLReferal();{
-			obj.mySqlSaveReferalData(referalEntity, referalContact);
-		}
-	}
 	
 	/**
 	 * @see IReferral.addInRedisSet
@@ -321,5 +318,23 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	@Override
 	public void deleteItemFromRedisUserReferIdSet(String userReferId) {
 		super.srem(ReferalKeyForSet, userReferId);
+	}
+
+	@Override
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey) {
+		Map<String, String> referalContactMapData = super.hgetAll(redisReferalKey);
+		return Base.fromMap(referalContactMapData, ReferredContactDetailEntity.class);
+	}
+
+	@Override
+	public void mySqlSaveReferalData(ReferralContactEntity referalContactList) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getUserReferralLink(String redisReferalExpiredKey) {
+		// TODO Auto-generated method stub
+		return super.get(redisReferalExpiredKey);
 	}
 }
