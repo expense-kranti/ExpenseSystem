@@ -146,7 +146,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set for migrating Users from
 			// Redis to MySQL
-			//this.fetchUserIdsAndAddInQueue();
+			this.fetchUserIdsAndAddInQueue();
 
 			// fetch and process BlogActivity from Redis set for migrating user
 			// from
