@@ -6,6 +6,9 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import java.util.List;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
+import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.UserAssessmentDetailEntity;
+import com.boilerplate.java.entities.UserMonthlyScoreEntity;
 
 /**
  * This class provide the method for assessment related operations regarding
@@ -71,4 +74,35 @@ public interface IAssessment {
 	 * @return the explanation regarding the question id
 	 */
 	public String getQuestionExpanation(String questionId);
+
+	/**
+	 * This method is used to save the user assessment data
+	 * 
+	 * @param userAssessmentDetail
+	 *            contains the user assessment details to be saved
+	 * @throws Exception
+	 *             thrown when exception occurs while saving or updating entity
+	 *             in MySQL
+	 */
+	public void saveUserAssessmentData(UserAssessmentDetailEntity userAssessmentDetail) throws Exception;
+
+	/**
+	 * This method is used to save user assessment score into MySQL
+	 * 
+	 * @param scoreEntity
+	 *            it contains userId of the user whose assessment score is to
+	 *            save, the assessmentId, the Obtained Score of the attempted
+	 *            assessment
+	 * @throws Exception
+	 *             thrown when exception occurs while saving the entity
+	 */
+	public void saveUserAssessmentScore(ScoreEntity scoreEntity) throws Exception;
+
+	/**
+	 * This method is used to save user monthly score to MYSQL
+	 * 
+	 * @throws Exception
+	 *             thrown when exception occurs in saving entity in MYSQL
+	 */
+	public void saveUserMonthlyScore(UserMonthlyScoreEntity userMonthlyScoreEntity) throws Exception;
 }

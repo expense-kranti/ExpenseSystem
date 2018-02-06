@@ -16,10 +16,11 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 
 	
 	/**
+	 * @throws Exception 
 	 * @see IFilePointer.mySqlSaveFile
 	 */
 	@Override
-	public void mySqlSaveFile(FileEntity file) throws IOException {
+	public void mySqlSaveFile(FileEntity file) throws Exception {
 		// Set creation time to current time
 		file.setCreationDate(Date.valueOf(LocalDate.now()));
 		// save file in MySql Database

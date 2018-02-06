@@ -227,28 +227,34 @@ public interface IReferral {
 	 *            The user refer id of the user
 	 */
 	public void deleteUserAllReferredExpireContactsData(String userReferId);
-	
+
 	/**
 	 * This method is used to save referal in mySql
+	 * 
 	 * @param referalEntity
 	 * @param referalContact
+	 * @throws Exception
+	 * 
 	 */
-	void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact);
+	void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact) throws Exception;
 
 	/**
 	 * This method is used to add key in Redis
+	 * 
 	 * @param referalEntity
 	 */
 	void addInRedisSet(ReferalEntity referalEntity);
 
 	/**
 	 * This method is used to fetch ReferalKey which is stored in redis
+	 * 
 	 * @return
 	 */
 	Set<String> fetchUserReferIdsFromRedisSet();
 
 	/**
 	 * This method is used to det
+	 * 
 	 * @param userReferId
 	 */
 	void deleteItemFromRedisUserReferIdSet(String userReferId);

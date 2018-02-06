@@ -1315,6 +1315,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
 		vAllEDev.put("IsMySQLPublishQueueEnabled", "true");
 
+		// query for updating monthly Obtained score
+		vAllEDev.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
+				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore WHERE Year = :Year AND Month = :Month And UserId = :UserId");
+
 		return vAllEDev;
 
 	}
@@ -1502,6 +1506,7 @@ public class BaseRedisDataAccessLayer {
 				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
+		vAllEAll.put("AKS_Script_Publish_Method", "POST");
 
 		return vAllEAll;
 

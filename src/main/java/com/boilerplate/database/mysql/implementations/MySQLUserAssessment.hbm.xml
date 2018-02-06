@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.boilerplate.java.entities.UserAssessmentDetailEntity"
+		table="UserAssessment">
+		<id name="id" column="Id">
+			<generator class="identity" />
+		</id>
+		<property name="userId" column="UserId" />
+		<property name="assessmentId" column="AssessmentId" />
+		<property name="questionId" column="MultipleChoiceQuestionId" />
+		<property name="answerId" column="AnswerOptionId" />
+		<property name="sectionId" column="SectionId" />
+		<!-- <property name="totalCorrectAnswer" column="TotalCorrectAnswers" />
+		<property name="status" column="Status" /> -->
+	</class>
+</hibernate-mapping>

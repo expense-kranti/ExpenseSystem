@@ -273,7 +273,10 @@ public class ScriptService implements IScriptsService {
 
 			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(row[0]));
 
-			if (row[2].equals(SUBTRACT)) {
+			if (row[2].equals(SUBTRACT) && scoreEntity != null) {
+				// check if any used values to update score are already null
+				// then make to "0"
+				makeNullValuesToZero(scoreEntity);
 				// update the TotalScore key entry for given userId
 				// here row[1] is expected to be the score points to subtract
 				scoreEntity.setObtainedScore(
@@ -281,7 +284,10 @@ public class ScriptService implements IScriptsService {
 				// update and save user total score
 				updateAndSaveUserTotalScore(scoreEntity, row[0]);
 
-			} else if (row[2].equals(ADD)) {
+			} else if (row[2].equals(ADD) && scoreEntity != null) {
+				// check if any used values to update score are already null
+				// then make to "0"
+				makeNullValuesToZero(scoreEntity);
 				// update the TotalScore key entry for given userId
 				// here row[1] is expected to be the score points to add
 				scoreEntity.setObtainedScore(
@@ -291,6 +297,16 @@ public class ScriptService implements IScriptsService {
 			}
 		}
 
+	}
+
+	// This method is used to make the null values to "0"
+	private void makeNullValuesToZero(ScoreEntity scoreEntity) {
+		if (scoreEntity.getObtainedScore() == null || scoreEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setObtainedScore("0");
+		}
+		if (scoreEntity.getReferScore() == null || scoreEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setReferScore("0");
+		}
 	}
 
 	/**
@@ -316,6 +332,7 @@ public class ScriptService implements IScriptsService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// save the user with updated score
 		userDataAccess.update(savedUser);
+		// publish user to crm
 		publishToCRM(savedUser);
 
 	}
@@ -353,7 +370,7 @@ public class ScriptService implements IScriptsService {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
 		if (isPublishReport) {
 			PublishEntity publishEntity = this.createPublishEntity("ScriptService.publishToCRM",
-					configurationManager.get("AKS_Assessment_Publish_Method"),
+					configurationManager.get("AKS_Script_Publish_Method"),
 					configurationManager.get("UPDATE_AKS_USER_SUBJECT"), externalFacingUserEntity, null, null, null);
 			if (subjects == null) {
 				subjects = new BoilerplateList<>();

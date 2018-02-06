@@ -62,7 +62,8 @@ public interface IFilePointer {
 	 * @param file
 	 * @return the file Entity
 	 * @throws IOException If there is any error accessing the file
+	 * @throws Exception thrown when exception occurs  
 	 */
-	public void mySqlSaveFile(FileEntity file) throws IOException;
+	public void mySqlSaveFile(FileEntity file) throws IOException, Exception;
 	
 }

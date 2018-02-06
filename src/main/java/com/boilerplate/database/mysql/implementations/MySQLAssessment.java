@@ -20,6 +20,9 @@ import com.boilerplate.java.entities.AssessmentSectionEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity;
 import com.boilerplate.java.entities.QuestionType;
+import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.UserAssessmentDetailEntity;
+import com.boilerplate.java.entities.UserMonthlyScoreEntity;
 
 /**
  * This class implements IAssessment
@@ -273,6 +276,43 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		List<Map<String, Object>> requestedDataList = // Execute query
 				requestedDataList = super.executeSelectNative(sqlQuery, queryParameterMap);
 		return (String) requestedDataList.get(0).get(questionExplanation);
+	}
+
+	/**
+	 * @see MySQLUserAssessment.saveUserAssessmentData
+	 */
+	@Override
+	public void saveUserAssessmentData(UserAssessmentDetailEntity userAssessmentDetail) throws Exception {
+		super.create(userAssessmentDetail);
+	}
+
+	/**
+	 * @see MySQLUserAssessment.saveUserAssessmentScore
+	 */
+	@Override
+	public void saveUserAssessmentScore(ScoreEntity scoreEntity) throws Exception {
+		super.create(scoreEntity);
+	}
+
+	/**
+	 * @see MySQLUserAssessment.saveUserMonthlyScore
+	 */
+	@Override
+	public void saveUserMonthlyScore(UserMonthlyScoreEntity userMonthlyScoreEntity) throws Exception {
+		// String queryReferUpdate = "UPDATE UserMonthlyScore SET ReferScore =
+		// :ReferScore WHERE Year = :Year AND Month = :Month And UserId =
+		// :UserId";
+
+		String queryObtainedScoreUpdate = configurationManager.get("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE");
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		queryParameterMap.put("ObtainedScore", userMonthlyScoreEntity.getMonthlyObtainedScore());
+		queryParameterMap.put("Year", userMonthlyScoreEntity.getYear());
+		queryParameterMap.put("Month", userMonthlyScoreEntity.getMonth());
+		queryParameterMap.put("UserId", userMonthlyScoreEntity.getUserId());
+		if (super.executeScalorNative(queryObtainedScoreUpdate, queryParameterMap) == 0) {
+			super.create(userMonthlyScoreEntity);
+		}
+
 	}
 
 }

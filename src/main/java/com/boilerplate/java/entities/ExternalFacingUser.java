@@ -651,6 +651,25 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
+	 * Gets the rank
+	 * 
+	 * @return the rank
+	 */
+	public String getRank() {
+		return rank;
+	}
+
+	/**
+	 * Sets the rank
+	 * 
+	 * @param rank
+	 *            the rank to set
+	 */
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+	/**
 	 * This is the user total score
 	 */
 	private String totalScore;
@@ -662,5 +681,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the role name of user
 	 */
 	private String roleName;
+	/**
+	 * This is the user's rank for assessments
+	 */
+	private String rank;
 
 }

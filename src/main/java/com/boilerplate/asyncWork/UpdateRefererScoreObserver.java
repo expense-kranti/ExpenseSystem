@@ -319,6 +319,11 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	private void updateUserScoreAndPublish(ExternalFacingReturnedUser user, String totalScore) {
 		user.setTotalScore(totalScore);
 		userDataAccess.update(user);
+
+		// TODO add userid to the Redis set for updating total score of the
+		// user(which
+		// contains user assessment score and refer score)
+
 		publishUserToCRM(user);
 	}
 
@@ -345,9 +350,9 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveTotalScore(newScore);
-			
-			// TODO use redis.sadd() here
-			
+
+			// TODO update user rank in mysql
+
 			// create external facing returned user from the user id of referal
 			// entity
 			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
@@ -377,9 +382,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveMonthlyScore(newScore);
-			
-			// TODO use redis.sadd() here
-			
+			// TODO update rank in mysql
 		}
 	}
 

@@ -47,10 +47,11 @@ public class MySQLArticle extends MySQLBaseDataAccessLayer implements IArticle {
 	private static String sqlQueryGetUserArticle = "SQL_QUERY_GET_USER_ARTICLE";
 
 	/**
+	 * @throws Exception
 	 * @see IArticle.saveUserArticle
 	 */
 	@Override
-	public void saveUserArticle(ArticleEntity articleEntity) {
+	public void saveUserArticle(ArticleEntity articleEntity) throws Exception {
 		// Set creation time to current time
 		articleEntity.setCreationDate(Date.valueOf(LocalDate.now()));
 		// Save the user article
@@ -75,10 +76,11 @@ public class MySQLArticle extends MySQLBaseDataAccessLayer implements IArticle {
 	}
 
 	/**
+	 * @throws Exception
 	 * @see IArticle.approveArticle
 	 */
 	@Override
-	public void approveArticle(ArticleEntity articleEntity) {
+	public void approveArticle(ArticleEntity articleEntity) throws Exception {
 		// Set current date for approved date
 		articleEntity.setApprovedDate(Date.valueOf(LocalDate.now()));
 		// Update article approve status to approved

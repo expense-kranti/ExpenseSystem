@@ -63,7 +63,7 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	}
 
 	@Override
-	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) {
+	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) throws Exception {
 		// TODO Auto-generated method stub
 		MySQLBlogActivity obj = new MySQLBlogActivity();
 		obj.mySqlSaveBlogActivity(blogActivityEntity);

@@ -41,7 +41,7 @@ public interface IBlogActivity {
 	/*
 	 * Save Blog Activity to MySQL Database
 	 */
-	void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity);
+	void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) throws Exception;
 
 	/**
 	 * thi method is used to add key in redis databases

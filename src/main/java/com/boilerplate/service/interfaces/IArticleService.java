@@ -20,9 +20,11 @@ public interface IArticleService {
 	 * @param articleEntity
 	 *            this parameter contains the articles details, details
 	 *            basically contain the article title and article content
-	 * @throws ValidationFailedException throw this exception if articleEntity is not valid
+	 * @throws ValidationFailedException
+	 *             throw this exception if articleEntity is not valid
+	 * @throws Exception
 	 */
-	public void saveUserArticle(ArticleEntity articleEntity) throws ValidationFailedException;
+	public void saveUserArticle(ArticleEntity articleEntity) throws ValidationFailedException, Exception;
 
 	/**
 	 * This method is used to get all the user articles which is saved by user
@@ -39,6 +41,7 @@ public interface IArticleService {
 	 * @param articleEntity
 	 *            this parameter contains the articles details, details
 	 *            basically contain the userId and article Id
+	 * @throws Exception
 	 */
-	public void approveArticle(ArticleEntity articleEntity);
+	public void approveArticle(ArticleEntity articleEntity) throws Exception;
 }

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral {
 
 	@Override
-	public void mySqlSaveReferalData(ReferalEntity referalEntity , ReferredContactDetailEntity referalContact) {
+	public void mySqlSaveReferalData(ReferalEntity referalEntity , ReferredContactDetailEntity referalContact) throws Exception {
 		
 		// Save the reffered user
 		super.create(referalEntity);

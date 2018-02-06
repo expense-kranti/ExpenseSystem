@@ -29,7 +29,7 @@ public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlog
 	}
 
 	@Override
-	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) {
+	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) throws Exception {
 		// Set creation time to current time
 		blogActivityEntity.setCreationDate(Date.valueOf(LocalDate.now()));
 		// Save the user blogActivity

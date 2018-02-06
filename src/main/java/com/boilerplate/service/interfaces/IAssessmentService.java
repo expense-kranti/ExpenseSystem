@@ -11,6 +11,7 @@ import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.TopScorerEntity;
+import com.boilerplate.java.entities.UserAssessmentDetailEntity;
 
 /**
  * This class has the services for assessment related operations
@@ -147,6 +148,8 @@ public interface IAssessmentService {
 	 *             throw this exception if we don't found any top scorer
 	 */
 	public BoilerplateList<TopScorerEntity> getTopScorrer();
+
+	
 
 	/**
 	 * This method is used to delete all the assessment related data like
