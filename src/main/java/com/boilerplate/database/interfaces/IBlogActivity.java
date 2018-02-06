@@ -1,7 +1,9 @@
 package com.boilerplate.database.interfaces;
 
+import java.util.Map;
 import java.util.Set;
 
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.BlogActivityEntity;
 
 /**
@@ -17,8 +19,9 @@ public interface IBlogActivity {
 	 * 
 	 * @param blogActivityEntity
 	 *            This contains the user blog activity and respective action
+	 * @throws Exception 
 	 */
-	void saveActivity(BlogActivityEntity blogActivityEntity);
+	void saveActivity(BlogActivityEntity blogActivityEntity) throws Exception;
 
 	/**
 	 * This method is used to delete all user blog activities whose userId is
@@ -41,12 +44,41 @@ public interface IBlogActivity {
 	/*
 	 * Save Blog Activity to MySQL Database
 	 */
-	void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) throws Exception;
+	public void mySqlSaveBlogActivity(BlogActivityEntity BlogActivityEntity) throws Exception;
 
 	/**
-	 * thi method is used to add key in redis databases
+	 * this method is used to add key in redis databases
 	 * @param blogActivity
 	 */
 	void addInRedisSet(BlogActivityEntity blogActivity);
+
+	/**
+	 * This method is used to fetch items from redis set
+	 * 
+	 * @param key
+	 *            the key against which the Set is to get
+	 * @return the set of members/items
+	 */
+	public Set<String> fetchBlogActivityAndAddInQueue();
+	
+	/**
+	 * This method is used to delete BlogActivity key from set
+	 * @param blogActivity
+	 */
+	void deleteItemFromRedisBlogActivitySet(String blogActivity);
+	
+	/**
+	 * this method is used 
+	 * @param blogActivity
+	 * @return
+	 */
+	public BlogActivityEntity getBlogActivity(String blogActivity);
+
+	/**
+	 * This method is used to get all hmset
+	 * @param payload
+	 * @return 
+	 */
+	public Map<String, String> getBlogActivityMap(String payload);
 
 }

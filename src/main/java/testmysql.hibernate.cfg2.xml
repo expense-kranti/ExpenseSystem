@@ -44,6 +44,10 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLBlogActivity.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLFile.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLReferal.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLReferredContactDetail.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
 

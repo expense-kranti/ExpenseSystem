@@ -44,8 +44,7 @@ public class FileController extends BaseController {
 	 *            The file
 	 * @param fileMetaProperties
 	 *            The metadata associated with the file
-	 * @throws UpdateFailedException
-	 *             If file save failed.
+	 * @throws Exception 
 	 * @returns the Id of the file for fetching in future
 	 */
 	@ApiOperation(value = "Uploads a file")
@@ -55,7 +54,7 @@ public class FileController extends BaseController {
 	public @ResponseBody FileEntity upload(
 			@ApiParam(value = "The master tag to be applied to the file", required = true, name = "fileMasterTag", allowMultiple = false) @PathVariable String fileMasterTag,
 			@RequestParam(value = "The file being uploaded") MultipartFile file)
-			throws UpdateFailedException {
+			throws Exception {
 		// find the name of file
 
 		return fileService.saveFile(fileMasterTag, file);

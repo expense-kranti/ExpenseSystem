@@ -8,9 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -287,11 +288,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		return super.keys(ReferredContact + userReferId + "*" + "*");
 	}
 
-	@Override
-	public void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact) {
-
-	}
-
 	/**
 	 * @see IReferral.addInRedisSet
 	 */
@@ -315,4 +311,24 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	public void deleteItemFromRedisUserReferIdSet(String userReferId) {
 		super.srem(ReferalKeyForSet, userReferId);
 	}
+
+	@Override
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey) {
+		Map<String, String> referalContactMapData = super.hgetAll(redisReferalKey);
+		return Base.fromMap(referalContactMapData, ReferredContactDetailEntity.class);
+	}
+
+	@Override
+	public void mySqlSaveReferalData(ReferralContactEntity referalContactList) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getUserReferralLink(String redisReferalExpiredKey) {
+		// TODO Auto-generated method stub
+		return super.get(redisReferalExpiredKey);
+	}
+
+	
 }

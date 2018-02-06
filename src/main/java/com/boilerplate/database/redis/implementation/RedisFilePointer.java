@@ -3,14 +3,17 @@ package com.boilerplate.database.redis.implementation;
 import com.boilerplate.framework.Logger;
 
 import java.io.IOException;
+import java.util.Set;
 
 import com.boilerplate.database.interfaces.IFilePointer;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.mysql.implementations.MySQLFile;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
+import com.boilerplate.java.entities.ReferalEntity;
 
 public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFilePointer{
 	Logger logger = Logger.getInstance(RedisFilePointer.class);
@@ -20,6 +23,8 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 	private static final String UserFile = "USER_FILE:";
 
 	private static final String OrganizationFile = "ORGANIZATION_FILE:";
+	
+	private static final String UserFileKeyForSet = "USERFILE_MYSQL:";
 	@Override
 	public FileEntity save(FileEntity fileEntity) {
 		fileEntity.setId(fileEntity.getFileName());
@@ -149,6 +154,30 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 		MySQLFile obj = new MySQLFile();
 		obj.mySqlSaveFile(file);
 		
+	}
+	
+	/**
+	 * @see IReferral.addInRedisSet
+	 */
+	@Override
+	public void addInRedisSet(FileEntity fileEntity) {
+		super.sadd(UserFileKeyForSet, fileEntity.getFileName());
+	}
+
+	/**
+	 * @see IReferral.fetchUserIdsFromRedisSet
+	 */
+	@Override
+	public Set<String> fetchUserFileAndAddInQueue() {
+		return super.smembers(UserFileKeyForSet);
+	}
+
+	/**
+	 * @see IReferral.deleteRedisUserIdSet
+	 */
+	@Override
+	public void deleteItemFromRedisUserFileSet(String fileName) {
+		super.srem(UserFileKeyForSet, fileName);
 	}
 
 }

@@ -30,10 +30,11 @@ public class BlogActivityService implements IBlogActivityService {
 	}
 
 	/** 
+	 * @throws Exception 
 	 * @see IBlogActivityService.saveActivity
 	 */
 	@Override
-	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity){
+	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity) throws Exception{
 		
 		blogActivityEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
 		

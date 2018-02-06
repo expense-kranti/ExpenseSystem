@@ -5,24 +5,15 @@ import java.util.Map;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral {
+public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements IReferral {
 
-	@Override
-	public void mySqlSaveReferalData(ReferalEntity referalEntity , ReferredContactDetailEntity referalContact) throws Exception {
-		
-		// Save the reffered user
-		super.create(referalEntity);
-		referalEntity.getId();
-		referalContact.setReferalId(referalEntity.getId());
-		super.create(referalContact);
-	}
-	
-	@Override
 	public void saveUserReferUUID(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
 		
@@ -150,6 +141,14 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 		
 	}
 
+	/**
+	 * @see IReferral
+	 */
+	@Override
+	public void mySqlSaveReferalData(ReferralContactEntity referalContact) throws Exception {
+		super.create(referalContact);
+	}
+
 	@Override
 	public void addInRedisSet(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
@@ -168,5 +167,18 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 		
 	}
 
+	@Override
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUserReferralLink(String redisReferalExpiredKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
+
 }

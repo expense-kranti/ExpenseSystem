@@ -1228,7 +1228,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_API_KEY", "A0f52a89f0ab2bf7d755ab9dada057eab");
 		vAllEDev.put("SMS_SENDER", "AKSSMS");
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
-		vAllEDev.put("RootFileUploadLocation", "/downloads/");
+		// vAllEDev.put("RootFileUploadLocation", "/downloads/");
+		vAllEDev.put("RootFileUploadLocation", "C:/Users/Yash/Desktop/downloads");
 		// new config
 		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
 		vAllEDev.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
@@ -1508,6 +1509,13 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
 		vAllEAll.put("AKS_Script_Publish_Method", "POST");
 
+		// to be used for userReferralContact
+		vAllEAll.put("SQL_QUERY_GET_USER_REFER_CONTACT",
+				"From ReferralContactEntity WHERE userReferId = :userReferId AND referralMediumType =:referralMediumType AND contact =:contact");
+
+		// to be used for user blog activity
+		vAllEAll.put("SQL_QUERY_GET_USER_BLOG_ACTIVITY",
+				"From BlogActivityEntity WHERE userId =:userId AND activity =:activity AND activityType =:activityType");
 		return vAllEAll;
 
 	}
