@@ -251,6 +251,12 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 			subject = subjectsForCreateReferalContact;
 			break;
 		}
+
+		// if set is empty then do nothing
+		if (!elements.isEmpty() && !(elements == null)) {
+			// add the userIds into queue from user set
+			addTaskInQueue(elements, subject);
+		}
 	}
 
 	/**
