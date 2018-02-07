@@ -696,21 +696,22 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	/**
 	 * This is the user refer score 
 	 */
-	private String totalReferScore;
+	private double totalReferScore;
 	
 	/**
-	 * get the refer score
+	 * Gets the total refer score
 	 * @return
+	 * 		the total refer score
 	 */
-	public String getTotalReferScore() {
+	public double getTotalReferScore() {
 		return totalReferScore;
 	}
 
 	/**
-	 * set the refer score
-	 * @param totalReferScore
+	 * Sets the total refer score
+	 * @param totalReferScore This is the total refer score		
 	 */
-	public void setTotalReferScore(String totalReferScore) {
+	public void setTotalReferScore(double totalReferScore) {
 		this.totalReferScore = totalReferScore;
 	}
 
