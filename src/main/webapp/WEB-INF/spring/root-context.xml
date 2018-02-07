@@ -153,7 +153,7 @@
 
 				<entry key="CreateUserFileInMySQL" value-ref="mySQLCreateUserFileObserverList"></entry>
 				<entry key="CreateBlogActivityInMySQL" value-ref="mySQLCreateBlogActivityObserverList"></entry>
-				<entry key="CreateReferalReferlContact" value-ref="mySQLCreateReferalContactObserverList"></entry>
+				<entry key="CreateUserReferralContact" value-ref="mySQLCreateReferalContactObserverList"></entry>
 
 			</map>
 
@@ -819,7 +819,6 @@
 		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"/>
 		<property name="filePointer" ref="filePointer" />
 	</bean>
-
 	<bean id="mySQLCreateOrUpdateUserObserver"
 		class="com.boilerplate.asyncWork.MySQLCreateOrUpdateUserObserver">
 		<property name="mySqlUser" ref="mySqlUser" />

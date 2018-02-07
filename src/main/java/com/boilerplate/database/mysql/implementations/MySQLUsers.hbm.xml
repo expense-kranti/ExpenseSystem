@@ -39,6 +39,7 @@
 		<property name="updationDate" column="UpdateDateTime" type="timestamp" />
 		<property name="roleName" column="RoleName" />
 		<property name="rank" column="Rank" />
+		<property name="totalReferScore" column="TotalReferScore"></property>
 	</class>
 
 </hibernate-mapping>

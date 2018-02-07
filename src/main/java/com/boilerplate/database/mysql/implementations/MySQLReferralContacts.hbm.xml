@@ -16,6 +16,7 @@
 		<property name="refferedUserScore" column="RefferedUserScore" />
 		<property name="comingUserId" column="ComingUserId" />
 		<property name="creationDate" column="CreationDate"></property>
-		<property name="comingTime" column="ComingTime"></property>
+		<property name="ComingTime" column="ComingTime"></property>
+		<property name="updationDate" column="UpdationDate"></property>
 	</class>
 </hibernate-mapping>
