@@ -9,6 +9,6 @@
 		</id>
 		<property name="userId" column="UserId" />
 		<property name="assessmentId" column="AssessmentId" />
-		<property name="obtainedScore" column="AssessmentObtainedScore" />
+		<property name="obtainedScoreInDouble" column="AssessmentObtainedScore" />
 	</class>
 </hibernate-mapping>

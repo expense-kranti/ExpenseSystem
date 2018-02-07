@@ -670,6 +670,25 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
+	 * Gets the totalScoreInDouble
+	 * 
+	 * @return the totalScoreInDouble
+	 */
+	public double getTotalScoreInDouble() {
+		return totalScoreInDouble;
+	}
+
+	/**
+	 * Sets the totalScoreInDouble
+	 * 
+	 * @param totalScoreInDouble
+	 *            the totalScoreInDouble to set
+	 */
+	public void setTotalScoreInDouble(double totalScoreInDouble) {
+		this.totalScoreInDouble = totalScoreInDouble;
+	}
+
+	/**
 	 * This is the user total score
 	 */
 	private String totalScore;
@@ -685,5 +704,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the user's rank for assessments
 	 */
 	private String rank;
+	/**
+	 * This is the user total score in double for saving in MySQL
+	 */
+	private double totalScoreInDouble;
 
 }

@@ -815,6 +815,9 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="userDataAccess" ref="userDataAccess" />
 		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="referral" ref="referral" />
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"/>
+		<property name="filePointer" ref="filePointer" />
 	</bean>
 
 	<bean id="mySQLCreateOrUpdateUserObserver"

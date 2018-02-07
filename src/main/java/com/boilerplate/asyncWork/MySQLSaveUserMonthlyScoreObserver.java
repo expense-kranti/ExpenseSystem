@@ -66,18 +66,29 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 	 */
 	public void saveUserMonthlyScoreInMySQL(String data) throws Exception {
 		String[] ids = data.split(",");
+		// get the user's monthly score from Redis database
 		ScoreEntity scoreEntity = redisAssessment.getUserMonthlyScore(ids[0], ids[1], ids[2]);
-		// create user monthly score entity and populate it to be saved in MySQL
+		// create user monthly score entity and populate it with saved monthly
+		// score got from
+		// Redis
 		UserMonthlyScoreEntity userMonthlyScore = new UserMonthlyScoreEntity();
 		userMonthlyScore.setUserId(scoreEntity.getUserId());
 		userMonthlyScore.setYear(ids[1]);
 		userMonthlyScore.setMonth(ids[2]);
-		userMonthlyScore.setMonthlyObtainedScore(scoreEntity.getObtainedScore());
-		userMonthlyScore.setMonthlyReferScore(scoreEntity.getReferScore());
+		// check if obtained score is null or empty then set it to "0"
+		// done for preventing NumberFormatException
+		if (scoreEntity.getObtainedScore() == null || scoreEntity.getObtainedScore().isEmpty())
+			scoreEntity.setObtainedScore("0");
+		// check if refer score is null or empty then set it to "0"
+		// done for preventing NumberFormatException
+		if (scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty())
+			scoreEntity.setReferScore("0");
+		userMonthlyScore.setMonthlyObtainedScore(scoreEntity.getObtainedScoreInDouble());
+		userMonthlyScore.setMonthlyReferScore(Double.parseDouble(scoreEntity.getReferScore()));
 		userMonthlyScore.setMonthlyRank(scoreEntity.getRank());
-
+		// save monthly score in MySQL
 		assessment.saveUserMonthlyScore(userMonthlyScore);
-		//delete entry from Redis Set
+		// delete entry from Redis Set
 		redisAssessment.deleteIdFromRedisSetForAssessmentMonthlyScore(data);
 	}
 

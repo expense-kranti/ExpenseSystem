@@ -1318,8 +1318,7 @@ public class BaseRedisDataAccessLayer {
 
 		// query for updating monthly Obtained score
 		vAllEDev.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
-				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore WHERE Year = :Year AND Month = :Month And UserId = :UserId");
-
+				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
 		return vAllEDev;
 
 	}

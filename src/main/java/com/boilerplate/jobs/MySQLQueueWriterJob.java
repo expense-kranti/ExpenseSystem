@@ -21,7 +21,7 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author urvij
  *
  */
-public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
+public class MySQLQueueWriterJob  {
 
 	/**
 	 * These variables are used to recognized the type of key fetching to do

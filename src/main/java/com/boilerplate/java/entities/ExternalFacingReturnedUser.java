@@ -56,6 +56,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setRoleName(user.getRoleName());
 
 		super.setRank(user.getRank());
+		super.setTotalScoreInDouble(user.getTotalScoreInDouble());
 
 	}
 

@@ -22,7 +22,7 @@
 		<property name="isFeedBackSubmitted" type="boolean">
 			<column name="IsFeedBackSubmitted " sql-type="tinyint" />
 		</property>
-		<property name="totalScore" column="TotalScore" />
+		<property name="totalScoreInDouble" column="TotalScore" />
 		<property name="incomeTaxUuid" column="IncomeTaxUuid" />
 		<property name="authenticationProvider" column="AuthenticationProvider" />
 		<property name="password" column="Password" />

@@ -27,11 +27,11 @@ public class UserMonthlyScoreEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the monthly obtained score
 	 */
-	private String monthlyObtainedScore;
+	private double monthlyObtainedScore;
 	/**
 	 * This is the monthly refer score
 	 */
-	private String monthlyReferScore;
+	private double monthlyReferScore;
 	/**
 	 * This is the monthly rank
 	 */
@@ -99,7 +99,7 @@ public class UserMonthlyScoreEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @return the monthlyObtainedScore
 	 */
-	public String getMonthlyObtainedScore() {
+	public double getMonthlyObtainedScore() {
 		return monthlyObtainedScore;
 	}
 
@@ -109,7 +109,7 @@ public class UserMonthlyScoreEntity extends BaseEntity implements Serializable {
 	 * @param monthlyObtainedScore
 	 *            the monthlyObtainedScore to set
 	 */
-	public void setMonthlyObtainedScore(String monthlyObtainedScore) {
+	public void setMonthlyObtainedScore(double monthlyObtainedScore) {
 		this.monthlyObtainedScore = monthlyObtainedScore;
 	}
 
@@ -118,7 +118,7 @@ public class UserMonthlyScoreEntity extends BaseEntity implements Serializable {
 	 * 
 	 * @return the monthlyReferScore
 	 */
-	public String getMonthlyReferScore() {
+	public double getMonthlyReferScore() {
 		return monthlyReferScore;
 	}
 
@@ -128,7 +128,7 @@ public class UserMonthlyScoreEntity extends BaseEntity implements Serializable {
 	 * @param monthlyReferScore
 	 *            the monthlyReferScore to set
 	 */
-	public void setMonthlyReferScore(String monthlyReferScore) {
+	public void setMonthlyReferScore(double monthlyReferScore) {
 		this.monthlyReferScore = monthlyReferScore;
 	}
 

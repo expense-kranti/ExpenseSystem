@@ -178,7 +178,11 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 
 		user.setTotalScore(String
 				.valueOf(Float.valueOf(scoreEntity.getObtainedScore()) + Float.valueOf(scoreEntity.getReferScore())));
-
+		// if user total score in string is empty or null then set it to "0"
+		// done for preventing NumberFormatException
+		if (user.getTotalScore() == null || user.getTotalScore().isEmpty())
+			user.setTotalScore("0");
+		user.setTotalScoreInDouble(Double.parseDouble(user.getTotalScore()));
 		user.setRank(scoreEntity.getRank());
 		// save user total score
 		userDataAccess.update(user);
@@ -234,6 +238,9 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(String.valueOf(maxScore));
 		// Set the obtained score
 		scoreEntity.setObtainedScore(String.valueOf(obtainedScore));
+		// Set the obtained score in double for SUM from MySQL
+		scoreEntity.setObtainedScoreInDouble(obtainedScore);
+
 		// If refer score is not null then get rank according the sum of refer
 		// and obtained score
 		// BELOW COMMMENTED BY URVIJ
@@ -276,6 +283,11 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(assessmentEntity.getMaxScore());
 		// Set the obtained score
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setObtainedScore("0");
+		}
+		// Set the obtained score in double for SUM in MySQL
+		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// Set refer score 0
@@ -323,6 +335,13 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(assessmentEntity.getMaxScore());
 		// Set the obtained score
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		// check for preventing Numberformat exception
+		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setObtainedScore("0");
+		}
+		// Set the obtained score in double for SUM in MySQL
+		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
+
 		// Set refer score 0
 		scoreEntity.setReferScore(String.valueOf(0f));
 		// Set user id
