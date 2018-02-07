@@ -82,4 +82,6 @@ public class ScriptController extends BaseController {
 			throws UnauthorizedException, NotFoundException, BadRequestException, IOException {
 		scriptService.fetchScorePointsFromFileAndUpdateUserTotalScore(fileId);
 	}
+	
+	
 }
