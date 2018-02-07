@@ -810,17 +810,6 @@
 	</bean>
 
 	<bean id="mySQLQueueWriterJob" class="com.boilerplate.jobs.MySQLQueueWriterJob"
-<<<<<<< HEAD
-	init-method="initialize">
-	<property name="queueReaderJob" ref="queueReaderJob" />
-	<property name="configurationManager" ref="configurationManager"></property>
-	<property name="userDataAccess" ref="userDataAccess" />
-	<property name="referral" ref="referral" />
-	<property name="blogActivityDataAccess" ref="blogActivityDataAccess" />
-	<property name="filePointer" ref="filePointer" />
-	<property name="redisAssessment" ref="redisAssessment"></property>
-</bean>
-=======
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob" />
 		<property name="configurationManager" ref="configurationManager"></property>
@@ -830,8 +819,6 @@
 		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"/>
 		<property name="filePointer" ref="filePointer" />
 	</bean>
->>>>>>> 93a0a0d0f54401fdfd3ae1abfabe8fb79eb7fdfe
-
 	<bean id="mySQLCreateOrUpdateUserObserver"
 		class="com.boilerplate.asyncWork.MySQLCreateOrUpdateUserObserver">
 		<property name="mySqlUser" ref="mySqlUser" />
