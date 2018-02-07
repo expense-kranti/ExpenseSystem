@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.UserMonthlyScoreEntity;
 
@@ -15,6 +16,11 @@ import com.boilerplate.java.entities.UserMonthlyScoreEntity;
  *
  */
 public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
+
+	/**
+	 * This is the instance of logger MySQLSaveUserMonthlyScoreObserver logger
+	 */
+	private static Logger logger = Logger.getInstance(MySQLSaveUserMonthlyScoreObserver.class);
 
 	/**
 	 * This is the new instance of redis assessment
@@ -78,8 +84,14 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 		userMonthlyScore.setMonthlyObtainedScore(scoreEntity.getObtainedScoreInDouble());
 		userMonthlyScore.setMonthlyReferScore(scoreEntity.getReferScoreInDouble());
 		userMonthlyScore.setMonthlyRank(scoreEntity.getRank());
-		// save monthly score in MySQL
-		assessment.saveUserMonthlyScore(userMonthlyScore);
+		try {
+			// save monthly score in MySQL
+			assessment.saveUserMonthlyScore(userMonthlyScore);
+		} catch (Exception ex) {
+			logger.logException("MySQLSaveUserMonthlyScoreObserver", "saveUserMonthlyScoreInMySQL",
+					"try-catch block calling saveUserMonthlyScore method", ex.getMessage(), ex);
+		}
+
 		// delete entry from Redis Set
 		redisAssessment.deleteIdFromRedisSetForAssessmentMonthlyScore(data);
 	}
