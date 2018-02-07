@@ -673,6 +673,28 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the user total score
 	 */
 	private String totalScore;
+	
+	/**
+	 * This is the user refer score 
+	 */
+	private String totalReferScore;
+	
+	/**
+	 * get the refer score
+	 * @return
+	 */
+	public String getTotalReferScore() {
+		return totalReferScore;
+	}
+
+	/**
+	 * set the refer score
+	 * @param totalReferScore
+	 */
+	public void setTotalReferScore(String totalReferScore) {
+		this.totalReferScore = totalReferScore;
+	}
+
 	/**
 	 * This is the income tax uuid used to refer to income tax data for the user
 	 */

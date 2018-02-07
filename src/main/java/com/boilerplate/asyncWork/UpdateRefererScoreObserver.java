@@ -168,6 +168,12 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			this.publishReferralData(referalEntity);
 			// Update contact detail
 			this.updateReferredData(referalEntity, referredContactDetail);
+			
+			 // check in configuration to add in redisset
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				// add key in redis database to migrate data to MySQL
+				referral.addInRedisSet(referalEntity, referredContactDetail);
+			}
 		}
 
 	}
@@ -349,15 +355,21 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		}
 		if (newScore != null) {
 			// Save total score
-			redisAssessment.saveTotalScore(newScore);
-
+			redisAssessment.saveTotalScore(newScore);			
 			// TODO update user rank in mysql
 
 			// create external facing returned user from the user id of referal
 			// entity
 			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
+			// set userTotal refer score in redis
+			user.setTotalReferScore(newScore.getReferScore());
+			user.setRank(newScore.getRank());
 			updateUserScoreAndPublish(user, String
 					.valueOf(Float.valueOf(newScore.getReferScore()) + Float.valueOf(newScore.getObtainedScore())));
+			
+			userDataAccess.addInRedisSet(user);
+			// add redis key for data base migration from redis to mySql
+			//referral.addIdInRedisSetForUserTotalReferScore(referalEntity.getUserId());
 		}
 
 	}

@@ -306,4 +306,6 @@ public interface IRedisAssessment {
 	// to be used in db migration
 	// not throwing not found exception as it must be present
 	public ScoreEntity getUserMonthlyScore(String userId, String year, String month);
+
+	
 }

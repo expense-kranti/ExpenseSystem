@@ -241,8 +241,9 @@ public interface IReferral {
 	 * This method is used to add key in Redis
 	 * 
 	 * @param referalEntity
+	 * @param updateReferral 
 	 */
-	void addInRedisSet(ReferalEntity referalEntity);
+	void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity updateReferral);
 
 	/**
 	 * This method is used to fetch ReferalKey which is stored in redis
@@ -274,5 +275,7 @@ public interface IReferral {
 	 * @return
 	 */
 	public String getUserReferralLink(String redisReferalExpiredKey);
+	
+	
 
 }

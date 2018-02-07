@@ -21,6 +21,7 @@ import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ArticleEntity;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
+import com.boilerplate.java.entities.ReferredContactEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -62,18 +63,18 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 
-		Set<String> referralContactEntitykeyList = referral
-				.getUserAllReferredContactsKeys((String) asyncWorkItem.getPayload());
-		Set<String> referralContactExpiredKeyList = referral
-				.getUserAllReferredExpireContactKeys((String) asyncWorkItem.getPayload());
+		// get stored referral key from redis for further use
+		
+		ReferredContactDetailEntity referredContactDetailEntity = referral
+				.getReferredContactDetailEntity((String) asyncWorkItem.getPayload());
+		String referralContactLink = referral.getUserReferralLink((String) asyncWorkItem.getPayload());
 
 		// get referral contact entity list
-		BoilerplateList<ReferralContactEntity> ReferralContactEntityList = getReferralContactList(
-				referralContactEntitykeyList, referralContactExpiredKeyList);
+		ReferralContactEntity referralContactEntity = getReferralContact(referredContactDetailEntity,
+				referralContactLink, (String) asyncWorkItem.getPayload());
 
 		// get the userfile from Redis data store and save it in MySQL data base
-		saveOrUpdateReferralContactEntityInMySQL((BoilerplateList<ReferralContactEntity>) ReferralContactEntityList,
-				(String) asyncWorkItem.getPayload());
+		saveOrUpdateReferralContactEntityInMySQL(referralContactEntity, (String) asyncWorkItem.getPayload());
 
 	}
 
@@ -84,74 +85,32 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	 * @return Referral Contact Entity List
 	 * @throws ParseException
 	 */
-	private BoilerplateList<ReferralContactEntity> getReferralContactList(Set<String> referralContactEntitykeyList,
-			Set<String> referralContactExpiredKeyList) throws ParseException {
-		BoilerplateList<ReferralContactEntity> referralContactEntityList = new BoilerplateList<ReferralContactEntity>();
+	private ReferralContactEntity getReferralContact(ReferredContactDetailEntity referredContactDetailEntity,
+			String referralLink, String redisReferalKey) throws ParseException {
 
-		// for each referred key get referal Contact Details
-		for (String redisReferalKey : referralContactEntitykeyList) {
-			// get ReferredContactDetailEntity from redis database key
-			ReferralContactEntity referContact = new ReferralContactEntity();
-			ReferredContactDetailEntity referredContactDetailEntity = referral
-					.getReferredContactDetailEntity(redisReferalKey);
-			// convert ReferredContactDetailEntity to ReferralContactEntity
-			referContact = setValuesInReferralContactEntityEntity(referredContactDetailEntity, redisReferalKey);
-			referralContactEntityList.add(referContact);
-		}
-
-		// get referal link from redis database
-		for (String redisReferalExpiredKey : referralContactExpiredKeyList) {
-			// get all key from redis data base
-			String referralLink = referral.getUserReferralLink(redisReferalExpiredKey);
-			// split the key
-			String referralKeyData[] = redisReferalExpiredKey.split(":");
-			
-			// for each referral entity add the referral link from the referred expired contact 
-			for (Object referal : referralContactEntityList) {
-				if (((((ReferralContactEntity) referal).getUserReferId()).equalsIgnoreCase(referralKeyData[1]))
-						&& ((((ReferralContactEntity) referal).getReferralMediumType())
-								.equalsIgnoreCase(referralKeyData[2].toString()))
-						&& ((((ReferralContactEntity) referal).getContact())
-								.equalsIgnoreCase(referralKeyData[3].toString()))) {
-					((ReferralContactEntity) referal).setReferralLink(referralLink);
-				}
-			}
-		}
-
-		return referralContactEntityList;
-	}
-
-	/**
-	 * This method is used set ReferredContactDetailEntity to
-	 * ReferralContactEntity
-	 * 
-	 * @param referredContactDetailEntity
-	 * @param redisReferalKey
-	 * @return
-	 * @throws ParseException
-	 */
-	private ReferralContactEntity setValuesInReferralContactEntityEntity(
-			ReferredContactDetailEntity referredContactDetailEntity, String redisReferalKey) throws ParseException {
-		ReferralContactEntity referContact = new ReferralContactEntity();
+		ReferralContactEntity referredContactEntity = new ReferralContactEntity();
 		// spilt the key
 		String redisReferalKeyData[] = redisReferalKey.split(":");
-		//set date format to  add creation date in date format
+		// set date format to add creation date in date format
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		// set all values in ReferContact Entity
-		referContact.setUserReferId(redisReferalKeyData[1]);
-		referContact.setReferralMediumType(redisReferalKeyData[2]);
-		referContact.setContact(referredContactDetailEntity.getContact());
-		referContact.setCreationDate(dateFormat.parse(referredContactDetailEntity.getStringCreationDate()));
-		referContact.setRefferedUserScore(referredContactDetailEntity.getrefferedUserScore());
-		referContact.setComingUserScore(referredContactDetailEntity.getComingUserScore());
-		referContact.setComingUserId(referredContactDetailEntity.getComingUserId());
-		if(!referredContactDetailEntity.getStringCreationDate().isEmpty()){
-			referContact.setComingTime(dateFormat.parse(referredContactDetailEntity.getComingTime()));
+		referredContactEntity.setUserReferId(redisReferalKeyData[0]);
+		referredContactEntity.setReferralMediumType(redisReferalKeyData[1]);
+		referredContactEntity.setContact(referredContactDetailEntity.getContact());
+		referredContactEntity.setCreationDate(dateFormat.parse(referredContactDetailEntity.getStringCreationDate()));
+		referredContactEntity.setRefferedUserScore(referredContactDetailEntity.getrefferedUserScore());
+		referredContactEntity.setComingUserScore(referredContactDetailEntity.getComingUserScore());
+		referredContactEntity.setComingUserId(referredContactDetailEntity.getComingUserId());
+		referredContactEntity.setReferralLink(referralLink);
+		if (referredContactDetailEntity.getComingTime() != null) {
+			referredContactEntity.setComingTime(dateFormat.parse(referredContactDetailEntity.getComingTime()));
 		}
-		
+		if (referredContactDetailEntity.getStringUpdateDate() != null) {
+			referredContactEntity.setUpdationDate(dateFormat.parse(referredContactDetailEntity.getStringUpdateDate()));
+		}
 
-		return referContact;
+		return referredContactEntity;
 	}
 
 	/**
@@ -161,19 +120,17 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	 * @param userReferId
 	 * @throws Exception
 	 */
-	private void saveOrUpdateReferralContactEntityInMySQL(BoilerplateList<ReferralContactEntity> referralContactList,
+	private void saveOrUpdateReferralContactEntityInMySQL(ReferralContactEntity referralContactEntity,
 			String userReferId) throws Exception {
 
 		// Get the SQL query from configurations for get the list of user
 		// Referal
 		String sqlQuery = configurationManager.get(sqlQueryGetUserReferralContact);
 		// get the ReferralContactEntity list to update the row for exist data
-		referralContactList = getReferralContactEntityUpdatedList(referralContactList, sqlQuery);
+		referralContactEntity = getReferralContactEntityUpdated(referralContactEntity, sqlQuery);
 		// save referal Contact to mySQL
-		for(Object referalContact : referralContactList){
-			mySqlRefralContact.mySqlSaveReferalData((ReferralContactEntity)referalContact);
-		}
-		
+		mySqlRefralContact.mySqlSaveReferalData(referralContactEntity);
+
 		// delete key from redis
 		referral.deleteItemFromRedisUserReferIdSet(userReferId);
 	}
@@ -186,27 +143,26 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	 * @param sqlQuery
 	 * @return
 	 */
-	private BoilerplateList<ReferralContactEntity> getReferralContactEntityUpdatedList(
-			BoilerplateList<ReferralContactEntity> referralContactList, String sqlQuery) {
-		for (Object referralData : referralContactList) {
-			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-			// Put user refer id in query parameter
-			queryParameterMap.put("userReferId", ((ReferralContactEntity) referralData).getUserReferId());
-			// put referral medium type
-			queryParameterMap.put("referralMediumType", ((ReferralContactEntity) referralData).getReferralMediumType());
-			// Put contact in query parameter
-			queryParameterMap.put("contact", ((ReferralContactEntity) referralData).getContact());
-			// Get the user articles from the data base
-			List<ReferralContactEntity> requestedDataList = super.executeSelect(sqlQuery, queryParameterMap);
+	private ReferralContactEntity getReferralContactEntityUpdated(ReferralContactEntity referralContactEntity,
+			String sqlQuery) {
 
-			// set the Id in the ReferralContactEntity
-			if (requestedDataList.size() > 0) {
-				for (ReferralContactEntity requestData : requestedDataList) {
-					((ReferralContactEntity) referralData).setId(requestData.getId());
-				}
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put user refer id in query parameter
+		queryParameterMap.put("userReferId", ((ReferralContactEntity) referralContactEntity).getUserReferId());
+		// put referral medium type
+		queryParameterMap.put("referralMediumType",
+				((ReferralContactEntity) referralContactEntity).getReferralMediumType());
+		// Put contact in query parameter
+		queryParameterMap.put("contact", ((ReferralContactEntity) referralContactEntity).getContact());
+		// Get the user articles from the data base
+		List<ReferralContactEntity> requestedDataList = super.executeSelect(sqlQuery, queryParameterMap);
+
+		// set the Id in the ReferralContactEntity
+		if (requestedDataList.size() > 0) {
+			for (ReferralContactEntity requestData : requestedDataList) {
+				((ReferralContactEntity) referralContactEntity).setId(requestData.getId());
 			}
 		}
-
-		return referralContactList;
+		return referralContactEntity;
 	}
 }

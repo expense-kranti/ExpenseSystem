@@ -33,7 +33,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	public static String addUserReferIdInQueue = "UserReferral";
 	public static String addIdForBlogActivityInQueue = "UserBlogActivity";
 	public static String addIdForUserFilesInQueue = "UserFiles";
-
+	
 	/**
 	 * This is an instance of the logger
 	 */
@@ -138,24 +138,19 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	BoilerplateList<String> subjectsForSaveUserAssessment = new BoilerplateList();
 	BoilerplateList<String> subjectsForSaveUserAssessmentScore = new BoilerplateList();
 	BoilerplateList<String> subjectsForSaveUserMonthlyScore = new BoilerplateList();
-
 	BoilerplateList<String> subjectsForCreateBlogActivity = new BoilerplateList<>();
 	BoilerplateList<String> subjectsForCreateUserFile = new BoilerplateList<>();
 	BoilerplateList<String> subjectsForCreateReferalContact = new BoilerplateList<>();
 
 	public void initialize() {
-		// add subject for task like for assessment, referral, blog, file
+		// subjects for task like for assessment, referral, blog, file
 		subjectsForCreateUser.add("CreateOrUpdateUserInMySQL");
 		subjectsForSaveUserAssessment.add("SaveAssessmentInMySQL");
-		// add the subject and observer entry in root context
 		subjectsForSaveUserAssessmentScore.add("SaveUserAssessmentScoreInMySQL");
 		subjectsForSaveUserMonthlyScore.add("SaveUserMonthlyScoreInMySQL");
-		// add subject for another task like for assessment, referral, blog,
-		// file
 		subjectsForCreateUserFile.add("CreateUserFileInMySQL");
 		subjectsForCreateBlogActivity.add("CreateBlogActivityInMySQL");
-		subjectsForCreateReferalContact.add("CreateReferalReferlContact");
-
+		subjectsForCreateReferalContact.add("CreateUserReferralContact");
 	}
 
 	/**
@@ -189,7 +184,6 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 			// fetch and process User uploaded File from Redis set for migrating
 			// user from redis to MySQL
 			this.fetchDataFromRedisSetAndAddInQueue(addIdForUserFilesInQueue);
-
 		}
 
 	}

@@ -149,11 +149,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 		super.create(referalContact);
 	}
 
-	@Override
-	public void addInRedisSet(ReferalEntity referalEntity) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public Set<String> fetchUserReferIdsFromRedisSet() {
@@ -179,6 +175,11 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 		return null;
 	}
 
-	
+	@Override
+	public void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity updateReferral) {
+		// TODO Auto-generated method stub
+		
+	}
 
+	
 }

@@ -73,6 +73,7 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	private static final String UserAssessmentScoreKeyForSet = "UserAssessmentScore_MySQL";
 
 	private static final String UserMonthlyScoreKeyForSet = "UserMonthlyScore_MySQL";
+	
 
 	/**
 	 * @see IRedisAssessment.getAssessmentAttempt
@@ -371,5 +372,6 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 		ScoreEntity scoreEntity = super.get(MonthlyScore + year + ":" + month + ":" + userId, ScoreEntity.class);
 		return scoreEntity;
 	}
-
+	
+	
 }
