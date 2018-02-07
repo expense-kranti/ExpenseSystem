@@ -1229,6 +1229,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_SENDER", "AKSSMS");
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 	    vAllEDev.put("RootFileUploadLocation", "/downloads/");		
+
 		// new config
 		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
 		vAllEDev.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
@@ -1317,8 +1318,7 @@ public class BaseRedisDataAccessLayer {
 
 		// query for updating monthly Obtained score
 		vAllEDev.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
-				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore WHERE Year = :Year AND Month = :Month And UserId = :UserId");
-
+				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
 		return vAllEDev;
 
 	}

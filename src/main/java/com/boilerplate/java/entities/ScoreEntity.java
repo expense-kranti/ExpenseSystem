@@ -39,6 +39,16 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 	private String referScore;
 
 	/**
+	 * This is the user obtained score in double
+	 */
+	private double obtainedScoreInDouble;
+
+	/**
+	 * This is the user refer score in double
+	 */
+	private double referScoreInDouble;
+
+	/**
 	 * This method is used to get the user id
 	 * 
 	 * @return the userId
@@ -177,10 +187,48 @@ public class ScoreEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * Gets obtainedScoreInDouble
+	 * 
+	 * @return the obtainedScoreInDouble
+	 */
+	public double getObtainedScoreInDouble() {
+		return obtainedScoreInDouble;
+	}
+
+	/**
+	 * Sets obtainedScoreInDouble
+	 * 
+	 * @param obtainedScoreInDouble
+	 *            the obtainedScoreInDouble to set
+	 */
+	public void setObtainedScoreInDouble(double obtainedScoreInDouble) {
+		this.obtainedScoreInDouble = obtainedScoreInDouble;
+	}
+
+	/**
+	 * Get referScoreInDouble
+	 * 
+	 * @return the referScoreInDouble
+	 */
+	public double getReferScoreInDouble() {
+		return referScoreInDouble;
+	}
+
+	/**
+	 * Set referScoreInDouble
+	 * 
+	 * @param referScoreInDouble
+	 *            the referScoreInDouble to set
+	 */
+	public void setReferScoreInDouble(double referScoreInDouble) {
+		this.referScoreInDouble = referScoreInDouble;
+	}
+
+	/**
 	 * This is the rank of user
 	 */
 	private String rank;
-	
+
 	public static Comparator<ScoreEntity> COMPARATOR = new Comparator<ScoreEntity>() {
 		// This is where the sorting happens.
 		public int compare(ScoreEntity o1, ScoreEntity o2) {

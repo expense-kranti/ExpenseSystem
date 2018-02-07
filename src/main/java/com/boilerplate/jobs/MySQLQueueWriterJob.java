@@ -21,7 +21,7 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author urvij
  *
  */
-public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
+public class MySQLQueueWriterJob  {
 
 	/**
 	 * These variables are used to recognized the type of key fetching to do
@@ -159,6 +159,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 * @throws NotFoundException
 	 *             thrown if user is not found in redis database
 	 */
+	//This method is being called automatically through servlet context configuration
 	public void addElementsInQueue() throws NotFoundException {
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set and add into queue for
@@ -194,7 +195,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 * @param key
 	 *            the key for which the Redis set is to fetch
 	 */
-	public void fetchDataFromRedisSetAndAddInQueue(String key) {
+	private void fetchDataFromRedisSetAndAddInQueue(String key) {
 		Set<String> elements = null;
 		BoilerplateList<String> subject = null;
 		switch (key) {
@@ -261,7 +262,7 @@ public class MySQLQueueWriterJob extends BaseRedisDataAccessLayer {
 	 * @param subjectsForPerformingTask
 	 *            the subjects list related to particular data pushed to queue
 	 */
-	public void addTaskInQueue(Set<String> dataSet, BoilerplateList<String> subjectsForPerformingTask) {
+	private void addTaskInQueue(Set<String> dataSet, BoilerplateList<String> subjectsForPerformingTask) {
 		// fetch user against each userId present in Set
 		for (String dataId : dataSet) {
 			try {

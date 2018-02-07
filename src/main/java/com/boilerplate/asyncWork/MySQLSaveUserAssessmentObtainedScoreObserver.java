@@ -53,9 +53,22 @@ public class MySQLSaveUserAssessmentObtainedScoreObserver implements IAsyncWorkO
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		AssessmentEntity assessmentEntity = new AssessmentEntity();
+		saveAssessmentObtainedScore((String) asyncWorkItem.getPayload());
+	}
 
-		String[] ids = ((String) asyncWorkItem.getPayload()).split(",");
+	/**
+	 * This method is used to save the assessment obtained score
+	 * 
+	 * @param data
+	 *            it contains the ids to be used to save obtained score
+	 * @throws Exception
+	 *             thrown when exception occurs while saving assessment obtained
+	 *             score
+	 */
+	private void saveAssessmentObtainedScore(String data) throws Exception {
+
+		AssessmentEntity assessmentEntity = new AssessmentEntity();
+		String[] ids = data.split(",");
 		assessmentEntity.setUserId(ids[0]);
 		assessmentEntity.setId(ids[1]);
 		assessmentEntity = redisAssessment.getUserAssessment(assessmentEntity);
@@ -63,12 +76,19 @@ public class MySQLSaveUserAssessmentObtainedScoreObserver implements IAsyncWorkO
 		ScoreEntity scoreEntity = new ScoreEntity();
 		scoreEntity.setAssessmentId(assessmentEntity.getId());
 		scoreEntity.setUserId(assessmentEntity.getUserId());
+		// check if obtained score is null or empty then set obtained score to
+		// "0"
+		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty())
+			assessmentEntity.setObtainedScore("0");
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		// set obtained score in double for saving in MySQL
+		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(assessmentEntity.getObtainedScore()));
 		// fetch total score of user with given userId
 		assessment.saveUserAssessmentScore(scoreEntity);
 		// delete the user id from Redis set after saving the total score in
 		// MySQL
-		redisAssessment.deleteIdFromRedisSetForAssessmentScore((String) asyncWorkItem.getPayload());
+		redisAssessment.deleteIdFromRedisSetForAssessmentScore(data);
+
 	}
 
 }

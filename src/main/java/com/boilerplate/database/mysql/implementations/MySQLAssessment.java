@@ -299,17 +299,21 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	 */
 	@Override
 	public void saveUserMonthlyScore(UserMonthlyScoreEntity userMonthlyScoreEntity) throws Exception {
-		// String queryReferUpdate = "UPDATE UserMonthlyScore SET ReferScore =
-		// :ReferScore WHERE Year = :Year AND Month = :Month And UserId =
-		// :UserId";
-
+		// get query template from configuration
 		String queryObtainedScoreUpdate = configurationManager.get("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE");
+		// prepare query parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		queryParameterMap.put("ObtainedScore", userMonthlyScoreEntity.getMonthlyObtainedScore());
 		queryParameterMap.put("Year", userMonthlyScoreEntity.getYear());
 		queryParameterMap.put("Month", userMonthlyScoreEntity.getMonth());
 		queryParameterMap.put("UserId", userMonthlyScoreEntity.getUserId());
+		queryParameterMap.put("ReferScore", userMonthlyScoreEntity.getMonthlyReferScore());
+		queryParameterMap.put("MonthlyRank", userMonthlyScoreEntity.getMonthlyRank());
+		// check for updating the monthly score if not done then add new record
+		// in MySQL
 		if (super.executeScalorNative(queryObtainedScoreUpdate, queryParameterMap) == 0) {
+			// if monthly score record for given userId id not present then
+			// create one record
 			super.create(userMonthlyScoreEntity);
 		}
 

@@ -16,12 +16,11 @@ import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.ReferalEntity;
 
 public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
-	
+
 	/**
 	 * CalculateTotalScoreObserver logger
 	 */
-	private static Logger logger = Logger
-			.getInstance(CreateReferUniqueIdObserver.class);
+	private static Logger logger = Logger.getInstance(CreateReferUniqueIdObserver.class);
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
 
@@ -34,6 +33,7 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
+
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -48,7 +48,7 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-	
+
 	/**
 	 * The autowired instance of user data access
 	 */
@@ -63,7 +63,7 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	public void setUserDataAccess(IUser iUser) {
 		this.userDataAccess = iUser;
 	}
-	
+
 	/**
 	 * This is a new instance of Referral
 	 */
@@ -78,43 +78,48 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	public void setReferral(IReferral referral) {
 		this.referral = referral;
 	}
+
 	private BoilerplateList<String> subjects = null;
 
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		ExternalFacingReturnedUser user = (ExternalFacingReturnedUser) asyncWorkItem
-				.getPayload();
+		ExternalFacingReturnedUser user = (ExternalFacingReturnedUser) asyncWorkItem.getPayload();
 		this.CreateReferUUID(user);
 	}
+
 	/**
 	 * This method create the user unique id
-	 * @param user The user
+	 * 
+	 * @param user
+	 *            The user
 	 * @throws ConflictException
 	 */
 	private void CreateReferUUID(ExternalFacingReturnedUser user) throws ConflictException {
 		// update user
 		userDataAccess.update(user);
-		referral.saveUserReferUUID(
-				new ReferalEntity(user.getUserId(), user.getUserReferId()));
+		// add the user id in redis set to be later fetched and saved in MysqlDB
+		// using job
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			userDataAccess.addInRedisSet(user);
+		}
+		referral.saveUserReferUUID(new ReferalEntity(user.getUserId(), user.getUserReferId()));
+
 		this.publishToCRM(user);
 
 	}
+
 	private void publishToCRM(ExternalFacingReturnedUser user) {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
 		if (isPublishReport) {
 			PublishEntity publishEntity = this.createPublishEntity("CreateReferUniqueIdObserver.publishToCRM",
-					configurationManager.get(""),
-					configurationManager.get("UPDATE_AKS_USER_SUBJECT"),
-						user,
-					configurationManager.get(""),
-					configurationManager.get(""),
-					configurationManager.get(""));
+					configurationManager.get(""), configurationManager.get("UPDATE_AKS_USER_SUBJECT"), user,
+					configurationManager.get(""), configurationManager.get(""), configurationManager.get(""));
 			if (subjects == null) {
 				subjects = new BoilerplateList<>();
 				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 			}
 			try {
-				
+
 				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
 						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
 			} catch (Exception exception) {
@@ -152,6 +157,7 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 		publishEntity.setPublishTemplate(publishTemplate);
 		return publishEntity;
 	}
+
 	/**
 	 * This method is used to create the UUID
 	 * 
