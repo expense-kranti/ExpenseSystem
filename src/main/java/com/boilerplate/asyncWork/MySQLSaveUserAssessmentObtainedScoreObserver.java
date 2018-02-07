@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.ScoreEntity;
 
@@ -15,6 +16,12 @@ import com.boilerplate.java.entities.ScoreEntity;
  *
  */
 public class MySQLSaveUserAssessmentObtainedScoreObserver implements IAsyncWorkObserver {
+
+	/**
+	 * This is the instance of logger
+	 * MySQLSaveUserAssessmentObtainedScoreObserver logger
+	 */
+	private static Logger logger = Logger.getInstance(MySQLSaveUserAssessmentObtainedScoreObserver.class);
 
 	/**
 	 * This is the new instance of redis assessment
@@ -83,8 +90,15 @@ public class MySQLSaveUserAssessmentObtainedScoreObserver implements IAsyncWorkO
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
 		// set obtained score in double for saving in MySQL
 		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(assessmentEntity.getObtainedScore()));
-		// fetch total score of user with given userId
-		assessment.saveUserAssessmentScore(scoreEntity);
+		try {
+			// fetch total score of user with given userId
+			assessment.saveUserAssessmentScore(scoreEntity);
+		} catch (Exception ex) {
+			logger.logException("MySQLSaveUserAssessmentObtainedScoreObserver", "saveAssessmentObtainedScore",
+					"try-catch calling saveUserAssessmentScore method", ex.getMessage(), ex);
+			throw ex;
+		}
+
 		// delete the user id from Redis set after saving the total score in
 		// MySQL
 		redisAssessment.deleteIdFromRedisSetForAssessmentScore(data);

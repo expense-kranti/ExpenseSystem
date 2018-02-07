@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.framework.HibernateUtility;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AssessmentQuestionSectionEntity;
 import com.boilerplate.java.entities.AssessmentSectionEntity;
@@ -23,6 +24,11 @@ import com.boilerplate.java.entities.UserAssessmentDetailEntity;
  *
  */
 public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
+
+	/**
+	 * This is the instance of logger MySQLSaveAssessmentDetailObserver logger
+	 */
+	private static Logger logger = Logger.getInstance(MySQLSaveAssessmentDetailObserver.class);
 
 	/**
 	 * This is the new instance of redis assessment
@@ -127,8 +133,17 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 				if (questionSection.getQuestion().getAnswer() != null
 						&& !(questionSection.getQuestion().getAnswer().isEmpty())) {
 					userAssessmentDetailEntity.setAnswerId(Integer.parseInt(questionSection.getQuestion().getAnswer()));
-					// save the user assessment detail Entity in Mysql
-					assessment.saveUserAssessmentData(userAssessmentDetailEntity);
+
+					try {
+						// save the user assessment detail Entity in Mysql
+						assessment.saveUserAssessmentData(userAssessmentDetailEntity);
+					} catch (Exception ex) {
+						logger.logException("MySQLSaveAssessmentDetailObserver",
+								"populateUserAssessmentDetailEntityAndSaveInMySQL",
+								"try-catch block calling saveUserAssessmentData method", ex.getMessage(), ex);
+						throw ex;
+					}
+
 				}
 
 			}
