@@ -292,6 +292,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// Set refer score 0
 		scoreEntity.setReferScore(String.valueOf(0f));
+		// set refer score in double for saving in MySQL
+		scoreEntity.setReferScoreInDouble(0);
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.parseFloat(assessmentEntity.getObtainedScore())));
 		// Save total score
@@ -339,11 +341,14 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty()) {
 			scoreEntity.setObtainedScore("0");
 		}
-		// Set the obtained score in double for SUM in MySQL
+		// Set the obtained score in double for SUM(like operations) in MySQL
 		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
 
 		// Set refer score 0
 		scoreEntity.setReferScore(String.valueOf(0f));
+		// Set refer score in double to save in MySQL for doing mathematical
+		// operations
+		scoreEntity.setReferScoreInDouble(0);
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// set rank
@@ -388,6 +393,9 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		}
 		// Set the obtained score
 		scoreEntity.setObtainedScore(String.valueOf(obtainedScore));
+		// set obtained score in double for saving in MySQL for doing
+		// mathematical operations over it
+		scoreEntity.setObtainedScoreInDouble(obtainedScore);
 
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);

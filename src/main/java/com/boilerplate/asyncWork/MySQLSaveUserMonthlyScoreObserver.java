@@ -75,16 +75,8 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 		userMonthlyScore.setUserId(scoreEntity.getUserId());
 		userMonthlyScore.setYear(ids[1]);
 		userMonthlyScore.setMonth(ids[2]);
-		// check if obtained score is null or empty then set it to "0"
-		// done for preventing NumberFormatException
-		if (scoreEntity.getObtainedScore() == null || scoreEntity.getObtainedScore().isEmpty())
-			scoreEntity.setObtainedScore("0");
-		// check if refer score is null or empty then set it to "0"
-		// done for preventing NumberFormatException
-		if (scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty())
-			scoreEntity.setReferScore("0");
 		userMonthlyScore.setMonthlyObtainedScore(scoreEntity.getObtainedScoreInDouble());
-		userMonthlyScore.setMonthlyReferScore(Double.parseDouble(scoreEntity.getReferScore()));
+		userMonthlyScore.setMonthlyReferScore(scoreEntity.getReferScoreInDouble());
 		userMonthlyScore.setMonthlyRank(scoreEntity.getRank());
 		// save monthly score in MySQL
 		assessment.saveUserMonthlyScore(userMonthlyScore);
