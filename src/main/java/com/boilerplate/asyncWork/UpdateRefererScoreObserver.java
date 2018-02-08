@@ -410,7 +410,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// here we are assuming the now time will be same taken in Redis
 			// if true add in redis key in set IsMySQLPublishQueueEnabled
 			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
-				redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
+				redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(newScore.getUserId() + ","
 						+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
 			}
 
