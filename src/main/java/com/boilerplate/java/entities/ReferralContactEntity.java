@@ -5,8 +5,18 @@ import java.util.Date;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
+/***
+ * This class is used to migrate Redis database to MySql database
+ * @author Yash
+ *
+ */
 public class ReferralContactEntity extends BaseEntity implements Serializable {
 	
+	/**
+	 * This is the userId
+	 */
+	private String userId;
+
 	/**
 	 * This is the user refer Id
 	 */
@@ -48,7 +58,23 @@ public class ReferralContactEntity extends BaseEntity implements Serializable {
 	private Date comingTime;
 	
 	/**
-	 * get the referal user coming time
+	 * This method is used to Get userId
+	 * @return
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * This method is used to Get userId
+	 * @param userId
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
+	/**
+	 * get the referral user coming time
 	 * @return
 	 */
 	public Date getComingTime() {

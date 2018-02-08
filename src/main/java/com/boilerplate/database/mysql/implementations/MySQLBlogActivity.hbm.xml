@@ -12,6 +12,5 @@
 		<property name="activity" column="Activity" />
 		<property name="action" column="Action" />
 		<property name="activityType" column="ActivityType" />
-		<property name="creationDate" column="CreationDate" />
 	</class>
 </hibernate-mapping>

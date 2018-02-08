@@ -40,11 +40,6 @@ public interface IBlogActivity {
 	 * @return the set of the user blog keys
 	 */
 	Set<String> getAllBlogUserKeys(String userId);
-	
-	/*
-	 * Save Blog Activity to MySQL Database
-	 */
-	public void mySqlSaveBlogActivity(BlogActivityEntity BlogActivityEntity) throws Exception;
 
 	/**
 	 * this method is used to add key in redis databases
@@ -66,13 +61,6 @@ public interface IBlogActivity {
 	 * @param blogActivity
 	 */
 	void deleteItemFromRedisBlogActivitySet(String blogActivity);
-	
-	/**
-	 * this method is used 
-	 * @param blogActivity
-	 * @return
-	 */
-	public BlogActivityEntity getBlogActivity(String blogActivity);
 
 	/**
 	 * This method is used to get all hmset

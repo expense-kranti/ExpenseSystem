@@ -8,6 +8,7 @@
 		<id name="id" column="Id">
 			<generator class="identity" />
 		</id>
+		<property name="userId" column="UserId"></property>
 		<property name="userReferId" column="UserReferId" />
 		<property name="referralLink" column="ReferralLink" />
 		<property name="referralMediumType" column="ReferralMediumType" />
@@ -15,8 +16,6 @@
 		<property name="comingUserScore" column="ComingUserScore" />
 		<property name="refferedUserScore" column="RefferedUserScore" />
 		<property name="comingUserId" column="ComingUserId" />
-		<property name="creationDate" column="CreationDate"></property>
-		<property name="ComingTime" column="ComingTime"></property>
-		<property name="updationDate" column="UpdationDate"></property>
+		<property name="comingTime" column="ComingTime"></property>
 	</class>
 </hibernate-mapping>

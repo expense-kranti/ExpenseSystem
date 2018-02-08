@@ -60,15 +60,6 @@ public interface IFilePointer {
 	public BoilerplateList<FileEntity> getAllFilesOnMasterTag(String id,
 			String fileMasterTag);
 	
-	/**
-	 * this method is used to save file in MYSQL Database
-	 * @param file
-	 * @return the file Entity
-	 * @throws IOException If there is any error accessing the file
-	 * @throws Exception thrown when exception occurs  
-	 */
-	public void mySqlSaveFile(FileEntity file) throws IOException, Exception;
-	
 	
 	/**
 	 * This method is used to add key in Redis

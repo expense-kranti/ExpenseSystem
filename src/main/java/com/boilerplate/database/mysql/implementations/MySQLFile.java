@@ -15,21 +15,6 @@ import com.boilerplate.java.entities.FileEntity;
 
 public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer  {
 
-	
-	/**
-	 * @throws Exception 
-	 * @see IFilePointer.mySqlSaveFile
-	 */
-	@Override
-	public void mySqlSaveFile(FileEntity file) throws Exception {
-		// Set creation time to current time
-		file.setCreationDate(Date.valueOf(LocalDate.now()));
-		file.setId(null);
-		// save file in MySql Database
-		super.create(file);
-		
-	}
-
 	@Override
 	public FileEntity save(FileEntity fileEntity) throws Exception {
 		

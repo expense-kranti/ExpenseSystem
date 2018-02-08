@@ -11,12 +11,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IBlogActivity;
 import com.boilerplate.database.mysql.implementations.MySQLBaseDataAccessLayer;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.BlogActivityEntity;
 import com.boilerplate.java.entities.ReferralContactEntity;;
 
+/**
+ * This class is used to pop or read queue and process each element
+ * @author Yash
+ *
+ */
 public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer implements IAsyncWorkObserver {
 
+	/**
+	 * This is the instance of logger MySQLCreateOrUpdateUserObserver logger
+	 */
+	private static Logger logger = Logger.getInstance(MySQLCreateOrUpdateUserObserver.class);
+	
 	/**
 	 * This is the instance of configuration manager
 	 */
@@ -65,17 +76,19 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 		this.blogActivityDataAccess = blogActivityDataAccess;
 	}
 
+	/**
+	 * This method get the user from Redis data store using supplied BlogActivity and
+	 * save it in MySQL Database
+	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-
 		// get the userfile from Redis data store and save it in MySQL data base
 		saveOrUpdateBlogAcivityInMySQL((String) asyncWorkItem.getPayload());
 	}
 
 	/**
-	 * This method is used to save or update the Blog Activity
-	 * 
-	 * @param blogActivityEntity
+	 * This method is used to save or update the Blog Activity 
+	 * @param blogActivityKey This is blog activity key saved in redis
 	 * @throws Exception
 	 */
 	private void saveOrUpdateBlogAcivityInMySQL(String blogActivityKey) throws Exception {
@@ -91,7 +104,13 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 
 		// save the blog activity in the MySQL table
 		for(Object blogActivityEntity : blogActivityEntityList){
-			mySqlBlogActivity.mySqlSaveBlogActivity((BlogActivityEntity) blogActivityEntity);
+			try {
+				// add blog activity to the mysql database
+				mySqlBlogActivity.saveActivity((BlogActivityEntity) blogActivityEntity);
+			} catch (Exception ex) {
+				logger.logException("MySQLCreateBlogActivityObserver", "saveActivity",
+						"try-catch block calling save blog activity method", ex.getMessage(), ex);
+			}
 		}
 		
 		// delete the redis key to empty the queue		
@@ -101,9 +120,9 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 
 	/**
 	 * This method is used to create Blog Activity entity from Map
-	 * @param blogActivityMap
-	 * @param blogActivityKey
-	 * @return
+	 * @param blogActivityMap this is the Blog activity map<Activity , Action> 
+	 * @param blogActivityKey this is the redis queue key get grom redis
+	 * @return list of Blog Activity Entity
 	 */
 	private BoilerplateList<BlogActivityEntity> getBlogActivityListFromMap(Map<String, String> blogActivityMap,
 			String blogActivityKey) {
@@ -112,12 +131,17 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 		String blogString[] = blogActivityKey.split(":");
 		// create blog Activity entity from each map
 		for (Map.Entry<String, String> entry : blogActivityMap.entrySet()) {
-			
+			// create new instance of blog activity			
 			BlogActivityEntity blogActivityEntity = new BlogActivityEntity();
+			// set user id
 			blogActivityEntity.setUserId(blogString[1] + ":" + blogString[2]);
+			// set activity type
 			blogActivityEntity.setActivityType(blogString[0]);
+			// set activity
 			blogActivityEntity.setActivity(entry.getKey());
+			// aet action 
 			blogActivityEntity.setAction(entry.getValue());
+			// add blog activity instance in the list
 			blogActivityEntityList.add(blogActivityEntity);
 		}
 		return blogActivityEntityList;
@@ -149,14 +173,10 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 			// if exist update the row
 			if (requestedDataList.size() > 0) {
 				for (BlogActivityEntity requestData : requestedDataList) {
+					// set id to the updated blog activity 
 					((BlogActivityEntity) blogActivityEntity).setId(requestData.getId());
-					((BlogActivityEntity) blogActivityEntity).setCreationDate(requestData.getCreationDate());
 				}
-			} else {
-				// Set creation time to current time
-				((BlogActivityEntity) blogActivityEntity).setCreationDate(Date.valueOf(LocalDate.now()));
 			}
-
 		}
 
 		return blogActivityEntityList;

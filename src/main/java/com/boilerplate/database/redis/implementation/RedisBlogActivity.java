@@ -64,34 +64,6 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 		return super.keys(BlogUser + "*" + userId);
 	}
 	
-	public BlogActivityEntity getBlogActivity(String blogActivityKey){
-		
-		// split string to get UserId and Activity type to set in blog Activity Entity
-		String blogString[] = blogActivityKey.split(":");
-		BlogActivityEntity blogActivityEntity = new BlogActivityEntity();
-		blogActivityEntity.setUserId(blogString[0] + ":" + blogString[1]);
-		blogActivityEntity.setActivityType(blogString[2]);
-		String activity = ""; 
-		String action = "";
-		
-		// get hmset by key from redis database
-		Map<String, String> blogActivityMap = super.hgetAll(BlogUser + blogActivityEntity.getActivityType() + ":" + blogActivityEntity.getUserId());
-		for ( Map.Entry<String, String> entry : blogActivityMap.entrySet()) {
-		    activity = entry.getKey();
-		    action = entry.getValue();
-		}
-		// create blog activity entity
-		blogActivityEntity.setActivity(activity);
-		blogActivityEntity.setAction(action);
-		return blogActivityEntity;
-	}
-
-	@Override
-	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/**
 	 * @see IBlogActivity.addInRedisSet
 	 */

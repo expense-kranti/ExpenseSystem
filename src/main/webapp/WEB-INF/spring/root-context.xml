@@ -641,6 +641,7 @@
 	<bean id="blogActivityService"
 		class="com.boilerplate.service.implemetations.BlogActivityService">
 		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<!-- Bean for redis BlogActivity data access -->
 	<bean id="blogActivityDataAccess"
@@ -947,6 +948,7 @@
 		<property name="mySqlRefralContact" ref="mySqlRefralContact" />
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="referral" ref="referral" />
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 	</bean>
 
 	<bean id="mySQLCreateReferalContactObserverList"

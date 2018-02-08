@@ -148,14 +148,6 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 		return files;
 	}
 
-	@Override
-	public void mySqlSaveFile(FileEntity file) throws Exception {
-		// call MySQLFile method to save the in MySqlDatabase
-		MySQLFile obj = new MySQLFile();
-		obj.mySqlSaveFile(file);
-		
-	}
-	
 	/**
 	 * @see IReferral.addInRedisSet
 	 */

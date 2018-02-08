@@ -171,7 +171,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// Update contact detail
 			this.updateReferredData(referalEntity, referredContactDetail);
 
-			// check in configuration to add in redisset
+			// if true then add key in redisset
 			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 				// add key in redis database to migrate data to MySQL
 				referral.addInRedisSet(referalEntity, referredContactDetail);
@@ -369,8 +369,12 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			user.setRank(newScore.getRank());
 			updateUserScoreAndPublish(user, String
 					.valueOf(Float.valueOf(newScore.getReferScore()) + Float.valueOf(newScore.getObtainedScore())));
-
-			userDataAccess.addInRedisSet(user);
+			
+			// if true  then add in redis key set 
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				userDataAccess.addInRedisSet(user);
+			}
+			
 		}
 
 	}
@@ -399,8 +403,11 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// save monthly refer score
 			// add userId in Redis set for saving monthly score in MYSQl
 			// here we are assuming the now time will be same taken in Redis
-			redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
-					+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+			// if true add in redis key in set IsMySQLPublishQueueEnabled
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
+						+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+			}
 
 		}
 	}

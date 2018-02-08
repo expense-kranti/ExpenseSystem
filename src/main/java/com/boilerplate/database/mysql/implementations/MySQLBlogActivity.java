@@ -14,7 +14,7 @@ public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlog
 
 	@Override
 	public void saveActivity(BlogActivityEntity blogActivityEntity) throws Exception {
-		// Save the user blogActivity // update is not working
+		// Save the user blogActivity
 		super.create(blogActivityEntity);
 	}
 
@@ -28,16 +28,6 @@ public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlog
 	public Set<String> getAllBlogUserKeys(String userId) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	/**
-	 * This method is used to save data 
-	 */
-	@Override
-	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) throws Exception {
-		// Save the user blogActivity
-		super.create(blogActivityEntity);
-
 	}
 
 	@Override
@@ -57,13 +47,6 @@ public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlog
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public BlogActivityEntity getBlogActivity(String blogActivity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public Map<String, String> getBlogActivityMap(String payload) {
 		// TODO Auto-generated method stub
