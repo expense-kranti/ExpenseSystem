@@ -71,6 +71,18 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 		
 	}
 
+	@Override
+	public void addInRedisSet(String fileName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<String> getAllFileKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 }

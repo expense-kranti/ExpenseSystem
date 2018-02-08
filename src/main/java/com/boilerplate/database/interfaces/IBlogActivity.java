@@ -19,7 +19,7 @@ public interface IBlogActivity {
 	 * 
 	 * @param blogActivityEntity
 	 *            This contains the user blog activity and respective action
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	void saveActivity(BlogActivityEntity blogActivityEntity) throws Exception;
 
@@ -43,6 +43,7 @@ public interface IBlogActivity {
 
 	/**
 	 * this method is used to add key in redis databases
+	 * 
 	 * @param blogActivity
 	 */
 	void addInRedisSet(BlogActivityEntity blogActivity);
@@ -55,18 +56,37 @@ public interface IBlogActivity {
 	 * @return the set of members/items
 	 */
 	public Set<String> fetchBlogActivityAndAddInQueue();
-	
+
 	/**
 	 * This method is used to delete BlogActivity key from set
+	 * 
 	 * @param blogActivity
 	 */
 	void deleteItemFromRedisBlogActivitySet(String blogActivity);
 
 	/**
 	 * This method is used to get all hmset
+	 * 
 	 * @param payload
-	 * @return 
+	 * @return
 	 */
 	public Map<String, String> getBlogActivityMap(String payload);
+
+	/**
+	 * This method is used to get all blog keys
+	 * 
+	 * @return the set of blogactivity keys
+	 */
+	public Set<String> getAllBlogActivityKeys();
+
+	/**
+	 * This method is used to add blogactivityId in Redis Set
+	 * 
+	 * @param blogActivityType
+	 *            the blogActivityType
+	 * @param userId
+	 *            the userId of the user
+	 */
+	public void addInRedisSet(String blogActivityType, String userId);
 
 }

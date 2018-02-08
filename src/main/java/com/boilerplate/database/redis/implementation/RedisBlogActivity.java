@@ -24,7 +24,7 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	 * This is the blog user mapping for storing user's blog activity
 	 */
 	private static final String BlogUser = "BLOGUSER:";
-	
+
 	/**
 	 * This is the blogUser key used to migrate redis data to mySql
 	 */
@@ -39,9 +39,9 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 		Map<String, String> blogActivityMap = new HashMap<>();
 		blogActivityMap.put(blogActivityEntity.getActivity(), blogActivityEntity.getAction());
 		// save blog activity
-		super.hmset(BlogUser + blogActivityEntity.getActivityType() + ":"
-				+ blogActivityEntity.getUserId(), blogActivityMap);
-		
+		super.hmset(BlogUser + blogActivityEntity.getActivityType() + ":" + blogActivityEntity.getUserId(),
+				blogActivityMap);
+
 	}
 
 	/**
@@ -59,25 +59,31 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	 * @see IBlogActivity.getAllBlogUserKeys
 	 */
 	@Override
-	public Set<String> getAllBlogUserKeys(String
-			userId) {
+	public Set<String> getAllBlogUserKeys(String userId) {
 		return super.keys(BlogUser + "*" + userId);
 	}
-	
+
 	/**
 	 * @see IBlogActivity.addInRedisSet
 	 */
 	@Override
 	public void addInRedisSet(BlogActivityEntity blogActivity) {
-		super.sadd(BlogUserKeyForSet,
-				   blogActivity.getActivityType() + ":" + blogActivity.getUserId());
+		super.sadd(BlogUserKeyForSet, blogActivity.getActivityType() + ":" + blogActivity.getUserId());
+	}
+
+	/**
+	 * @see IBlogActivity.addInRedisSet
+	 */
+	@Override
+	public void addInRedisSet(String blogActivityType, String userId) {
+		super.sadd(BlogUserKeyForSet, blogActivityType + ":" + userId);
 	}
 
 	@Override
 	public Set<String> fetchBlogActivityAndAddInQueue() {
 		return super.smembers(BlogUserKeyForSet);
 	}
-	
+
 	/**
 	 * @see IReferral.deleteRedisUserIdSet
 	 */
@@ -89,8 +95,13 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	@Override
 	public Map<String, String> getBlogActivityMap(String BlogActivityKey) {
 		Map<String, String> blogActivityMap = super.hgetAll(BlogUser + BlogActivityKey);
-		
+
 		return blogActivityMap;
+	}
+
+	@Override
+	public Set<String> getAllBlogActivityKeys() {
+		return super.keys(BlogUser + "*" + "*");
 	}
 
 }

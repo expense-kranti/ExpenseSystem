@@ -14,7 +14,9 @@ import org.hibernate.Transaction;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
 import com.boilerplate.framework.HibernateUtility;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.jobs.QueueReaderJob;
 
 /**
  * This method is a base of data access layer
@@ -23,6 +25,11 @@ import com.boilerplate.framework.RequestThreadLocal;
  *
  */
 public class MySQLBaseDataAccessLayer {
+
+	/**
+	 * This is the logger for MySQLBaseDataAccessLayer class
+	 */
+	private Logger logger = Logger.getInstance(MySQLBaseDataAccessLayer.class);
 
 	/**
 	 * This method creates an object in the database
@@ -46,6 +53,7 @@ public class MySQLBaseDataAccessLayer {
 			transaction.commit();
 			return t;
 		} catch (Exception ex) {
+			logger.logException("MySQLBaseDataAccessLayer", "create", "try-catch block", ex.getMessage(), ex);
 			session.getTransaction().rollback();
 			throw ex;
 		} finally {
@@ -80,6 +88,8 @@ public class MySQLBaseDataAccessLayer {
 			transaction.commit();
 			return ts;
 		} catch (Exception ex) {
+			logger.logException("MySQLBaseDataAccessLayer", "create with list of objects as parameters",
+					"try-catch block", ex.getMessage(), ex);
 			throw ex;
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -190,6 +200,8 @@ public class MySQLBaseDataAccessLayer {
 
 			return aliasToValueMapList;
 		} catch (Exception ex) {
+			logger.logException("MySQLBaseDataAccessLayer", "executeSelectNative", "try-catch block", ex.getMessage(),
+					ex);
 			session.getTransaction().rollback();
 			throw ex;
 		} finally {
@@ -360,6 +372,8 @@ public class MySQLBaseDataAccessLayer {
 			session.getTransaction().commit();
 			return aliasToValueMapList;
 		} catch (Exception ex) {
+			logger.logException("MySQLBaseDataAccessLayer", "executeSelectNative returning list of map",
+					"try-catch block", ex.getMessage(), ex);
 			session.getTransaction().rollback();
 			throw ex;
 		}
@@ -402,6 +416,8 @@ public class MySQLBaseDataAccessLayer {
 			session.getTransaction().commit();
 			return rowsEffected;
 		} catch (Exception ex) {
+			logger.logException("MySQLBaseDataAccessLayer", "executeScalorNative", "try-catch block", ex.getMessage(),
+					ex);
 			session.getTransaction().rollback();
 			throw ex;
 		}
@@ -437,6 +453,8 @@ public class MySQLBaseDataAccessLayer {
 			List<T> ts = query.list();
 			return ts;
 		} catch (Exception ex) {
+			logger.logException("MySQLBaseDataAccessLayer", "executeScalorNative", "try-catch block", ex.getMessage(),
+					ex);
 			throw ex;
 		} finally {
 			if (session != null && session.isOpen()) {

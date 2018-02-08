@@ -16,7 +16,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 
 	public void saveUserReferUUID(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void increaseDayCounter(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -46,19 +46,19 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void increaseReferSignUpCounter(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void createDayCounter(ReferalEntity referalEntity, String initialValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void saveUserReferredExpireContacts(ReferalEntity referalEntity, String contact) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 			ReferredContactDetailEntity updateReferralContactDetailsEntity)
 			throws JsonParseException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void createSignUpCounter(ReferalEntity referalEntity, String initialValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void deleteUserAllReferredContactsData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void deleteUserAllReferSignUpCountData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -132,13 +132,13 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void deleteUserAllReferCounterData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteUserAllReferredExpireContactsData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -149,8 +149,6 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 		super.create(referalContact);
 	}
 
-	
-
 	@Override
 	public Set<String> fetchUserReferIdsFromRedisSet() {
 		// TODO Auto-generated method stub
@@ -160,7 +158,7 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void deleteItemFromRedisUserReferIdSet(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -178,8 +176,19 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	@Override
 	public void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity updateReferral) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
+	@Override
+	public Set<String> getAllReferredContactKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(String userReferId, String referralMediumType, String contact) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

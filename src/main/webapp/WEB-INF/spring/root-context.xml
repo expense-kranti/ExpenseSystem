@@ -154,6 +154,8 @@
 				<entry key="CreateUserFileInMySQL" value-ref="mySQLCreateUserFileObserverList"></entry>
 				<entry key="CreateBlogActivityInMySQL" value-ref="mySQLCreateBlogActivityObserverList"></entry>
 				<entry key="CreateUserReferralContact" value-ref="mySQLCreateReferalContactObserverList"></entry>
+				<entry key="AddUserAndRelatedDataKeysToRedisSet"
+					value-ref="addUserAndRelatedDataRedisKeysToRedisSetObserverList"></entry>
 
 			</map>
 
@@ -817,7 +819,7 @@
 		<property name="userDataAccess" ref="userDataAccess" />
 		<property name="redisAssessment" ref="redisAssessment"></property>
 		<property name="referral" ref="referral" />
-		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"/>
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess" />
 		<property name="filePointer" ref="filePointer" />
 	</bean>
 	<bean id="mySQLCreateOrUpdateUserObserver"
@@ -958,6 +960,28 @@
 				<!-- This is the class that will save sessions to the database Also the 
 					data we put in will get logged as the log observer is enabled for everything -->
 				<ref bean="mySQLCreateReferalContactObserver"></ref>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="addUserAndRelatedDataRedisKeysToRedisSetObserver"
+		class="com.boilerplate.asyncWork.AddUserAndRelatedDataRedisKeysToRedisSetObserver">
+		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="referral" ref="referral"></property>
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
+		<property name="filePointer" ref="filePointer"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+	<bean id="addUserAndRelatedDataRedisKeysToRedisSetObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="addUserAndRelatedDataRedisKeysToRedisSetObserver"></ref>
 			</list>
 		</property>
 	</bean>

@@ -73,7 +73,6 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	private static final String UserAssessmentScoreKeyForSet = "UserAssessmentScore_MySQL";
 
 	private static final String UserMonthlyScoreKeyForSet = "UserMonthlyScore_MySQL";
-	
 
 	/**
 	 * @see IRedisAssessment.getAssessmentAttempt
@@ -233,14 +232,29 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	}
 
 	/**
-	 * @see IRedisAssessment.addInRedisSet
+	 * @see IRedisAssessment.addInRedisSetForUserAssessment
 	 */
 	@Override
-	public void addInRedisSet(UserAssessmentDetailEntity userAssessmentDetailEntity) {
+	public void addInRedisSetForUserAssessment(UserAssessmentDetailEntity userAssessmentDetailEntity) {
 		// here , is used as separator because userId already have ":" in it so
 		// we cant split on ":"
 		super.sadd(UserAssessmentKeyForSet,
 				userAssessmentDetailEntity.getUserId() + "," + userAssessmentDetailEntity.getAssessmentId());
+	}
+
+	/**
+	 * @see IRedisAssessment.addInRedisSet
+	 */
+	@Override
+	public void addInRedisSetForUserAssessment(String userId, String assessmentId) {
+		// here , is used as separator because userId already have ":" in it so
+		// we cant split on ":"
+		super.sadd(UserAssessmentKeyForSet, userId + "," + assessmentId);
+	}
+
+	@Override
+	public Set<String> getAllTotalScoreKeys() {
+		return super.keys(TotalScore + "*");
 	}
 
 	/**
@@ -333,11 +347,27 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	}
 
 	/**
+	 * @see IRedisAssessment.getAllMonthlyScoreKeys
+	 */
+	@Override
+	public Set<String> getAllMonthlyScoreKeys() {
+		return super.keys(MonthlyScore + "*" + "*" + "*");
+	}
+
+	/**
 	 * @see IRedisAssessment.getAllAssessmentKeysForUser
 	 */
 	@Override
 	public Set<String> getAllAssessmentKeysForUser(String userId) {
 		return super.keys(Assessment + userId + "*");
+	}
+
+	/**
+	 * @see IRedisAssessment.getAllAssessmentKeys
+	 */
+	@Override
+	public Set<String> getAllAssessmentKeys() {
+		return super.keys(Assessment + "*" + "*");
 	}
 
 	/**
@@ -372,6 +402,5 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 		ScoreEntity scoreEntity = super.get(MonthlyScore + year + ":" + month + ":" + userId, ScoreEntity.class);
 		return scoreEntity;
 	}
-	
-	
+
 }

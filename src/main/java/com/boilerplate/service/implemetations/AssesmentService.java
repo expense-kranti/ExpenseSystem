@@ -344,7 +344,7 @@ public class AssesmentService implements IAssessmentService {
 		// Save the assessment to data store
 		redisAssessment.saveAssessment(assessmentEntity);
 
-		//save assessment related data only when assessment status is Submit
+		// save assessment related data only when assessment status is Submit
 		if (assessmentEntity.getStatus().equals(AssessmentStatus.Submit)) {
 			// save the user id and assessment Id in Redis Set for saving the
 			// assessment
@@ -367,10 +367,12 @@ public class AssesmentService implements IAssessmentService {
 		// in MyqsqlDB the id used is in BigInt type
 		userAssessmentDetail.setAssessmentId(Integer.parseInt(assessmentEntity.getId()));
 		// add in redis set
-		redisAssessment.addInRedisSet(userAssessmentDetail);
-		redisAssessment.addIdInRedisSetForAssessmentScore(
-				RequestThreadLocal.getSession().getExternalFacingUser().getUserId() + "," + assessmentEntity.getId());
-
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			redisAssessment.addInRedisSetForUserAssessment(userAssessmentDetail);
+			redisAssessment.addIdInRedisSetForAssessmentScore(
+					RequestThreadLocal.getSession().getExternalFacingUser().getUserId() + ","
+							+ assessmentEntity.getId());
+		}
 	}
 
 	/**

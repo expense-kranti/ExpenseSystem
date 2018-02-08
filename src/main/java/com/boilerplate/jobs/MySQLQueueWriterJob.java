@@ -21,10 +21,16 @@ import com.boilerplate.java.collections.BoilerplateList;
  * @author urvij
  *
  */
-public class MySQLQueueWriterJob  {
+public class MySQLQueueWriterJob {
 
 	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(MySQLQueueWriterJob.class);
+	
+	/**
 	 * These variables are used to recognized the type of key fetching to do
+	 * from Redis set
 	 */
 	public static String addUserInQueue = "User";
 	public static String addUserAssessmentInQueue = "Assessment";
@@ -33,11 +39,8 @@ public class MySQLQueueWriterJob  {
 	public static String addUserReferIdInQueue = "UserReferral";
 	public static String addIdForBlogActivityInQueue = "UserBlogActivity";
 	public static String addIdForUserFilesInQueue = "UserFiles";
+
 	
-	/**
-	 * This is an instance of the logger
-	 */
-	Logger logger = Logger.getInstance(MySQLQueueWriterJob.class);
 
 	/**
 	 * This is the instance of the configuration manager.
@@ -159,13 +162,12 @@ public class MySQLQueueWriterJob  {
 	 * @throws NotFoundException
 	 *             thrown if user is not found in redis database
 	 */
-	//This method is being called automatically through servlet context configuration
+	// This method is being called automatically through servlet context
+	// configuration
 	public void addElementsInQueue() throws NotFoundException {
-		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+		if (Boolean.parseBoolean(configurationManager.get("IsReadSetAndAddToMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set and add into queue for
-			// migrating Users from
-			// Redis to MySQL
-
+			// migrating Users from Redis to MySQL
 			this.fetchDataFromRedisSetAndAddInQueue(addUserInQueue);
 			// fetch and process AssessmentIds from Redis Set and add into queue
 			// for migrating Assessments from Redis to MySQL
@@ -246,6 +248,8 @@ public class MySQLQueueWriterJob  {
 			subject = subjectsForCreateReferalContact;
 			break;
 		}
+		logger.logInfo("MySQLQueueWriterJob", "fetchDataFromRedisSetAndAddInQueue method", "below switch block end",
+				"about to call addTaskInQueue method");
 
 		// if set is empty then do nothing
 		if (!elements.isEmpty() && !(elements == null)) {
@@ -263,6 +267,10 @@ public class MySQLQueueWriterJob  {
 	 *            the subjects list related to particular data pushed to queue
 	 */
 	private void addTaskInQueue(Set<String> dataSet, BoilerplateList<String> subjectsForPerformingTask) {
+
+		logger.logInfo("MySQLQueueWriterJob", "addTaskInQueue method",
+				"before for loop which is fetching each id from Ids Set to be added in queu",
+				"about to call addTaskInQueue method");
 		// fetch user against each userId present in Set
 		for (String dataId : dataSet) {
 			try {
