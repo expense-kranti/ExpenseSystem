@@ -1251,6 +1251,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllEDev.put("RootFileUploadLocation", "/downloads/");
 
+		
 		// new config
 		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
 		vAllEDev.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
@@ -1340,14 +1341,14 @@ public class BaseRedisDataAccessLayer {
 		// tells that whenever any new entry is added or
 		// updated in Redis database then we need to make an entry into Redis
 		// Set to later transfer it to MySQL is enabled or not
-		vAllEDev.put("IsMySQLPublishQueueEnabled", "false");
+		vAllEDev.put("IsMySQLPublishQueueEnabled", "true");
 
 		// tell that background mysql publish queue reading is enabled or not
 		vAllEDev.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
 
 		// tells that bulk adding all the Redis Keys like
 		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllEDev.put("ISBulkAddInRedisSetEnabled", "true");
+		vAllEDev.put("ISBulkAddInRedisSetEnabled", "false");
 		// tells that if reading Redis Sets and pushing to queue is enabled
 		vAllEDev.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
 

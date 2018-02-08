@@ -326,12 +326,17 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	 */
 	private void updateUserScoreAndPublish(ExternalFacingReturnedUser user, String totalScore) {
 		user.setTotalScore(totalScore);
+		if (user.getTotalScore() != null && !(user.getTotalScore().isEmpty()))
+			user.setTotalScoreInDouble(Double.parseDouble(user.getTotalScore()));
 		userDataAccess.update(user);
 
-		// TODO add userid to the Redis set for updating total score of the
+		// add userid to the Redis set for updating total score of the
 		// user(which
 		// contains user assessment score and refer score)
-
+		// if true then add in redis key set
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			userDataAccess.addInRedisSet(user);
+		}
 		publishUserToCRM(user);
 	}
 
@@ -369,12 +374,12 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			user.setRank(newScore.getRank());
 			updateUserScoreAndPublish(user, String
 					.valueOf(Float.valueOf(newScore.getReferScore()) + Float.valueOf(newScore.getObtainedScore())));
-			
-			// if true  then add in redis key set 
+
+			// if true then add in redis key set
 			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 				userDataAccess.addInRedisSet(user);
 			}
-			
+
 		}
 
 	}
