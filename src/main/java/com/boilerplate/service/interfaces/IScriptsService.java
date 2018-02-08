@@ -65,4 +65,19 @@ public interface IScriptsService {
 	public void fetchScorePointsFromFileAndUpdateUserTotalScore(String fileId)
 			throws UnauthorizedException, NotFoundException, BadRequestException, IOException;
 
+	/**
+	 * This method is used to put the task for adding user and user related data
+	 * Redis keys to Redis Set
+	 * 
+	 * @throws UnauthorizedException
+	 *             thrown when user is not authorized
+	 * @throws NotFoundException
+	 *             thrown when user is not found
+	 * @throws BadRequestException
+	 *             thrown when user id is not provided for getting user while
+	 *             checking if it is authorized
+	 */
+	public void publishUserAndUserRelatedDataToMySQL()
+			throws UnauthorizedException, NotFoundException, BadRequestException;
+
 }

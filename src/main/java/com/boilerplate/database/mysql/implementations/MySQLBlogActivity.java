@@ -70,4 +70,16 @@ public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlog
 		return null;
 	}
 
+	@Override
+	public Set<String> getAllBlogActivityKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(String blogActivityType, String userId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

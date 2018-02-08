@@ -82,6 +82,20 @@ public class ScriptController extends BaseController {
 			throws UnauthorizedException, NotFoundException, BadRequestException, IOException {
 		scriptService.fetchScorePointsFromFileAndUpdateUserTotalScore(fileId);
 	}
-	
-	
+
+	/**
+	 * This method is used to publish user and user related data from Redis by
+	 * starting a task
+	 * 
+	 * @throws UnauthorizedException thrown when user is not authorized
+	 * @throws NotFoundException thrown when user is not found
+	 * @throws BadRequestException thrown when userId is not provided to check for authorization
+	 */
+	@ApiOperation(value = "Migrates User and User related data like Assessment data, Referral data, File data, BlogActivity data")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok") })
+	@RequestMapping(value = "scripts/publishUserAndUserRelatedDataToMySQL", method = RequestMethod.GET)
+	public @ResponseBody void publishUserAndUserRelatedDataToMySQL()
+			throws UnauthorizedException, NotFoundException, BadRequestException {
+		scriptService.publishUserAndUserRelatedDataToMySQL();
+	}
 }

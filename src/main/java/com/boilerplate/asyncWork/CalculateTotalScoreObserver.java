@@ -186,8 +186,10 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		user.setRank(scoreEntity.getRank());
 		// save user total score
 		userDataAccess.update(user);
-		// add userId in to Redis Set for updating user total score
-		userDataAccess.addInRedisSet(user);
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add userId in to Redis Set for updating user total score
+			userDataAccess.addInRedisSet(user);
+		}
 		// publish user total score to crm
 		this.publishUserToCRM(user);
 	}
@@ -241,18 +243,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		// Set the obtained score in double for SUM from MySQL
 		scoreEntity.setObtainedScoreInDouble(obtainedScore);
 
-		// If refer score is not null then get rank according the sum of refer
-		// and obtained score
-		// BELOW COMMMENTED BY URVIJ
-		// if (scoreEntity.getReferScore() != null) {
-		// // set rank
-		// scoreEntity.setRank(calculateRank(obtainedScore +
-		// Float.valueOf(scoreEntity.getReferScore())));
-		// } else {
-		// // set rank
-		// scoreEntity.setRank(calculateRank(obtainedScore));
-		// }
-		/////////////////////
+		// get rank according the sum of refer and obtained score
 		if (scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty()) {
 			scoreEntity.setReferScore("0");
 		}
@@ -356,11 +347,12 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);
 
-		// add userId in Redis set for saving monthly score in MYSQl
-		// here we are assuming the now time will be same taken in Redis
-		redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(
-				scoreEntity.getUserId() + "," + LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
-
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add userId in Redis set for saving monthly score in MYSQl
+			// here we are assuming the now time will be same taken in Redis
+			redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
+					+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+		}
 	}
 
 	/**
@@ -400,10 +392,12 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);
 
-		// add userId in Redis set for saving monthly score in MYSQl
-		// here we are assuming the now time will be same taken in Redis
-		redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(
-				scoreEntity.getUserId() + "," + LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add userId in Redis set for saving monthly score in MYSQl
+			// here we are assuming the now time will be same taken in Redis
+			redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
+					+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+		}
 	}
 
 	/**

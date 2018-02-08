@@ -68,8 +68,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 * in redis.sadd()
 	 */
 	private static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
-	
-	private static final String UserTotalReferScoreKeyForSet = "UserTotalReferScore_MyScore";
 
 	/**
 	 * @see IReferral.saveUserReferredContacts
@@ -297,9 +295,17 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 */
 	@Override
 	public void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity referredContactDetailEntity) {
-		super.sadd(ReferalKeyForSet, referalEntity.getUserReferId() + ":"
-				+ referalEntity.getReferralMediumType().toString() + ":"
-				+ (referredContactDetailEntity.getContact()).toUpperCase());
+		super.sadd(ReferalKeyForSet,
+				referalEntity.getUserReferId() + ":" + referalEntity.getReferralMediumType().toString() + ":"
+						+ (referredContactDetailEntity.getContact()).toUpperCase());
+	}
+
+	/**
+	 * @see IReferral.addInRedisSet
+	 */
+	@Override
+	public void addInRedisSet(String userReferId, String referralMediumType, String contact) {
+		super.sadd(ReferalKeyForSet, userReferId + ":" + referralMediumType + ":" + (contact).toUpperCase());
 	}
 
 	/**
@@ -318,6 +324,14 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		super.srem(ReferalKeyForSet, userReferId);
 	}
 
+	/**
+	 * @see IRedisAssessment.getAllMonthlyScoreKeys
+	 */
+	@Override
+	public Set<String> getAllReferredContactKeys() {
+		return super.keys(ReferredContact + "*" + "*");
+	}
+
 	@Override
 	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey) {
 		Map<String, String> referalContactMapData = super.hgetAll(ReferredContact + redisReferalKey);
@@ -332,7 +346,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 
 	@Override
 	public String getUserReferralLink(String redisReferalExpiredKey) {
-	// TODO Auto-generated method stub
-	return super.get(ReferredExpireContact + redisReferalExpiredKey);
+		// TODO Auto-generated method stub
+		return super.get(ReferredExpireContact + redisReferalExpiredKey);
 	}
 }

@@ -7,8 +7,8 @@ import java.text.DecimalFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.database.interfaces.IRedisScript;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -16,12 +16,10 @@ import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.entities.AssessmentStatusPubishEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.ScoreEntity;
-import com.boilerplate.service.interfaces.IAssessmentService;
 import com.boilerplate.service.interfaces.IScriptsService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.opencsv.CSVReader;
@@ -43,6 +41,21 @@ public class ScriptService implements IScriptsService {
 
 	// format of double values in two places decimal
 	DecimalFormat df = new DecimalFormat("#.##");
+
+	/**
+	 * This is the instance of IRedisScript
+	 */
+	IRedisScript scriptDataAccess;
+
+	/**
+	 * Sets the scriptDataAccess
+	 * 
+	 * @param scriptDataAccess
+	 *            the scriptDataAccess to set
+	 */
+	public void setScriptDataAccess(IRedisScript scriptDataAccess) {
+		this.scriptDataAccess = scriptDataAccess;
+	}
 
 	/**
 	 * This is the user service
@@ -156,6 +169,11 @@ public class ScriptService implements IScriptsService {
 	BoilerplateList<String> subjectsForAKSOrReferReportPublish = new BoilerplateList<>();
 
 	/**
+	 * This is the fetch user and user related data key from Redis Database
+	 */
+	BoilerplateList<String> subjectsForFetchingUserAndUserRelatedKey = new BoilerplateList<>();
+
+	/**
 	 * Subject for publishing to crm
 	 */
 	private BoilerplateList<String> subjects = null;
@@ -167,6 +185,7 @@ public class ScriptService implements IScriptsService {
 		subjectsForPublishUserReportData.add("PublishUserData");
 		subjectsForSetUserChangePasswordStatus.add("SetUserChangePasswordStatus");
 		subjectsForAKSOrReferReportPublish.add("PublishUserAKSOrReferReport");
+		subjectsForFetchingUserAndUserRelatedKey.add("AddUserAndRelatedDataKeysToRedisSet");
 	}
 
 	@Override
@@ -247,6 +266,9 @@ public class ScriptService implements IScriptsService {
 		}
 	}
 
+	/**
+	 * @see IScriptsService.fetchScorePointsFromFileAndUpdateUserTotalScore
+	 */
 	@Override
 	public void fetchScorePointsFromFileAndUpdateUserTotalScore(String fileId)
 			throws UnauthorizedException, NotFoundException, BadRequestException, IOException {
@@ -295,6 +317,27 @@ public class ScriptService implements IScriptsService {
 				// update and save user total score
 				updateAndSaveUserTotalScore(scoreEntity, row[0]);
 			}
+		}
+
+	}
+
+	/**
+	 * @see IScriptsService.publi
+	 */
+	@Override
+	public void publishUserAndUserRelatedDataToMySQL()
+			throws UnauthorizedException, NotFoundException, BadRequestException {
+		if (!checkIsAdmin()) {
+			throw new UnauthorizedException("User", "User is not authorized to perform this action.", null);
+		}
+		try {
+			// Call background job for fetching all keys from Redis database for
+			// migrating Saved User and User data to MySQL
+			queueReaderJob.requestBackroundWorkItem("", subjectsForFetchingUserAndUserRelatedKey, "ScriptService",
+					"publishUserAndUserRelatedDataToMySQL");
+		} catch (Exception ex) {
+			logger.logError("ScriptService", "publishUserAndUserRelatedDataToMySQL", "Inside try-catch block",
+					ex.toString());
 		}
 
 	}

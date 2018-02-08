@@ -212,7 +212,7 @@ public interface IRedisAssessment {
 	 *            contains the user id , assessment id to get the user attempted
 	 *            assessments
 	 */
-	public void addInRedisSet(UserAssessmentDetailEntity userAssessmentDetailEntity);
+	public void addInRedisSetForUserAssessment(UserAssessmentDetailEntity userAssessmentDetailEntity);
 
 	/**
 	 * This method is used to fetch all the assessment ids stored in redis set
@@ -307,5 +307,35 @@ public interface IRedisAssessment {
 	// not throwing not found exception as it must be present
 	public ScoreEntity getUserMonthlyScore(String userId, String year, String month);
 
-	
+	/**
+	 * This method is overloaded method used to set in Redis Set
+	 * 
+	 * @param userId
+	 *            the userId of the user
+	 * @param assessmentId
+	 *            the assessment id for assessment attempted by user
+	 */
+	public void addInRedisSetForUserAssessment(String userId, String assessmentId);
+
+	/**
+	 * This method is used to get all total score keys from database
+	 * 
+	 * @return the set of all total score keys
+	 */
+	public Set<String> getAllTotalScoreKeys();
+
+	/**
+	 * This method is used to get all the assessment keys
+	 * 
+	 * @return the set of all assessment keys
+	 */
+	public Set<String> getAllAssessmentKeys();
+
+	/**
+	 * This method is used to get all the monthly score keys
+	 * 
+	 * @return the set of all monthly keys
+	 */
+	public Set<String> getAllMonthlyScoreKeys();
+
 }

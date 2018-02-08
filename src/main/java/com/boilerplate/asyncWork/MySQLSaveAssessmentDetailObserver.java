@@ -78,11 +78,13 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 	 *             updating assessment in the database
 	 */
 	public void saveOrUpdateAssessmentInMySQL() throws Exception {
-		AssessmentEntity assessmentEntity = new AssessmentEntity();
 
+		logger.logInfo("MySQLSaveAssessmentDetailObserver", "saveOrUpdateAssessmentInMySQL",
+				"First Statement in the method block",
+				"About to fetch assessment ids from Redis Set and process one by one");
 		Set<String> elements = redisAssessment.fetchAssessmentIdsFromRedisSet();
 		for (String element : elements) {
-
+			AssessmentEntity assessmentEntity = new AssessmentEntity();
 			String[] ids = element.split(",");
 			// set assessment id to get the assessment from Redis data store
 			assessmentEntity.setId(ids[1]);

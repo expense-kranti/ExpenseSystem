@@ -93,4 +93,16 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 
 	}
 
+	@Override
+	public Set<String> getAllUserKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(String userId) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

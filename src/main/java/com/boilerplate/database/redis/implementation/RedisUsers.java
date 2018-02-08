@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.database.interfaces.IRedisScript;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -49,7 +50,9 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	private static final String UserKey = "USER_KEY:";
 
 	private static final String User = "USER:";
-
+	/**
+	 * This is the Redis User Set key which will be used to migrate user
+	 */
 	private static final String UserKeyForSet = "USER_MYSQL";
 
 	/**
@@ -156,6 +159,14 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	}
 
 	/**
+	 * @see IUser.addInSadd
+	 */
+	@Override
+	public void addInRedisSet(String userId) {
+		super.sadd(UserKeyForSet, userId);
+	}
+
+	/**
 	 * @see IUser.fetchUserIdsFromRedisSet
 	 */
 	@Override
@@ -169,6 +180,14 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	@Override
 	public void deleteItemFromRedisUserIdSet(String userId) {
 		super.srem(UserKeyForSet, userId);
+	}
+
+	/**
+	 * @see IUser.getAllUserKeys
+	 */
+	@Override
+	public Set<String> getAllUserKeys() {
+		return super.keys(User + "*");
 	}
 
 }

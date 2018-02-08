@@ -481,7 +481,10 @@ public class QueueReaderJob {
 		}
 	}
 
-	// TODO add method call in servlet context
+	/**
+	 * This method is used to start reading queue and processing jobs for
+	 * publishing to MySQL
+	 */
 	public void readMySQLPublishQueueAndDispatch() {
 		if (this.isFirstRun == false) {
 			// this.isBackgroundJobEnabled =
@@ -490,7 +493,7 @@ public class QueueReaderJob {
 			// this.isPublishQueueEnabled =
 			// Boolean.parseBoolean(configurationManager.get("IsPublishQueueEnabled"));
 			this.isMySQLPublishJobEnabled = Boolean
-					.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"));
+					.parseBoolean(configurationManager.get("IsMySQLReadQueueJobAndPublishEnabled"));
 			this.isFirstRun = true;
 		}
 		// if the queue is enabled then work
@@ -530,7 +533,7 @@ public class QueueReaderJob {
 						} catch (Exception ex) {
 							// A single job has failed
 							logger.logException("QueueReaderJob", "readMySQLPublishQueueAndDispatch",
-									"Publish queue Job Failed Exception",
+									"Publish to Mysql queue Job Failed Exception",
 									asyncWorkItem == null ? "Null" : asyncWorkItem.toJSON(), ex);
 						} finally {
 							// push into history queue if needed
