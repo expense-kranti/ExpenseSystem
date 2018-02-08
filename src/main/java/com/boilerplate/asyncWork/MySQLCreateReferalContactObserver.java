@@ -173,7 +173,7 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 		// Get the SQL query from configurations for get the list of user Referal
 		String sqlQuery = configurationManager.get(sqlQueryGetUserReferralContact);
 		// Get the ReferralContactEntity list to update the row for exist data
-		referralContactEntity = getReferralContactEntityUpdated(referralContactEntity, sqlQuery);
+		referralContactEntity = getReferralContactEntityFromMySQl(referralContactEntity, sqlQuery);
 		// save referal Contact to mySQL
 		try {
 			// add user to the mysql database
@@ -193,10 +193,12 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	 * @param sqlQuery the Sqlquery
 	 * @return the updated ReferralContactEntity with Id
 	 */
-	private ReferralContactEntity getReferralContactEntityUpdated(ReferralContactEntity referralContactEntity,
+	private ReferralContactEntity getReferralContactEntityFromMySQl(ReferralContactEntity referralContactEntity,
 			String sqlQuery) {
 
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// put user id in query parameter
+		queryParameterMap.put("userId", ((ReferralContactEntity) referralContactEntity).getUserId());
 		// Put user refer id in query parameter
 		queryParameterMap.put("userReferId", ((ReferralContactEntity) referralContactEntity).getUserReferId());
 		// put referral medium type

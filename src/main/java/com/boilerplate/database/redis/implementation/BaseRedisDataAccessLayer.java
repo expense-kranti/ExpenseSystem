@@ -1556,7 +1556,7 @@ public class BaseRedisDataAccessLayer {
 
 		// to be used for userReferralContact
 		vAllEAll.put("SQL_QUERY_GET_USER_REFER_CONTACT",
-				"From ReferralContactEntity WHERE userReferId = :userReferId AND referralMediumType =:referralMediumType AND contact =:contact");
+				"From ReferralContactEntity WHERE userId =:userId AND userReferId = :userReferId AND referralMediumType =:referralMediumType AND contact =:contact");
 
 		// to be used for user blog activity
 		vAllEAll.put("SQL_QUERY_GET_USER_BLOG_ACTIVITY",
