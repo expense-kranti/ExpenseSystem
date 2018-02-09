@@ -2,24 +2,26 @@ package com.boilerplate.database.mysql.implementations;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IBlogActivity;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.BlogActivityEntity;
 
 public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlogActivity {
-	
+
 	@Override
-	public void saveActivity(BlogActivityEntity blogActivityEntity) {
-		// TODO Auto-generated method stub
-		
+	public void saveActivity(BlogActivityEntity blogActivityEntity) throws Exception {
+		// Save the user blogActivity
+		super.create(blogActivityEntity);
 	}
 
 	@Override
 	public void deleteActivity(String userId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -29,19 +31,38 @@ public class MySQLBlogActivity extends MySQLBaseDataAccessLayer implements IBlog
 	}
 
 	@Override
-	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) {
-		// Set creation time to current time
-		blogActivityEntity.setCreationDate(Date.valueOf(LocalDate.now()));
-		// Save the user blogActivity
-		super.create(blogActivityEntity);
+	public void addInRedisSet(BlogActivityEntity blogActivity) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addInRedisSet(BlogActivityEntity blogActivity) {
+	public Set<String> fetchBlogActivityAndAddInQueue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteItemFromRedisBlogActivitySet(String blogActivity) {
+		// TODO Auto-generated method stub
+
+	}
+	@Override
+	public Map<String, String> getBlogActivityMap(String payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<String> getAllBlogActivityKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(String blogActivityType, String userId) {
 		// TODO Auto-generated method stub
 		
 	}
-
 
 }

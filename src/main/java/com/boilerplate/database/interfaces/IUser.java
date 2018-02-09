@@ -67,7 +67,7 @@ public interface IUser {
 	public void addInRedisSet(ExternalFacingUser user);
 
 	/**
-	 * This method is used to fetch items from redis set
+	 * This method is used to fetch items from Redis set
 	 * 
 	 * @param key
 	 *            the key against which the Set is to get
@@ -76,8 +76,23 @@ public interface IUser {
 	public Set<String> fetchUserIdsFromRedisSet();
 
 	/**
-	 * This method is used to delete the userId from redis set
+	 * This method is used to delete the userId from Redis set
 	 */
 	public void deleteItemFromRedisUserIdSet(String userId);
+
+	/**
+	 * This method is used to get all user keys of Redis Database
+	 * 
+	 * @return the set of user keys
+	 */
+	public Set<String> getAllUserKeys();
+
+	/**
+	 * This method is used to add user in Mysql db
+	 * 
+	 * @param userId
+	 *            the userId to add in Redis set
+	 */
+	public void addInRedisSet(String userId);
 
 }

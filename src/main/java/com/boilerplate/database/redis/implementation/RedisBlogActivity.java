@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IBlogActivity;
+import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.mysql.implementations.MySQLBlogActivity;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.Base;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.BlogActivityEntity;
 
 /**
@@ -21,26 +24,24 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	 * This is the blog user mapping for storing user's blog activity
 	 */
 	private static final String BlogUser = "BLOGUSER:";
-	
+
 	/**
 	 * This is the blogUser key used to migrate redis data to mySql
 	 */
-	public static final String BlogUserKeyForSet = "BLOGUSER";
+	public static final String BlogUserKeyForSet = "BLOGUSER_MYSQL";
 
 	/**
 	 * @see IBlogActivity.saveActivity
 	 */
 	@Override
 	public void saveActivity(BlogActivityEntity blogActivityEntity) {
-		
-		
 		// create new map of input activity and save
 		Map<String, String> blogActivityMap = new HashMap<>();
 		blogActivityMap.put(blogActivityEntity.getActivity(), blogActivityEntity.getAction());
 		// save blog activity
-		super.hmset(BlogUser + blogActivityEntity.getActivityType() + ":"
-				+ blogActivityEntity.getUserId(), blogActivityMap);
-		
+		super.hmset(BlogUser + blogActivityEntity.getActivityType() + ":" + blogActivityEntity.getUserId(),
+				blogActivityMap);
+
 	}
 
 	/**
@@ -62,20 +63,45 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 		return super.keys(BlogUser + "*" + userId);
 	}
 
+	/**
+	 * @see IBlogActivity.addInRedisSet
+	 */
 	@Override
-	public void mySqlSaveBlogActivity(BlogActivityEntity blogActivityEntity) {
-		// TODO Auto-generated method stub
-		MySQLBlogActivity obj = new MySQLBlogActivity();
-		obj.mySqlSaveBlogActivity(blogActivityEntity);
+	public void addInRedisSet(BlogActivityEntity blogActivity) {
+		super.sadd(BlogUserKeyForSet, blogActivity.getActivityType() + ":" + blogActivity.getUserId());
 	}
 
 	/**
 	 * @see IBlogActivity.addInRedisSet
 	 */
 	@Override
-	public void addInRedisSet(BlogActivityEntity blogActivity) {
-		super.sadd(BlogUserKeyForSet,
-				blogActivity.getUserId() + ":" + blogActivity.getActivityType() + ":" + blogActivity.getActivity());
+	public void addInRedisSet(String blogActivityType, String userId) {
+		super.sadd(BlogUserKeyForSet, blogActivityType + ":" + userId);
+	}
+
+	@Override
+	public Set<String> fetchBlogActivityAndAddInQueue() {
+		return super.smembers(BlogUserKeyForSet);
+	}
+
+	/**
+	 * @see IReferral.deleteRedisUserIdSet
+	 */
+	@Override
+	public void deleteItemFromRedisBlogActivitySet(String blogActivity) {
+		super.srem(BlogUserKeyForSet, blogActivity);
+	}
+
+	@Override
+	public Map<String, String> getBlogActivityMap(String BlogActivityKey) {
+		Map<String, String> blogActivityMap = super.hgetAll(BlogUser + BlogActivityKey);
+
+		return blogActivityMap;
+	}
+
+	@Override
+	public Set<String> getAllBlogActivityKeys() {
+		return super.keys(BlogUser + "*" + "*");
 	}
 
 }

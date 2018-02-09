@@ -40,6 +40,8 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLQuestionType.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLArticle.hbm.xml" />
+
+		
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLBlogActivity.hbm.xml" />
 		<mapping
@@ -47,9 +49,14 @@
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLFile.hbm.xml" />
 		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLReferal.hbm.xml" />
+			resource="com/boilerplate/database/mysql/implementations/MySQLUserAssessment.hbm.xml" />
 		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLReferredContactDetail.hbm.xml" />
+			resource="com/boilerplate/database/mysql/implementations/MySQLUserAssessmentScore.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLUserMonthlyScore.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLReferralContacts.hbm.xml" />
+
 
 	</session-factory>
 </hibernate-configuration>

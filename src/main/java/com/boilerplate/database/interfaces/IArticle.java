@@ -20,8 +20,9 @@ public interface IArticle {
 	 * @param articleEntity
 	 *            this parameter contains the articles details, details
 	 *            basically contain the article title and article content
+	 * @throws Exception
 	 */
-	public void saveUserArticle(ArticleEntity articleEntity);
+	public void saveUserArticle(ArticleEntity articleEntity) throws Exception;
 
 	/**
 	 * This method is used to get all the user articles which is saved by user
@@ -38,6 +39,7 @@ public interface IArticle {
 	 * @param articleEntity
 	 *            this parameter contains the articles details, details
 	 *            basically contain the userId and article Id
+	 * @throws Exception 
 	 */
-	public void approveArticle(ArticleEntity articleEntity);
+	public void approveArticle(ArticleEntity articleEntity) throws Exception;
 }

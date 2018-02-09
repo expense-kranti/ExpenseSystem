@@ -786,12 +786,12 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
+	 * @throws Exception 
 	 * @see IExperianService.fetchNextItem
 	 */
 	@Override
 	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
-			throws NotFoundException, BadRequestException, ConflictException, IOException, PreconditionFailedException,
-			ParserConfigurationException, SAXException, UpdateFailedException {
+			throws Exception {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		ReportInputEntiity reportInputEntity = user.getReportInputEntitty();
@@ -1164,21 +1164,10 @@ public class ExperianBureauService implements IExperianService {
 	 * @param responseBodyMap
 	 * @return the reportInputEntity that contains experian integration state,
 	 *         report number
-	 * @throws UpdateFailedException
-	 *             thrown when saving of experian report data fails
-	 * @throws IOException
-	 *             thrown when exception occurs in reading report file
-	 * @throws BadRequestException
-	 *             thrown when input is not provided properly
-	 * @throws ParserConfigurationException
-	 *             thrown if a DocumentBuilder cannot be created which satisfies
-	 *             the configuration requested.
-	 * @throws SAXException
-	 *             thrown when exception occurs in parsing the xml document
+	 * @throws Exception 
 	 */
 	private ReportInputEntiity parseReportAndGetReportNumber(ReportInputEntiity reportInputEntity,
-			Map<String, Object> responseBodyMap) throws UpdateFailedException, IOException, ConflictException,
-			BadRequestException, ParserConfigurationException, SAXException {
+			Map<String, Object> responseBodyMap) throws Exception {
 		// we have a report
 		// save this to the users context
 		// and change state to next question

@@ -75,10 +75,11 @@ public class FileService implements IFileService {
 	}
 
 	/**
+	 * @throws Exception 
 	 * @see IFileService.saveFile
 	 */
 	@Override
-	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws UpdateFailedException {
+	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws Exception {
 
 		try {
 			// validates the file size, If greater than Maximum_File_Upload_Size
@@ -105,9 +106,11 @@ public class FileService implements IFileService {
 			
 			// method to save file entity in redis database
 			fileEntity = filePointer.save(fileEntity);
-//			// method to save file in MySql database
-//			fileEntity.setId(null);
-//			filePointer.mySqlSaveFile(fileEntity);
+			
+			// if true the add redis key in set for database migration
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				filePointer.addInRedisSet(fileEntity);
+			}
 			return fileEntity;
 		} catch (IOException ex) {
 			throw new UpdateFailedException("File", ex.toString(), ex);

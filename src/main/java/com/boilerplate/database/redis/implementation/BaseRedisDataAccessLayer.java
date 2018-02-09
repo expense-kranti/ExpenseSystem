@@ -1016,6 +1016,17 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for saveIncomeTaxUserDetails method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL()");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1209,7 +1220,17 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL
 		vAllETest.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllETest.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+		// tells that whenever any new entry is added or
+		// updated in Redis database then we need to make an entry into Redis
+		// Set to later transfer it to MySQL is enabled or not
 		vAllETest.put("IsMySQLPublishQueueEnabled", "false");
+		// tell that background mysql publish queue reading is enabled or not
+		vAllETest.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
+		// tells that bulk adding all the Redis Keys like
+		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
+		vAllETest.put("ISBulkAddInRedisSetEnabled", "false");
+		// tells that if reading Redis Sets and pushing to queue is enabled
+		vAllETest.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "false");
 
 		return vAllETest;
 	}
@@ -1229,6 +1250,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_SENDER", "AKSSMS");
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllEDev.put("RootFileUploadLocation", "/downloads/");
+
+		
 		// new config
 		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
 		vAllEDev.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
@@ -1310,10 +1333,24 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("INCOME_TAX_DETAILS_EMAIL_CONTENT",
 				"b44fee2d-a993-4d20-833d-263985d4e076_FinalTaxCalculatorE-mailerhtml");
 
-		// config for SaveInMySQL
+		// config for SaveInMySQL reader queue
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
+		// config for SaveInMySQL reader queue
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+		// config for SaveInMySQL reader queue
+		// tells that whenever any new entry is added or
+		// updated in Redis database then we need to make an entry into Redis
+		// Set to later transfer it to MySQL is enabled or not
 		vAllEDev.put("IsMySQLPublishQueueEnabled", "true");
+
+		// tell that background mysql publish queue reading is enabled or not
+		vAllEDev.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
+
+		// tells that bulk adding all the Redis Keys like
+		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
+		vAllEDev.put("ISBulkAddInRedisSetEnabled", "false");
+		// tells that if reading Redis Sets and pushing to queue is enabled
+		vAllEDev.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
 
 		return vAllEDev;
 
@@ -1395,7 +1432,20 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL
 		vAllEProduction.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllEProduction.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+
+		// tells that whenever any new entry is added or
+		// updated in Redis database then we need to make an entry into Redis
+		// Set to later transfer it to MySQL is enabled or not
 		vAllEProduction.put("IsMySQLPublishQueueEnabled", "false");
+
+		// tell that background mysql publish queue reading is enabled or not
+		vAllEProduction.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
+
+		// tells that bulk adding all the Redis Keys like
+		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
+		vAllEProduction.put("ISBulkAddInRedisSetEnabled", "false");
+		// tells that if reading Redis Sets and pushing to queue is enabled
+		vAllEProduction.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "false");
 
 		return vAllEProduction;
 	}
@@ -1502,7 +1552,19 @@ public class BaseRedisDataAccessLayer {
 				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
+		vAllEAll.put("AKS_Script_Publish_Method", "POST");
 
+		// to be used for userReferralContact
+		vAllEAll.put("SQL_QUERY_GET_USER_REFER_CONTACT",
+				"From ReferralContactEntity WHERE userId =:userId AND userReferId = :userReferId AND referralMediumType =:referralMediumType AND contact =:contact");
+
+		// to be used for user blog activity
+		vAllEAll.put("SQL_QUERY_GET_USER_BLOG_ACTIVITY",
+				"From BlogActivityEntity WHERE userId =:userId AND activity =:activity AND activityType =:activityType");
+
+		// query for updating monthly Obtained score
+		vAllEAll.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
+				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
 		return vAllEAll;
 
 	}

@@ -11,11 +11,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
+import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.UserAssessmentDetailEntity;
 
 /**
  * This class implements the IRedisAssessment
@@ -64,6 +66,15 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	private static final String MonthlyScore = "MonthlyScore:";
 
 	/**
+	 * This is the variable for representing key to be used in Redis Set
+	 */
+	private static final String UserAssessmentKeyForSet = "UserAssessment_MySQL";
+
+	private static final String UserAssessmentScoreKeyForSet = "UserAssessmentScore_MySQL";
+
+	private static final String UserMonthlyScoreKeyForSet = "UserMonthlyScore_MySQL";
+
+	/**
 	 * @see IRedisAssessment.getAssessmentAttempt
 	 */
 	@Override
@@ -100,6 +111,16 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 		AssessmentEntity assessmentDataEntity = super.get(
 				Assessment + RequestThreadLocal.getSession().getUserId() + ":" + assessmentEntity.getId(),
 				AssessmentEntity.class);
+		return assessmentDataEntity;
+	}
+
+	/**
+	 * @see IRedisAssessment.getAssessment
+	 */
+	@Override
+	public AssessmentEntity getUserAssessment(AssessmentEntity assessmentEntity) {
+		AssessmentEntity assessmentDataEntity = super.get(
+				Assessment + assessmentEntity.getUserId() + ":" + assessmentEntity.getId(), AssessmentEntity.class);
 		return assessmentDataEntity;
 	}
 
@@ -211,15 +232,81 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	}
 
 	/**
+	 * @see IRedisAssessment.addInRedisSetForUserAssessment
+	 */
+	@Override
+	public void addInRedisSetForUserAssessment(UserAssessmentDetailEntity userAssessmentDetailEntity) {
+		// here , is used as separator because userId already have ":" in it so
+		// we cant split on ":"
+		super.sadd(UserAssessmentKeyForSet,
+				userAssessmentDetailEntity.getUserId() + "," + userAssessmentDetailEntity.getAssessmentId());
+	}
+
+	/**
+	 * @see IRedisAssessment.addInRedisSet
+	 */
+	@Override
+	public void addInRedisSetForUserAssessment(String userId, String assessmentId) {
+		// here , is used as separator because userId already have ":" in it so
+		// we cant split on ":"
+		super.sadd(UserAssessmentKeyForSet, userId + "," + assessmentId);
+	}
+
+	@Override
+	public Set<String> getAllTotalScoreKeys() {
+		return super.keys(TotalScore + "*");
+	}
+
+	/**
+	 * @see IRedisAssessment.fetchAssessmentIdsFromRedisSet
+	 */
+	@Override
+	public Set<String> fetchAssessmentIdsFromRedisSet() {
+		return super.smembers(UserAssessmentKeyForSet);
+	}
+
+	/**
+	 * @see IRedisAssessment.deleteRedisAssessmentIdFromSet
+	 */
+	@Override
+	public void deleteRedisAssessmentIdFromSet(String assessmentId) {
+		super.srem(UserAssessmentKeyForSet, assessmentId);
+	}
+
+	/**
+	 * @see IRedisAssessment.addIdInRedisSetForAssessmentScore
+	 */
+	@Override
+	public void addIdInRedisSetForAssessmentScore(String id) {
+		super.sadd(UserAssessmentScoreKeyForSet, id);
+	}
+
+	/**
+	 * @see IRedisAssessment.fetchAssessmentIdsFromRedisSet
+	 */
+	@Override
+	public Set<String> fetchIdsFromAssessmentScoreRedisSet() {
+		return super.smembers(UserAssessmentScoreKeyForSet);
+	}
+
+	/**
+	 * @see IRedisAssessment.deleteUserIdFromRedisSetForTotalScore
+	 */
+	@Override
+	public void deleteIdFromRedisSetForAssessmentScore(String userId) {
+		super.srem(UserAssessmentScoreKeyForSet, userId);
+	}
+
+	/**
 	 * @see IRedisAssessment.deleteAssessmentsData
 	 */
 	@Override
 	public void deleteUserAssessmentsData(String userId) {
 		Set<String> assessmentKeys = this.getAllAssessmentKeysForUser(userId);
-		for(String key : assessmentKeys){
+		for (String key : assessmentKeys) {
 			super.del(key);
 		}
-		//super.del(Assessment + userId);
+		// super.del(Assessment + userId);
 	}
 
 	/**
@@ -258,8 +345,62 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	public Set<String> getAllMonthlyScoreKeys(String userId) {
 		return super.keys(MonthlyScore + "*" + "*" + userId);
 	}
+
+	/**
+	 * @see IRedisAssessment.getAllMonthlyScoreKeys
+	 */
 	@Override
-	public Set<String> getAllAssessmentKeysForUser(String userId){
+	public Set<String> getAllMonthlyScoreKeys() {
+		return super.keys(MonthlyScore + "*" + "*" + "*");
+	}
+
+	/**
+	 * @see IRedisAssessment.getAllAssessmentKeysForUser
+	 */
+	@Override
+	public Set<String> getAllAssessmentKeysForUser(String userId) {
 		return super.keys(Assessment + userId + "*");
 	}
+
+	/**
+	 * @see IRedisAssessment.getAllAssessmentKeys
+	 */
+	@Override
+	public Set<String> getAllAssessmentKeys() {
+		return super.keys(Assessment + "*" + "*");
+	}
+
+	/**
+	 * @see IRedisAssessment.addIdInRedisSetForAssessmentMonthlyScore
+	 */
+	@Override
+	public void addIdInRedisSetForAssessmentMonthlyScore(String id) {
+		super.sadd(UserMonthlyScoreKeyForSet, id);
+	}
+
+	/**
+	 * @see IRedisAssessment.fetchIdsFromAssessmentMonthlyScoreRedisSet
+	 */
+	@Override
+	public Set<String> fetchIdsFromAssessmentMonthlyScoreRedisSet() {
+		return super.smembers(UserMonthlyScoreKeyForSet);
+	}
+
+	/**
+	 * @see IRedisAssessment.deleteIdFromRedisSetForAssessmentMonthlyScore
+	 */
+	@Override
+	public void deleteIdFromRedisSetForAssessmentMonthlyScore(String userId) {
+		super.srem(UserMonthlyScoreKeyForSet, userId);
+	}
+
+	/**
+	 * @see IRedisAssessment.getMonthlyScore
+	 */
+	@Override
+	public ScoreEntity getUserMonthlyScore(String userId, String year, String month) {
+		ScoreEntity scoreEntity = super.get(MonthlyScore + year + ":" + month + ":" + userId, ScoreEntity.class);
+		return scoreEntity;
+	}
+
 }

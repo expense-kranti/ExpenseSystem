@@ -94,9 +94,10 @@ public interface IExperianService {
 	 * @throws PreconditionFailedException
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
+	 * @throws Exception 
 	 */
 	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
-			UpdateFailedException, ParserConfigurationException, PreconditionFailedException;
+			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
 
 }

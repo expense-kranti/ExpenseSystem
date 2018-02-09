@@ -18,8 +18,9 @@ public interface IFileService {
 	 * @param file
 	 *            The file data
 	 * @return the file entity
+	 * @throws Exception 
 	 */
-	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws UpdateFailedException;
+	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws UpdateFailedException, Exception;
 
 	/**
 	 * This method is used to the list of files for given master tag

@@ -303,10 +303,9 @@ public class SendEmailToReferredUserObserver implements IAsyncWorkObserver {
 		// check in configuration to add in redisset
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			// add key in redis database to migrate data to MySQL
-			referral.addInRedisSet(referralEntity);
+			referral.addInRedisSet(referralEntity, updateReferral);
 		}
-		// TODO redis sadd() or save to mysql - delete
-		//referral.mySqlSaveReferalData(referralEntity, updateReferral);
+		
 	}
 
 	/**

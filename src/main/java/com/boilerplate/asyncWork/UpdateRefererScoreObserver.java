@@ -2,6 +2,8 @@ package com.boilerplate.asyncWork;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
@@ -168,6 +170,12 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			this.publishReferralData(referalEntity);
 			// Update contact detail
 			this.updateReferredData(referalEntity, referredContactDetail);
+
+			// if true then add key in redisset
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				// add key in redis database to migrate data to MySQL
+				referral.addInRedisSet(referalEntity, referredContactDetail);
+			}
 		}
 
 	}
@@ -318,7 +326,17 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 	 */
 	private void updateUserScoreAndPublish(ExternalFacingReturnedUser user, String totalScore) {
 		user.setTotalScore(totalScore);
+		if (user.getTotalScore() != null && !(user.getTotalScore().isEmpty()))
+			user.setTotalScoreInDouble(Double.parseDouble(user.getTotalScore()));
 		userDataAccess.update(user);
+
+		// add userid to the Redis set for updating total score of the
+		// user(which
+		// contains user assessment score and refer score)
+		// if true then add in redis key set
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			userDataAccess.addInRedisSet(user);
+		}
 		publishUserToCRM(user);
 	}
 
@@ -345,14 +363,23 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveTotalScore(newScore);
-			
-			// TODO use redis.sadd() here
-			
 			// create external facing returned user from the user id of referal
 			// entity
 			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
+			// set userTotal refer score in redis
+			if (newScore.getReferScore() != null) {
+				user.setTotalReferScore(Double.parseDouble(newScore.getReferScore()));
+			}
+
+			user.setRank(newScore.getRank());
 			updateUserScoreAndPublish(user, String
 					.valueOf(Float.valueOf(newScore.getReferScore()) + Float.valueOf(newScore.getObtainedScore())));
+
+			// if true then add in redis key set
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				userDataAccess.addInRedisSet(user);
+			}
+
 		}
 
 	}
@@ -377,9 +404,16 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		if (newScore != null) {
 			// Save total score
 			redisAssessment.saveMonthlyScore(newScore);
-			
-			// TODO use redis.sadd() here
-			
+
+			// save monthly refer score
+			// add userId in Redis set for saving monthly score in MYSQl
+			// here we are assuming the now time will be same taken in Redis
+			// if true add in redis key in set IsMySQLPublishQueueEnabled
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(newScore.getUserId() + ","
+						+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+			}
+
 		}
 	}
 
@@ -404,6 +438,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		}
 		// Set refer score
 		scoreEntity.setReferScore(String.valueOf(userReferScore));
+		scoreEntity.setReferScoreInDouble(userReferScore);
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.valueOf(scoreEntity.getObtainedScore()) + userReferScore));
 		return scoreEntity;
@@ -429,6 +464,10 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(String.valueOf(0f));
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.valueOf(referScore)));
+		// set double referscore
+		scoreEntity.setReferScoreInDouble(Double.parseDouble(referScore));
+		// set Double obtained score
+		scoreEntity.setObtainedScoreInDouble(0f);
 		return scoreEntity;
 	}
 

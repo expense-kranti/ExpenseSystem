@@ -7,6 +7,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.AttemptAssessmentListEntity;
 import com.boilerplate.java.entities.ScoreEntity;
+import com.boilerplate.java.entities.UserAssessmentDetailEntity;
 
 /**
  * This class provide the mechanism to perform assessment related operations
@@ -203,4 +204,138 @@ public interface IRedisAssessment {
 	 * @return the Set of all assessment keys of the user with given userId
 	 */
 	public Set<String> getAllAssessmentKeysForUser(String userId);
+
+	/**
+	 * This method is used to add the userassessmentdetailentity in Redis Set
+	 * 
+	 * @param userAssessmentDetailsEntity
+	 *            contains the user id , assessment id to get the user attempted
+	 *            assessments
+	 */
+	public void addInRedisSetForUserAssessment(UserAssessmentDetailEntity userAssessmentDetailEntity);
+
+	/**
+	 * This method is used to fetch all the assessment ids stored in redis set
+	 * 
+	 * @return the assessmentIds set
+	 */
+	public Set<String> fetchAssessmentIdsFromRedisSet();
+
+	/**
+	 * This method is used to delete the id related to assessment present in
+	 * Redis Set
+	 * 
+	 * @param assessmentId
+	 *            the id to delete
+	 */
+	public void deleteRedisAssessmentIdFromSet(String assessmentId);
+
+	/**
+	 * This method is used to add ids to the Redis Set for saving assessment
+	 * score of the assessment attempted by user, to MySQL
+	 * 
+	 * @param id
+	 *            the id to be saved in Redis Set which comprises of userId and
+	 *            assessmentId
+	 */
+	public void addIdInRedisSetForAssessmentScore(String id);
+
+	/**
+	 * This method is used to fetch the user ids from redis set of
+	 * AssessmentObtainedScore save or update
+	 * 
+	 * @return the set of keys
+	 */
+	public Set<String> fetchIdsFromAssessmentScoreRedisSet();
+
+	/**
+	 * This method is used to delete userId from totalScore Redis Set
+	 * 
+	 * @param id
+	 *            the id to be deleted
+	 */
+	public void deleteIdFromRedisSetForAssessmentScore(String id);
+
+	/**
+	 * This method is used to get user assessment
+	 * 
+	 * @param assessmentEntity
+	 *            contains userId of the user whose assessment is to get,
+	 *            assessmentId of assessment to get
+	 * @return the assessment details of the assessment
+	 */
+	public AssessmentEntity getUserAssessment(AssessmentEntity assessmentEntity);
+
+	/**
+	 * This method is used to add the userId whose monthly score is to save in
+	 * MySQL
+	 * 
+	 * @param id
+	 *            the user id
+	 */
+	public void addIdInRedisSetForAssessmentMonthlyScore(String id);
+
+	/**
+	 * This method is used to add ids to the Redis Set for saving assessment
+	 * monthly score of the assessment attempted by user, to MySQL
+	 * 
+	 * @return the set of keys
+	 */
+	public Set<String> fetchIdsFromAssessmentMonthlyScoreRedisSet();
+
+	/**
+	 * This method is used to delete userId from MontlhyScore Redis Set
+	 * 
+	 * @param userId
+	 *            the user id present in Redis Set that has been processed
+	 */
+	public void deleteIdFromRedisSetForAssessmentMonthlyScore(String userId);
+
+	/**
+	 * This method is used to get the user monthly score with user's given
+	 * userId, month, and year
+	 * 
+	 * @param userId
+	 *            is the user id of the user whose monthly score to get
+	 * @param year
+	 *            the year for which monthly score to get
+	 * @param month
+	 *            the month for which monthly score to get
+	 * @return the scoreEntity
+	 */
+	// to be used in db migration
+	// not throwing not found exception as it must be present
+	public ScoreEntity getUserMonthlyScore(String userId, String year, String month);
+
+	/**
+	 * This method is overloaded method used to set in Redis Set
+	 * 
+	 * @param userId
+	 *            the userId of the user
+	 * @param assessmentId
+	 *            the assessment id for assessment attempted by user
+	 */
+	public void addInRedisSetForUserAssessment(String userId, String assessmentId);
+
+	/**
+	 * This method is used to get all total score keys from database
+	 * 
+	 * @return the set of all total score keys
+	 */
+	public Set<String> getAllTotalScoreKeys();
+
+	/**
+	 * This method is used to get all the assessment keys
+	 * 
+	 * @return the set of all assessment keys
+	 */
+	public Set<String> getAllAssessmentKeys();
+
+	/**
+	 * This method is used to get all the monthly score keys
+	 * 
+	 * @return the set of all monthly keys
+	 */
+	public Set<String> getAllMonthlyScoreKeys();
+
 }

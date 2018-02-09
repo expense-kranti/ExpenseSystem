@@ -3,6 +3,7 @@ package com.boilerplate.database.mysql.implementations;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 
@@ -14,23 +15,12 @@ import com.boilerplate.java.entities.FileEntity;
 
 public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer  {
 
-	
-	/**
-	 * @see IFilePointer.mySqlSaveFile
-	 */
 	@Override
-	public void mySqlSaveFile(FileEntity file) throws IOException {
-		// Set creation time to current time
-		file.setCreationDate(Date.valueOf(LocalDate.now()));
-		// save file in MySql Database
-		super.create(file);
+	public FileEntity save(FileEntity fileEntity) throws Exception {
 		
-	}
-
-	@Override
-	public FileEntity save(FileEntity fileEntity) {
-		// TODO Auto-generated method stub
-		return null;
+		// save file in MySql Database
+		super.create(fileEntity);
+		return fileEntity;
 	}
 
 	@Override
@@ -62,5 +52,37 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void addInRedisSet(FileEntity fileEntity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<String> fetchUserFileAndAddInQueue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteItemFromRedisUserFileSet(String fileName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInRedisSet(String fileName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<String> getAllFileKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 
 }

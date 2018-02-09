@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
+import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferalEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -227,30 +229,68 @@ public interface IReferral {
 	 *            The user refer id of the user
 	 */
 	public void deleteUserAllReferredExpireContactsData(String userReferId);
-	
+
 	/**
-	 * This method is used to save referal in mySql
-	 * @param referalEntity
+	 * 
 	 * @param referalContact
+	 * @throws Exception
 	 */
-	void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact);
+	public void mySqlSaveReferalData(ReferralContactEntity referalContact) throws Exception;
 
 	/**
 	 * This method is used to add key in Redis
+	 * 
 	 * @param referalEntity
+	 * @param updateReferral
 	 */
-	void addInRedisSet(ReferalEntity referalEntity);
+	void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity updateReferral);
 
 	/**
 	 * This method is used to fetch ReferalKey which is stored in redis
+	 * 
 	 * @return
 	 */
 	Set<String> fetchUserReferIdsFromRedisSet();
 
 	/**
 	 * This method is used to det
+	 * 
 	 * @param userReferId
 	 */
 	void deleteItemFromRedisUserReferIdSet(String userReferId);
+
+	/**
+	 * This method is use to get ReferredContactDetailEntity from redis database
+	 * by its key
+	 * 
+	 * @param redisReferalKey
+	 * @return
+	 */
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey);
+
+	/**
+	 * This method is used to get User referral link from redis database
+	 * 
+	 * @param redisReferalExpiredKey
+	 * @return
+	 */
+	public String getUserReferralLink(String redisReferalExpiredKey);
+
+	/**
+	 * This method is used to get all referred Contact keys
+	 * 
+	 * @return set of all referred contacts
+	 */
+	public Set<String> getAllReferredContactKeys();
+
+	/**
+	 * This method is used to add the Keys to Redis Set
+	 * 
+	 * @param userReferId
+	 *            the userReferId of the user
+	 * @param referralMediumType
+	 *            the medium type of the user
+	 */
+	public void addInRedisSet(String userReferId, String referralMediumType, String contact);
 
 }

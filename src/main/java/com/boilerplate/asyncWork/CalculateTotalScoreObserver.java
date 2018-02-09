@@ -1,5 +1,7 @@
 package com.boilerplate.asyncWork;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IRedisAssessment;
@@ -41,7 +43,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
-	
+
 	/**
 	 * The autowired instance of user data access
 	 */
@@ -122,16 +124,31 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 *            this parameter contains the assessment data ,assessment data
 	 *            like assessment id, assessment section,assessment
 	 *            questions,assessment score,obtained score etc.
-	 * @throws NotFoundException throws when user is not found
+	 * @throws NotFoundException
+	 *             throws when user is not found
 	 */
-	private void publishAssessmentStatus(AssessmentEntity assessmentEntity) throws NotFoundException, ConflictException {
+	private void publishAssessmentStatus(AssessmentEntity assessmentEntity)
+			throws NotFoundException, ConflictException {
 		// Create a new instance of assessment status publish entity
 		AssessmentStatusPubishEntity assessmentPublishData = new AssessmentStatusPubishEntity();
 		// Set the user id
 		assessmentPublishData.setUserId(assessmentEntity.getUserId());
+		ScoreEntity scoreEntity = redisAssessment.getTotalScore(assessmentEntity.getUserId());
+		// // Set the total score of user
+		// assessmentPublishData
+		// .setTotalScore((redisAssessment.getTotalScore(assessmentEntity.getUserId())).getObtainedScore());
+		// // Set the monthly score of user
+		// assessmentPublishData
+		// .setMonthlyScore((redisAssessment.getMonthlyScore(assessmentEntity.getUserId())).getObtainedScore());
+		// // Set user Rank
+		// assessmentPublishData.setRank(calculateRank(Float.parseFloat(assessmentPublishData.getTotalScore())));
+		// // Set user monthly rank
+		// assessmentPublishData.setMonthlyRank(calculateRank(Float.parseFloat(assessmentPublishData.getMonthlyScore())));
+		// // Set the assessment status
+		// assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(assessmentEntity.getUserId()));
+
 		// Set the total score of user
-		assessmentPublishData
-				.setTotalScore((redisAssessment.getTotalScore(assessmentEntity.getUserId())).getObtainedScore());
+		assessmentPublishData.setTotalScore(scoreEntity.getObtainedScore());
 		// Set the monthly score of user
 		assessmentPublishData
 				.setMonthlyScore((redisAssessment.getMonthlyScore(assessmentEntity.getUserId())).getObtainedScore());
@@ -141,21 +158,39 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		assessmentPublishData.setMonthlyRank(calculateRank(Float.parseFloat(assessmentPublishData.getMonthlyScore())));
 		// Set the assessment status
 		assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(assessmentEntity.getUserId()));
-		//save total score in user
-		this.saveUserTotalScore(assessmentPublishData);
+
+		// // save total score in user
+		// this.saveUserTotalScore(scoreEntity);
 		this.publishToCRM(assessmentPublishData);
 	}
+
 	/**
 	 * This method save the user total score in user object
-	 * @param assessmentPublishData This is the assessment publish data.
-	 * @throws NotFoundException throws when user is not found
+	 * 
+	 * @param assessmentPublishData
+	 *            This is the assessment publish data.
+	 * @throws NotFoundException
+	 *             throws when user is not found
 	 */
-	private void saveUserTotalScore(
-			AssessmentStatusPubishEntity assessmentPublishData) throws NotFoundException, ConflictException {
-	
-		ExternalFacingReturnedUser user = userDataAccess.getUser(assessmentPublishData.getUserId(), null);
-		user.setTotalScore(assessmentPublishData.getTotalScore());
+	private void saveUserTotalScore(ScoreEntity scoreEntity) throws NotFoundException, ConflictException {
+		// get user which is to be update total score is to save
+		ExternalFacingReturnedUser user = userDataAccess.getUser(scoreEntity.getUserId(), null);
+
+		user.setTotalScore(String
+				.valueOf(Float.valueOf(scoreEntity.getObtainedScore()) + Float.valueOf(scoreEntity.getReferScore())));
+		// if user total score in string is empty or null then set it to "0"
+		// done for preventing NumberFormatException
+		if (user.getTotalScore() == null || user.getTotalScore().isEmpty())
+			user.setTotalScore("0");
+		user.setTotalScoreInDouble(Double.parseDouble(user.getTotalScore()));
+		user.setRank(scoreEntity.getRank());
+		// save user total score
 		userDataAccess.update(user);
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add userId in to Redis Set for updating user total score
+			userDataAccess.addInRedisSet(user);
+		}
+		// publish user total score to crm
 		this.publishUserToCRM(user);
 	}
 
@@ -166,8 +201,10 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 *            this parameter contains the assessment data ,assessment data
 	 *            like assessment id, assessment section,assessment
 	 *            questions,assessment score,obtained score etc.
+	 * @throws ConflictException
+	 * @throws NotFoundException
 	 */
-	public void calculateTotalScore(AssessmentEntity assessmentEntity) {
+	public void calculateTotalScore(AssessmentEntity assessmentEntity) throws NotFoundException, ConflictException {
 		// Get total score
 		ScoreEntity scoreEntity = redisAssessment.getTotalScore(assessmentEntity.getUserId());
 		// If score is not null
@@ -176,6 +213,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		} else {
 			this.createNewTotalScore(assessmentEntity);
 		}
+
 	}
 
 	/**
@@ -188,8 +226,11 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 *            this parameter contains the assessment data ,assessment data
 	 *            like assessment id, assessment section,assessment
 	 *            questions,assessment score,obtained score etc.
+	 * @throws ConflictException
+	 * @throws NotFoundException
 	 */
-	private void updateTotalScore(ScoreEntity scoreEntity, AssessmentEntity assessmentEntity) {
+	private void updateTotalScore(ScoreEntity scoreEntity, AssessmentEntity assessmentEntity)
+			throws NotFoundException, ConflictException {
 		// Calculate max score
 		Float maxScore = Float.valueOf(scoreEntity.getMaxScore()) + Float.valueOf(assessmentEntity.getMaxScore());
 		// Calculate total score
@@ -199,17 +240,21 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(String.valueOf(maxScore));
 		// Set the obtained score
 		scoreEntity.setObtainedScore(String.valueOf(obtainedScore));
-		// If refer score is not null then get rank according the sum of refer
-		// and obtained score
-		if (scoreEntity.getReferScore() != null) {
-			// set rank
-			scoreEntity.setRank(calculateRank(obtainedScore + Float.valueOf(scoreEntity.getReferScore())));
-		} else {
-			// set rank
-			scoreEntity.setRank(calculateRank(obtainedScore));
+		// Set the obtained score in double for SUM from MySQL
+		scoreEntity.setObtainedScoreInDouble(obtainedScore);
+
+		// get rank according the sum of refer and obtained score
+		if (scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty()) {
+			scoreEntity.setReferScore("0");
 		}
+		// set rank
+		scoreEntity.setRank(calculateRank(obtainedScore + Float.valueOf(scoreEntity.getReferScore())));
+		//////////////////////
 		// Save total score
 		redisAssessment.saveTotalScore(scoreEntity);
+		// save total score in user in redis and in MySQL
+		this.saveUserTotalScore(scoreEntity);
+
 	}
 
 	/**
@@ -219,22 +264,33 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 *            this parameter contains the assessment data ,assessment data
 	 *            like assessment id, assessment section,assessment
 	 *            questions,assessment score,obtained score etc.
+	 * @throws ConflictException
+	 * @throws NotFoundException
 	 */
-	private void createNewTotalScore(AssessmentEntity assessmentEntity) {
+	private void createNewTotalScore(AssessmentEntity assessmentEntity) throws NotFoundException, ConflictException {
 		// New instance of score entity
 		ScoreEntity scoreEntity = new ScoreEntity();
 		// Set max score
 		scoreEntity.setMaxScore(assessmentEntity.getMaxScore());
 		// Set the obtained score
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setObtainedScore("0");
+		}
+		// Set the obtained score in double for SUM in MySQL
+		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// Set refer score 0
 		scoreEntity.setReferScore(String.valueOf(0f));
+		// set refer score in double for saving in MySQL
+		scoreEntity.setReferScoreInDouble(0);
 		// set rank
 		scoreEntity.setRank(calculateRank(Float.parseFloat(assessmentEntity.getObtainedScore())));
 		// Save total score
 		redisAssessment.saveTotalScore(scoreEntity);
+		// save total score in user in redis and in MySQL
+		this.saveUserTotalScore(scoreEntity);
 	}
 
 	/**
@@ -272,8 +328,18 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(assessmentEntity.getMaxScore());
 		// Set the obtained score
 		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		// check for preventing Numberformat exception
+		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setObtainedScore("0");
+		}
+		// Set the obtained score in double for SUM(like operations) in MySQL
+		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
+
 		// Set refer score 0
 		scoreEntity.setReferScore(String.valueOf(0f));
+		// Set refer score in double to save in MySQL for doing mathematical
+		// operations
+		scoreEntity.setReferScoreInDouble(0);
 		// Set user id
 		scoreEntity.setUserId(assessmentEntity.getUserId());
 		// set rank
@@ -281,6 +347,12 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);
 
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add userId in Redis set for saving monthly score in MYSQl
+			// here we are assuming the now time will be same taken in Redis
+			redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
+					+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+		}
 	}
 
 	/**
@@ -313,8 +385,19 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		}
 		// Set the obtained score
 		scoreEntity.setObtainedScore(String.valueOf(obtainedScore));
+		// set obtained score in double for saving in MySQL for doing
+		// mathematical operations over it
+		scoreEntity.setObtainedScoreInDouble(obtainedScore);
+
 		// Save monthly score
 		redisAssessment.saveMonthlyScore(scoreEntity);
+
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			// add userId in Redis set for saving monthly score in MYSQl
+			// here we are assuming the now time will be same taken in Redis
+			redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(scoreEntity.getUserId() + ","
+					+ LocalDateTime.now().getYear() + "," + LocalDateTime.now().getMonth());
+		}
 	}
 
 	/**
@@ -353,8 +436,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		if (isPublishReport) {
 			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
 					configurationManager.get("AKS_Assessment_Publish_Method"),
-					configurationManager.get("AKS_Assessment_Publish_Subject"),
-					assessmentStatusPubishEntity,
+					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPubishEntity,
 					configurationManager.get("AKS_Assessment_Publish_URL"),
 					configurationManager.get("AKS_Assessment_Publish_Template"),
 					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));
@@ -373,23 +455,20 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 			}
 		}
 	}
+
 	private void publishUserToCRM(ExternalFacingReturnedUser user) {
 		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
-		
+
 		if (isPublishReport) {
 			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
-					configurationManager.get(""),
-					configurationManager.get("UPDATE_AKS_USER_SUBJECT"),
-						user,
-					configurationManager.get(""),
-					configurationManager.get(""),
-					configurationManager.get(""));
+					configurationManager.get(""), configurationManager.get("UPDATE_AKS_USER_SUBJECT"), user,
+					configurationManager.get(""), configurationManager.get(""), configurationManager.get(""));
 			if (subjects == null) {
 				subjects = new BoilerplateList<>();
 				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
 			}
 			try {
-				
+
 				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
 						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
 			} catch (Exception exception) {

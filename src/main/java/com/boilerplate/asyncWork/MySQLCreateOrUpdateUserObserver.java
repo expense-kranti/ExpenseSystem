@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.ConflictException;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ExternalFacingUser;
 
 /**
@@ -14,6 +15,10 @@ import com.boilerplate.java.entities.ExternalFacingUser;
  */
 public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 
+	/**
+	 * This is the instance of logger MySQLCreateOrUpdateUserObserver logger
+	 */
+	private static Logger logger = Logger.getInstance(MySQLCreateOrUpdateUserObserver.class);
 	/**
 	 * This is the instance of IUser
 	 */
@@ -67,12 +72,13 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 	 */
 	private void saveOrUpdateUserInMySQL(ExternalFacingUser externalFacingUser) throws ConflictException {
 
-		// try {
-		// add user to the mysql database
-		mySqlUser.create(externalFacingUser);
-		// } catch (Exception cev) {
-		// userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
-		// }
+		try {
+			// add user to the mysql database
+			mySqlUser.create(externalFacingUser);
+		} catch (Exception ex) {
+			logger.logException("MySQLCreateOrUpdateUserObserver", "saveOrUpdateUserInMySQL",
+					"try-catch block calling create method", ex.getMessage(), ex);
+		}
 		// after getting work done by using userId delete that user id from set
 		userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
 	}

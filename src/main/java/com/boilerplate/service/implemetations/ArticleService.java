@@ -71,11 +71,12 @@ public class ArticleService implements IArticleService {
 	}
 
 	/**
+	 * @throws Exception
 	 * @see IArticleService.saveUserArticle
 	 */
 	@Override
-	public void saveUserArticle(ArticleEntity articleEntity) throws ValidationFailedException {
-		//Validate articleEntity
+	public void saveUserArticle(ArticleEntity articleEntity) throws Exception {
+		// Validate articleEntity
 		articleEntity.validate();
 		// Set the user id
 		articleEntity.setUserId(RequestThreadLocal.getSession().getUserId());
@@ -104,10 +105,11 @@ public class ArticleService implements IArticleService {
 	}
 
 	/**
+	 * @throws Exception
 	 * @see IArticleService.approveArticle
 	 */
 	@Override
-	public void approveArticle(ArticleEntity articleEntity) {
+	public void approveArticle(ArticleEntity articleEntity) throws Exception {
 		// Set approved status to true
 		articleEntity.setIsApproved(true);
 		article.approveArticle(articleEntity);

@@ -18,8 +18,9 @@ public interface IBlogActivityService {
 	 *            The blogActivityEntity containing the user's blog activity and
 	 *            action
 	 * @return
+	 * @throws Exception 
 	 */
-	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity);
+	public BlogActivityEntity saveActivity(BlogActivityEntity blogActivityEntity) throws Exception;
 
 	/**
 	 * This method is used to delete user's blog activity

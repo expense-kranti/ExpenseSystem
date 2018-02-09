@@ -282,7 +282,7 @@ public class SendSmsToReferredUserObserver implements IAsyncWorkObserver {
 		// check in configuration to add in redisset
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			// add key in redis database to migrate data to MySQL
-			referral.addInRedisSet(referralEntity);
+			referral.addInRedisSet(referralEntity, updateReferral);
 		}
 		
 	}

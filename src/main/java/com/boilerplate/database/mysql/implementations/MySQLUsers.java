@@ -33,29 +33,12 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	 */
 	@Override
 	public ExternalFacingUser create(ExternalFacingUser user) throws ConflictException {
-		org.hibernate.Session session = null;
+
 		try {
-			// open a session
-			session = HibernateUtility.getSessionFactory().openSession();
-			// get all the configurations from the DB as a list
-			org.hibernate.Transaction transaction = session.beginTransaction();
-			session.saveOrUpdate(user);
-			// commit the transaction
-			transaction.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-			// } catch (ConstraintViolationException cve) {// error no
-			// constraint
-			// // violation exception class found
-			// logger.logException("MySQLUsers", "create",
-			// "ConstraintViolationException", cve.toString(), cve);
-			// throw new ConflictException("User", cve.getCause().getMessage(),
-			// null);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			super.update(user);
+		} catch (Exception ex) {
+			logger.logException("MySQLUsers", "create", "try -catch block", ex.getMessage(), ex);
+			throw ex;
 		}
 		return user;
 
@@ -106,6 +89,18 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 
 	@Override
 	public void deleteItemFromRedisUserIdSet(String userId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Set<String> getAllUserKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(String userId) {
 		// TODO Auto-generated method stub
 
 	}

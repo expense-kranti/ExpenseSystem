@@ -9,8 +9,11 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.java.Base;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -64,7 +67,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 * This is the blogUser key used to migrate redis data to mySql to to save
 	 * in redis.sadd()
 	 */
-	public static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
+	private static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
 
 	/**
 	 * @see IReferral.saveUserReferredContacts
@@ -287,17 +290,22 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		return super.keys(ReferredContact + userReferId + "*" + "*");
 	}
 
+	/**
+	 * @see IReferral.addInRedisSet
+	 */
 	@Override
-	public void mySqlSaveReferalData(ReferalEntity referalEntity, ReferredContactDetailEntity referalContact) {
-
+	public void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity referredContactDetailEntity) {
+		super.sadd(ReferalKeyForSet,
+				referalEntity.getUserReferId() + ":" + referalEntity.getReferralMediumType().toString() + ":"
+						+ (referredContactDetailEntity.getContact()).toUpperCase());
 	}
 
 	/**
 	 * @see IReferral.addInRedisSet
 	 */
 	@Override
-	public void addInRedisSet(ReferalEntity referalEntity) {
-		super.sadd(ReferalKeyForSet, referalEntity.getUserReferId());
+	public void addInRedisSet(String userReferId, String referralMediumType, String contact) {
+		super.sadd(ReferalKeyForSet, userReferId + ":" + referralMediumType + ":" + (contact).toUpperCase());
 	}
 
 	/**
@@ -314,5 +322,31 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	@Override
 	public void deleteItemFromRedisUserReferIdSet(String userReferId) {
 		super.srem(ReferalKeyForSet, userReferId);
+	}
+
+	/**
+	 * @see IRedisAssessment.getAllMonthlyScoreKeys
+	 */
+	@Override
+	public Set<String> getAllReferredContactKeys() {
+		return super.keys(ReferredContact + "*" + "*");
+	}
+
+	@Override
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey) {
+		Map<String, String> referalContactMapData = super.hgetAll(ReferredContact + redisReferalKey);
+		return Base.fromMap(referalContactMapData, ReferredContactDetailEntity.class);
+	}
+
+	@Override
+	public void mySqlSaveReferalData(ReferralContactEntity referalContactList) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getUserReferralLink(String redisReferalExpiredKey) {
+		// TODO Auto-generated method stub
+		return super.get(ReferredExpireContact + redisReferalExpiredKey);
 	}
 }

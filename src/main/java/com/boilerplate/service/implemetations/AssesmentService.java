@@ -1,3 +1,4 @@
+
 package com.boilerplate.service.implemetations;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -26,6 +27,7 @@ import com.boilerplate.java.entities.QuestionEntity;
 import com.boilerplate.java.entities.QuestionType;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.TopScorerEntity;
+import com.boilerplate.java.entities.UserAssessmentDetailEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
 
 /**
@@ -286,6 +288,7 @@ public class AssesmentService implements IAssessmentService {
 		assessmentEntity.validate();
 		// Save the assessment to data store
 		redisAssessment.saveAssessment(assessmentEntity);
+
 	}
 
 	/**
@@ -340,6 +343,36 @@ public class AssesmentService implements IAssessmentService {
 		assessmentEntity.setStatus(assessmentStatus);
 		// Save the assessment to data store
 		redisAssessment.saveAssessment(assessmentEntity);
+
+		// save assessment related data only when assessment status is Submit
+		if (assessmentEntity.getStatus().equals(AssessmentStatus.Submit)) {
+			// save the user id and assessment Id in Redis Set for saving the
+			// assessment
+			fetchAssessmentAndUserIdAndSaveInRedisSet(assessmentEntity);
+		}
+	}
+
+	/**
+	 * This method is used to save the assessment and userId in Redis Set
+	 * 
+	 * @param assessmentEntity
+	 *            contains the User Id and Assessment Id
+	 */
+	private void fetchAssessmentAndUserIdAndSaveInRedisSet(AssessmentEntity assessmentEntity) {
+
+		UserAssessmentDetailEntity userAssessmentDetail = new UserAssessmentDetailEntity();
+		// set the user id
+		userAssessmentDetail.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		// set assessment id by converting assessment id from string to int as
+		// in MyqsqlDB the id used is in BigInt type
+		userAssessmentDetail.setAssessmentId(Integer.parseInt(assessmentEntity.getId()));
+		// add in redis set
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			redisAssessment.addInRedisSetForUserAssessment(userAssessmentDetail);
+			redisAssessment.addIdInRedisSetForAssessmentScore(
+					RequestThreadLocal.getSession().getExternalFacingUser().getUserId() + ","
+							+ assessmentEntity.getId());
+		}
 	}
 
 	/**
@@ -639,15 +672,16 @@ public class AssesmentService implements IAssessmentService {
 		}
 		return topscorerUser;
 	}
+
 	/**
 	 * @see IRedisAssessment.deleteUserAllAssessmentData
 	 */
 	@Override
-	public void deleteUserAllAssessmentData(String userId){
+	public void deleteUserAllAssessmentData(String userId) {
 		redisAssessment.deleteUserAssessmentsData(userId);
 		redisAssessment.deleteUserAttemptsData(userId);
 		redisAssessment.deleteUserTotalScoreData(userId);
-	    redisAssessment.deleteUserMonthlyScoreData(userId);
+		redisAssessment.deleteUserMonthlyScoreData(userId);
 	}
 
 }

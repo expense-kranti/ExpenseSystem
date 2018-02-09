@@ -651,9 +651,70 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
+	 * Gets the rank
+	 * 
+	 * @return the rank
+	 */
+	public String getRank() {
+		return rank;
+	}
+
+	/**
+	 * Sets the rank
+	 * 
+	 * @param rank
+	 *            the rank to set
+	 */
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+	/**
+	 * Gets the totalScoreInDouble
+	 * 
+	 * @return the totalScoreInDouble
+	 */
+	public double getTotalScoreInDouble() {
+		return totalScoreInDouble;
+	}
+
+	/**
+	 * Sets the totalScoreInDouble
+	 * 
+	 * @param totalScoreInDouble
+	 *            the totalScoreInDouble to set
+	 */
+	public void setTotalScoreInDouble(double totalScoreInDouble) {
+		this.totalScoreInDouble = totalScoreInDouble;
+	}
+
+	/**
 	 * This is the user total score
 	 */
 	private String totalScore;
+	
+	/**
+	 * This is the user refer score 
+	 */
+	private double totalReferScore;
+	
+	/**
+	 * Gets the total refer score
+	 * @return
+	 * 		the total refer score
+	 */
+	public double getTotalReferScore() {
+		return totalReferScore;
+	}
+
+	/**
+	 * Sets the total refer score
+	 * @param totalReferScore This is the total refer score		
+	 */
+	public void setTotalReferScore(double totalReferScore) {
+		this.totalReferScore = totalReferScore;
+	}
+
 	/**
 	 * This is the income tax uuid used to refer to income tax data for the user
 	 */
@@ -662,5 +723,13 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the role name of user
 	 */
 	private String roleName;
+	/**
+	 * This is the user's rank for assessments
+	 */
+	private String rank;
+	/**
+	 * This is the user total score in double for saving in MySQL
+	 */
+	private double totalScoreInDouble;
 
 }

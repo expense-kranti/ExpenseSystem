@@ -5,27 +5,18 @@ import java.util.Map;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.ReferralContactEntity;
 import com.boilerplate.java.entities.ReferredContactDetailEntity;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral {
+public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements IReferral {
 
-	@Override
-	public void mySqlSaveReferalData(ReferalEntity referalEntity , ReferredContactDetailEntity referalContact) {
-		
-		// Save the reffered user
-		super.create(referalEntity);
-		referalEntity.getId();
-		referalContact.setReferalId(referalEntity.getId());
-		super.create(referalContact);
-	}
-	
-	@Override
 	public void saveUserReferUUID(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -43,7 +34,7 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void increaseDayCounter(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -55,19 +46,19 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void increaseReferSignUpCounter(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void createDayCounter(ReferalEntity referalEntity, String initialValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void saveUserReferredExpireContacts(ReferalEntity referalEntity, String contact) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -75,7 +66,7 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 			ReferredContactDetailEntity updateReferralContactDetailsEntity)
 			throws JsonParseException, JsonMappingException, IOException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -87,7 +78,7 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void createSignUpCounter(ReferalEntity referalEntity, String initialValue) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -105,7 +96,7 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void deleteUserAllReferredContactsData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -117,7 +108,7 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void deleteUserAllReferSignUpCountData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -141,19 +132,21 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void deleteUserAllReferCounterData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteUserAllReferredExpireContactsData(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	/**
+	 * @see IReferral
+	 */
 	@Override
-	public void addInRedisSet(ReferalEntity referalEntity) {
-		// TODO Auto-generated method stub
-		
+	public void mySqlSaveReferalData(ReferralContactEntity referalContact) throws Exception {
+		super.create(referalContact);
 	}
 
 	@Override
@@ -165,8 +158,37 @@ public class MySQLReferal extends MySQLBaseDataAccessLayer implements IReferral 
 	@Override
 	public void deleteItemFromRedisUserReferIdSet(String userReferId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
+	@Override
+	public ReferredContactDetailEntity getReferredContactDetailEntity(String redisReferalKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getUserReferralLink(String redisReferalExpiredKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(ReferalEntity referalEntity, ReferredContactDetailEntity updateReferral) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Set<String> getAllReferredContactKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addInRedisSet(String userReferId, String referralMediumType, String contact) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
