@@ -164,7 +164,7 @@ public class MySQLQueueWriterJob {
 	 */
 	// This method is being called automatically through servlet context
 	// configuration
-	public void addElementsInQueue() throws NotFoundException {
+	public void addRedisSetElementsInQueue() throws NotFoundException {
 		if (Boolean.parseBoolean(configurationManager.get("IsReadSetAndAddToMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set and add into queue for
 			// migrating Users from Redis to MySQL

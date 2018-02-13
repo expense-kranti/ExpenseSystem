@@ -18,6 +18,7 @@ import com.boilerplate.java.entities.ReferralContactEntity;;
 
 /**
  * This class is used to pop or read queue and process each element
+ * 
  * @author Yash
  *
  */
@@ -27,7 +28,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 	 * This is the instance of logger MySQLCreateOrUpdateUserObserver logger
 	 */
 	private static Logger logger = Logger.getInstance(MySQLCreateOrUpdateUserObserver.class);
-	
+
 	/**
 	 * This is the instance of configuration manager
 	 */
@@ -77,8 +78,8 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 	}
 
 	/**
-	 * This method get the user from Redis data store using supplied BlogActivity and
-	 * save it in MySQL Database
+	 * This method get the user from Redis data store using supplied
+	 * BlogActivity and save it in MySQL Database
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
@@ -87,8 +88,10 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 	}
 
 	/**
-	 * This method is used to save or update the Blog Activity 
-	 * @param blogActivityKey This is blog activity key saved in redis
+	 * This method is used to save or update the Blog Activity
+	 * 
+	 * @param blogActivityKey
+	 *            This is blog activity key saved in redis
 	 * @throws Exception
 	 */
 	private void saveOrUpdateBlogAcivityInMySQL(String blogActivityKey) throws Exception {
@@ -98,30 +101,36 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 		Map<String, String> blogActivityMap = blogActivityDataAccess.getBlogActivityMap(blogActivityKey);
 		// get blog Activity from Map
 		blogActivityEntityList = getBlogActivityListFromMap(blogActivityMap, blogActivityKey);
-		
+
 		// get the already save row and if exist update the row
 		blogActivityEntityList = getAlreadySavedBlogActivity(blogActivityEntityList);
 
 		// save the blog activity in the MySQL table
-		for(Object blogActivityEntity : blogActivityEntityList){
+		for (Object blogActivityEntity : blogActivityEntityList) {
 			try {
 				// add blog activity to the mysql database
 				mySqlBlogActivity.saveActivity((BlogActivityEntity) blogActivityEntity);
 			} catch (Exception ex) {
 				logger.logException("MySQLCreateBlogActivityObserver", "saveActivity",
-						"try-catch block calling save blog activity method", ex.getMessage(), ex);
+						"try-catch block calling save blog activity method", "Exception Message is : " + ex.getMessage()
+								+ " and Exception cause is : " + ex.getCause().toString(),
+						ex);
+				throw ex;
 			}
 		}
-		
-		// delete the redis key to empty the queue		
+
+		// delete the redis key to empty the queue
 		blogActivityDataAccess.deleteItemFromRedisBlogActivitySet(blogActivityKey);
 
 	}
 
 	/**
 	 * This method is used to create Blog Activity entity from Map
-	 * @param blogActivityMap this is the Blog activity map<Activity , Action> 
-	 * @param blogActivityKey this is the redis queue key get grom redis
+	 * 
+	 * @param blogActivityMap
+	 *            this is the Blog activity map<Activity , Action>
+	 * @param blogActivityKey
+	 *            this is the redis queue key get grom redis
 	 * @return list of Blog Activity Entity
 	 */
 	private BoilerplateList<BlogActivityEntity> getBlogActivityListFromMap(Map<String, String> blogActivityMap,
@@ -131,7 +140,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 		String blogString[] = blogActivityKey.split(":");
 		// create blog Activity entity from each map
 		for (Map.Entry<String, String> entry : blogActivityMap.entrySet()) {
-			// create new instance of blog activity			
+			// create new instance of blog activity
 			BlogActivityEntity blogActivityEntity = new BlogActivityEntity();
 			// set user id
 			blogActivityEntity.setUserId(blogString[1] + ":" + blogString[2]);
@@ -139,7 +148,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 			blogActivityEntity.setActivityType(blogString[0]);
 			// set activity
 			blogActivityEntity.setActivity(entry.getKey());
-			// aet action 
+			// aet action
 			blogActivityEntity.setAction(entry.getValue());
 			// add blog activity instance in the list
 			blogActivityEntityList.add(blogActivityEntity);
@@ -159,7 +168,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 
 		// Get the SQL query from configurations for get the list of assessment
 		String sqlQuery = configurationManager.get(sqlQueryGetUserBlogActivity);
-		
+
 		for (Object blogActivityEntity : blogActivityEntityList) {
 			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 			// Put userid, activity, activityType in query parameter
@@ -173,7 +182,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 			// if exist update the row
 			if (requestedDataList.size() > 0) {
 				for (BlogActivityEntity requestData : requestedDataList) {
-					// set id to the updated blog activity 
+					// set id to the updated blog activity
 					((BlogActivityEntity) blogActivityEntity).setId(requestData.getId());
 				}
 			}

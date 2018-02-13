@@ -3,6 +3,7 @@ package com.boilerplate.database.mysql.implementations;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -13,11 +14,11 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
 
-public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer  {
+public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer {
 
 	@Override
 	public FileEntity save(FileEntity fileEntity) throws Exception {
-		
+
 		// save file in MySql Database
 		super.create(fileEntity);
 		return fileEntity;
@@ -56,7 +57,7 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 	@Override
 	public void addInRedisSet(FileEntity fileEntity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -68,13 +69,13 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 	@Override
 	public void deleteItemFromRedisUserFileSet(String fileName) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void addInRedisSet(String fileName) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -83,6 +84,10 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 		return null;
 	}
 
-	
+	@Override
+	public List<String> getAllUserFileKeysForUser(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

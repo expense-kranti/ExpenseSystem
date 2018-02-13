@@ -1,6 +1,7 @@
 package com.boilerplate.database.interfaces;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -115,5 +116,7 @@ public interface IFilePointer {
 	 * @return the set of all file keys
 	 */
 	public Set<String> getAllFileKeys();
+
+	List<String> getAllUserFileKeysForUser(String userId);
 
 }

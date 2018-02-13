@@ -123,10 +123,12 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 				userAssessmentDetailEntity.setSectionId(Integer.parseInt(section.getId()));
 				userAssessmentDetailEntity.setStatus(assessmentEntity.getStatus().toString());
 				userAssessmentDetailEntity.setAssessmentId(Integer.parseInt(assessmentEntity.getId()));
-				if (userAssessmentDetailEntity.getStatus().toString().equals("Submit")) {
-					// set total correct answer
-					userAssessmentDetailEntity.setTotalCorrectAnswer(assessmentEntity.getTotalCorrectAnswer());
-				}
+				// if
+				// (userAssessmentDetailEntity.getStatus().toString().equals("Submit"))
+				// {
+				// // set total correct answer
+				// userAssessmentDetailEntity.setTotalCorrectAnswer(assessmentEntity.getTotalCorrectAnswer());
+				// }
 				MultipleChoiceQuestionEntity question = questionSection.getQuestion().getQuestionData();
 				// set the question id
 				userAssessmentDetailEntity.setQuestionId(Integer.parseInt(question.getQuestionId()));
@@ -142,7 +144,11 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 					} catch (Exception ex) {
 						logger.logException("MySQLSaveAssessmentDetailObserver",
 								"populateUserAssessmentDetailEntityAndSaveInMySQL",
-								"try-catch block calling saveUserAssessmentData method", ex.getMessage(), ex);
+								"try-catch block calling saveUserAssessmentData method",
+								"User Id : " + userAssessmentDetailEntity.getUserId() + " AssessmentId : "
+										+ userAssessmentDetailEntity.getAssessmentId() + " Error message "
+										+ ex.getMessage(),
+								ex);
 						throw ex;
 					}
 

@@ -28,7 +28,7 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 	/**
 	 * This is the blogUser key used to migrate redis data to mySql
 	 */
-	public static final String BlogUserKeyForSet = "BLOGUSER_MYSQL";
+	public static final String BlogUserKeyForSet = "AKS_BLOGUSER_MYSQL";
 
 	/**
 	 * @see IBlogActivity.saveActivity
@@ -101,7 +101,9 @@ public class RedisBlogActivity extends BaseRedisDataAccessLayer implements IBlog
 
 	@Override
 	public Set<String> getAllBlogActivityKeys() {
-		return super.keys(BlogUser + "*" + "*");
+		return super.keys(BlogUser + "*" + "AKS:" + "*");
 	}
+
+	
 
 }

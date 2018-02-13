@@ -3,6 +3,7 @@ package com.boilerplate.database.redis.implementation;
 import com.boilerplate.framework.Logger;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IFilePointer;
@@ -24,7 +25,7 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 
 	private static final String OrganizationFile = "ORGANIZATION_FILE:";
 
-	private static final String UserFileKeyForSet = "USERFILE_MYSQL:";
+	private static final String UserFileKeyForSet = "AKS_USERFILE_MYSQL";
 
 	@Override
 	public FileEntity save(FileEntity fileEntity) {
@@ -172,7 +173,7 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 	 */
 	@Override
 	public void addInRedisSet(String fileName) {
-		super.sadd(UserFileKeyForSet, fileName);
+		super.sadd(UserFileKeyForSet, fileName.toUpperCase());
 	}
 
 	/**
@@ -188,7 +189,22 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 	 */
 	@Override
 	public void deleteItemFromRedisUserFileSet(String fileName) {
-		super.srem(UserFileKeyForSet, fileName);
+		super.srem(UserFileKeyForSet, fileName.toUpperCase());
+	}
+
+	/**
+	 * @see IFilePointer.getAllFileKeys
+	 */
+	@Override
+	public List<String> getAllUserFileKeysForUser(String userId) {
+		BoilerplateList<String> fileIdsAsList = new BoilerplateList<>();
+
+		// get files for the user
+		String fileIdsForUserXML = super.get(UserFile + userId.toUpperCase());
+		if (fileIdsForUserXML != null) {
+			fileIdsAsList.addAll((BoilerplateList<String>) Base.fromXML(fileIdsForUserXML, BoilerplateList.class));
+		}
+		return fileIdsAsList;
 	}
 
 }

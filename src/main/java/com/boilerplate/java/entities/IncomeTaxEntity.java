@@ -685,11 +685,6 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		} else {
 			this.setInvestmentIn80E(Double.valueOf(this.getInvestmentIn80EInString()).longValue());
 		}
-		// this line of code is commented in favor of requirement for lac
-		// abbreviation
-		if (this.isNullOrEmpty(this.getCtcInString())) {
-			this.setCtcInString("0");
-		}
 
 		if (this.isNullOrEmpty(this.getAgeInString())) {
 			this.setAge(0);

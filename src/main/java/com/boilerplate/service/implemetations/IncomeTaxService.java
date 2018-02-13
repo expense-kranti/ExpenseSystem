@@ -10,6 +10,7 @@ import com.boilerplate.database.interfaces.IIncomeTax;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.IncomeTaxEntity;
 import com.boilerplate.service.interfaces.IIncomeTaxService;
@@ -148,11 +149,19 @@ public class IncomeTaxService implements IIncomeTaxService {
 					incomeTaxEntity.getCtcForLacAbreviation(), incomeTaxEntity.getEstimatedTax()));
 		} else {
 			logger.logInfo("IncomeTaxService", "calculateSimpleTax", "Inside else block",
-					"about to calculate tax from slab");
+					" about to calculate tax from slab");
 			incomeTaxEntity.setEstimatedTax((long) ((getEstimatedTaxFromSlab(incomeTaxEntity.getAge(), taxableIncome))
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 			incomeTaxEntity.setTakeHomeSalaryMonthly((long) getTakeHomeSalaryPerMonth(
 					incomeTaxEntity.getCtcForLacAbreviation(), incomeTaxEntity.getEstimatedTax()));
+		}
+
+		// check if user is logged in and fetch incometax uuid and assign the
+		// uuid to the incometaxEntity to making relation between logged in user
+		// and incometax calculation
+		if (RequestThreadLocal.getSession() != null
+				&& (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))) {
+			incomeTaxEntity.setUuid(RequestThreadLocal.getSession().getExternalFacingUser().getIncomeTaxUuid());
 		}
 
 		// maintaining uuid is important for maintaining user session from
@@ -188,7 +197,19 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// convert negative values to zeros to prevent miss calculations
 		incomeTaxEntity.makeNegativeValuesToZero();
 
-		incomeTaxEntity.setInvestmentIn80CCD1B(incomeTaxEntity.getInvestmentIn80CCD1B());
+		// check if user is logged in and fetch incometax uuid and assign the
+		// uuid to the incometaxEntity to making relation between logged in user
+		// and incometax calculation
+		if (RequestThreadLocal.getSession() != null
+				&& (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))) {
+			incomeTaxEntity.setUuid(RequestThreadLocal.getSession().getExternalFacingUser().getIncomeTaxUuid());
+		}
+		// uuid is checked for existence for maintaining working through chatbot
+		// for sending email if session null before here
+		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
+			incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+		}
+
 		// validation has been handled at front end
 		// incomeTaxEntity.validate();
 		long taxableIncome = 0;

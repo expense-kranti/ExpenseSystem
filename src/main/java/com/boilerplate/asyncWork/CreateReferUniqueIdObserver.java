@@ -97,12 +97,13 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 	private void CreateReferUUID(ExternalFacingReturnedUser user) throws ConflictException {
 		// update user
 		userDataAccess.update(user);
+
+		referral.saveUserReferUUID(new ReferalEntity(user.getUserId(), user.getUserReferId()));
 		// add the user id in redis set to be later fetched and saved in MysqlDB
 		// using job
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			userDataAccess.addInRedisSet(user);
 		}
-		referral.saveUserReferUUID(new ReferalEntity(user.getUserId(), user.getUserReferId()));
 
 		this.publishToCRM(user);
 

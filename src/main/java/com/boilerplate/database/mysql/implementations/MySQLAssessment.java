@@ -312,7 +312,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		// check for updating the monthly score if not done then add new record
 		// in MySQL
 		if (super.executeScalorNative(queryObtainedScoreUpdate, queryParameterMap) == 0) {
-			// if monthly score record for given userId id not present then
+			// if monthly score record for given userId id not present hence not updated then
 			// create one record
 			super.create(userMonthlyScoreEntity);
 		}
