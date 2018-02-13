@@ -15,6 +15,7 @@ import com.boilerplate.java.entities.FileEntity;
 
 /**
  * This class is used to pop or read queue and process each element
+ * 
  * @author Yash
  *
  */
@@ -66,11 +67,14 @@ public class MySQLCreateUserFileObserver implements IAsyncWorkObserver {
 
 	/**
 	 * This method is used to save File in MySQLdatabase
-	 * @param fileEntity This is the file entity
+	 * 
+	 * @param fileEntity
+	 *            This is the file entity
 	 * @throws Exception
 	 */
 	private void saveOrUpdateUserFileInMySQL(FileEntity fileEntity) throws Exception {
-		// Set file id to null to avoid conflict of File Table Id column and Redis FileEntity Id Column 
+		// Set file id to null to avoid conflict of File Table Id column and
+		// Redis FileEntity Id Column
 		// used file name as get and delete key from redis
 		// file name and file id is same
 		fileEntity.setId(null);
@@ -79,12 +83,21 @@ public class MySQLCreateUserFileObserver implements IAsyncWorkObserver {
 			// add/save file entity to the mysql database
 			mySqlUserFile.save(fileEntity);
 		} catch (Exception ex) {
-			logger.logException("MySQLCreateUserFileObserver", "save",
-					"try-catch block calling save method", ex.getMessage(), ex);
+			logger.logException("MySQLCreateUserFileObserver", "save", "try-catch block calling save method",
+					"Exception cause is : " + ex.getCause().toString() + "- Exception message is : " + ex.getMessage(),
+					ex);
+			// check if exception cause is "Duplicate entry"
+			if (ex.getCause().toString().contains("Duplicate entry")) {
+				// then remove the file name from Redis Set by making it in
+				// upper case(making in upper case is must)
+				filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
+			}
+			throw ex;
 		}
-		
-		// after getting work done by using file name delete that filename from set
-		filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName());
+
+		// after getting work done by using file name delete that filename from
+		// set
+		filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
 
 	}
 

@@ -367,7 +367,7 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// entity
 			ExternalFacingReturnedUser user = userDataAccess.getUser(referalEntity.getUserId(), null);
 			// set userTotal refer score in redis
-			if (newScore.getReferScore() != null) {
+			if (newScore.getReferScore() != null && !(newScore.getReferScore().isEmpty())) {
 				user.setTotalReferScore(Double.parseDouble(newScore.getReferScore()));
 			}
 

@@ -293,4 +293,11 @@ public interface IReferral {
 	 */
 	public void addInRedisSet(String userReferId, String referralMediumType, String contact);
 
+	/**
+	 * This method is used to get all the referred expire contact keys
+	 * 
+	 * @return the set of all referred expired contact keys
+	 */
+	public Set<String> getAllReferredExpireContactKeys();
+
 }

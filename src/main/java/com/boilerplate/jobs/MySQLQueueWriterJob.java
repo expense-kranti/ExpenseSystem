@@ -27,7 +27,7 @@ public class MySQLQueueWriterJob {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(MySQLQueueWriterJob.class);
-	
+
 	/**
 	 * These variables are used to recognized the type of key fetching to do
 	 * from Redis set
@@ -39,8 +39,6 @@ public class MySQLQueueWriterJob {
 	public static String addUserReferIdInQueue = "UserReferral";
 	public static String addIdForBlogActivityInQueue = "UserBlogActivity";
 	public static String addIdForUserFilesInQueue = "UserFiles";
-
-	
 
 	/**
 	 * This is the instance of the configuration manager.
@@ -164,7 +162,7 @@ public class MySQLQueueWriterJob {
 	 */
 	// This method is being called automatically through servlet context
 	// configuration
-	public void addElementsInQueue() throws NotFoundException {
+	public void addRedisSetElementsInQueue() throws NotFoundException {
 		if (Boolean.parseBoolean(configurationManager.get("IsReadSetAndAddToMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set and add into queue for
 			// migrating Users from Redis to MySQL
@@ -268,15 +266,13 @@ public class MySQLQueueWriterJob {
 	 */
 	private void addTaskInQueue(Set<String> dataSet, BoilerplateList<String> subjectsForPerformingTask) {
 
-		logger.logInfo("MySQLQueueWriterJob", "addTaskInQueue method",
-				"before for loop which is fetching each id from Ids Set to be added in queu",
-				"about to call addTaskInQueue method");
 		// fetch user against each userId present in Set
 		for (String dataId : dataSet) {
+			logger.logInfo("MySQLQueueWriterJob", "addTaskInQueue method",
+					"inside for loop which is fetching each id from Ids Redis Set to be added in queue",
+					"about to add id in queue, id is : " + dataId);
 			try {
-
-				// add the data into queue redis
-				// database
+				// add the data id into queue for processing
 				queueReaderJob.requestBackroundWorkItem(dataId, subjectsForPerformingTask, "MySQLQueueWriterJob",
 						"addTaskInQueue", configurationManager.get("MYSQL_PUBLISH_QUEUE"));
 

@@ -67,7 +67,7 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	 * This is the blogUser key used to migrate redis data to mySql to to save
 	 * in redis.sadd()
 	 */
-	private static final String ReferalKeyForSet = "REFERALCONTACTS_MYSQL";
+	private static final String ReferalKeyForSet = "AKS_REFERALCONTACTS_MYSQL";
 
 	/**
 	 * @see IReferral.saveUserReferredContacts
@@ -283,6 +283,14 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
+	 * @see IReferral.getUserAllReferredExpireContactKeys
+	 */
+	@Override
+	public Set<String> getAllReferredExpireContactKeys() {
+		return super.keys(ReferredExpireContact + "*" + "*" + "*");
+	}
+
+	/**
 	 * @see IReferral.getUSerAllReferredContactsKeys
 	 */
 	@Override
@@ -349,4 +357,6 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		// TODO Auto-generated method stub
 		return super.get(ReferredExpireContact + redisReferalExpiredKey);
 	}
+	
+	
 }

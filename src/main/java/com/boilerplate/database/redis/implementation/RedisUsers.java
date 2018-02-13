@@ -53,7 +53,7 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	/**
 	 * This is the Redis User Set key which will be used to migrate user
 	 */
-	private static final String UserKeyForSet = "USER_MYSQL";
+	private static final String UserKeyForSet = "AKS_USER_MYSQL";
 
 	/**
 	 * @see create
@@ -187,7 +187,7 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	 */
 	@Override
 	public Set<String> getAllUserKeys() {
-		return super.keys(User + "*");
+		return super.keys(User + "AKS:" + "*");
 	}
 
 }

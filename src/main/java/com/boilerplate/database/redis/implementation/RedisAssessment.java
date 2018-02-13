@@ -68,11 +68,11 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	/**
 	 * This is the variable for representing key to be used in Redis Set
 	 */
-	private static final String UserAssessmentKeyForSet = "UserAssessment_MySQL";
+	private static final String UserAssessmentKeyForSet = "AKS_UserAssessment_MySQL";
 
-	private static final String UserAssessmentScoreKeyForSet = "UserAssessmentScore_MySQL";
+	private static final String UserAssessmentScoreKeyForSet = "AKS_UserAssessmentScore_MySQL";
 
-	private static final String UserMonthlyScoreKeyForSet = "UserMonthlyScore_MySQL";
+	private static final String UserMonthlyScoreKeyForSet = "AKS_UserMonthlyScore_MySQL";
 
 	/**
 	 * @see IRedisAssessment.getAssessmentAttempt
@@ -351,7 +351,7 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	 */
 	@Override
 	public Set<String> getAllMonthlyScoreKeys() {
-		return super.keys(MonthlyScore + "*" + "*" + "*");
+		return super.keys(MonthlyScore + "*" + "*" + "AKS:" + "*");
 	}
 
 	/**
@@ -367,7 +367,7 @@ public class RedisAssessment extends BaseRedisDataAccessLayer implements IRedisA
 	 */
 	@Override
 	public Set<String> getAllAssessmentKeys() {
-		return super.keys(Assessment + "*" + "*");
+		return super.keys(Assessment +"AKS:" +"*" + "*");
 	}
 
 	/**

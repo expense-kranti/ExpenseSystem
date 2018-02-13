@@ -376,7 +376,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		scoreEntity.setMaxScore(String.valueOf(maxScore));
 		// If refer score is not null then get rank according the sum of refer
 		// and obtained score
-		if (scoreEntity.getReferScore() != null) {
+		if (scoreEntity.getReferScore() != null && !(scoreEntity.getReferScore().isEmpty())) {
 			// set rank
 			scoreEntity.setRank(calculateRank(obtainedScore + Float.valueOf(scoreEntity.getReferScore())));
 		} else {

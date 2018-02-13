@@ -89,4 +89,6 @@ public interface IBlogActivity {
 	 */
 	public void addInRedisSet(String blogActivityType, String userId);
 
+	
+
 }

@@ -191,4 +191,10 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 
 	}
 
+	@Override
+	public Set<String> getAllReferredExpireContactKeys() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

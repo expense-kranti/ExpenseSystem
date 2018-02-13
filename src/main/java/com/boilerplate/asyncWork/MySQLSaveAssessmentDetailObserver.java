@@ -79,11 +79,12 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 	 */
 	public void saveOrUpdateAssessmentInMySQL() throws Exception {
 
-		logger.logInfo("MySQLSaveAssessmentDetailObserver", "saveOrUpdateAssessmentInMySQL",
-				"First Statement in the method block",
-				"About to fetch assessment ids from Redis Set and process one by one");
 		Set<String> elements = redisAssessment.fetchAssessmentIdsFromRedisSet();
 		for (String element : elements) {
+			logger.logInfo("MySQLSaveAssessmentDetailObserver", "saveOrUpdateAssessmentInMySQL",
+					"Inside For loop which is iterating through ids Redis Set of Assessment ",
+					"About to fetch assessment from Redis Data base for current data id from Redis set being processed is : "
+							+ element);
 			AssessmentEntity assessmentEntity = new AssessmentEntity();
 			String[] ids = element.split(",");
 			// set assessment id to get the assessment from Redis data store
@@ -123,10 +124,12 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 				userAssessmentDetailEntity.setSectionId(Integer.parseInt(section.getId()));
 				userAssessmentDetailEntity.setStatus(assessmentEntity.getStatus().toString());
 				userAssessmentDetailEntity.setAssessmentId(Integer.parseInt(assessmentEntity.getId()));
-				if (userAssessmentDetailEntity.getStatus().toString().equals("Submit")) {
-					// set total correct answer
-					userAssessmentDetailEntity.setTotalCorrectAnswer(assessmentEntity.getTotalCorrectAnswer());
-				}
+				// if
+				// (userAssessmentDetailEntity.getStatus().toString().equals("Submit"))
+				// {
+				// // set total correct answer
+				// userAssessmentDetailEntity.setTotalCorrectAnswer(assessmentEntity.getTotalCorrectAnswer());
+				// }
 				MultipleChoiceQuestionEntity question = questionSection.getQuestion().getQuestionData();
 				// set the question id
 				userAssessmentDetailEntity.setQuestionId(Integer.parseInt(question.getQuestionId()));
@@ -142,13 +145,22 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 					} catch (Exception ex) {
 						logger.logException("MySQLSaveAssessmentDetailObserver",
 								"populateUserAssessmentDetailEntityAndSaveInMySQL",
-								"try-catch block calling saveUserAssessmentData method", ex.getMessage(), ex);
+								"try-catch block calling saveUserAssessmentData method",
+								"User Id : " + userAssessmentDetailEntity.getUserId() + " AssessmentId : "
+										+ userAssessmentDetailEntity.getAssessmentId() + " Error message "
+										+ ex.getMessage(),
+								ex);
 						throw ex;
 					}
 
 				}
 
 			}
+			logger.logInfo("MySQLSaveAssessmentDetailObserver", "populateUserAssessmentDetailEntityAndSaveInMySQL",
+					"Outside the first for loop ",
+					"About to delete the assessment id after being saved in MySQL, id is : "
+							+ userAssessmentDetailEntity.getUserId() + ","
+							+ userAssessmentDetailEntity.getAssessmentId());
 			// delete the id related to assessment after saving the
 			// assessment in MySQL with the id present in Redis set
 			redisAssessment.deleteRedisAssessmentIdFromSet(

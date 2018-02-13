@@ -358,23 +358,6 @@ public class UserService implements IUserService {
 
 		// check if a user with given Id exists
 		if (this.userExists(externalFacingUser.getAuthenticationProvider() + ":" + externalFacingUser.getUserId())) {
-			// check if income tax uuid is present means need to set in existing
-			// user
-			if (externalFacingUser.getIncomeTaxUuid() != null) {
-				ExternalFacingReturnedUser existingUser = userDataAccess
-						.getUser(normalizeUserId(externalFacingUser.getUserId()), null);
-				existingUser.setIncomeTaxUuid(externalFacingUser.getIncomeTaxUuid());
-				// SAVE USER HERE
-				userDataAccess.update(existingUser);
-
-				// add the user id in redis set to be later fetched and saved in
-				// MysqlDB using job
-				if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
-					userDataAccess.addInRedisSet(existingUser);
-				}
-
-				return existingUser;
-			}
 			throw new ConflictException("User", "User already exist with this mobile", null);
 		}
 		/*
@@ -529,6 +512,17 @@ public class UserService implements IUserService {
 				}
 			}
 			user.setPassword("Password Encrypted");
+			//////////////////////////// added by URVIJ
+			// assign incometax uuid if user donot have incometaxuuid
+			if (user.getIncomeTaxUuid() == null || user.getIncomeTaxUuid().isEmpty()) {
+				user.setIncomeTaxUuid(
+						this.createUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+			}
+
+			// SAVE USER HERE
+			userDataAccess.update(user);
+			/////////////////////////////////////
+
 			// get the roles, ACL and there details of this user
 			// if the user is valid create a new session, in the session add
 			// details
@@ -549,6 +543,13 @@ public class UserService implements IUserService {
 				}
 
 			}
+
+			// add the user id in redis set to be later fetched and saved in
+			// MysqlDB using job
+			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+				userDataAccess.addInRedisSet(user);
+			}
+
 			return session;
 		} catch (NotFoundException nfe) {
 			logger.logException("UserService", "authenticate",

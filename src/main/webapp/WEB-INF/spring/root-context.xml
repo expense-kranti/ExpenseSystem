@@ -826,6 +826,7 @@
 		class="com.boilerplate.asyncWork.MySQLCreateOrUpdateUserObserver">
 		<property name="mySqlUser" ref="mySqlUser" />
 		<property name="userDataAccess" ref="userDataAccess" />
+		<property name="redisAssessment" ref="redisAssessment"></property>
 	</bean>
 
 	<bean id="mySQLCreateOrUpdateUserObserverList"
@@ -973,6 +974,7 @@
 		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
 		<property name="filePointer" ref="filePointer"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 	</bean>
 
 	<bean id="addUserAndRelatedDataRedisKeysToRedisSetObserverList"

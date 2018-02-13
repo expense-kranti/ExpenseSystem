@@ -37,7 +37,9 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 		try {
 			super.update(user);
 		} catch (Exception ex) {
-			logger.logException("MySQLUsers", "create", "try -catch block", ex.getMessage(), ex);
+			logger.logException("MySQLUsers", "create", "try -catch block calling super.update method ",
+					"UserId : " + user.getUserId() + " ~Cause : " + ex.getCause() + " ~Message : " + ex.getMessage(),
+					ex);
 			throw ex;
 		}
 		return user;

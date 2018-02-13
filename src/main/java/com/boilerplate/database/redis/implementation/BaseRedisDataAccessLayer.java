@@ -1222,15 +1222,15 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
 		// tells that whenever any new entry is added or
 		// updated in Redis database then we need to make an entry into Redis
-		// Set to later transfer it to MySQL is enabled or not
+		// Set to later transfer it to MySQL, is enabled or not
 		vAllETest.put("IsMySQLPublishQueueEnabled", "false");
 		// tell that background mysql publish queue reading is enabled or not
 		vAllETest.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
 		// tells that bulk adding all the Redis Keys like
 		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllETest.put("ISBulkAddInRedisSetEnabled", "false");
+		vAllETest.put("ISBulkAddInRedisSetEnabled", "true");
 		// tells that if reading Redis Sets and pushing to queue is enabled
-		vAllETest.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "false");
+		vAllETest.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
 
 		return vAllETest;
 	}
@@ -1251,7 +1251,6 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("SMS_URL", "?method=sms&api_key=@apiKey&to=@to&sender=@sender&message=@message");
 		vAllEDev.put("RootFileUploadLocation", "/downloads/");
 
-		
 		// new config
 		vAllEDev.put("S3_Bucket_Name", "csrdata-files");
 		vAllEDev.put("Secret_Access_Key", "VE7YpkMBrwCLbHgUz/8j8j0i2rdmhhnguv3LmJZz");
@@ -1348,7 +1347,7 @@ public class BaseRedisDataAccessLayer {
 
 		// tells that bulk adding all the Redis Keys like
 		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllEDev.put("ISBulkAddInRedisSetEnabled", "false");
+		vAllEDev.put("ISBulkAddInRedisSetEnabled", "true");
 		// tells that if reading Redis Sets and pushing to queue is enabled
 		vAllEDev.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
 
@@ -1565,6 +1564,8 @@ public class BaseRedisDataAccessLayer {
 		// query for updating monthly Obtained score
 		vAllEAll.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
 				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
+
+		vAllEAll.put("GENERAL_UUID_LENGTH", "8");
 		return vAllEAll;
 
 	}

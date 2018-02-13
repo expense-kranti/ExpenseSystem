@@ -10,8 +10,10 @@ import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IRedisScript;
 import com.boilerplate.database.interfaces.IReferral;
+import com.boilerplate.database.interfaces.ISFUpdateHash;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.jobs.MySQLQueueWriterJob;
 
@@ -107,6 +109,22 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	}
 
 	/**
+	 * This is the instance of redissfupdatehashaccess
+	 */
+	@Autowired
+	ISFUpdateHash redisSFUpdateHashAccess;
+
+	/**
+	 * This method set the instance of redisSFUpdateHashAccess
+	 * 
+	 * @param redisSFUpdateHashAccess
+	 *            the redisSFUpdateHashAccess to set
+	 */
+	public void setRedisSFUpdateHashAccess(ISFUpdateHash redisSFUpdateHashAccess) {
+		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
+	}
+
+	/**
 	 * This is the instance of the configuration manager.
 	 */
 	@Autowired
@@ -143,51 +161,114 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 		if (Boolean.parseBoolean(configurationManager.get("ISBulkAddInRedisSetEnabled"))) {
 
 			// add all user ids to Redis set
-			for (String userId : userDataAccess.getAllUserKeys()) {
-				String[] userIdParts = userId.split(":");
-				// add to Redis set
-				userDataAccess.addInRedisSet(userIdParts[1] + ":" + userIdParts[2]);
+			Set<String> keySet = userDataAccess.getAllUserKeys();
+			if ((keySet != null) && !(keySet.isEmpty())) {
+				for (String userIdWithRedisKeyName : keySet) {
+					String[] userIdParts = userIdWithRedisKeyName.split(":");
+					String userId = userIdParts[1] + ":" + userIdParts[2];
+					// process userIds with phoneNumber length equals 10
+					if (userId.equals("AKS:ADMIN") || userId.equals("AKS:ANNONYMOUS") || userId.equals("AKS:BACKGROUND")
+							|| userId.equals("AKS:ROLEASSIGNER") || userIdParts[2].length() == 10) {
+
+						String userReferId = this.redisSFUpdateHashAccess
+								.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
+						// add to Redis set
+						userDataAccess.addInRedisSet(userIdParts[1] + ":" + userIdParts[2]);
+						// get assessment for this user Id and add in assessment
+						// redis set
+						for (String userAssessmentKey : redisAssessment.getAllAssessmentKeysForUser(userId)) {
+							addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(userAssessmentKey);
+						}
+						// get BlogActivity for this user Id and add in
+						// assessment
+						// redis set
+						for (String userBlogActivityKey : blogActivityDataAccess.getAllBlogUserKeys(userId)) {
+							addBlogActivityKeyByProcessingRedisKey(userBlogActivityKey);
+						}
+						// get ReferredContact for this user Id and add in
+						// assessment
+						// redis set
+						for (String userReferredContactKey : referral.getUserAllReferredContactsKeys(userReferId)) {
+							addReferredRelatedDataKeyByProcessingRedisKey(userReferredContactKey);
+						}
+						// get MonthlyScore for this user Id and add in
+						// assessment
+						// redis set
+						for (String userMonthlyScoreKey : redisAssessment.getAllMonthlyScoreKeys(userId)) {
+							addMonthlyScoreKeyByProcessingRedisKey(userMonthlyScoreKey);
+						}
+						// get userFiles for this user Id and add in assessment
+						// redis set
+						for (String userFileKey : filePointer.getAllUserFileKeysForUser(userId)) {
+							filePointer.addInRedisSet(userFileKey);
+						}
+					}
+
+				}
 			}
 
-			// add all assessment keys to Redis set
-			for (String assessmentKey : redisAssessment.getAllAssessmentKeys()) {
-				String[] assessmentKeyPart = assessmentKey.split(":");
-				// add to Redis set
-				redisAssessment.addInRedisSetForUserAssessment(assessmentKeyPart[1] + ":" + assessmentKeyPart[2],
-						assessmentKeyPart[3]);
-			}
-
-			// add all monthly score keys to Redis set
-			for (String monthlyScoreKey : redisAssessment.getAllMonthlyScoreKeys()) {
-				String[] monthlyScoreKeyPart = monthlyScoreKey.split(":");
-				redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(monthlyScoreKeyPart[3] + ":"
-						+ monthlyScoreKeyPart[4] + "," + monthlyScoreKeyPart[1] + "," + monthlyScoreKeyPart[2]);
-			}
-
-			// add all referredcontact key to Redis Set
-			for (String referredContactKey : referral.getAllReferredContactKeys()) {
-				String[] referredContactKeyPart = referredContactKey.split(":");
-				referral.addInRedisSet(referredContactKeyPart[1], referredContactKeyPart[2],
-						referredContactKeyPart[3].toUpperCase());
-			}
-
-			// add all blogActivityKey to Redis Set
-			for (String blogActivityKey : blogActivityDataAccess.getAllBlogActivityKeys()) {
-				String[] blogActivityKeyPart = blogActivityKey.split(":");
-				blogActivityDataAccess.addInRedisSet(blogActivityKeyPart[1],
-						blogActivityKeyPart[2] + ":" + blogActivityKeyPart[3]);
-			}
-
-			// add all FileKey to Redis Set
-			for (String fileKey : filePointer.getAllFileKeys()) {
-				String[] fileKeyPart = fileKey.split(":");
-				filePointer.addInRedisSet(fileKeyPart[1]);
-			}
 		}
 		logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
 				"Last statement Inside body of addAllRedisKeysToRedisSet method",
 				"adding of Redis Keys into RedisSet done");
 
+	}
+
+	/**
+	 * This method is used to prepare assessment keys to be used to be saved in
+	 * Redis Set
+	 * 
+	 * @param assessmentIdWithRedisKeyName
+	 *            the complete key containing Redis assessment key
+	 */
+	private void addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(String assessmentIdWithRedisKeyName) {
+		String[] assessmentKeyPart = assessmentIdWithRedisKeyName.split(":");
+		// add to Redis set
+		redisAssessment.addInRedisSetForUserAssessment(assessmentKeyPart[1] + ":" + assessmentKeyPart[2],
+				assessmentKeyPart[3]);
+		redisAssessment.addIdInRedisSetForAssessmentScore(
+				assessmentKeyPart[1] + ":" + assessmentKeyPart[2] + "," + assessmentKeyPart[3]);
+
+	}
+
+	/**
+	 * This method is used to prepare blog activity and save in Redis Set
+	 * 
+	 * @param blogActivityKey
+	 *            containing the Redis blog key
+	 */
+	private void addBlogActivityKeyByProcessingRedisKey(String blogActivityKey) {
+		String[] blogActivityKeyPart = blogActivityKey.split(":");
+		blogActivityDataAccess.addInRedisSet(blogActivityKeyPart[1],
+				blogActivityKeyPart[2] + ":" + blogActivityKeyPart[3]);
+
+	}
+
+	/**
+	 * This method is used to get referred related key and processkey to get
+	 * info
+	 * 
+	 * @param referalKey
+	 *            containing the Redis key for referal key for user
+	 */
+	private void addReferredRelatedDataKeyByProcessingRedisKey(String referalKey) {
+		String[] referalKeyPart = referalKey.split(":");
+		referral.addInRedisSet(referalKeyPart[1], referalKeyPart[2], referalKeyPart[3].toUpperCase());
+		referral.addInRedisSet(referalKeyPart[1], referalKeyPart[2], referalKeyPart[3].toUpperCase());
+
+	}
+
+	/**
+	 * This method is used to get the monthly score key and prepare it to be
+	 * used in making entry in Redis Set
+	 * 
+	 * @param monthlyScoreKey
+	 *            containing the Redis key for referal keys
+	 */
+	private void addMonthlyScoreKeyByProcessingRedisKey(String monthlyScoreKey) {
+		String[] monthlyScoreKeyPart = monthlyScoreKey.split(":");
+		redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(monthlyScoreKeyPart[3] + ":" + monthlyScoreKeyPart[4]
+				+ "," + monthlyScoreKeyPart[1] + "," + monthlyScoreKeyPart[2]);
 	}
 
 }

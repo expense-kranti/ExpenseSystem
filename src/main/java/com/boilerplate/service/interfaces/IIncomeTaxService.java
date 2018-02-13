@@ -47,7 +47,7 @@ public interface IIncomeTaxService {
 	 * @param incomeTaxEntity
 	 *            it contains the values that are required to calculate income
 	 *            tax
-	 * @return incometaxentity with estimated tax calculated
+	 * @return incomeTaxEntity with estimated tax calculated
 	 * @throws NotFoundException
 	 *             thrown when income tax data is not found in data store
 	 * @throws IOException
