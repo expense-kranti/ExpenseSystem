@@ -235,7 +235,7 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 * This method is used to prepare blog activity and save in Redis Set
 	 * 
 	 * @param blogActivityKey
-	 *            containing the complete blog key
+	 *            containing the Redis blog key
 	 */
 	private void addBlogActivityKeyByProcessingRedisKey(String blogActivityKey) {
 		String[] blogActivityKeyPart = blogActivityKey.split(":");
@@ -249,7 +249,7 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 * info
 	 * 
 	 * @param referalKey
-	 *            containing the complete Redis key for referal key for user
+	 *            containing the Redis key for referal key for user
 	 */
 	private void addReferredRelatedDataKeyByProcessingRedisKey(String referalKey) {
 		String[] referalKeyPart = referalKey.split(":");
@@ -263,7 +263,7 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 * used in making entry in Redis Set
 	 * 
 	 * @param monthlyScoreKey
-	 *            containing the complete Redis key for referal keys
+	 *            containing the Redis key for referal keys
 	 */
 	private void addMonthlyScoreKeyByProcessingRedisKey(String monthlyScoreKey) {
 		String[] monthlyScoreKeyPart = monthlyScoreKey.split(":");

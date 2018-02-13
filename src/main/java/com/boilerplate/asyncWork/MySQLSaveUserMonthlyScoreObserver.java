@@ -71,23 +71,23 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 	 *             thrown when exception occurs in saving Montlhy score in MYSQL
 	 */
 	public void saveUserMonthlyScoreInMySQL(String data) throws Exception {
+		logger.logInfo("MySQLSaveUserMonthlyScoreObserver", "saveUserMonthlyScoreInMySQL",
+				"First statement in method body", "About to process monthly data id which is : " + data);
 		String[] ids = data.split(",");
 		// get the user's monthly score from Redis database
 		ScoreEntity scoreEntity = redisAssessment.getUserMonthlyScore(ids[0], ids[1], ids[2]);
 		if (scoreEntity != null) {
 			// create user monthly score entity and populate it with saved
-			// monthly
-			// score got from
-			// Redis
+			// monthly score got from Redis
 			UserMonthlyScoreEntity userMonthlyScore = new UserMonthlyScoreEntity();
 			userMonthlyScore.setUserId(scoreEntity.getUserId());
 			userMonthlyScore.setYear(ids[1]);
 			userMonthlyScore.setMonth(ids[2]);
 
-			if (scoreEntity.getReferScore() != null || !(scoreEntity.getReferScore().isEmpty())) {
+			if (scoreEntity.getReferScore() != null && !(scoreEntity.getReferScore().isEmpty())) {
 				userMonthlyScore.setMonthlyReferScore(Float.valueOf(scoreEntity.getReferScore()));
 			}
-			if (scoreEntity.getObtainedScore() != null || !(scoreEntity.getObtainedScore().isEmpty())) {
+			if (scoreEntity.getObtainedScore() != null && !(scoreEntity.getObtainedScore().isEmpty())) {
 				userMonthlyScore.setMonthlyObtainedScore(Float.valueOf(scoreEntity.getObtainedScore()));
 			}
 			// userMonthlyScore.setMonthlyObtainedScore(scoreEntity.getObtainedScoreInDouble());
@@ -98,11 +98,16 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 				assessment.saveUserMonthlyScore(userMonthlyScore);
 			} catch (Exception ex) {
 				logger.logException("MySQLSaveUserMonthlyScoreObserver", "saveUserMonthlyScoreInMySQL",
-						"try-catch block calling saveUserMonthlyScore method", ex.getMessage(), ex);
+						"try-catch block calling saveUserMonthlyScore method",
+						"Key from Redis Set for which exception occured : " + data + "Exception Message : "
+								+ ex.getMessage(),
+						ex);
 				throw ex;
 			}
 
 		}
+		logger.logInfo("MySQLSaveUserMonthlyScoreObserver", "saveUserMonthlyScoreInMySQL", "Outside the if statement ",
+				"About to delete the monthly score id after being saved in MySQL, id is : " + data);
 		// delete entry from Redis Set
 		redisAssessment.deleteIdFromRedisSetForAssessmentMonthlyScore(data);
 	}
