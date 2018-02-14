@@ -174,11 +174,10 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// empty then set incometaxentity userId to userId of logged in user
 		// below line commented for production working fine as this is under
 		// construction
-		// if (RequestThreadLocal.getSession() != null
-		// && (incomeTaxEntity.getUuid() == null ||
-		// incomeTaxEntity.getUuid().equals(""))) {
-		// incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-		// }
+//		if ((incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))
+//				&& RequestThreadLocal.getSession() != null) {
+//			incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+//		}
 
 		// maintaining uuid is important for maintaining user session from
 		// chatbot to akshar website
@@ -186,13 +185,11 @@ public class IncomeTaxService implements IIncomeTaxService {
 			incomeTaxEntity.setUuid(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
 		}
 
-		// if (incomeTaxEntity.getUserId() != null &&
-		// !(incomeTaxEntity.getUserId().isEmpty())) {
-		// // TODO save incomeTax data in MySQL
-		// } else {
-		// save income tax details in datastore
-		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
-		// }
+//		// // save income tax details in MySQL
+//		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
+
+		 // save income tax details in Redis datastore
+		 incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "before return statement", "about to return response");
 		return incomeTaxEntity;
@@ -221,13 +218,10 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// check if user is logged in and fetch incometax uuid and assign the
 		// uuid to the incometaxEntity to making relation between logged in user
 		// and incometax calculation
-		// below line commented for production working fine as this is under
-		// construction
-		// if (RequestThreadLocal.getSession() != null
-		// && (incomeTaxEntity.getUuid() == null ||
-		// incomeTaxEntity.getUuid().equals(""))) {
-		// incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-		// }
+//		if ((incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))
+//				&& RequestThreadLocal.getSession() != null) {
+//			incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+//		}
 		// uuid is checked for existence for maintaining working through chatbot
 		// for sending email if session null before here
 		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
@@ -238,7 +232,7 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// incomeTaxEntity.validate();
 		long taxableIncome = 0;
 		// check user input investments if larger than max allowed then assign
-		// max allowed otherwise input investment
+		// max allowed otherwise make it to input investment
 		long exempted80C = (incomeTaxEntity.getInvestmentIn80C() < Integer
 				.parseInt(configurationManager.get("Max_80C_Allowed_Deduction")))
 						? (incomeTaxEntity.getInvestmentIn80C() < 0 ? 0 : incomeTaxEntity.getInvestmentIn80C())
@@ -314,10 +308,11 @@ public class IncomeTaxService implements IIncomeTaxService {
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 		}
 
-		// mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
+//		// save income tax details in MySQL
+//		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
 
-		// save income tax details in datastore
-		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		 // save income tax details in Redis datastore
+		 incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
 		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "before return statement",
 				"about to return response");
@@ -330,6 +325,10 @@ public class IncomeTaxService implements IIncomeTaxService {
 	 */
 	@Override
 	public IncomeTaxEntity getIncomeTaxData(IncomeTaxEntity incomeTaxEntity) throws NotFoundException {
+
+		// TODO add code for getting income tax data from MySQL
+
+		// get income tax data from Redis datastore
 		return incomeTaxDataAccess.getIncomeTaxData(incomeTaxEntity.getUuid());
 	}
 

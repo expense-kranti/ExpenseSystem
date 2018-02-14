@@ -164,50 +164,50 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 			Set<String> keySet = userDataAccess.getAllUserKeys();
 			if ((keySet != null) && !(keySet.isEmpty())) {
 				for (String userIdWithRedisKeyName : keySet) {
+					logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
+							"Inside if statement checking user Redis Set not null or empty",
+							"about to fetch UserId from Redis Keys and Add into RedisSet, UserIdKeyName is : "
+									+ userIdWithRedisKeyName);
 					String[] userIdParts = userIdWithRedisKeyName.split(":");
 					String userId = userIdParts[1] + ":" + userIdParts[2];
-					// process userIds with phoneNumber length equals greater than 10
-					if (userId.equals("AKS:ADMIN") || userId.equals("AKS:ANNONYMOUS") || userId.equals("AKS:BACKGROUND")
-							|| userId.equals("AKS:ROLEASSIGNER") || userIdParts[2].length() > 10) {
 
-						String userReferId = this.redisSFUpdateHashAccess
-								.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
-						// add to Redis set
-						userDataAccess.addInRedisSet(userIdParts[1] + ":" + userIdParts[2]);
-						// get assessment for this user Id and add in assessment
-						// redis set
-						for (String userAssessmentKey : redisAssessment.getAllAssessmentKeysForUser(userId)) {
-							addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(userAssessmentKey);
-						}
-						// get BlogActivity for this user Id and add in
-						// assessment
-						// redis set
-						for (String userBlogActivityKey : blogActivityDataAccess.getAllBlogUserKeys(userId)) {
-							addBlogActivityKeyByProcessingRedisKey(userBlogActivityKey);
-						}
-						// get ReferredContact for this user Id and add in
-						// assessment
-						// redis set
-						for (String userReferredContactKey : referral.getUserAllReferredContactsKeys(userReferId)) {
-							addReferredRelatedDataKeyByProcessingRedisKey(userReferredContactKey);
-						}
-						// get MonthlyScore for this user Id and add in
-						// assessment
-						// redis set
-						for (String userMonthlyScoreKey : redisAssessment.getAllMonthlyScoreKeys(userId)) {
-							addMonthlyScoreKeyByProcessingRedisKey(userMonthlyScoreKey);
-						}
-						// get userFiles for this user Id and add in assessment
-						// redis set
-						for (String userFileKey : filePointer.getAllUserFileKeysForUser(userId)) {
-							filePointer.addInRedisSet(userFileKey);
-						}
+					String userReferId = this.redisSFUpdateHashAccess
+							.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
+					// add to Redis set
+					userDataAccess.addInRedisSet(userIdParts[1] + ":" + userIdParts[2]);
+					// get assessment for this user Id and add in assessment
+					// redis set
+					for (String userAssessmentKey : redisAssessment.getAllAssessmentKeysForUser(userId)) {
+						addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(userAssessmentKey);
 					}
-
+					// get BlogActivity for this user Id and add in
+					// assessment
+					// redis set
+					for (String userBlogActivityKey : blogActivityDataAccess.getAllBlogUserKeys(userId)) {
+						addBlogActivityKeyByProcessingRedisKey(userBlogActivityKey);
+					}
+					// get ReferredContact for this user Id and add in
+					// assessment
+					// redis set
+					for (String userReferredContactKey : referral.getUserAllReferredContactsKeys(userReferId)) {
+						addReferredRelatedDataKeyByProcessingRedisKey(userReferredContactKey);
+					}
+					// get MonthlyScore for this user Id and add in
+					// assessment
+					// redis set
+					for (String userMonthlyScoreKey : redisAssessment.getAllMonthlyScoreKeys(userId)) {
+						addMonthlyScoreKeyByProcessingRedisKey(userMonthlyScoreKey);
+					}
+					// get userFiles for this user Id and add in assessment
+					// redis set
+					for (String userFileKey : filePointer.getAllUserFileKeysForUser(userId)) {
+						filePointer.addInRedisSet(userFileKey);
+					}
 				}
-			}
 
+			}
 		}
+
 		logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
 				"Last statement Inside body of addAllRedisKeysToRedisSet method",
 				"adding of Redis Keys into RedisSet done");

@@ -89,39 +89,35 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 	 *             given provider.
 	 */
 	private void saveOrUpdateUserInMySQL(ExternalFacingUser externalFacingUser) throws ConflictException {
-		if (externalFacingUser.getUserId().equals("AKS:ADMIN")
-				|| externalFacingUser.getUserId().equals("AKS:ANNONYMOUS")
-				|| externalFacingUser.getUserId().equals("AKS:BACKGROUND")
-				|| externalFacingUser.getUserId().equals("AKS:ROLEASSIGNER")
-				|| externalFacingUser.getPhoneNumber().length() > 10) {
-			try {
-				// check if total score which is in String is not null or empty
-				if (externalFacingUser.getTotalScore() != null && !(externalFacingUser.getTotalScore().isEmpty()))
-					externalFacingUser.setTotalScoreInDouble(Double.parseDouble(externalFacingUser.getTotalScore()));
-				// check if users total refer score is 0 means user either have
-				// no refer score or refer score in externalFacingUserEntity is
-				// not present on second condition we will get refer score from
-				// "TotalScore" key from Redis in ScoreEntity Form and assign it
-				// to externalFacingUserEntity
-				if (externalFacingUser.getTotalReferScore() == 0) {
-					ScoreEntity scoreEntity = redisAssessment.getTotalScore(externalFacingUser.getUserId());
-					if (scoreEntity != null)
-						externalFacingUser.setTotalReferScore(
-								scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty() ? 0
-										: Float.parseFloat(scoreEntity.getReferScore()));
-				}
-				// add user to the mysql database
-				mySqlUser.create(externalFacingUser);
-			} catch (Exception ex) {
-				logger.logException("MySQLCreateOrUpdateUserObserver", "saveOrUpdateUserInMySQL",
-						"try-catch block calling create method",
-						"Exception message is : " + ex.getMessage() + " and Exception cause : " + ex.getMessage(), ex);
-				// simply delete that user id from set
-				userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
-				
-				throw ex;
+
+		try {
+			// check if total score which is in String is not null or empty
+			if (externalFacingUser.getTotalScore() != null && !(externalFacingUser.getTotalScore().isEmpty()))
+				externalFacingUser.setTotalScoreInDouble(Double.parseDouble(externalFacingUser.getTotalScore()));
+			// check if users total refer score is 0 means user either have
+			// no refer score or refer score in externalFacingUserEntity is
+			// not present on second condition we will get refer score from
+			// "TotalScore" key from Redis in ScoreEntity Form and assign it
+			// to externalFacingUserEntity
+			if (externalFacingUser.getTotalReferScore() == 0) {
+				ScoreEntity scoreEntity = redisAssessment.getTotalScore(externalFacingUser.getUserId());
+				if (scoreEntity != null)
+					externalFacingUser.setTotalReferScore(
+							scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty() ? 0
+									: Float.parseFloat(scoreEntity.getReferScore()));
 			}
+			// add user to the mysql database
+			mySqlUser.create(externalFacingUser);
+		} catch (Exception ex) {
+			logger.logException("MySQLCreateOrUpdateUserObserver", "saveOrUpdateUserInMySQL",
+					"try-catch block calling create method",
+					"Exception message is : " + ex.getMessage() + " and Exception cause is : " + ex.getMessage(), ex);
+			// simply delete that user id from set
+			userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
+
+			throw ex;
 		}
+
 		// after getting work done by using userId delete that user id from set
 		userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
 	}
