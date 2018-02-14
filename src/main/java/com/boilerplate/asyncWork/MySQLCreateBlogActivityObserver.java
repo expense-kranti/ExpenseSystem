@@ -115,6 +115,8 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 						"try-catch block calling save blog activity method", "Exception Message is : " + ex.getMessage()
 								+ " and Exception cause is : " + ex.getCause().toString(),
 						ex);
+				// delete the redis key to empty the queue
+				blogActivityDataAccess.deleteItemFromRedisBlogActivitySet(blogActivityKey);
 				throw ex;
 			}
 		}

@@ -100,8 +100,11 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 				logger.logException("MySQLSaveUserMonthlyScoreObserver", "saveUserMonthlyScoreInMySQL",
 						"try-catch block calling saveUserMonthlyScore method",
 						"Key from Redis Set for which exception occured : " + data + "Exception Message : "
-								+ ex.getMessage(),
+								+ ex.getMessage() + " Exception cause is : " + ex.getCause().toString(),
 						ex);
+				// delete entry from Redis Set
+				redisAssessment.deleteIdFromRedisSetForAssessmentMonthlyScore(data);
+
 				throw ex;
 			}
 

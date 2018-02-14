@@ -25,9 +25,12 @@ public interface IIncomeTax {
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
+	 * @throws Exception
+	 *             thrown when any exception occurs in saving the
+	 *             incometaxentity
 	 */
 	public IncomeTaxEntity saveIncomeTaxData(IncomeTaxEntity incomeTaxEntity)
-			throws JsonParseException, JsonMappingException, IOException;
+			throws JsonParseException, JsonMappingException, IOException, Exception;
 
 	/**
 	 * This method is used to get income tax details against a uuid

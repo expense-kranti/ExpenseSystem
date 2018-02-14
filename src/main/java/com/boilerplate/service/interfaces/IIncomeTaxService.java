@@ -27,9 +27,11 @@ public interface IIncomeTaxService {
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
+	 * @throws Exception thrown when any exception occurs in saving the
+	 *             incometaxentity
 	 */
 	public IncomeTaxEntity calculateSimpleTax(IncomeTaxEntity incomeTaxEntity)
-			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException;
+			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException, Exception;
 
 	/**
 	 * This method is used to get income tax data against a given uuid
@@ -56,9 +58,12 @@ public interface IIncomeTaxService {
 	 * @throws ValidationFailedException
 	 *             thrown when required input is not provided or have
 	 *             discrepancies
+	 * @throws Exception
+	 *             thrown when any exception occurs in saving the
+	 *             incometaxentity
 	 */
-	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity)
-			throws NotFoundException, JsonParseException, JsonMappingException, IOException, ValidationFailedException;
+	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity) throws NotFoundException,
+			JsonParseException, JsonMappingException, IOException, ValidationFailedException, Exception;
 
 	/**
 	 * This method saves user details against income tax data in data store with

@@ -512,17 +512,6 @@ public class UserService implements IUserService {
 				}
 			}
 			user.setPassword("Password Encrypted");
-			//////////////////////////// added by URVIJ
-			// assign incometax uuid if user donot have incometaxuuid
-			if (user.getIncomeTaxUuid() == null || user.getIncomeTaxUuid().isEmpty()) {
-				user.setIncomeTaxUuid(
-						this.createUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
-			}
-
-			// SAVE USER HERE
-			userDataAccess.update(user);
-			/////////////////////////////////////
-
 			// get the roles, ACL and there details of this user
 			// if the user is valid create a new session, in the session add
 			// details
@@ -542,12 +531,6 @@ public class UserService implements IUserService {
 
 				}
 
-			}
-
-			// add the user id in redis set to be later fetched and saved in
-			// MysqlDB using job
-			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
-				userDataAccess.addInRedisSet(user);
 			}
 
 			return session;

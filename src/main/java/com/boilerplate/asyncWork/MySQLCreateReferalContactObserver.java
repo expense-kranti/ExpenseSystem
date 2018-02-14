@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * This class is used to pop or read queue and process each element
+ * 
  * @author Yash
  *
  */
@@ -39,7 +40,7 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	 */
 	@Autowired
 	ISFUpdateHash redisSFUpdateHashAccess;
-	
+
 	public void setRedisSFUpdateHashAccess(ISFUpdateHash redisSFUpdateHashAccess) {
 		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
 	}
@@ -54,8 +55,10 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	IReferral mySqlRefralContact;
 
 	/**
-	 * Set the mySqlRefralContact 
-	 * @param mySqlRefralContact this is the mySqlRefralContact
+	 * Set the mySqlRefralContact
+	 * 
+	 * @param mySqlRefralContact
+	 *            this is the mySqlRefralContact
 	 */
 	public void setMySqlRefralContact(IReferral mySqlRefralContact) {
 		this.mySqlRefralContact = mySqlRefralContact;
@@ -68,6 +71,7 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 
 	/**
 	 * This method is used to set referral
+	 * 
 	 * @param referral
 	 */
 	public void setReferral(IReferral referral) {
@@ -105,11 +109,12 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 		// get the referral contact detail entity by redis key get from queue
 		ReferredContactDetailEntity referredContactDetailEntity = referral
 				.getReferredContactDetailEntity((String) asyncWorkItem.getPayload());
-		
+
 		// get the referral link from the redis data base
 		String referralContactLink = referral.getUserReferralLink((String) asyncWorkItem.getPayload());
 
-		// create the referral contact entity using referralcontactdetail and referral link and redis queue key
+		// create the referral contact entity using referralcontactdetail and
+		// referral link and redis queue key
 		ReferralContactEntity referralContactEntity = getReferralContact(referredContactDetailEntity,
 				referralContactLink, (String) asyncWorkItem.getPayload());
 
@@ -120,27 +125,33 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 
 	/**
 	 * This is used to get Referral Contact Entity
-	 * @param referredContactDetailEntity This is the referradContact  detail entiyt
-	 * @param referralLink This is the referral link
-	 * @param redisReferalKey this the redis key saved in queue
+	 * 
+	 * @param referredContactDetailEntity
+	 *            This is the referradContact detail entiyt
+	 * @param referralLink
+	 *            This is the referral link
+	 * @param redisReferalKey
+	 *            this the redis key saved in queue
 	 * @return the ReferralContactEntity
 	 * @throws ParseException
 	 */
 	private ReferralContactEntity getReferralContact(ReferredContactDetailEntity referredContactDetailEntity,
 			String referralLink, String redisReferalKey) throws ParseException {
-		
-		//instance of ReferarlContactEntity to return
+
+		// instance of ReferarlContactEntity to return
 		ReferralContactEntity referredContactEntity = new ReferralContactEntity();
 		// split the key to get UserreferId , ReferralMediumType
 		String redisReferalKeyData[] = redisReferalKey.split(":");
-		// set date format to update date in Date format in (yyyy-MM-dd) - for coming time
+		// set date format to update date in Date format in (yyyy-MM-dd) - for
+		// coming time
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-		// set all values in ReferContact Entity		
+		// set all values in ReferContact Entity
 		// set userreferid
 		referredContactEntity.setUserReferId(redisReferalKeyData[0]);
 		// set userId
-		referredContactEntity.setUserId( this.redisSFUpdateHashAccess.hget(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), referredContactEntity.getUserReferId()));
+		referredContactEntity.setUserId(this.redisSFUpdateHashAccess
+				.hget(configurationManager.get("AKS_UUID_USER_HASH_BASE_TAG"), referredContactEntity.getUserReferId()));
 		// set referral medium
 		referredContactEntity.setReferralMediumType(redisReferalKeyData[1]);
 		// set contact
@@ -152,25 +163,30 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 		// set coming userId
 		referredContactEntity.setComingUserId(referredContactDetailEntity.getComingUserId());
 		// set referral link
-		referredContactEntity.setReferralLink(referralLink);		
+		referredContactEntity.setReferralLink(referralLink);
 		// set coming time if ComiingTime is not empty
-		if (referredContactDetailEntity.getComingTime() != null && !(referredContactDetailEntity.getComingTime().isEmpty())) {
+		if (referredContactDetailEntity.getComingTime() != null
+				&& !(referredContactDetailEntity.getComingTime().isEmpty())) {
 			referredContactEntity.setComingTime(dateFormat.parse(referredContactDetailEntity.getComingTime()));
-		}		
-		
+		}
+
 		return referredContactEntity;
 	}
 
 	/**
-	 * Method used to save redis data into MySql 
-	 * @param ReferralContactEntity This is the referralContactEntity
-	 * @param userReferId This is the userReferId
+	 * Method used to save redis data into MySql
+	 * 
+	 * @param ReferralContactEntity
+	 *            This is the referralContactEntity
+	 * @param userReferId
+	 *            This is the userReferId
 	 * @throws Exception
 	 */
 	private void saveOrUpdateReferralContactEntityInMySQL(ReferralContactEntity referralContactEntity,
 			String userReferId) throws Exception {
 
-		// Get the SQL query from configurations for get the list of user Referal
+		// Get the SQL query from configurations for get the list of user
+		// Referal
 		String sqlQuery = configurationManager.get(sqlQueryGetUserReferralContact);
 		// Get the ReferralContactEntity list to update the row for exist data
 		referralContactEntity = getReferralContactEntityFromMySQl(referralContactEntity, sqlQuery);
@@ -180,7 +196,12 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 			mySqlRefralContact.mySqlSaveReferalData(referralContactEntity);
 		} catch (Exception ex) {
 			logger.logException("MySQLCreateReferalContactObserver", "mySqlSaveReferalData",
-					"try-catch block calling save method", ex.getMessage(), ex);
+					"try-catch block calling save method",
+					"Exception Message : is " + ex.getMessage() + ", Exception Cause : " + ex.getCause().toString(),
+					ex);
+			// delete key from redis
+			referral.deleteItemFromRedisUserReferIdSet(userReferId);
+			throw ex;
 		}
 		// delete key from redis
 		referral.deleteItemFromRedisUserReferIdSet(userReferId);
@@ -189,8 +210,11 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	/**
 	 * This method is used to get saved ReferralContactEntity and if exist
 	 * update them with new ReferralContactEntity
-	 * @param referralContactEntity This is the referralCotactEntity
-	 * @param sqlQuery the Sqlquery
+	 * 
+	 * @param referralContactEntity
+	 *            This is the referralCotactEntity
+	 * @param sqlQuery
+	 *            the Sqlquery
 	 * @return the updated ReferralContactEntity with Id
 	 */
 	private ReferralContactEntity getReferralContactEntityFromMySQl(ReferralContactEntity referralContactEntity,

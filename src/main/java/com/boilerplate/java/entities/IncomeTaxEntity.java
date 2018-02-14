@@ -125,6 +125,10 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 * This is the ctc for lac abbreviation
 	 */
 	private double ctcForLacAbreviation;
+	/**
+	 * This is the userId of the user who has calculated tax
+	 */
+	private String userId;
 
 	/**
 	 * Gets the uuid
@@ -633,6 +637,25 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 */
 	public void setCtcForLacAbreviation(double ctcForLacAbreviation) {
 		this.ctcForLacAbreviation = ctcForLacAbreviation;
+	}
+
+	/**
+	 * Gets the userId
+	 * 
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * Sets the userId
+	 * 
+	 * @param userId
+	 *            the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	/**

@@ -166,9 +166,9 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 				for (String userIdWithRedisKeyName : keySet) {
 					String[] userIdParts = userIdWithRedisKeyName.split(":");
 					String userId = userIdParts[1] + ":" + userIdParts[2];
-					// process userIds with phoneNumber length equals 10
+					// process userIds with phoneNumber length equals greater than 10
 					if (userId.equals("AKS:ADMIN") || userId.equals("AKS:ANNONYMOUS") || userId.equals("AKS:BACKGROUND")
-							|| userId.equals("AKS:ROLEASSIGNER") || userIdParts[2].length() == 10) {
+							|| userId.equals("AKS:ROLEASSIGNER") || userIdParts[2].length() > 10) {
 
 						String userReferId = this.redisSFUpdateHashAccess
 								.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
