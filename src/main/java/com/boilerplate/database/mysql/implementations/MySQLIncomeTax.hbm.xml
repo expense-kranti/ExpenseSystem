@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.boilerplate.java.entities.IncomeTaxEntity"
+		table="IncomeTax">
+		<id name="id" column="Id">
+			<generator class="identity" />
+		</id>
+		<property name="userId" column="UserId" />
+		<property name="uuid" column="Uuid" />
+		<property name="ctcForLacAbreviation" column="Ctc" />
+		<property name="age" column="Age" />
+		<property name="fromMetropolitanCity" column="FromMetropolitanCity" />
+		<property name="basicSalary" column="BasicSalary" />
+		<property name="investmentIn80C" column="InvestmentIn80C" />
+		<property name="investmentIn80D" column="InvestmentIn80D" />
+		<property name="investmentIn80E" column="InvestmentIn80E" />
+		<property name="investmentInSection24" column="InvestmentInSection24" />
+		<property name="investmentIn80CCD1B" column="InvestmentIn80CCD1B" />
+		<property name="medicalAllowance" column="MedicalAllowance" />
+		<property name="travelAllowance" column="TravelAllowance" />
+		<property name="houseRentPaidMonthly" column="HouseRentPaidMonthly" />
+		<property name="hraExempted" column="HraExempted" />
+		<property name="estimatedTax" column="EstimatedTax" />
+		<property name="takeHomeSalaryMonthly" column="TakeHomeSalaryMonthly" />
+		<property name="emailId" column="EmailId" />
+
+	</class>
+</hibernate-mapping>
+	

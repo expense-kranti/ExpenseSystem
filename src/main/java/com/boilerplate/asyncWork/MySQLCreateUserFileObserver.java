@@ -92,6 +92,9 @@ public class MySQLCreateUserFileObserver implements IAsyncWorkObserver {
 				// upper case(making in upper case is must)
 				filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
 			}
+			// after getting work done by using file name delete that filename from
+			// set
+			filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
 			throw ex;
 		}
 
