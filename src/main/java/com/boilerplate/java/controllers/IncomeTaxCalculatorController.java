@@ -43,17 +43,14 @@ public class IncomeTaxCalculatorController extends BaseController {
 	 * @param incomeTaxEntity
 	 *            contains the input values required to calculate income tax
 	 * @return the incomeTaxEntity with uuid against which the income tax data
-	 * @throws ValidationFailedException
-	 *             thrown when required inputs are not provided
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonParseException
+	 * @throws Exception
+	 *             thrown when exception occurs in saving user in MySQL
 	 */
 	@ApiOperation(value = "Calculates tax with predefined deductions on given cost to company")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok") })
 	@RequestMapping(value = "/calculateSimpleIncomeTax", method = RequestMethod.POST)
 	public @ResponseBody IncomeTaxEntity calculateSimpleTax(@RequestBody IncomeTaxEntity incomeTaxEntity)
-			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException {
+			throws Exception {
 		return incomeTaxService.calculateSimpleTax(incomeTaxEntity);
 	}
 
@@ -84,19 +81,14 @@ public class IncomeTaxCalculatorController extends BaseController {
 	 * @param incomeTaxEntity
 	 *            contains investments made if any
 	 * @return the incometax entity with estimated tax
-	 * @throws ValidationFailedException
-	 *             thrown when required input is not provided
-	 * @throws JsonParseException
-	 * @throws JsonMappingException
-	 * @throws IOException
-	 * @throws NotFoundException
-	 *             thrown when income tax data is not found against uuid
+	 * @throws Exception
+	 *             thrown when exception occurs in saving user in MySQL
 	 */
 	@ApiOperation(value = "Calculates income tax with investments made")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok") })
 	@RequestMapping(value = "/calculateIncomeTaxWithInvestments", method = RequestMethod.POST)
 	public @ResponseBody IncomeTaxEntity calculateIncomeTaxWithInvestments(@RequestBody IncomeTaxEntity incomeTaxEntity)
-			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException, NotFoundException {
+			throws Exception {
 		return incomeTaxService.calculateTaxWithInvestments(incomeTaxEntity);
 	}
 

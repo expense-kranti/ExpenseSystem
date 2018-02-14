@@ -93,7 +93,7 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 				|| externalFacingUser.getUserId().equals("AKS:ANNONYMOUS")
 				|| externalFacingUser.getUserId().equals("AKS:BACKGROUND")
 				|| externalFacingUser.getUserId().equals("AKS:ROLEASSIGNER")
-				|| externalFacingUser.getPhoneNumber().length() == 10) {
+				|| externalFacingUser.getPhoneNumber().length() > 10) {
 			try {
 				// check if total score which is in String is not null or empty
 				if (externalFacingUser.getTotalScore() != null && !(externalFacingUser.getTotalScore().isEmpty()))
@@ -114,7 +114,11 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 				mySqlUser.create(externalFacingUser);
 			} catch (Exception ex) {
 				logger.logException("MySQLCreateOrUpdateUserObserver", "saveOrUpdateUserInMySQL",
-						"try-catch block calling create method", ex.getMessage(), ex);
+						"try-catch block calling create method",
+						"Exception message is : " + ex.getMessage() + " and Exception cause : " + ex.getMessage(), ex);
+				// simply delete that user id from set
+				userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
+				
 				throw ex;
 			}
 		}

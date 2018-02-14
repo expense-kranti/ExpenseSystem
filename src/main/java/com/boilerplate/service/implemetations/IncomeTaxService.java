@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendEmailWithIncomeTaxDetailsObserver;
 import com.boilerplate.database.interfaces.IIncomeTax;
+import com.boilerplate.database.mysql.implementations.MySQLIncomeTax;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
@@ -86,6 +87,19 @@ public class IncomeTaxService implements IIncomeTaxService {
 	}
 
 	/**
+	 * This is the instance of MySQLIncomeTax
+	 */
+	private MySQLIncomeTax mySQLIncomeTax;
+
+	/**
+	 * @param mySQLIncomeTax
+	 *            the mySQLIncomeTax to set
+	 */
+	public void setMySQLIncomeTax(MySQLIncomeTax mySQLIncomeTax) {
+		this.mySQLIncomeTax = mySQLIncomeTax;
+	}
+
+	/**
 	 * This is the instance of sendEmailWithIncomeTaxDetails
 	 */
 	SendEmailWithIncomeTaxDetailsObserver sendEmailWithIncomeTaxDetailsObserver;
@@ -109,11 +123,11 @@ public class IncomeTaxService implements IIncomeTaxService {
 	}
 
 	/**
+	 * @throws Exception
 	 * @see IIncomeTaxService.calculateSimpleTax
 	 */
 	@Override
-	public IncomeTaxEntity calculateSimpleTax(IncomeTaxEntity incomeTaxEntity)
-			throws ValidationFailedException, JsonParseException, JsonMappingException, IOException {
+	public IncomeTaxEntity calculateSimpleTax(IncomeTaxEntity incomeTaxEntity) throws Exception {
 
 		incomeTaxEntity.convertEntityPropertiesStringValuesToPrimitiveTypes();
 
@@ -156,35 +170,42 @@ public class IncomeTaxService implements IIncomeTaxService {
 					incomeTaxEntity.getCtcForLacAbreviation(), incomeTaxEntity.getEstimatedTax()));
 		}
 
-		// check if user is logged in and fetch incometax uuid and assign the
-		// uuid to the incometaxEntity to making relation between logged in user
-		// and incometax calculation
-		if (RequestThreadLocal.getSession() != null
-				&& (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))) {
-			incomeTaxEntity.setUuid(RequestThreadLocal.getSession().getExternalFacingUser().getIncomeTaxUuid());
-		}
+		// check if user is logged in and check if income tax uuid is null or
+		// empty then set incometaxentity userId to userId of logged in user
+		// below line commented for production working fine as this is under
+		// construction
+		// if (RequestThreadLocal.getSession() != null
+		// && (incomeTaxEntity.getUuid() == null ||
+		// incomeTaxEntity.getUuid().equals(""))) {
+		// incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		// }
 
 		// maintaining uuid is important for maintaining user session from
 		// chatbot to akshar website
 		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
-			incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+			incomeTaxEntity.setUuid(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
 		}
 
-		// save data in datastore to be retrieved
+		// if (incomeTaxEntity.getUserId() != null &&
+		// !(incomeTaxEntity.getUserId().isEmpty())) {
+		// // TODO save incomeTax data in MySQL
+		// } else {
+		// save income tax details in datastore
 		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		// }
 
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "before return statement", "about to return response");
 		return incomeTaxEntity;
 	}
 
 	/**
+	 * @throws Exception
 	 * @see IIncomeTaxService.calculateTaxWithInvestments
 	 */
 	// this method currently requires uuid,frommetropolitan,ageInString to be
 	// input
 	@Override
-	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity)
-			throws NotFoundException, JsonParseException, JsonMappingException, IOException, ValidationFailedException {
+	public IncomeTaxEntity calculateTaxWithInvestments(IncomeTaxEntity incomeTaxEntity) throws Exception {
 		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "First Statement in method",
 				"about to validate input");
 
@@ -200,14 +221,17 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// check if user is logged in and fetch incometax uuid and assign the
 		// uuid to the incometaxEntity to making relation between logged in user
 		// and incometax calculation
-		if (RequestThreadLocal.getSession() != null
-				&& (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))) {
-			incomeTaxEntity.setUuid(RequestThreadLocal.getSession().getExternalFacingUser().getIncomeTaxUuid());
-		}
+		// below line commented for production working fine as this is under
+		// construction
+		// if (RequestThreadLocal.getSession() != null
+		// && (incomeTaxEntity.getUuid() == null ||
+		// incomeTaxEntity.getUuid().equals(""))) {
+		// incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+		// }
 		// uuid is checked for existence for maintaining working through chatbot
 		// for sending email if session null before here
 		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
-			incomeTaxEntity.setUuid(getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+			incomeTaxEntity.setUuid(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
 		}
 
 		// validation has been handled at front end
@@ -289,6 +313,8 @@ public class IncomeTaxService implements IIncomeTaxService {
 			incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 		}
+
+		// mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
 
 		// save income tax details in datastore
 		incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);

@@ -148,8 +148,13 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 								"try-catch block calling saveUserAssessmentData method",
 								"User Id : " + userAssessmentDetailEntity.getUserId() + " AssessmentId : "
 										+ userAssessmentDetailEntity.getAssessmentId() + " Error message "
-										+ ex.getMessage(),
+										+ ex.getMessage() + " And Exception Cause is : " + ex.getCause().toString(),
 								ex);
+						// delete the id related to assessment after saving the
+						// assessment in MySQL with the id present in Redis set
+						redisAssessment.deleteRedisAssessmentIdFromSet(userAssessmentDetailEntity.getUserId() + ","
+								+ userAssessmentDetailEntity.getAssessmentId());
+
 						throw ex;
 					}
 
