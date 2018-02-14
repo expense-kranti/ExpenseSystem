@@ -1461,7 +1461,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("V_All_Dev", "V_All_Dev");
 		vAllEAll.put("DefaultAuthenticationProvider", "AKS");
 		vAllEAll.put("DSAAuthenticationProvider", "DSA");
-		vAllEAll.put("SessionTimeOutInMinutes", "43200");
+		vAllEAll.put("SessionTimeOutInMinutes", "129600");
 		vAllEAll.put("CMD_Organization_Id", "CMD001");
 		vAllEAll.put("OrganizationTimeOutInSeconds", "2147483647");
 
