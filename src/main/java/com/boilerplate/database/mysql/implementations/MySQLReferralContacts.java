@@ -197,4 +197,10 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 		return null;
 	}
 
+	@Override
+	public void addInRedisSetInReferredExpiredContact(String userReferId, String referralMediumType, String contact) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
