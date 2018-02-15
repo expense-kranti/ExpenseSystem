@@ -142,8 +142,15 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 
+		logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "OBSERVE",
+				" FIRST STATEMENT IN OBSERVE METHOD",
+				" READING REDIS KEYS AND ADDING INTO REDIS SETS ******STARTED******* ");
 		// read all the Redis Keys and add them to Redis Sets
 		addAllRedisKeysToRedisSet();
+
+		logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "OBSERVE",
+				" LAST STATEMENT IN OBSERVE METHOD",
+				" READING REDIS KEYS AND ADDING INTO REDIS SETS ******ENDED******* ");
 
 	}
 
@@ -162,47 +169,55 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 
 			// add all user ids to Redis set
 			Set<String> keySet = userDataAccess.getAllUserKeys();
-			if ((keySet != null) && !(keySet.isEmpty())) {
+			logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
+					"After getting all User Keys from Redis ", "Number of User Keys Fetched : " + keySet.size());
+			if ((keySet.size() > 0)) {
 				for (String userIdWithRedisKeyName : keySet) {
+
 					logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
-							"Inside if statement checking user Redis Set not null or empty",
+							"Inside if statement checking user Redis Set size greater than 0",
 							"about to fetch UserId from Redis Keys and Add into RedisSet, UserIdKeyName is : "
 									+ userIdWithRedisKeyName);
-					String[] userIdParts = userIdWithRedisKeyName.split(":");
-					String userId = userIdParts[1] + ":" + userIdParts[2];
+					try {
+						String[] userIdParts = userIdWithRedisKeyName.split(":");
+						String userId = userIdParts[1] + ":" + userIdParts[2];
 
-					String userReferId = this.redisSFUpdateHashAccess
-							.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
-					// add to Redis set
-					userDataAccess.addInRedisSet(userIdParts[1] + ":" + userIdParts[2]);
-					// get assessment for this user Id and add in assessment
-					// redis set
-					for (String userAssessmentKey : redisAssessment.getAllAssessmentKeysForUser(userId)) {
-						addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(userAssessmentKey);
+						String userReferId = this.redisSFUpdateHashAccess
+								.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
+						// add to Redis set
+						userDataAccess.addInRedisSet(userId);
+						// get assessment for this user Id and add in assessment
+						// redis set
+						fetchEachAssesssmentKeyAndAddInRedisSet(userId);
+
+						// get BlogActivity for this user Id and add in
+						// assessment
+						// redis set
+						fetchEachBlogActivityAndAddInRedisSet(userId);
+
+						// get ReferredContact for this user Id and add in
+						// assessment
+						// redis set
+						fetchEachReferredContactsKeyAndAddInRedisSet(userReferId);
+
+						// get MonthlyScore for this user Id and add in
+						// assessment
+						// redis set
+						fetchEachMonthlyScoreKeyAndAddInRedisSet(userId);
+
+						// get userFiles for this user Id and add in assessment
+						// redis set
+						fetchEachFileKeyAndAddInRedisSet(userId);
+					} catch (Exception ex) {
+						logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+								"addAllRedisKeysToRedisSet",
+								"Last statement Inside body of first for loop which is getting userids from redis keys and traversing to add into redis set",
+								"exception messege : " + ex.getMessage() + ", exception cause : "
+										+ ex.getCause().toString(),
+								ex);
+
 					}
-					// get BlogActivity for this user Id and add in
-					// assessment
-					// redis set
-					for (String userBlogActivityKey : blogActivityDataAccess.getAllBlogUserKeys(userId)) {
-						addBlogActivityKeyByProcessingRedisKey(userBlogActivityKey);
-					}
-					// get ReferredContact for this user Id and add in
-					// assessment
-					// redis set
-					for (String userReferredContactKey : referral.getUserAllReferredContactsKeys(userReferId)) {
-						addReferredRelatedDataKeyByProcessingRedisKey(userReferredContactKey);
-					}
-					// get MonthlyScore for this user Id and add in
-					// assessment
-					// redis set
-					for (String userMonthlyScoreKey : redisAssessment.getAllMonthlyScoreKeys(userId)) {
-						addMonthlyScoreKeyByProcessingRedisKey(userMonthlyScoreKey);
-					}
-					// get userFiles for this user Id and add in assessment
-					// redis set
-					for (String userFileKey : filePointer.getAllUserFileKeysForUser(userId)) {
-						filePointer.addInRedisSet(userFileKey);
-					}
+
 				}
 
 			}
@@ -215,6 +230,118 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	}
 
 	/**
+	 * This method fetches each user file key from UserFileKey and add into
+	 * Redis Set
+	 * 
+	 * @param userReferId
+	 *            against which file details to be fetched
+	 */
+	private void fetchEachFileKeyAndAddInRedisSet(String userId) {
+		for (String userFileKey : filePointer.getAllUserFileKeysForUser(userId)) {
+			try {
+				filePointer.addInRedisSet(userFileKey);
+			} catch (Exception ex) {
+				logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+						"fetchEachFileKeyAndAddInRedisSet",
+						"inside for loop which is fetching each file key and adding in redis set",
+						"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(),
+						ex);
+
+			}
+		}
+	}
+
+	/**
+	 * This method fetches each user monthly score key from MonthlyScoreKey and
+	 * add into Redis Set
+	 * 
+	 * @param userReferId
+	 *            against which monthly score to be fetched
+	 */
+	private void fetchEachMonthlyScoreKeyAndAddInRedisSet(String userId) {
+		for (String userMonthlyScoreKey : redisAssessment.getAllMonthlyScoreKeys(userId)) {
+			try {
+				addMonthlyScoreKeyByProcessingRedisKey(userMonthlyScoreKey);
+			} catch (Exception ex) {
+				logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+						"fetchEachMonthlyScoreKeyAndAddInRedisSet",
+						"inside for loop which is fetching each monthly score key and adding in redis set",
+						"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(),
+						ex);
+
+			}
+		}
+	}
+
+	/**
+	 * This method fetches each referredcontact key from AssessmentKeys and add
+	 * into Redis Set
+	 * 
+	 * @param userReferId
+	 *            against which referred contact to be fetched
+	 */
+	private void fetchEachReferredContactsKeyAndAddInRedisSet(String userReferId) {
+		for (String userReferredContactKey : referral.getUserAllReferredContactsKeys(userReferId)) {
+			try {
+				addReferredRelatedDataKeyByProcessingRedisKey(userReferredContactKey);
+			} catch (Exception ex) {
+				logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+						"fetchEachReferredContactsKeyAndAddInRedisSet",
+						"inside for loop which is fetching each referred contact key and adding in redis set",
+						"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(),
+						ex);
+
+			}
+		}
+	}
+
+	/**
+	 * This method fetches each BlogActivity key from BlogActivityKeys and add
+	 * into Redis Set
+	 * 
+	 * @param userReferId
+	 *            against which blog activity to be fetched
+	 */
+	private void fetchEachBlogActivityAndAddInRedisSet(String userId) {
+		for (String userBlogActivityKey : blogActivityDataAccess.getAllBlogUserKeys(userId)) {
+			try {
+				addBlogActivityKeyByProcessingRedisKey(userBlogActivityKey);
+			} catch (Exception ex) {
+				logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+						"fetchEachBlogActivityAndAddInRedisSet",
+						"inside for loop which is fetching each blog acitvity key and adding in redis set",
+						"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(),
+						ex);
+
+			}
+
+		}
+	}
+
+	/**
+	 * This method fetches each asessmnet key from AssessmentKeys and add into
+	 * Redis Set
+	 * 
+	 * @param userId
+	 *            against which assessment keys to be fetched
+	 */
+	private void fetchEachAssesssmentKeyAndAddInRedisSet(String userId) {
+		for (String userAssessmentKey : redisAssessment.getAllAssessmentKeysForUser(userId)) {
+			try {
+				addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(userAssessmentKey);
+			} catch (Exception ex) {
+				logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+						"fetchEachAssesssmentKeyAndAddInRedisSet",
+						"inside for loop which is fetching each assessment key and adding in redis set",
+						"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(),
+						ex);
+
+			}
+		}
+
+	}
+
+	/**
 	 * This method is used to prepare assessment keys to be used to be saved in
 	 * Redis Set
 	 * 
@@ -222,12 +349,20 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 *            the complete key containing Redis assessment key
 	 */
 	private void addAssessmentAndAssessmentScoreKeyByProcessingRedisKey(String assessmentIdWithRedisKeyName) {
-		String[] assessmentKeyPart = assessmentIdWithRedisKeyName.split(":");
-		// add to Redis set
-		redisAssessment.addInRedisSetForUserAssessment(assessmentKeyPart[1] + ":" + assessmentKeyPart[2],
-				assessmentKeyPart[3]);
-		redisAssessment.addIdInRedisSetForAssessmentScore(
-				assessmentKeyPart[1] + ":" + assessmentKeyPart[2] + "," + assessmentKeyPart[3]);
+		try {
+			String[] assessmentKeyPart = assessmentIdWithRedisKeyName.split(":");
+			// add to Redis set
+			redisAssessment.addInRedisSetForUserAssessment(assessmentKeyPart[1] + ":" + assessmentKeyPart[2],
+					assessmentKeyPart[3]);
+			redisAssessment.addIdInRedisSetForAssessmentScore(
+					assessmentKeyPart[1] + ":" + assessmentKeyPart[2] + "," + assessmentKeyPart[3]);
+		} catch (Exception ex) {
+			logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+					"addAssessmentAndAssessmentScoreKeyByProcessingRedisKey",
+					"inside catch block of try block spliting assessment redis key and adding it to assessment Redis set and Assessment score redis set",
+					"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(), ex);
+
+		}
 
 	}
 
@@ -238,9 +373,18 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 *            containing the Redis blog key
 	 */
 	private void addBlogActivityKeyByProcessingRedisKey(String blogActivityKey) {
-		String[] blogActivityKeyPart = blogActivityKey.split(":");
-		blogActivityDataAccess.addInRedisSet(blogActivityKeyPart[1],
-				blogActivityKeyPart[2] + ":" + blogActivityKeyPart[3]);
+		try {
+			String[] blogActivityKeyPart = blogActivityKey.split(":");
+			blogActivityDataAccess.addInRedisSet(blogActivityKeyPart[1],
+					blogActivityKeyPart[2] + ":" + blogActivityKeyPart[3]);
+		} catch (Exception ex) {
+
+			logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+					"addBlogActivityKeyByProcessingRedisKey",
+					"inside catch block of try block spliting blogactivity key and adding it to blog activity redis set",
+					"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(), ex);
+
+		}
 
 	}
 
@@ -252,9 +396,18 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 *            containing the Redis key for referal key for user
 	 */
 	private void addReferredRelatedDataKeyByProcessingRedisKey(String referalKey) {
-		String[] referalKeyPart = referalKey.split(":");
-		referral.addInRedisSet(referalKeyPart[1], referalKeyPart[2], referalKeyPart[3].toUpperCase());
-		referral.addInRedisSet(referalKeyPart[1], referalKeyPart[2], referalKeyPart[3].toUpperCase());
+		try {
+			String[] referalKeyPart = referalKey.split(":");
+			referral.addInRedisSet(referalKeyPart[1], referalKeyPart[2], referalKeyPart[3].toUpperCase());
+			referral.addInRedisSetInReferredExpiredContact(referalKeyPart[1], referalKeyPart[2],
+					referalKeyPart[3].toUpperCase());
+		} catch (Exception ex) {
+			logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+					"addReferredRelatedDataKeyByProcessingRedisKey",
+					"inside catch block of try block spliting referal key and adding it to referral contact redis set and referred expired contact redis set",
+					"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(), ex);
+
+		}
 
 	}
 
@@ -266,9 +419,18 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 	 *            containing the Redis key for referal keys
 	 */
 	private void addMonthlyScoreKeyByProcessingRedisKey(String monthlyScoreKey) {
-		String[] monthlyScoreKeyPart = monthlyScoreKey.split(":");
-		redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(monthlyScoreKeyPart[3] + ":" + monthlyScoreKeyPart[4]
-				+ "," + monthlyScoreKeyPart[1] + "," + monthlyScoreKeyPart[2]);
+		try {
+			String[] monthlyScoreKeyPart = monthlyScoreKey.split(":");
+			redisAssessment.addIdInRedisSetForAssessmentMonthlyScore(monthlyScoreKeyPart[3] + ":"
+					+ monthlyScoreKeyPart[4] + "," + monthlyScoreKeyPart[1] + "," + monthlyScoreKeyPart[2]);
+
+		} catch (Exception ex) {
+			logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+					"addMonthlyScoreKeyByProcessingRedisKey",
+					"inside catch block of try block spliting monthly score redis key and adding it to monthlyscore Redis set ",
+					"Exception message : " + ex.getMessage() + ", Exception cause : " + ex.getCause().toString(), ex);
+
+		}
 	}
 
 }

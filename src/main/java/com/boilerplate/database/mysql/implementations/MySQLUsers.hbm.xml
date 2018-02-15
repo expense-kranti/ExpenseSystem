@@ -4,7 +4,7 @@
 <hibernate-mapping>
 
 	<class name="com.boilerplate.java.entities.ExternalFacingReturnedUser"
-		table="Users">
+		table="Aks_Users">
 		<id name="userId" column="UserId">
 			<generator class="assigned" />
 		</id>
@@ -30,7 +30,12 @@
 		<property name="userStatus" column="UserStatus" />
 		<property name="dateOfBirth" column="DateOfBirth" />
 		<property name="alternateNumber" column="AlternateNumber" />
-		<property name="employmentStatus" column="EmploymentStatus" />
+		<property name="employmentStatus" column="EmploymentStatus">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.boilerplate.java.entities.EmploymentStatus</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
 		<property name="location" column="Location"></property>
 		<property name="isPasswordChanged" type="boolean">
 			<column name="IsPasswordChanged" sql-type="tinyint" />

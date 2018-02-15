@@ -1477,9 +1477,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_GET_MULTIPLE_CHOICE_QUESTION",
 				"From MultipleChoiceQuestionEntity mcq where mcq.questionId = :QuestionId ");
 		vAllEAll.put("SQL_QUERY_GET_ASSESSMENT_LIST",
-				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
+				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Aks_Assessment Where IsActive = 1 And (IsSurvey = 0 or IsSurvey is null)");
 		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST",
-				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Assessment Where IsActive = 1 And IsSurvey = 1");
+				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Aks_Assessment Where IsActive = 1 And IsSurvey = 1");
 		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION",
 				"Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
 		vAllEAll.put("Maximum_File_Upload_Size", "5");
@@ -1563,7 +1563,7 @@ public class BaseRedisDataAccessLayer {
 
 		// query for updating monthly Obtained score
 		vAllEAll.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
-				"UPDATE UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
+				"UPDATE Aks_UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
 
 		vAllEAll.put("GENERAL_UUID_LENGTH", "8");
 		return vAllEAll;

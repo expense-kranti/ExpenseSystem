@@ -317,6 +317,14 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	/**
+	 * @see IReferral.addInRedisSetInReferredExpiredContact
+	 */
+	@Override
+	public void addInRedisSetInReferredExpiredContact(String userReferId, String referralMediumType, String contact) {
+		super.sadd(ReferredExpireContact, userReferId + ":" + referralMediumType + ":" + (contact).toUpperCase());
+	}
+
+	/**
 	 * @see IReferral.fetchUserIdsFromRedisSet
 	 */
 	@Override
@@ -357,6 +365,5 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 		// TODO Auto-generated method stub
 		return super.get(ReferredExpireContact + redisReferalExpiredKey);
 	}
-	
-	
+
 }

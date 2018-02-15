@@ -163,6 +163,11 @@ public class MySQLQueueWriterJob {
 	// This method is being called automatically through servlet context
 	// configuration
 	public void addRedisSetElementsInQueue() throws NotFoundException {
+
+		logger.logInfo("MySQLQueueWriterJob", "addRedisSetElementsInQueue",
+				" FIRST STATEMENT IN ADD REDIS SET ELEMENTS IN QUEUE",
+				" READING REDIS SETS AND ADDING INTO QUEUE ******STARTED******* ");
+
 		if (Boolean.parseBoolean(configurationManager.get("IsReadSetAndAddToMySQLPublishQueueEnabled"))) {
 			// fetch and process userIds from Redis Set and add into queue for
 			// migrating Users from Redis to MySQL
@@ -186,6 +191,10 @@ public class MySQLQueueWriterJob {
 			// user from redis to MySQL
 			this.fetchDataFromRedisSetAndAddInQueue(addIdForUserFilesInQueue);
 		}
+
+		logger.logInfo("MySQLQueueWriterJob", "addRedisSetElementsInQueue",
+				" LAST STATEMENT IN ADD REDIS SET ELEMENTS IN QUEUE",
+				" READING REDIS SETS AND ADDING INTO QUEUE ******ENDED******* ");
 
 	}
 
@@ -246,11 +255,12 @@ public class MySQLQueueWriterJob {
 			subject = subjectsForCreateReferalContact;
 			break;
 		}
-		logger.logInfo("MySQLQueueWriterJob", "fetchDataFromRedisSetAndAddInQueue method", "below switch block end",
-				"about to call addTaskInQueue method");
-
 		// if set is empty then do nothing
 		if (!elements.isEmpty() && !(elements == null)) {
+			logger.logInfo("MySQLQueueWriterJob", "fetchDataFromRedisSetAndAddInQueue method",
+					"Below switch block end inside if block",
+					" About to call addTaskInQueue method for adding each id in Queue with number of elements are : "
+							+ elements.size() + ", for subject : " + subject.get(0));
 			// add the userIds into queue from user set
 			addTaskInQueue(elements, subject);
 		}
@@ -266,6 +276,8 @@ public class MySQLQueueWriterJob {
 	 */
 	private void addTaskInQueue(Set<String> dataSet, BoilerplateList<String> subjectsForPerformingTask) {
 
+		int count = 0;
+
 		// fetch user against each userId present in Set
 		for (String dataId : dataSet) {
 			logger.logInfo("MySQLQueueWriterJob", "addTaskInQueue method",
@@ -275,7 +287,7 @@ public class MySQLQueueWriterJob {
 				// add the data id into queue for processing
 				queueReaderJob.requestBackroundWorkItem(dataId, subjectsForPerformingTask, "MySQLQueueWriterJob",
 						"addTaskInQueue", configurationManager.get("MYSQL_PUBLISH_QUEUE"));
-
+				count += 1;
 			} catch (Exception ex) {
 				// if queue fails then log the exception
 				logger.logException("MySQLQueueWriterJob", "addTaskInQueue", "try-catch block of queue",
@@ -283,6 +295,11 @@ public class MySQLQueueWriterJob {
 			}
 
 		}
+
+		logger.logInfo("MySQLQueueWriterJob", "addTaskInQueue method",
+				"outside for loop after adding elements from redis set to queue",
+				"no. of elements added in queue, count varible is : " + count + ", for subject : "
+						+ subjectsForPerformingTask.get(0));
 	}
 
 }

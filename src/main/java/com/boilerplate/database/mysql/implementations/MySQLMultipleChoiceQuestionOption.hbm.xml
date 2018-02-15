@@ -5,7 +5,7 @@
 <hibernate-mapping>
 	<class
 		name="com.boilerplate.java.entities.MultipleChoiceQuestionOptionEntity"
-		table="MultipleChoiceQuestionOption">
+		table="Aks_MultipleChoiceQuestionOption">
 		<id name="id" column="Id">
 			<generator class="identity" />
 		</id>

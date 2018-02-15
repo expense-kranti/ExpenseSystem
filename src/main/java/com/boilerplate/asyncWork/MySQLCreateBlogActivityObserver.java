@@ -95,7 +95,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 	 * @throws Exception
 	 */
 	private void saveOrUpdateBlogAcivityInMySQL(String blogActivityKey) throws Exception {
-
+		
 		BoilerplateList<BlogActivityEntity> blogActivityEntityList = new BoilerplateList<BlogActivityEntity>();
 		// getBlogActivityMap
 		Map<String, String> blogActivityMap = blogActivityDataAccess.getBlogActivityMap(blogActivityKey);
@@ -104,9 +104,10 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 
 		// get the already save row and if exist update the row
 		blogActivityEntityList = getAlreadySavedBlogActivity(blogActivityEntityList);
-
+		
 		// save the blog activity in the MySQL table
 		for (Object blogActivityEntity : blogActivityEntityList) {
+			
 			try {
 				// add blog activity to the mysql database
 				mySqlBlogActivity.saveActivity((BlogActivityEntity) blogActivityEntity);
