@@ -172,55 +172,68 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 			logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
 					"After getting all User Keys from Redis ", "Number of User Keys Fetched : " + keySet.size());
 			if ((keySet.size() > 0)) {
-				for (String userIdWithRedisKeyName : keySet) {
+				int count = 1;
+				try{
+					for (String userIdWithRedisKeyName : keySet) {
+						logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
+								"Set Key Counter",
+								"Counter Value "+ Integer.toString(count));
+						try {
+						logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
+								"Inside if statement checking user Redis Set size greater than 0",
+								"about to fetch UserId from Redis Keys and Add into RedisSet, UserIdKeyName is : "
+										+ userIdWithRedisKeyName);
+						
+							String[] userIdParts = userIdWithRedisKeyName.split(":");
+							String userId = userIdParts[1] + ":" + userIdParts[2];
 
-					logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
-							"Inside if statement checking user Redis Set size greater than 0",
-							"about to fetch UserId from Redis Keys and Add into RedisSet, UserIdKeyName is : "
-									+ userIdWithRedisKeyName);
-					try {
-						String[] userIdParts = userIdWithRedisKeyName.split(":");
-						String userId = userIdParts[1] + ":" + userIdParts[2];
+							String userReferId = this.redisSFUpdateHashAccess
+									.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
+							// add to Redis set
+							userDataAccess.addInRedisSet(userId);
+							// get assessment for this user Id and add in assessment
+							// redis set
+							fetchEachAssesssmentKeyAndAddInRedisSet(userId);
 
-						String userReferId = this.redisSFUpdateHashAccess
-								.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
-						// add to Redis set
-						userDataAccess.addInRedisSet(userId);
-						// get assessment for this user Id and add in assessment
-						// redis set
-						fetchEachAssesssmentKeyAndAddInRedisSet(userId);
+							// get BlogActivity for this user Id and add in
+							// assessment
+							// redis set
+							fetchEachBlogActivityAndAddInRedisSet(userId);
 
-						// get BlogActivity for this user Id and add in
-						// assessment
-						// redis set
-						fetchEachBlogActivityAndAddInRedisSet(userId);
+							// get ReferredContact for this user Id and add in
+							// assessment
+							// redis set
+							fetchEachReferredContactsKeyAndAddInRedisSet(userReferId);
 
-						// get ReferredContact for this user Id and add in
-						// assessment
-						// redis set
-						fetchEachReferredContactsKeyAndAddInRedisSet(userReferId);
+							// get MonthlyScore for this user Id and add in
+							// assessment
+							// redis set
+							fetchEachMonthlyScoreKeyAndAddInRedisSet(userId);
 
-						// get MonthlyScore for this user Id and add in
-						// assessment
-						// redis set
-						fetchEachMonthlyScoreKeyAndAddInRedisSet(userId);
+							// get userFiles for this user Id and add in assessment
+							// redis set
+							fetchEachFileKeyAndAddInRedisSet(userId);
+							count++;
+						} catch (Exception ex) {
+							logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+									"addAllRedisKeysToRedisSet",
+									"Last statement Inside body of first for loop which is getting userids from redis keys and traversing to add into redis set",
+									"exception messege : " + ex.getMessage() + ", exception cause : "
+											+ ex.getCause().toString(),
+									ex);
 
-						// get userFiles for this user Id and add in assessment
-						// redis set
-						fetchEachFileKeyAndAddInRedisSet(userId);
-					} catch (Exception ex) {
-						logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
-								"addAllRedisKeysToRedisSet",
-								"Last statement Inside body of first for loop which is getting userids from redis keys and traversing to add into redis set",
-								"exception messege : " + ex.getMessage() + ", exception cause : "
-										+ ex.getCause().toString(),
-								ex);
-
-					}
+						}
+						}
+				}catch (Exception e) {
+					logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+							"addAllRedisKeysToRedisSet","Set for loop erro","Error while processing set for loop",e);
+							
+				}
+				
 
 				}
 
-			}
+			
 		}
 
 		logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
