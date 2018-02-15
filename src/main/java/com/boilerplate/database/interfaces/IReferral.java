@@ -300,16 +300,5 @@ public interface IReferral {
 	 */
 	public Set<String> getAllReferredExpireContactKeys();
 
-	/**
-	 * This method is used to add key in referred expired contacts Redis set
-	 * 
-	 * @param userReferId
-	 *            the user refer id of user
-	 * @param referralMediumType
-	 *            user refer medium through which the user is refered
-	 * @param contact
-	 *            the contact of the refered user
-	 */
-	public void addInRedisSetInReferredExpiredContact(String userReferId, String referralMediumType, String contact);
-
+	
 }

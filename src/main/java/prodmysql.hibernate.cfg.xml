@@ -5,10 +5,10 @@
 	<session-factory>
 
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.url">jdbc:mysql://bankexpress-migrated.cubonxudqxps.ap-south-1.rds.amazonaws.com:3306/MySqlCSRDB?autoReconnect=true</property>
-		<property name="hibernate.connection.username">mysqlcsrdb</property>
-		<property name="hibernate.connection.password">mysql_csr</property>
-		<property name="hibernate.default_schema">MySqlCSRDB</property>
+		<property name="hibernate.connection.url">jdbc:mysql://bankexpress-migrated.cubonxudqxps.ap-south-1.rds.amazonaws.com:3306/bank_express_new?autoReconnect=true</property>
+		<property name="hibernate.connection.username">bank_dataExpress</property>
+		<property name="hibernate.connection.password">bank_data#123</property>
+		<property name="hibernate.default_schema">bank_express_new</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
 		<property name="hibernate.show_sql">false</property>

@@ -111,7 +111,9 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 		} catch (Exception ex) {
 			logger.logException("MySQLCreateOrUpdateUserObserver", "saveOrUpdateUserInMySQL",
 					"try-catch block calling create method",
-					"Exception message is : " + ex.getMessage() + " and Exception cause is : " + ex.getMessage(), ex);
+					"Exception message is : " + ex.getMessage() + " and Exception cause is : " + ex.getMessage()
+							+ "UserId failed to add is : " + externalFacingUser.getUserId(),
+					ex);
 			// simply delete that user id from set
 			userDataAccess.deleteItemFromRedisUserIdSet(externalFacingUser.getUserId());
 

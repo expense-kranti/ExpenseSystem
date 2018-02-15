@@ -1481,7 +1481,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_GET_SURVEY_LIST",
 				"Select Name as name, Id as id,MaxScore as maxScore,Category as category,Level as level From Aks_Assessment Where IsActive = 1 And IsSurvey = 1");
 		vAllEAll.put("SQL_QUERY_GET_QUESTION_EXPLANATION",
-				"Select Explanation as QuestionExplanation From Question Where Id = :QuestionId");
+				"Select Explanation as QuestionExplanation From Aks_Question Where Id = :QuestionId");
 		vAllEAll.put("Maximum_File_Upload_Size", "5");
 		// Owner Allocation QUEUE NAme
 		vAllEAll.put("S3_Signed_Url_Time_In_Hour", "5");

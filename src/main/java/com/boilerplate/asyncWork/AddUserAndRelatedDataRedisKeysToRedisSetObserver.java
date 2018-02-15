@@ -399,8 +399,7 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 		try {
 			String[] referalKeyPart = referalKey.split(":");
 			referral.addInRedisSet(referalKeyPart[1], referalKeyPart[2], referalKeyPart[3].toUpperCase());
-			referral.addInRedisSetInReferredExpiredContact(referalKeyPart[1], referalKeyPart[2],
-					referalKeyPart[3].toUpperCase());
+
 		} catch (Exception ex) {
 			logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
 					"addReferredRelatedDataKeyByProcessingRedisKey",
