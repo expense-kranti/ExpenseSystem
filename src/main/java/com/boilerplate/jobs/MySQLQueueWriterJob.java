@@ -287,6 +287,8 @@ public class MySQLQueueWriterJob {
 				// add the data id into queue for processing
 				queueReaderJob.requestBackroundWorkItem(dataId, subjectsForPerformingTask, "MySQLQueueWriterJob",
 						"addTaskInQueue", configurationManager.get("MYSQL_PUBLISH_QUEUE"));
+				// this variable is incremented when element is added in queue
+				// successfully
 				count += 1;
 			} catch (Exception ex) {
 				// if queue fails then log the exception

@@ -982,6 +982,7 @@
 		<property name="filePointer" ref="filePointer"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="file" ref="file"></property>
 	</bean>
 
 	<bean id="addUserAndRelatedDataRedisKeysToRedisSetObserverList"

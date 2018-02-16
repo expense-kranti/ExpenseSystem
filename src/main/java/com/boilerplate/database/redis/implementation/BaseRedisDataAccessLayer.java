@@ -1220,17 +1220,6 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL
 		vAllETest.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllETest.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
-		// tells that whenever any new entry is added or
-		// updated in Redis database then we need to make an entry into Redis
-		// Set to later transfer it to MySQL, is enabled or not
-		vAllETest.put("IsMySQLPublishQueueEnabled", "false");
-		// tell that background mysql publish queue reading is enabled or not
-		vAllETest.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
-		// tells that bulk adding all the Redis Keys like
-		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllETest.put("ISBulkAddInRedisSetEnabled", "true");
-		// tells that if reading Redis Sets and pushing to queue is enabled
-		vAllETest.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
 
 		return vAllETest;
 	}
@@ -1336,20 +1325,6 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		// config for SaveInMySQL reader queue
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
-		// config for SaveInMySQL reader queue
-		// tells that whenever any new entry is added or
-		// updated in Redis database then we need to make an entry into Redis
-		// Set to later transfer it to MySQL is enabled or not
-		vAllEDev.put("IsMySQLPublishQueueEnabled", "true");
-
-		// tell that background mysql publish queue reading is enabled or not
-		vAllEDev.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
-
-		// tells that bulk adding all the Redis Keys like
-		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllEDev.put("ISBulkAddInRedisSetEnabled", "true");
-		// tells that if reading Redis Sets and pushing to queue is enabled
-		vAllEDev.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
 
 		return vAllEDev;
 
@@ -1431,20 +1406,6 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL
 		vAllEProduction.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllEProduction.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
-
-		// tells that whenever any new entry is added or
-		// updated in Redis database then we need to make an entry into Redis
-		// Set to later transfer it to MySQL is enabled or not
-		vAllEProduction.put("IsMySQLPublishQueueEnabled", "false");
-
-		// tell that background mysql publish queue reading is enabled or not
-		vAllEProduction.put("IsMySQLReadQueueJobAndPublishEnabled", "false");
-
-		// tells that bulk adding all the Redis Keys like
-		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllEProduction.put("ISBulkAddInRedisSetEnabled", "false");
-		// tells that if reading Redis Sets and pushing to queue is enabled
-		vAllEProduction.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "false");
 
 		return vAllEProduction;
 	}
