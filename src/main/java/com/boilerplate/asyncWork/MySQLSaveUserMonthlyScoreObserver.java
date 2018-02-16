@@ -56,8 +56,13 @@ public class MySQLSaveUserMonthlyScoreObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 
+		logger.logInfo("MySQLSaveUserMonthlyScoreObserver", "observe", "SaveUserMonthlyScore",
+				"about to save user monthly score Started, MonthlyScore Key : "
+						+ ((String) asyncWorkItem.getPayload()));
 		// extract userId,year,month from payload
 		saveUserMonthlyScoreInMySQL(((String) asyncWorkItem.getPayload()));
+		logger.logInfo("MySQLSaveUserMonthlyScoreObserver", "observe", "SaveUserMonthlyScore",
+				"save user monthly score Ended");
 	}
 
 	/**

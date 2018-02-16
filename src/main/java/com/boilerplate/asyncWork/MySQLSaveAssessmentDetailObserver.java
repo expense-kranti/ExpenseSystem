@@ -63,9 +63,12 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("MySQLSaveAssessmentDetailObserver", "observe", "SaveAssessment",
+				"about to save user assessment Started, AssessmentId : " + ((String) asyncWorkItem.getPayload()));
 		// get the assessment from Redis data store and save it in MySQL data
 		// base
-		saveOrUpdateAssessmentInMySQL();
+		saveOrUpdateAssessmentInMySQL((String) asyncWorkItem.getPayload());
+		logger.logInfo("MySQLSaveAssessmentDetailObserver", "observe", "SaveAssessment", "Save user assessment Ended");
 	}
 
 	/**
@@ -77,24 +80,21 @@ public class MySQLSaveAssessmentDetailObserver implements IAsyncWorkObserver {
 	 *             throws exception in case of any error while saving or
 	 *             updating assessment in the database
 	 */
-	public void saveOrUpdateAssessmentInMySQL() throws Exception {
+	public void saveOrUpdateAssessmentInMySQL(String element) throws Exception {
 
-		Set<String> elements = redisAssessment.fetchAssessmentIdsFromRedisSet();
-		for (String element : elements) {
-			logger.logInfo("MySQLSaveAssessmentDetailObserver", "saveOrUpdateAssessmentInMySQL",
-					"Inside For loop which is iterating through ids Redis Set of Assessment ",
-					"About to fetch assessment from Redis Data base for current data id from Redis set being processed is : "
-							+ element);
-			AssessmentEntity assessmentEntity = new AssessmentEntity();
-			String[] ids = element.split(",");
-			// set assessment id to get the assessment from Redis data store
-			assessmentEntity.setId(ids[1]);
-			// get the assessment entity from Redis Store here ids[0] contains
-			// userId
-			assessmentEntity = redisAssessment.getAssessment(assessmentEntity, ids[0]);
+		logger.logInfo("MySQLSaveAssessmentDetailObserver", "saveOrUpdateAssessmentInMySQL",
+				"Inside For loop which is iterating through ids Redis Set of Assessment ",
+				"About to fetch assessment from Redis Data base for current data id from Redis set being processed is : "
+						+ element);
+		AssessmentEntity assessmentEntity = new AssessmentEntity();
+		String[] ids = element.split(",");
+		// set assessment id to get the assessment from Redis data store
+		assessmentEntity.setId(ids[1]);
+		// get the assessment entity from Redis Store here ids[0] contains
+		// userId
+		assessmentEntity = redisAssessment.getAssessment(assessmentEntity, ids[0]);
 
-			populateUserAssessmentDetailEntityAndSaveInMySQL(ids[0], assessmentEntity);
-		}
+		populateUserAssessmentDetailEntityAndSaveInMySQL(ids[0], assessmentEntity);
 	}
 
 	/**

@@ -171,6 +171,8 @@ public class UpdateRefererScoreObserver implements IAsyncWorkObserver {
 			// Update contact detail
 			this.updateReferredData(referalEntity, referredContactDetail);
 
+			logger.logInfo("UpdateRefererScoreObserver", "saveUserReferData", "saveuserReferScore",
+					"Adding in Redis Set to save user refer score");
 			// if true then add key in redisset
 			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 				// add key in redis database to migrate data to MySQL

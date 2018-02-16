@@ -83,8 +83,13 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("MySQLCreateBlogActivityObserver", "observe", "SaveUserBlogActivity",
+				"about to save user blog activity Started, BlogActivity Key : "
+						+ ((String) asyncWorkItem.getPayload()));
 		// get the userfile from Redis data store and save it in MySQL data base
 		saveOrUpdateBlogAcivityInMySQL((String) asyncWorkItem.getPayload());
+		logger.logInfo("MySQLCreateBlogActivityObserver", "observe", "SaveUserBlogActivity",
+				"save user blog activity Ended");
 	}
 
 	/**
@@ -95,7 +100,7 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 	 * @throws Exception
 	 */
 	private void saveOrUpdateBlogAcivityInMySQL(String blogActivityKey) throws Exception {
-		
+
 		BoilerplateList<BlogActivityEntity> blogActivityEntityList = new BoilerplateList<BlogActivityEntity>();
 		// getBlogActivityMap
 		Map<String, String> blogActivityMap = blogActivityDataAccess.getBlogActivityMap(blogActivityKey);
@@ -104,10 +109,10 @@ public class MySQLCreateBlogActivityObserver extends MySQLBaseDataAccessLayer im
 
 		// get the already save row and if exist update the row
 		blogActivityEntityList = getAlreadySavedBlogActivity(blogActivityEntityList);
-		
+
 		// save the blog activity in the MySQL table
 		for (Object blogActivityEntity : blogActivityEntityList) {
-			
+
 			try {
 				// add blog activity to the mysql database
 				mySqlBlogActivity.saveActivity((BlogActivityEntity) blogActivityEntity);

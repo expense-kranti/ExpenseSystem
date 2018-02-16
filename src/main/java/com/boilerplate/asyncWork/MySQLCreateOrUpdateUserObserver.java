@@ -75,8 +75,12 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 
+		logger.logInfo("MySQLCreateOrUpdateUserObserver", "observer", "SaveOrUpdateUserInMYSQLObserver",
+				"about to save or update user started");
 		// get the user from Redis data store and save it in MySQL data base
 		saveOrUpdateUserInMySQL((ExternalFacingUser) userDataAccess.getUser((String) asyncWorkItem.getPayload(), null));
+		logger.logInfo("MySQLCreateOrUpdateUserObserver", "observer", "SaveOrUpdateUserInMYSQLObserver",
+				"save or update user observer ended");
 	}
 
 	/**
@@ -106,6 +110,8 @@ public class MySQLCreateOrUpdateUserObserver implements IAsyncWorkObserver {
 							scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty() ? 0
 									: Float.parseFloat(scoreEntity.getReferScore()));
 			}
+			logger.logInfo("MySQLCreateOrUpdateUserObserver", "saveOrUpdateUserInMySQL", "SaveOrUpdateUser",
+					"UserId : " + externalFacingUser.getUserId());
 			// add user to the mysql database
 			mySqlUser.create(externalFacingUser);
 		} catch (Exception ex) {

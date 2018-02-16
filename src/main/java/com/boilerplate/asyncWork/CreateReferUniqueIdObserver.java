@@ -99,6 +99,9 @@ public class CreateReferUniqueIdObserver implements IAsyncWorkObserver {
 		userDataAccess.update(user);
 
 		referral.saveUserReferUUID(new ReferalEntity(user.getUserId(), user.getUserReferId()));
+
+		logger.logInfo("CalculateTotalScoreObserver", "saveUserTotalScore", "SaveUserTotalScore",
+				"Adding in Redis Set to update user for referId, UserReferId: " + user.getUserReferId());
 		// add the user id in redis set to be later fetched and saved in MysqlDB
 		// using job
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {

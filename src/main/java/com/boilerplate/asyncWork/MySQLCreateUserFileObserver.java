@@ -60,9 +60,12 @@ public class MySQLCreateUserFileObserver implements IAsyncWorkObserver {
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("MySQLCreateUserFileObserver", "observe", "SaveUserFile",
+				"about to save user file Started, File Key : " + ((String) asyncWorkItem.getPayload()));
 		// get the userfile from Redis data store and save it in MySQL data base
 		saveOrUpdateUserFileInMySQL((FileEntity) filePointer.getFilePointerById((String) asyncWorkItem.getPayload()));
 
+		logger.logInfo("MySQLCreateUserFileObserver", "observe", "SaveUserFile", "save user file Ended");
 	}
 
 	/**
@@ -92,7 +95,8 @@ public class MySQLCreateUserFileObserver implements IAsyncWorkObserver {
 				// upper case(making in upper case is must)
 				filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
 			}
-			// after getting work done by using file name delete that filename from
+			// after getting work done by using file name delete that filename
+			// from
 			// set
 			filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
 			throw ex;

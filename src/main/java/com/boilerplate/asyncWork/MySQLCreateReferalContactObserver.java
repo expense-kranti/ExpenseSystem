@@ -105,6 +105,9 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("MySQLCreateReferalContactObserver", "observe", "SaveUserReferredContact",
+				"about to save user referred contact Started, Referred Contact Key : "
+						+ ((String) asyncWorkItem.getPayload()));
 
 		// get the referral contact detail entity by redis key get from queue
 		ReferredContactDetailEntity referredContactDetailEntity = referral
@@ -120,6 +123,9 @@ public class MySQLCreateReferalContactObserver extends MySQLBaseDataAccessLayer 
 
 		// get the userfile from Redis data store and save it in MySQL data base
 		saveOrUpdateReferralContactEntityInMySQL(referralContactEntity, (String) asyncWorkItem.getPayload());
+
+		logger.logInfo("MySQLCreateReferalContactObserver", "observe", "SaveUserReferredContact",
+				"save user referred contact Ended");
 
 	}
 

@@ -390,6 +390,8 @@ public class UserService implements IUserService {
 		// call the database to save the user
 		externalFacingUser = (ExternalFacingUser) userDataAccess.create(externalFacingUser).transformToExternal();
 
+		logger.logInfo("UserService", "create", "CreateUser",
+				"adding user id into Redis Set. UserId is : " + externalFacingUser.getUserId());
 		// add the user id in redis set to be later fetched and saved in MysqlDB
 		// using job
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
@@ -709,6 +711,8 @@ public class UserService implements IUserService {
 		// update the user in the database
 		this.userDataAccess.update(returnedUser);
 
+		logger.logInfo("UserService", "update", "UpdateUser",
+				"adding user id into Redis Set for user update. UserId is : " + returnedUser.getUserId());
 		// update user in MySQLdatabase
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			userDataAccess.addInRedisSet(returnedUser);

@@ -60,7 +60,11 @@ public class MySQLSaveUserAssessmentObtainedScoreObserver implements IAsyncWorkO
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("MySQLSaveUserAssessmentObtainedScoreObserver", "observe", "SaveUserAssessmentScore",
+				"about to save user assessment score Started, AssessmentId : " + ((String) asyncWorkItem.getPayload()));
 		saveAssessmentObtainedScore((String) asyncWorkItem.getPayload());
+		logger.logInfo("MySQLSaveUserAssessmentObtainedScoreObserver", "observe", "SaveUserAssessmentScore",
+				"about to save user assessment score Ended");
 	}
 
 	/**
@@ -86,32 +90,29 @@ public class MySQLSaveUserAssessmentObtainedScoreObserver implements IAsyncWorkO
 		// prepare score entity for saving user score in MySql
 		ScoreEntity scoreEntity = new ScoreEntity();
 		scoreEntity.setAssessmentId(assessmentEntity.getId());
-		
-		
-			scoreEntity.setUserId(assessmentEntity.getUserId());
-			// check if obtained score is null or empty then set obtained score
-			// to
-			// "0"
-			if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty())
-				assessmentEntity.setObtainedScore("0");
-			scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
-			// set obtained score in double for saving in MySQL
-			scoreEntity.setObtainedScoreInDouble(Double.parseDouble(assessmentEntity.getObtainedScore()));
-			try {
-				// fetch total score of user with given userId
-				assessment.saveUserAssessmentScore(scoreEntity);
-			} catch (Exception ex) {
-				logger.logException("MySQLSaveUserAssessmentObtainedScoreObserver", "saveAssessmentObtainedScore",
-						"try-catch calling saveUserAssessmentScore method",
-						" Error Message is : " + ex.getMessage() + " Error Cause is : " + ex.getCause().toString(), ex);
-				// delete the user id from Redis set after saving the total score in
-				// MySQL
-				redisAssessment.deleteIdFromRedisSetForAssessmentScore(data);
 
-				
-				throw ex;
-			}
-		
+		scoreEntity.setUserId(assessmentEntity.getUserId());
+		// check if obtained score is null or empty then set obtained score
+		// to
+		// "0"
+		if (assessmentEntity.getObtainedScore() == null || assessmentEntity.getObtainedScore().isEmpty())
+			assessmentEntity.setObtainedScore("0");
+		scoreEntity.setObtainedScore(assessmentEntity.getObtainedScore());
+		// set obtained score in double for saving in MySQL
+		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(assessmentEntity.getObtainedScore()));
+		try {
+			// fetch total score of user with given userId
+			assessment.saveUserAssessmentScore(scoreEntity);
+		} catch (Exception ex) {
+			logger.logException("MySQLSaveUserAssessmentObtainedScoreObserver", "saveAssessmentObtainedScore",
+					"try-catch calling saveUserAssessmentScore method",
+					" Error Message is : " + ex.getMessage() + " Error Cause is : " + ex.getCause().toString(), ex);
+			// delete the user id from Redis set after saving the total score in
+			// MySQL
+			redisAssessment.deleteIdFromRedisSetForAssessmentScore(data);
+
+			throw ex;
+		}
 
 		// delete the user id from Redis set after saving the total score in
 		// MySQL

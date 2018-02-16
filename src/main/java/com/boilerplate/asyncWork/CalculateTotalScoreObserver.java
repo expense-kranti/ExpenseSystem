@@ -186,6 +186,8 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		user.setRank(scoreEntity.getRank());
 		// save user total score
 		userDataAccess.update(user);
+		logger.logInfo("CalculateTotalScoreObserver", "saveUserTotalScore", "SaveUserTotalScore",
+				"Adding in Redis Set to update user for total score, UserId: " + user.getUserId());
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 			// add userId in to Redis Set for updating user total score
 			userDataAccess.addInRedisSet(user);
