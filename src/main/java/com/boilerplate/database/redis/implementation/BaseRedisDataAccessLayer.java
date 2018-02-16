@@ -1435,16 +1435,16 @@ public class BaseRedisDataAccessLayer {
 		// tells that whenever any new entry is added or
 		// updated in Redis database then we need to make an entry into Redis
 		// Set to later transfer it to MySQL is enabled or not
-		vAllEProduction.put("IsMySQLPublishQueueEnabled", "true");
+		vAllEProduction.put("IsMySQLPublishQueueEnabled", "false");
 
 		// tell that background mysql publish queue reading is enabled or not
-		vAllEProduction.put("IsMySQLReadQueueJobAndPublishEnabled", "true");
+		vAllEProduction.put("IsMySQLReadQueueJobAndPublishEnabled", "false");
 
 		// tells that bulk adding all the Redis Keys like
 		// UserKeys,AssessmentKeys,ReferralKeys are to be added to Redis Set
-		vAllEProduction.put("ISBulkAddInRedisSetEnabled", "true");
+		vAllEProduction.put("ISBulkAddInRedisSetEnabled", "false");
 		// tells that if reading Redis Sets and pushing to queue is enabled
-		vAllEProduction.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "true");
+		vAllEProduction.put("IsReadSetAndAddToMySQLPublishQueueEnabled", "false");
 
 		return vAllEProduction;
 	}
@@ -1565,6 +1565,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("MYSQL_UPDATE_QUERY_FOR_MONTHLY_OBTAINED_SCORE",
 				"UPDATE Aks_UserMonthlyScore SET ObtainedScore = :ObtainedScore , ReferScore = :ReferScore, MonthlyRank = :MonthlyRank WHERE Year = :Year AND Month = :Month And UserId = :UserId");
 
+		vAllEAll.put("MYSQL_QUERY_TO_GET_INCOME_TAX_DATA", "From IncomeTaxEntity where uuidOrUserId = :uuidOrUserId");
 		vAllEAll.put("GENERAL_UUID_LENGTH", "8");
 		return vAllEAll;
 

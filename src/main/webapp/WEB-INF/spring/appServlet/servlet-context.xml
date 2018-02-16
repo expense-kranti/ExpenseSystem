@@ -101,10 +101,10 @@
 
 	<!--here addRedisSetElementsInQueue method used to add Keys From Redis Set 
 		to Queue -->
-	<task:scheduled-tasks scheduler="scheduler">
+<!-- 	<task:scheduled-tasks scheduler="scheduler">
 		<task:scheduled ref="mySQLQueueWriterJob" method="addRedisSetElementsInQueue"
-			fixed-delay="1800000" /><!-- 1800000 are values used in test -->
-	</task:scheduled-tasks>
+			fixed-delay="1800000" />1800000 are values used in test
+	</task:scheduled-tasks> -->
 
 
 

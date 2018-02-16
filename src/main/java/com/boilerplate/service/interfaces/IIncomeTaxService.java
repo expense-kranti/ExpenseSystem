@@ -27,7 +27,8 @@ public interface IIncomeTaxService {
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
-	 * @throws Exception thrown when any exception occurs in saving the
+	 * @throws Exception
+	 *             thrown when any exception occurs in saving the
 	 *             incometaxentity
 	 */
 	public IncomeTaxEntity calculateSimpleTax(IncomeTaxEntity incomeTaxEntity)
@@ -39,8 +40,10 @@ public interface IIncomeTaxService {
 	 * @return the found income tax data
 	 * @throws NotFoundException
 	 *             thrown when income tax data is not found against uuid
+	 * @throws ValidationFailedException
 	 */
-	public IncomeTaxEntity getIncomeTaxData(IncomeTaxEntity incomeTaxEntity) throws NotFoundException;
+	public IncomeTaxEntity getIncomeTaxData(IncomeTaxEntity incomeTaxEntity)
+			throws NotFoundException, ValidationFailedException;
 
 	/**
 	 * This method is used to calculate estimated tax with investments being

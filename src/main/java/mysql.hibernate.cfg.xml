@@ -41,7 +41,7 @@
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLArticle.hbm.xml" />
 
-		
+
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLBlogActivity.hbm.xml" />
 		<mapping
@@ -56,6 +56,8 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLUserMonthlyScore.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLReferralContacts.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLIncomeTax.hbm.xml" />
 
 
 	</session-factory>
