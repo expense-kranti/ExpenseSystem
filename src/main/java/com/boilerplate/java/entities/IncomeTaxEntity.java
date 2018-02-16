@@ -126,7 +126,11 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 */
 	private double ctcForLacAbreviation;
 	/**
-	 * This is the userId of the user who has calculated tax
+	 * This is the uuidOrUserId
+	 */
+	private String uuidOrUserId;
+	/**
+	 * This is the userId of the who is calculating the tax
 	 */
 	private String userId;
 
@@ -640,6 +644,25 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * Gets the uuidOrUserId
+	 * 
+	 * @return the uuidOrUserId
+	 */
+	public String getUuidOrUserId() {
+		return uuidOrUserId;
+	}
+
+	/**
+	 * Sets the uuidOrUserId
+	 * 
+	 * @param uuidOrUserId
+	 *            the uuidOrUserId to set
+	 */
+	public void setUuidOrUserId(String uuidOrUserId) {
+		this.uuidOrUserId = uuidOrUserId;
+	}
+
+	/**
 	 * Gets the userId
 	 * 
 	 * @return the userId
@@ -710,7 +733,7 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		}
 
 		if (this.isNullOrEmpty(this.getAgeInString())) {
-			this.setAge(0);
+			this.setAge(18);
 		} else {
 			this.setAge((Double.valueOf(this.getAgeInString())).intValue());
 		}

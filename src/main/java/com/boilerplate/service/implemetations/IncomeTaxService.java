@@ -9,6 +9,7 @@ import com.boilerplate.asyncWork.SendEmailWithIncomeTaxDetailsObserver;
 import com.boilerplate.database.interfaces.IIncomeTax;
 import com.boilerplate.database.mysql.implementations.MySQLIncomeTax;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
@@ -170,26 +171,17 @@ public class IncomeTaxService implements IIncomeTaxService {
 					incomeTaxEntity.getCtcForLacAbreviation(), incomeTaxEntity.getEstimatedTax()));
 		}
 
-		// check if user is logged in and check if income tax uuid is null or
-		// empty then set incometaxentity userId to userId of logged in user
-		// below line commented for production working fine as this is under
-		// construction
-//		if ((incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))
-//				&& RequestThreadLocal.getSession() != null) {
-//			incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-//		}
-
 		// maintaining uuid is important for maintaining user session from
 		// chatbot to akshar website
-		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
+		if ((incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))) {
 			incomeTaxEntity.setUuid(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+
 		}
 
-//		// // save income tax details in MySQL
-//		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
-
-		 // save income tax details in Redis datastore
-		 incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		// set uuidOrUserId property so that it can be used to update entity
+		incomeTaxEntity.setUuidOrUserId(incomeTaxEntity.getUuid());
+		// save income tax details in MySQL
+		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
 
 		logger.logInfo("IncomeTaxService", "calculateSimpleTax", "before return statement", "about to return response");
 		return incomeTaxEntity;
@@ -218,15 +210,25 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// check if user is logged in and fetch incometax uuid and assign the
 		// uuid to the incometaxEntity to making relation between logged in user
 		// and incometax calculation
-//		if ((incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals(""))
-//				&& RequestThreadLocal.getSession() != null) {
-//			incomeTaxEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-//		}
-		// uuid is checked for existence for maintaining working through chatbot
-		// for sending email if session null before here
 		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
-			incomeTaxEntity.setUuid(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+			if (RequestThreadLocal.getSession() != null
+					&& (!(RequestThreadLocal.getSession().getExternalFacingUser().getUserId().equals("AKS:ANNONYMOUS"))
+							&& !(RequestThreadLocal.getSession().getExternalFacingUser().getUserId()
+									.equals("AKS:ADMIN"))
+							&& !(RequestThreadLocal.getSession().getExternalFacingUser().getUserId())
+									.equals("AKS:ROLEASSIGNER")
+							&& !(RequestThreadLocal.getSession().getExternalFacingUser().getUserId()
+									.equals("AKS:BACKGROUND")))) {
+				incomeTaxEntity.setUuid(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+
+			} else {
+				incomeTaxEntity
+						.setUuid(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+			}
 		}
+
+		if (incomeTaxEntity.getUuid() != null && incomeTaxEntity.getUuid().equals("") == false)
+			incomeTaxEntity.setUuidOrUserId(incomeTaxEntity.getUuid());
 
 		// validation has been handled at front end
 		// incomeTaxEntity.validate();
@@ -307,12 +309,15 @@ public class IncomeTaxService implements IIncomeTaxService {
 			incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
 					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 		}
+		// atlast if uuidOrUserID is not set then set it with calculating uuid
+		if (incomeTaxEntity.getUuidOrUserId() == null || incomeTaxEntity.getUuidOrUserId().equals(""))
+			incomeTaxEntity
+					.setUuidOrUserId(this.getUUID(Integer.valueOf(configurationManager.get("INCOMETAX_UUID_LENGTH"))));
+		// save income tax details in MySQL
+		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
 
-//		// save income tax details in MySQL
-//		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntity);
-
-		 // save income tax details in Redis datastore
-		 incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
+		// // save income tax details in Redis datastore
+		// incomeTaxDataAccess.saveIncomeTaxData(incomeTaxEntity);
 
 		logger.logInfo("IncomeTaxService", "calculateTaxWithInvestments", "before return statement",
 				"about to return response");
@@ -321,15 +326,19 @@ public class IncomeTaxService implements IIncomeTaxService {
 	}
 
 	/**
+	 * @throws ValidationFailedException
 	 * @see IIncomeTaxService.getIncomeTaxData
 	 */
 	@Override
-	public IncomeTaxEntity getIncomeTaxData(IncomeTaxEntity incomeTaxEntity) throws NotFoundException {
+	public IncomeTaxEntity getIncomeTaxData(IncomeTaxEntity incomeTaxEntity)
+			throws NotFoundException, ValidationFailedException {
 
-		// TODO add code for getting income tax data from MySQL
+		if (incomeTaxEntity.getUuid() != null && incomeTaxEntity.getUuid().equals("") == false) {
+			// getting income tax data from MySQL for uuid
+			return mySQLIncomeTax.getIncomeTaxData(incomeTaxEntity.getUuid());
+		}
 
-		// get income tax data from Redis datastore
-		return incomeTaxDataAccess.getIncomeTaxData(incomeTaxEntity.getUuid());
+		throw new ValidationFailedException("IncomeTaxEntity", "Uuid is null or empty", null);
 	}
 
 	/**
@@ -394,19 +403,48 @@ public class IncomeTaxService implements IIncomeTaxService {
 	// here emailid, phonenumber,firstname values are required
 	@Override
 	public void saveIncomeTaxUserDetailsAndEmail(IncomeTaxEntity incomeTaxEntity) throws Exception {
-		incomeTaxDataAccess.saveUserContacts(incomeTaxEntity.getUuid(), emailIdField, incomeTaxEntity.getEmailId());
-		incomeTaxDataAccess.saveUserContacts(incomeTaxEntity.getUuid(), phoneNumberField,
-				incomeTaxEntity.getPhoneNumber());
-		incomeTaxDataAccess.saveUserContacts(incomeTaxEntity.getUuid(), firstNameField, incomeTaxEntity.getFirstName());
+
+		if (incomeTaxEntity.getUuid() != null && incomeTaxEntity.getUuid().equals("") == false)
+			incomeTaxEntity.setUuidOrUserId(incomeTaxEntity.getUuid());
+
+		// if uuid is not given then get usre Id of logged in user from session
+		// and get the incometax details of thiss user
+		if (incomeTaxEntity.getUuid() == null || incomeTaxEntity.getUuid().equals("")) {
+			if (RequestThreadLocal.getSession() != null
+					&& (!(RequestThreadLocal.getSession().getExternalFacingUser().getUserId().equals("AKS:ANNONYMOUS"))
+							&& !(RequestThreadLocal.getSession().getExternalFacingUser().getUserId()
+									.equals("AKS:ADMIN"))
+							&& !(RequestThreadLocal.getSession().getExternalFacingUser().getUserId())
+									.equals("AKS:ROLEASSIGNER")
+							&& !(RequestThreadLocal.getSession().getExternalFacingUser().getUserId()
+									.equals("AKS:BACKGROUND")))) {
+				incomeTaxEntity.setUuidOrUserId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+			} else {
+				throw new UnauthorizedException("User", "User is not logged in or A uuid is not provided", null);
+			}
+		}
+		// get the incometax data from database
+		IncomeTaxEntity incomeTaxEntityFromDatabase = mySQLIncomeTax
+				.getIncomeTaxData(incomeTaxEntity.getUuidOrUserId());
+		if (incomeTaxEntityFromDatabase == null)
+			throw new NotFoundException("IncomeTaxEntity", "No data found for given uuid or userId", null);
+		// set email id to the entity got from database
+		incomeTaxEntityFromDatabase.setEmailId(incomeTaxEntity.getEmailId());
+		// set phonenumber to entity got from database
+		incomeTaxEntityFromDatabase.setPhoneNumber(incomeTaxEntity.getPhoneNumber());
+		// set first name to entity got from database
+		incomeTaxEntityFromDatabase.setFirstName(incomeTaxEntity.getFirstName());
+		// update income tax data with email id
+		mySQLIncomeTax.saveIncomeTaxData(incomeTaxEntityFromDatabase);
 
 		try {
 			// add send email job to queue
-			queueReaderJob.requestBackroundWorkItem(incomeTaxEntity, subjectsForSendingIncomeTaxDetails,
+			queueReaderJob.requestBackroundWorkItem(incomeTaxEntityFromDatabase, subjectsForSendingIncomeTaxDetails,
 					"IncomeTaxService", "saveIncomeTaxUserDetails");
 		} catch (Exception ex) {
 			// when queue is not working send email manually
 			sendEmailWithIncomeTaxDetailsObserver
-					.prepareEmailContentAndSendToEmailReceiver(this.getIncomeTaxData(incomeTaxEntity));
+					.prepareEmailContentAndSendToEmailReceiver(this.getIncomeTaxData(incomeTaxEntityFromDatabase));
 		}
 
 	}

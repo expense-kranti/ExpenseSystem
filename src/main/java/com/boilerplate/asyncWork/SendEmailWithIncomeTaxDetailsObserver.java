@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IIncomeTax;
 import com.boilerplate.framework.EmailUtility;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.IncomeTaxEntity;
+import com.boilerplate.service.implemetations.IncomeTaxService;
 import com.boilerplate.service.interfaces.IContentService;
 import com.boilerplate.service.interfaces.IFileService;
 
@@ -23,6 +25,10 @@ import com.boilerplate.service.interfaces.IFileService;
  *
  */
 public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver {
+	/*
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(SendEmailWithIncomeTaxDetailsObserver.class);
 
 	private static String incomeTaxDetailsTemplate = "";
 
@@ -112,14 +118,18 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("SendEmailWithIncomeTaxDetailsObserver", "observer", "First statement",
+				"about get details from database");
 		// this payload is the user whose incometaxuuid will be used to get
 		// income tax details
 		IncomeTaxEntity incomeTaxEntity = (IncomeTaxEntity) asyncWorkItem.getPayload();
-		// get the income tax details with matching uuid
-		IncomeTaxEntity incomeTaxEntityFromDatastore = incomeTaxDataAccess.getIncomeTaxData(incomeTaxEntity.getUuid());
+		// // get the income tax details with matching uuid
+		// IncomeTaxEntity incomeTaxEntityFromDatastore =
+		// incomeTaxDataAccess.getIncomeTaxData(incomeTaxEntity.getUuid());
 		// prepare email content and send income tax details to user email id
-		prepareEmailContentAndSendToEmailReceiver(incomeTaxEntityFromDatastore);
+		prepareEmailContentAndSendToEmailReceiver(incomeTaxEntity);
 
+		logger.logInfo("SendEmailWithIncomeTaxDetailsObserver", "observer", "Last statement", "Email sent");
 	}
 
 	public void prepareEmailContentAndSendToEmailReceiver(IncomeTaxEntity incomeTaxEntity) throws Exception {
