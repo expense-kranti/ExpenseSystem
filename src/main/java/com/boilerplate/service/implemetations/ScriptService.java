@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -322,18 +324,20 @@ public class ScriptService implements IScriptsService {
 	}
 
 	/**
+	 * @throws IOException
 	 * @see IScriptsService.publi
 	 */
 	@Override
-	public void publishUserAndUserRelatedDataToMySQL()
-			throws UnauthorizedException, NotFoundException, BadRequestException {
+	public void publishUserAndUserRelatedDataToMySQL(String fileId)
+			throws UnauthorizedException, NotFoundException, BadRequestException, IOException {
 		if (!checkIsAdmin()) {
 			throw new UnauthorizedException("User", "User is not authorized to perform this action.", null);
 		}
+
 		try {
 			// Call background job for fetching all keys from Redis database for
 			// migrating Saved User and User data to MySQL
-			queueReaderJob.requestBackroundWorkItem("", subjectsForFetchingUserAndUserRelatedKey, "ScriptService",
+			queueReaderJob.requestBackroundWorkItem(fileId, subjectsForFetchingUserAndUserRelatedKey, "ScriptService",
 					"publishUserAndUserRelatedDataToMySQL");
 		} catch (Exception ex) {
 			logger.logError("ScriptService", "publishUserAndUserRelatedDataToMySQL", "Inside try-catch block",

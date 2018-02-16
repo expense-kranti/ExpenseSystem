@@ -76,8 +76,9 @@ public interface IScriptsService {
 	 * @throws BadRequestException
 	 *             thrown when user id is not provided for getting user while
 	 *             checking if it is authorized
+	 * @throws IOException 
 	 */
-	public void publishUserAndUserRelatedDataToMySQL()
-			throws UnauthorizedException, NotFoundException, BadRequestException;
+	public void publishUserAndUserRelatedDataToMySQL(String fileId)
+			throws UnauthorizedException, NotFoundException, BadRequestException, IOException;
 
 }

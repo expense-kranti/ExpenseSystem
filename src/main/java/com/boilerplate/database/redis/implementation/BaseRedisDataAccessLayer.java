@@ -902,6 +902,17 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for publishUserAndUserRelatedDataToMySQL method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL(java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permissions for RewardController
 
 		// for sendRewardWinningUserDetailsInEmail method
@@ -1013,17 +1024,6 @@ public class BaseRedisDataAccessLayer {
 				"public void com.boilerplate.java.controllers.IncomeTaxCalculatorController.saveIncomeTaxUserDetails(com.boilerplate.java.entities.IncomeTaxEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for saveIncomeTaxUserDetails method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL()");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 

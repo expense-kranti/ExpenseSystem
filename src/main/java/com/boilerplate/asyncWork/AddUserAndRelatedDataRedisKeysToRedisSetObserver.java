@@ -1,6 +1,5 @@
 package com.boilerplate.asyncWork;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -170,87 +169,71 @@ public class AddUserAndRelatedDataRedisKeysToRedisSetObserver implements IAsyncW
 
 			// add all user ids to Redis set
 			Set<String> keySet = userDataAccess.getAllUserKeys();
-			List<String> keysList = new ArrayList<>();
-			keysList.addAll(keySet);
 			logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
-					"After getting all User Keys from Redis ",
-					"Before null Number of User Keys Fetched : " + keySet.size());
-			if ((keysList.size() > 0)) {
-				logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
-						"After getting all User Keys from Redis ",
-						"After null Number of User Keys Fetched : " + keysList.size());
+					"After getting all User Keys from Redis ", "Number of User Keys Fetched : " + keySet.size());
+			if ((keySet.size() > 0)) {
 				int count = 1;
-				try {
-					for (int i = 0; i < keysList.size(); i++) {
-						if (keysList.get(i) != null) {
-							String userIdWithRedisKeyName = keysList.get(i);
-							logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
-									"addAllRedisKeysToRedisSet", "Set Key Counter",
-									"Counter Value " + Integer.toString(count));
-							try {
-								logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
-										"addAllRedisKeysToRedisSet",
-										"Inside if statement checking user Redis Set size greater than 0",
-										"about to fetch UserId from Redis Keys and Add into RedisSet, UserIdKeyName is : "
-												+ userIdWithRedisKeyName);
+				try{
+					for (String userIdWithRedisKeyName : keySet) {
+						logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
+								"Set Key Counter",
+								"Counter Value "+ Integer.toString(count));
+						try {
+						logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
+								"Inside if statement checking user Redis Set size greater than 0",
+								"about to fetch UserId from Redis Keys and Add into RedisSet, UserIdKeyName is : "
+										+ userIdWithRedisKeyName);
+						
+							String[] userIdParts = userIdWithRedisKeyName.split(":");
+							String userId = userIdParts[1] + ":" + userIdParts[2];
 
-								String[] userIdParts = userIdWithRedisKeyName.split(":");
-								String userId = userIdParts[1] + ":" + userIdParts[2];
+							String userReferId = this.redisSFUpdateHashAccess
+									.hget(configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
+							// add to Redis set
+							userDataAccess.addInRedisSet(userId);
+							// get assessment for this user Id and add in assessment
+							// redis set
+							fetchEachAssesssmentKeyAndAddInRedisSet(userId);
 
-								String userReferId = this.redisSFUpdateHashAccess.hget(
-										configurationManager.get("AKS_USER_UUID_HASH_BASE_TAG"), userId.toUpperCase());
-								// add to Redis set
-								userDataAccess.addInRedisSet(userId);
-								// get assessment for this user Id and add in
-								// assessment
-								// redis set
-								fetchEachAssesssmentKeyAndAddInRedisSet(userId);
+							// get BlogActivity for this user Id and add in
+							// assessment
+							// redis set
+							fetchEachBlogActivityAndAddInRedisSet(userId);
 
-								// get BlogActivity for this user Id and add in
-								// assessment
-								// redis set
-								fetchEachBlogActivityAndAddInRedisSet(userId);
+							// get ReferredContact for this user Id and add in
+							// assessment
+							// redis set
+							fetchEachReferredContactsKeyAndAddInRedisSet(userReferId);
 
-								// get ReferredContact for this user Id and add
-								// in
-								// assessment
-								// redis set
-								fetchEachReferredContactsKeyAndAddInRedisSet(userReferId);
+							// get MonthlyScore for this user Id and add in
+							// assessment
+							// redis set
+							fetchEachMonthlyScoreKeyAndAddInRedisSet(userId);
 
-								// get MonthlyScore for this user Id and add in
-								// assessment
-								// redis set
-								fetchEachMonthlyScoreKeyAndAddInRedisSet(userId);
+							// get userFiles for this user Id and add in assessment
+							// redis set
+							fetchEachFileKeyAndAddInRedisSet(userId);
+							count++;
+						} catch (Exception ex) {
+							logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+									"addAllRedisKeysToRedisSet",
+									"Last statement Inside body of first for loop which is getting userids from redis keys and traversing to add into redis set",
+									"exception messege : " + ex.getMessage() + ", exception cause : "
+											+ ex.getCause().toString(),
+									ex);
 
-								// get userFiles for this user Id and add in
-								// assessment
-								// redis set
-								fetchEachFileKeyAndAddInRedisSet(userId);
-								count++;
-							} catch (Exception ex) {
-								logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
-										"addAllRedisKeysToRedisSet",
-										"Last statement Inside body of first for loop which is getting userids from redis keys and traversing to add into redis set",
-										"exception messege : " + ex.getMessage() + ", exception cause : "
-												+ ex.getCause().toString(),
-										ex);
-
-							}
-
-						} else {
-							logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
-									"addAllRedisKeysToRedisSet", "key null", "");
 						}
-					}
-
-				} catch (Exception e) {
-					logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
-							"Set for loop erro", "Error while processing set for loop", e);
+						}
+				}catch (Exception e) {
+					logger.logException("AddUserAndRelatedDataRedisKeysToRedisSetObserver",
+							"addAllRedisKeysToRedisSet","Set for loop erro","Error while processing set for loop",e);
+							
+				}
+				
 
 				}
 
-			}
-
+			
 		}
 
 		logger.logInfo("AddUserAndRelatedDataRedisKeysToRedisSetObserver", "addAllRedisKeysToRedisSet",
