@@ -1,6 +1,7 @@
 package com.boilerplate.service.implemetations;
 
 import java.nio.charset.CharacterCodingException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -422,9 +423,36 @@ public class UserService implements IUserService {
 		}
 		// we dont want to share the hash hence sending bacj the text
 		externalFacingUser.setPassword("Password Encrypted");
-		// generate otp list
+		//generate otp list 
+		BoilerplateList<Integer> randomOtpList = new BoilerplateList<Integer>();
+		try {
+			randomOtpList = generateOtp(Long.toString(otpPassword));
+		} catch (Exception e) {
+			logger.logException("UserService", "create", "catch block of random otp list", e.toString(), e);
+		}
+		// set otp list in external facing user
+		externalFacingUser.setOtpList(randomOtpList);
 		this.checkIfUserRegisteredThroughCampaign(externalFacingUser);
 		return externalFacingUser;
+	}
+	/**
+	 * This method generate random otp list. 
+	 * otherwise throw conflict exception
+	 * @param email
+	 * @throws ConflictException
+	 */
+	private BoilerplateList<Integer> generateOtp(String otpPassword)throws Exception{
+		//generate otp list 
+		Random random = new Random();
+		int lowRangeValue = 100000;
+		int highRangeValue = 999999;
+		BoilerplateList<Integer> randomOtpList = new BoilerplateList<>();
+		for (int i= 0; i<3;i++){
+			randomOtpList.add(random.nextInt(highRangeValue-lowRangeValue) + lowRangeValue);
+		}
+		randomOtpList.add(Integer.parseInt(otpPassword));
+		Collections.shuffle(randomOtpList);
+		return randomOtpList;
 	}
 
 	/**
