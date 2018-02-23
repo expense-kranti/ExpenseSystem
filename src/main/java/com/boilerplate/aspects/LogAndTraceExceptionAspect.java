@@ -73,8 +73,7 @@ public class LogAndTraceExceptionAspect {
 	/**
 	 * This is the logger
 	 */
-	private Logger logger = Logger
-			.getInstance(LogAndTraceExceptionAspect.class);
+	private Logger logger = Logger.getInstance(LogAndTraceExceptionAspect.class);
 
 	@Autowired
 	PublishLibrary publishLibrary;
@@ -89,47 +88,37 @@ public class LogAndTraceExceptionAspect {
 	 *             A Http error for the business case.
 	 */
 	@Around("execution(public* com.boilerplate.java.controllers.*.*(..))")
-	public Object logTraceAndHandleException(
-			ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+	public Object logTraceAndHandleException(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		MethodPermissions methodPermissions = null;
 
 		try {
 
 			Session session = RequestThreadLocal.getSession();
-			String methodExecuted = proceedingJoinPoint.getSignature()
-					.toLongString();
-			methodPermissions = this.methodPermissionService
-					.getMethodPermissions().get(methodExecuted);
+			String methodExecuted = proceedingJoinPoint.getSignature().toLongString();
+			methodPermissions = this.methodPermissionService.getMethodPermissions().get(methodExecuted);
 
 			if (methodPermissions != null) {
 				// check if user needs to be authenticated to execute the method
 				if (methodPermissions.getIsAuthenticationRequired()) {
 					if (session == null)
-						throw new UnauthorizedException("User",
-								"User is not logged in", null);
-					if (session.getExternalFacingUser().getUserId()
-							.equals("AKS:ANNONYMOUS"))
-						throw new UnauthorizedException("User",
-								"User is not logged in", null);
+						throw new UnauthorizedException("User", "User is not logged in", null);
+					if (session.getExternalFacingUser().getUserId().equals("AKS:ANNONYMOUS"))
+						throw new UnauthorizedException("User", "User is not logged in", null);
 				}
 			}
 
 			if (RequestThreadLocal.threadLocal.get() != null) {
-				if (RequestThreadLocal.threadLocal.get()
-						.getHttpServletResponse() != null) {
-					String[] headers = this.configurationManager
-							.get("CrossDomainHeaders").split(";");
+				if (RequestThreadLocal.threadLocal.get().getHttpServletResponse() != null) {
+					String[] headers = this.configurationManager.get("CrossDomainHeaders").split(";");
 					for (String header : headers) {
 						String keyValue[] = header.split(":");
-						RequestThreadLocal.threadLocal.get()
-								.getHttpServletResponse()
-								.setHeader(keyValue[0], keyValue[1]);
+						RequestThreadLocal.threadLocal.get().getHttpServletResponse().setHeader(keyValue[0],
+								keyValue[1]);
 					}
 				}
 			}
 
-			Object returnValue = getReturnValue(proceedingJoinPoint,
-					methodPermissions);
+			Object returnValue = getReturnValue(proceedingJoinPoint, methodPermissions);
 			// publish data to crm
 			publishToCRM(proceedingJoinPoint, methodPermissions, returnValue);
 			return returnValue;
@@ -139,25 +128,18 @@ public class LogAndTraceExceptionAspect {
 		}
 		// Logged UnauthorizedException as Warning
 		catch (UnauthorizedException unauthorizedException) {
-			logger.logWarning(
-					proceedingJoinPoint.getSignature().getDeclaringTypeName(),
-					proceedingJoinPoint.getSignature().getName(),
-					" UnauthorizedException ",
-					" Arguments List: "
-							+ Base.toJSON(proceedingJoinPoint.getArgs())
-							+ " Throwable: "
+			logger.logWarning(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
+					proceedingJoinPoint.getSignature().getName(), " UnauthorizedException ",
+					" Arguments List: " + Base.toJSON(proceedingJoinPoint.getArgs()) + " Throwable: "
 							+ unauthorizedException.toString());
 			throw unauthorizedException;
 		}
 		// Logged ConflictException as Warning
 		catch (ConflictException conflictException) {
-			logger.logWarning(
-					proceedingJoinPoint.getSignature().getDeclaringTypeName(),
-					proceedingJoinPoint.getSignature().getName(),
-					" ConflictException ",
-					" Arguments List: "
-							+ Base.toJSON(proceedingJoinPoint.getArgs())
-							+ " Throwable: " + conflictException.toString());
+			logger.logWarning(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
+					proceedingJoinPoint.getSignature().getName(), " ConflictException ",
+					" Arguments List: " + Base.toJSON(proceedingJoinPoint.getArgs()) + " Throwable: "
+							+ conflictException.toString());
 			throw conflictException;
 		} catch (Throwable th) {
 			// TODO - Must do-In case of file upload all args and details should
@@ -166,41 +148,40 @@ public class LogAndTraceExceptionAspect {
 
 			// update user state in case of generic error update
 
-			logger.logTraceExitException(
-					proceedingJoinPoint.getSignature().getDeclaringTypeName(),
-					proceedingJoinPoint.getSignature().getName(),
-					proceedingJoinPoint.getArgs(), th,
+			logger.logTraceExitException(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
+					proceedingJoinPoint.getSignature().getName(), proceedingJoinPoint.getArgs(), th,
 					RequestThreadLocal.getSession());
 			throw th;
 		}
 	}
+
 	/**
-     * This method publish the task to CRM.
-     * @param proceedingJoinPoint The proceedingJoinPoint
-     * @param methodPermissions the methodPermissions
-     * @param returnValue The return value
-     */
-    private void publishToCRM(ProceedingJoinPoint proceedingJoinPoint, MethodPermissions methodPermissions, Object returnValue) {
-    	 try{
-	            if(methodPermissions!=null){
-	            	if(methodPermissions.isPublishRequired()){
-	            		publishLibrary.requestPublishAsyncOffline(
-	            				methodPermissions.getUrlToPublish(),
-	            				methodPermissions.getPublishMethod(),
-	            				proceedingJoinPoint.getArgs(),
-	            				returnValue,
-	            				methodPermissions.getMethodName(),
-	            				methodPermissions.getPublishBusinessSubject(),
-	            				methodPermissions.getPublishTemplate(),
-	            				methodPermissions.isDynamicPublishURl()
-	            				
-	            				);
-	            	}
-	            }
-         }
-         catch(Exception ex){
-        	 logger.logException("LogAndTraceExceptionAspect", "publishToCRM", "try-catch block of CRM Publishing", ex.toString(), ex);
-         }	
+	 * This method publish the task to CRM.
+	 * 
+	 * @param proceedingJoinPoint
+	 *            The proceedingJoinPoint
+	 * @param methodPermissions
+	 *            the methodPermissions
+	 * @param returnValue
+	 *            The return value
+	 */
+	private void publishToCRM(ProceedingJoinPoint proceedingJoinPoint, MethodPermissions methodPermissions,
+			Object returnValue) {
+		try {
+			if (methodPermissions != null) {
+				if (methodPermissions.isPublishRequired()) {
+					publishLibrary.requestPublishAsyncOffline(methodPermissions.getUrlToPublish(),
+							methodPermissions.getPublishMethod(), proceedingJoinPoint.getArgs(), returnValue,
+							methodPermissions.getMethodName(), methodPermissions.getPublishBusinessSubject(),
+							methodPermissions.getPublishTemplate(), methodPermissions.isDynamicPublishURl()
+
+					);
+				}
+			}
+		} catch (Exception ex) {
+			logger.logException("LogAndTraceExceptionAspect", "publishToCRM", "try-catch block of CRM Publishing",
+					ex.toString(), ex);
+		}
 	}
 
 	/**
@@ -213,22 +194,17 @@ public class LogAndTraceExceptionAspect {
 	 * @return return value
 	 * @throws Throwable
 	 */
-	private Object getReturnValue(ProceedingJoinPoint proceedingJoinPoint,
-			MethodPermissions methodPermissions) throws Throwable {
+	private Object getReturnValue(ProceedingJoinPoint proceedingJoinPoint, MethodPermissions methodPermissions)
+			throws Throwable {
 		Object returnValue = proceedingJoinPoint.proceed();
 		// log the details including class, method, input arguments and return
-		if (isDebugEnabled && (methodPermissions == null ? false
-				: methodPermissions.getIsLoggingRequired())) {
-			logger.logTraceExit(
-					proceedingJoinPoint.getSignature().getDeclaringTypeName(),
-					proceedingJoinPoint.getSignature().toLongString(),
-					proceedingJoinPoint.getArgs(), returnValue,
+		if (isDebugEnabled && (methodPermissions == null ? false : methodPermissions.getIsLoggingRequired())) {
+			logger.logTraceExit(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
+					proceedingJoinPoint.getSignature().toLongString(), proceedingJoinPoint.getArgs(), returnValue,
 					RequestThreadLocal.getSession());
 		} else {
-			logger.logTraceExit(
-					proceedingJoinPoint.getSignature().getDeclaringTypeName(),
-					proceedingJoinPoint.getSignature().toLongString(),
-					new String[] { "Not_Printed" }, "Not_Printed",
+			logger.logTraceExit(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
+					proceedingJoinPoint.getSignature().toLongString(), new String[] { "Not_Printed" }, "Not_Printed",
 					RequestThreadLocal.getSession());
 		}
 		return returnValue;
@@ -238,8 +214,7 @@ public class LogAndTraceExceptionAspect {
 	 * This method is called when the bean is initialized
 	 */
 	public void init() {
-		isDebugEnabled = Boolean.parseBoolean(
-				configurationManager.get(Constants.IsDebugEnabled));
+		isDebugEnabled = Boolean.parseBoolean(configurationManager.get(Constants.IsDebugEnabled));
 	}
 
 }

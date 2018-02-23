@@ -423,7 +423,7 @@ public class UserService implements IUserService {
 		}
 		// we dont want to share the hash hence sending bacj the text
 		externalFacingUser.setPassword("Password Encrypted");
-		//generate otp list 
+		// generate otp list
 		BoilerplateList<Integer> randomOtpList = new BoilerplateList<Integer>();
 		try {
 			randomOtpList = generateOtp(Long.toString(otpPassword));
@@ -435,20 +435,21 @@ public class UserService implements IUserService {
 		this.checkIfUserRegisteredThroughCampaign(externalFacingUser);
 		return externalFacingUser;
 	}
+
 	/**
-	 * This method generate random otp list. 
-	 * otherwise throw conflict exception
+	 * This method generate random otp list. otherwise throw conflict exception
+	 * 
 	 * @param email
 	 * @throws ConflictException
 	 */
-	private BoilerplateList<Integer> generateOtp(String otpPassword)throws Exception{
-		//generate otp list 
+	private BoilerplateList<Integer> generateOtp(String otpPassword) throws Exception {
+		// generate otp list
 		Random random = new Random();
 		int lowRangeValue = 100000;
 		int highRangeValue = 999999;
 		BoilerplateList<Integer> randomOtpList = new BoilerplateList<>();
-		for (int i= 0; i<3;i++){
-			randomOtpList.add(random.nextInt(highRangeValue-lowRangeValue) + lowRangeValue);
+		for (int i = 0; i < 3; i++) {
+			randomOtpList.add(random.nextInt(highRangeValue - lowRangeValue) + lowRangeValue);
 		}
 		randomOtpList.add(Integer.parseInt(otpPassword));
 		Collections.shuffle(randomOtpList);
@@ -609,7 +610,7 @@ public class UserService implements IUserService {
 	@Override
 	public ExternalFacingReturnedUser get(String userId, boolean encryptPasswordString)
 			throws NotFoundException, BadRequestException {
-		if (userId == null)
+		if (userId == null || userId.isEmpty())
 			throw new BadRequestException("User", "User Id not populated", null);
 		// convert user names to upper
 		userId = this.normalizeUserId(userId);
@@ -728,6 +729,7 @@ public class UserService implements IUserService {
 		if (updateUserEntity.getCrmid() != null && updateUserEntity.getCrmid().equals("") == false) {
 			returnedUser.setCrmid(updateUserEntity.getCrmid());
 		}
+
 		if (updateUserEntity.getIsPasswordChanged()) {
 			// Set is password reset to true
 			returnedUser.setIsPasswordChanged(true);
@@ -879,6 +881,42 @@ public class UserService implements IUserService {
 		} else {
 			throw new NotFoundException("User Entity", "No User Found with this id", null);
 		}
+	}
+
+	@Override
+	public ExternalFacingReturnedUser updateAUser(UpdateUserEntity updateUserEntity)
+			throws ConflictException, NotFoundException, BadRequestException, ValidationFailedException {
+
+		// check if first name null or empty then throw exception as first name
+		// is mandatory to update here
+		if (updateUserEntity.getFirstName() == null || updateUserEntity.getFirstName().isEmpty())
+			throw new ValidationFailedException("UpdateUserEntity", "First name is null or emtpy", null);
+		// check if the user exists, if so get it validation has been handled
+		ExternalFacingUser user = this.get(updateUserEntity.getPhoneNumber(), false);
+		ExternalFacingReturnedUser returnedUser = new ExternalFacingReturnedUser(user);
+		// below first name,lastname, email is set for new requirements of
+		// creditworthiness landing page
+		// update user first name
+		returnedUser.setFirstName(updateUserEntity.getFirstName());
+
+		if (updateUserEntity.getLastName() != null && updateUserEntity.getLastName().equals("") == false) {
+			returnedUser.setLastName(updateUserEntity.getLastName());
+		}
+		if (updateUserEntity.getEmail() != null && updateUserEntity.getEmail().equals("") == false) {
+			returnedUser.setEmail(updateUserEntity.getEmail());
+			this.checkOrCreateEmailInHash(returnedUser);
+		}
+		// update user in redis datastore
+		this.userDataAccess.update(returnedUser);
+
+		logger.logInfo("UserService", "updateAUser", "UpdateANotLoggedInUser",
+				"adding user id into Redis Set for user update. UserId is : " + returnedUser.getUserId());
+		// update user in MySQLdatabase
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			userDataAccess.addInRedisSet(returnedUser);
+		}
+
+		return returnedUser;
 	}
 
 	/**

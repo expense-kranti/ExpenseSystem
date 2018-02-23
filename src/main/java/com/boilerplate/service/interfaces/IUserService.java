@@ -153,6 +153,7 @@ public interface IUserService {
 	public String getReferUserId(String uuid);
 
 	void update(ExternalFacingReturnedUser user) throws ConflictException;
+
 	/**
 	 * This method is used to delete User from database with given user id
 	 * 
@@ -186,5 +187,23 @@ public interface IUserService {
 	 */
 	public boolean checkUserExistence(ExternalFacingUser externalFacingUser)
 			throws ValidationFailedException, ConflictException;
+
+	/**
+	 * This method is used to update a user's first name, last name, email
+	 * 
+	 * @param updateUserEntity
+	 *            contains data to be updated
+	 * @return
+	 * @throws ConflictException
+	 *             thrown when user exists
+	 * @throws NotFoundException
+	 *             thrown when user not found with given userId
+	 * @throws BadRequestException
+	 *             thrown when userId is not provided
+	 * @throws ValidationFailedException
+	 *             thrown when firstname is not provided
+	 */
+	public ExternalFacingReturnedUser updateAUser(UpdateUserEntity updateUserEntity)
+			throws ConflictException, NotFoundException, BadRequestException, ValidationFailedException;
 
 }
