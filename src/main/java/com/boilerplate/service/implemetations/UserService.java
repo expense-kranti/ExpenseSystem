@@ -730,6 +730,20 @@ public class UserService implements IUserService {
 			returnedUser.setCrmid(updateUserEntity.getCrmid());
 		}
 
+		// below first name,lastname, email is set for new requirements of
+		// creditworthiness landing page
+		// update user first name
+		if (updateUserEntity.getFirstName() != null && updateUserEntity.getFirstName().equals("") == false) {
+			returnedUser.setFirstName(updateUserEntity.getFirstName());
+		}
+		if (updateUserEntity.getLastName() != null && updateUserEntity.getLastName().equals("") == false) {
+			returnedUser.setLastName(updateUserEntity.getLastName());
+		}
+		if (updateUserEntity.getEmail() != null && updateUserEntity.getEmail().equals("") == false) {
+			returnedUser.setEmail(updateUserEntity.getEmail());
+			this.checkOrCreateEmailInHash(returnedUser);
+		}
+
 		if (updateUserEntity.getIsPasswordChanged()) {
 			// Set is password reset to true
 			returnedUser.setIsPasswordChanged(true);

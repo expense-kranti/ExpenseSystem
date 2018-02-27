@@ -1550,7 +1550,7 @@ public class BaseRedisDataAccessLayer {
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
 		contentMap.put("WELCOME_MESSAGE_SMS",
-				"Welcome @FirstName, @Password is your password. Thanks for registering on Akshar!");
+				"@Password is your password. Thanks for being a part of Akshar- A Financial Literacy Initiative.");
 		contentMap.put("RESET_PASSWORD_SMS",
 				"Your new password is @Password. Please change your password after logging in. Akshar.");
 		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, your password has been changed successfully. Akshar.");
