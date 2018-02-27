@@ -1553,7 +1553,7 @@ public class BaseRedisDataAccessLayer {
 				"@Password is your password. Thanks for being a part of Akshar- A Financial Literacy Initiative.");
 		contentMap.put("RESET_PASSWORD_SMS",
 				"Your new password is @Password. Please change your password after logging in. Akshar.");
-		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, your password has been changed successfully. Akshar.");
+		contentMap.put("PASSWORD_CHANGE_SMS", "Your password has been changed successfully. Akshar.");
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Contact Us");
 		contentMap.put("CONTACT_US_EMAIL_BODY",
 				"<b><h2>Contact Person Details:<h2></b> <b>Name:</b> @ContactPersonName <br> <b>Email:</b> @ContactPersonEmail <br> <b>Contact Number:</b> @ContactPersonMobileNumber <br> <b>Message:</b> @ContactPersonMessage");
