@@ -197,7 +197,7 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 
 			BoilerplateMap<String, BoilerplateList<String>> requestHeaders = new BoilerplateMap<String, BoilerplateList<String>>();
 			requestHeaders = createRequestHeaders();
-			HttpResponse httpResponse = HttpUtility.makeHttpRequest(publishUrl,
+			/*HttpResponse httpResponse = HttpUtility.makeHttpRequest(publishUrl,
 					requestHeaders, null, jsonArray,
 					publishEntity.getPublishMethod());
 			if (httpResponse.getHttpStatus() == 401) {
@@ -234,7 +234,7 @@ public class PublishBulkObserver implements IAsyncWorkObserver {
 				// Send Email when fails
 				sendEmailForFailedBulkPublish(publishData.getSubject(),
 						jsonArray, httpResponse.getResponseBody());
-			}
+			}*/
 		}
 
 	}

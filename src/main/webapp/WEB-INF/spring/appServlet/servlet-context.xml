@@ -120,10 +120,6 @@
 		<property name="sessionManager" ref="sessionManager"></property>
 	</bean>
 
-	<task:scheduled-tasks scheduler="scheduler">
-		<task:scheduled ref="cleanupCRMPublishHash" method="cleanupSFUpdateHash"
-			fixed-delay="30000" />
-	</task:scheduled-tasks>
 	<bean id="cleanupCRMPublishHash" class="com.boilerplate.jobs.CleanupCRMPublishHash"
 		init-method="initialize">
 		<property name="configurationManager" ref="configurationManager"></property>

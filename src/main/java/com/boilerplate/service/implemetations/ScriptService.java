@@ -379,60 +379,9 @@ public class ScriptService implements IScriptsService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// save the user with updated score
 		userDataAccess.update(savedUser);
-		// publish user to crm
-		publishToCRM(savedUser);
 
 	}
 
-	/**
-	 * This method creates the publish entity.
-	 * 
-	 * @param method
-	 *            the publish method
-	 * @param publishMethod
-	 *            the publish method
-	 * @param publishSubject
-	 *            the publish subject
-	 * @param returnValue
-	 *            the object
-	 * @param url
-	 *            the publish url
-	 * @return the publish entity
-	 */
-	private PublishEntity createPublishEntity(String method, String publishMethod, String publishSubject,
-			Object returnValue, String url, String publishTemplate, String isDynamicPublishURl) {
-		PublishEntity publishEntity = new PublishEntity();
-		publishEntity.setInput(new Object[0]);
-		publishEntity.setMethod(method);
-		publishEntity.setPublishMethod(publishMethod);
-		publishEntity.setPublishSubject(publishSubject);
-		publishEntity.setReturnValue(returnValue);
-		publishEntity.setUrl(url);
-		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
-		publishEntity.setPublishTemplate(publishTemplate);
-		return publishEntity;
-	}
-
-	private void publishToCRM(ExternalFacingReturnedUser externalFacingUserEntity) {
-		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
-		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("ScriptService.publishToCRM",
-					configurationManager.get("AKS_Script_Publish_Method"),
-					configurationManager.get("UPDATE_AKS_USER_SUBJECT"), externalFacingUserEntity, null, null, null);
-			if (subjects == null) {
-				subjects = new BoilerplateList<>();
-				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-			}
-			try {
-				logger.logInfo("ScriptService", "publishToCRM", "Publishing updated user",
-						"publish update user score " + externalFacingUserEntity.getUserId());
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "ScriptService", "publishToCRM",
-						configurationManager.get("AKS_PUBLISH_QUEUE"));
-			} catch (Exception exception) {
-				logger.logError("ScriptService", "publishToCRM", "queueReaderJob catch block",
-						"Exception :" + exception);
-			}
-		}
-	}
+	
 
 }

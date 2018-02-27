@@ -161,7 +161,6 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 
 		// // save total score in user
 		// this.saveUserTotalScore(scoreEntity);
-		this.publishToCRM(assessmentPublishData);
 	}
 
 	/**
@@ -193,7 +192,6 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 			userDataAccess.addInRedisSet(user);
 		}
 		// publish user total score to crm
-		this.publishUserToCRM(user);
 	}
 
 	/**
@@ -433,79 +431,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		return rank;
 	}
 
-	private void publishToCRM(AssessmentStatusPubishEntity assessmentStatusPubishEntity) {
-		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
-		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
-					configurationManager.get("AKS_Assessment_Publish_Method"),
-					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPubishEntity,
-					configurationManager.get("AKS_Assessment_Publish_URL"),
-					configurationManager.get("AKS_Assessment_Publish_Template"),
-					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));
-			if (subjects == null) {
-				subjects = new BoilerplateList<>();
-				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-			}
-			try {
-				logger.logInfo("CalculateTotalScoreObserver", "publishToCRM", "Publishing report",
-						"publish assessment status" + assessmentStatusPubishEntity.getUserId());
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
-						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
-			} catch (Exception exception) {
-				logger.logError("CalculateTotalScoreObserver", "publishToCRM", "queueReaderJob catch block",
-						"Exception :" + exception);
-			}
-		}
-	}
+	
 
-	private void publishUserToCRM(ExternalFacingReturnedUser user) {
-		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
-
-		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("CalculateTotalScoreObserver.publishToCRM",
-					configurationManager.get(""), configurationManager.get("UPDATE_AKS_USER_SUBJECT"), user,
-					configurationManager.get(""), configurationManager.get(""), configurationManager.get(""));
-			if (subjects == null) {
-				subjects = new BoilerplateList<>();
-				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-			}
-			try {
-
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
-						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
-			} catch (Exception exception) {
-				logger.logError("CreateReferUniqueIdObserver", "publishToCRM", "queueReaderJob catch block",
-						"Exception :" + exception);
-			}
-		}
-	}
-
-	/**
-	 * This method creates the publish entity.
-	 * 
-	 * @param method
-	 *            the publish method
-	 * @param publishMethod
-	 *            the publish method
-	 * @param publishSubject
-	 *            the publish subject
-	 * @param returnValue
-	 *            the object
-	 * @param url
-	 *            the publish url
-	 * @return the publish entity
-	 */
-	private PublishEntity createPublishEntity(String method, String publishMethod, String publishSubject,
-			Object returnValue, String url, String publishTemplate, String isDynamicPublishURl) {
-		PublishEntity publishEntity = new PublishEntity();
-		publishEntity.setInput(new Object[0]);
-		publishEntity.setMethod(method);
-		publishEntity.setPublishMethod(publishMethod);
-		publishEntity.setPublishSubject(publishSubject);
-		publishEntity.setReturnValue(returnValue);
-		publishEntity.setUrl(url);
-		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
-		publishEntity.setPublishTemplate(publishTemplate);
-		return publishEntity;
-	}
+	
 }
