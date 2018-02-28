@@ -69,7 +69,7 @@ public class CheckListEntity extends BaseEntity implements Serializable {
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check if checkList map is null or empty
-		if (this.getCheckListMap().isEmpty() || this.getCheckListMap() == null)
+		if (this.getCheckListMap() == null || this.getCheckListMap().isEmpty() )
 			throw new ValidationFailedException("CheckListEntity", "checkListMap cannot be null or empty", null);
 		return true;
 	}
