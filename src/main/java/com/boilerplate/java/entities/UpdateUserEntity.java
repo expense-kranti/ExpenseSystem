@@ -362,6 +362,25 @@ public class UpdateUserEntity extends BaseEntity {
 	}
 
 	/**
+	 * Gets the hasSkippedEmailInput
+	 * 
+	 * @return the hasSkippedEmailInput
+	 */
+	public boolean getHasSkippedEmailInput() {
+		return hasSkippedEmailInput;
+	}
+
+	/**
+	 * Sets the hasSkippedEmailInput
+	 * 
+	 * @param hasSkippedEmailInput
+	 *            the hasSkippedEmailInput to set
+	 */
+	public void setHasSkippedEmailInput(boolean hasSkippedEmailInput) {
+		this.hasSkippedEmailInput = hasSkippedEmailInput;
+	}
+
+	/**
 	 * This is state of user which tell us about milestones covered by the user.
 	 */
 	@ApiModelProperty(value = "This is state of the user", required = false)
@@ -372,8 +391,7 @@ public class UpdateUserEntity extends BaseEntity {
 	 */
 	// this is made for new requirement to let user register only with phone
 	// number with dummy first name for landing page(credit worthiness)
-	// requirement and update user
-	// name later
+	// requirement and then update user name later
 	private String firstName;
 	/**
 	 * This is the last name to be updated
@@ -387,5 +405,13 @@ public class UpdateUserEntity extends BaseEntity {
 	 * This is the phonenumber of user
 	 */
 	private String phoneNumber;
+
+	// this is used to check if user is not interested for input its emailid and
+	// will not be shown popup for entering this again
+	/**
+	 * This is the has skipped email input that tells that user is not
+	 * interested in inputing his/her emailid
+	 */
+	private boolean hasSkippedEmailInput;
 
 }

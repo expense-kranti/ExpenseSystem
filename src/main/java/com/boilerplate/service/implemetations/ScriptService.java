@@ -305,6 +305,8 @@ public class ScriptService implements IScriptsService {
 				// here row[1] is expected to be the score points to subtract
 				scoreEntity.setObtainedScore(
 						df.format(Float.parseFloat(scoreEntity.getObtainedScore()) - Float.parseFloat(row[1])));
+				// no need to check for null and empty
+				scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
 				// update and save user total score
 				updateAndSaveUserTotalScore(scoreEntity, row[0]);
 
@@ -316,6 +318,8 @@ public class ScriptService implements IScriptsService {
 				// here row[1] is expected to be the score points to add
 				scoreEntity.setObtainedScore(
 						df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(row[1])));
+				// no need to check for null and empty
+				scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
 				// update and save user total score
 				updateAndSaveUserTotalScore(scoreEntity, row[0]);
 			}
@@ -370,6 +374,8 @@ public class ScriptService implements IScriptsService {
 	 */
 	private void updateAndSaveUserTotalScore(ScoreEntity scoreEntity, String userPhoneNumber) throws NotFoundException {
 		// save updated score in data store
+		// no relation in saving it to mysql so not making its entry in redis
+		// set as same total score is is updated and saved in user
 		redisAssessment.saveTotalScore(scoreEntity);
 
 		// update the Total Score in saved User in data store
@@ -377,11 +383,12 @@ public class ScriptService implements IScriptsService {
 				null);
 		savedUser.setTotalScore(df.format(
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
+		//no need to check for null or empty
+		savedUser.setTotalScoreInDouble(Double.parseDouble(savedUser.getTotalScore()));
+
 		// save the user with updated score
 		userDataAccess.update(savedUser);
 
 	}
-
-	
 
 }

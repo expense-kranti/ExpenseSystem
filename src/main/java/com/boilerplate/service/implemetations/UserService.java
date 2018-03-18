@@ -744,10 +744,18 @@ public class UserService implements IUserService {
 			this.checkOrCreateEmailInHash(returnedUser);
 		}
 
+		// if this is set true means user is not interested and skipped inputing
+		// his/her emailid and will always remain true, once set true
+		if (updateUserEntity.getHasSkippedEmailInput()) {
+			// set hasSkippedEmailInput to true
+			returnedUser.setHasSkippedEmailInput(true);
+		}
+
 		if (updateUserEntity.getIsPasswordChanged()) {
 			// Set is password reset to true
 			returnedUser.setIsPasswordChanged(true);
 		}
+
 		if ((this.get(userId, true).getRoles()) != null && (this.get(userId, true).getRoles()).size() != 0)
 			returnedUser.setRoles(get(userId, true).getRoles());
 		else

@@ -247,6 +247,7 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		if (scoreEntity.getReferScore() == null || scoreEntity.getReferScore().isEmpty()) {
 			scoreEntity.setReferScore("0");
 		}
+		scoreEntity.setReferScoreInDouble(Double.parseDouble(scoreEntity.getReferScore()));
 		// set rank
 		scoreEntity.setRank(calculateRank(obtainedScore + Float.valueOf(scoreEntity.getReferScore())));
 		//////////////////////
@@ -431,7 +432,4 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 		return rank;
 	}
 
-	
-
-	
 }
