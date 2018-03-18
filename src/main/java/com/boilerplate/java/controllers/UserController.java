@@ -268,7 +268,7 @@ public class UserController extends BaseController {
 	 * @throws NotFoundException
 	 *             If user is not found
 	 */
-	@ApiOperation(value = "Updates A user", notes = "needs user phoneNumber of user")
+	@ApiOperation(value = "Updates A user", notes = "needs phoneNumber of user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/user/updateAUser", method = RequestMethod.PUT)
 	public @ResponseBody ExternalFacingReturnedUser updateAUser(@RequestBody UpdateUserEntity updateUserEntity)

@@ -692,16 +692,16 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the user total score
 	 */
 	private String totalScore;
-	
+
 	/**
-	 * This is the user refer score 
+	 * This is the user refer score
 	 */
 	private double totalReferScore;
-	
+
 	/**
 	 * Gets the total refer score
-	 * @return
-	 * 		the total refer score
+	 * 
+	 * @return the total refer score
 	 */
 	public double getTotalReferScore() {
 		return totalReferScore;
@@ -709,10 +709,31 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 
 	/**
 	 * Sets the total refer score
-	 * @param totalReferScore This is the total refer score		
+	 * 
+	 * @param totalReferScore
+	 *            This is the total refer score
 	 */
 	public void setTotalReferScore(double totalReferScore) {
 		this.totalReferScore = totalReferScore;
+	}
+
+	/**
+	 * Gets the hasSkippedEmailInput
+	 * 
+	 * @return the hasSkippedEmailInput
+	 */
+	public boolean getHasSkippedEmailInput() {
+		return hasSkippedEmailInput;
+	}
+
+	/**
+	 * Sets the hasSkippedEmailInput
+	 * 
+	 * @param hasSkippedEmailInput
+	 *            the hasSkippedEmailInput to set
+	 */
+	public void setHasSkippedEmailInput(boolean hasSkippedEmailInput) {
+		this.hasSkippedEmailInput = hasSkippedEmailInput;
 	}
 
 	/**
@@ -731,5 +752,10 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the user total score in double for saving in MySQL
 	 */
 	private double totalScoreInDouble;
+	/**
+	 * This is the has skipped email input that tells that user is not
+	 * interested in inputing his/her emailid
+	 */
+	private boolean hasSkippedEmailInput;
 
 }

@@ -135,6 +135,11 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		}
 		super.set(User + user.getUserId(), user);
 
+		// update user in MySQLdatabase
+		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
+			this.addInRedisSet(user);
+		}
+
 		// save mapping against experian request email key
 
 		return user;
