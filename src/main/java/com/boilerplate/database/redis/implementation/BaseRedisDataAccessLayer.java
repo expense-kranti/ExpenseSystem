@@ -426,7 +426,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(true);
+		methodPermission.setPublishRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
@@ -532,6 +532,16 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// for method updateAUser
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permission for AssessmentController
 		// Validate answer
 		methodPermission = new MethodPermissions();
@@ -583,7 +593,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(true);
+		methodPermission.setPublishRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate("");
@@ -662,7 +672,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(true);
+		methodPermission.setPublishRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/ReferReport");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
@@ -679,7 +689,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		// methodPermission.setPublishMethod("POST");
-		// methodPermission.setPublishRequired(true);
+		// methodPermission.setPublishRequired(false);
 		// methodPermission.setUrlToPublish(salesForceBaseurl +
 		// "/services/apexrest/ReferReport");
 		// methodPermission.setDynamicPublishURl(false);
@@ -746,7 +756,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(true);
+		methodPermission.setPublishRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/BlogActivity");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
@@ -766,7 +776,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(true);
+		methodPermission.setPublishRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate("");
@@ -972,7 +982,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(true);
+		methodPermission.setPublishRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/MyHandBook");
 		methodPermission.setDynamicPublishURl(false);
 		methodPermission.setPublishTemplate(
@@ -1540,10 +1550,10 @@ public class BaseRedisDataAccessLayer {
 		BoilerplateMap<String, String> contentMap = new BoilerplateMap<>();
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Welcome @FirstName");
 		contentMap.put("WELCOME_MESSAGE_SMS",
-				"Welcome @FirstName, @Password is your password. Thanks for registering on Akshar!");
+				"@Password is your password. Thanks for being a part of Akshar- A Financial Literacy Initiative.");
 		contentMap.put("RESET_PASSWORD_SMS",
 				"Your new password is @Password. Please change your password after logging in. Akshar.");
-		contentMap.put("PASSWORD_CHANGE_SMS", "Dear @FirstName, your password has been changed successfully. Akshar.");
+		contentMap.put("PASSWORD_CHANGE_SMS", "Your password has been changed successfully. Akshar.");
 		contentMap.put("WELCOME_MESSAGE_EMAIL_SUBJECT", "Contact Us");
 		contentMap.put("CONTACT_US_EMAIL_BODY",
 				"<b><h2>Contact Person Details:<h2></b> <b>Name:</b> @ContactPersonName <br> <b>Email:</b> @ContactPersonEmail <br> <b>Contact Number:</b> @ContactPersonMobileNumber <br> <b>Message:</b> @ContactPersonMessage");

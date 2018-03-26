@@ -145,7 +145,6 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 				if (user != null) {
 					// Check is script publish user to CRM is true or not
 					if (Boolean.valueOf(configurationManager.get("Is_Script_Publish_User_To_CRM"))) {
-						this.publishUserToCRM(user);
 					}
 					// Publish user assessment details
 					this.publishUserAssessmentDetails(userId.replace("USER:", ""));
@@ -158,27 +157,7 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 
 	}
 
-	private void publishUserToCRM(ExternalFacingReturnedUser user) {
-		PublishEntity publishEntity = this.createPublishEntity("PublishUserDataObserver.publishUserToCRM",
-				configurationManager.get("AKS_USER_Publish_Method"),
-				configurationManager.get("AKS_USER_Publish_Subject"), user,
-				configurationManager.get("AKS_USER_Publish_URL"), configurationManager.get("AKS_USER_Publish_Template"),
-				configurationManager.get("AKS_USER_Dynamic_Publish_Url"));
-		if (subjects == null) {
-			subjects = new BoilerplateList<>();
-			subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-		}
-		try {
-			logger.logInfo("PublishUserDataObserver", "publishUserToCRM", "Publishing user",
-					"publish user status" + user.getUserId());
-			queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "PublishUserDataObserver", "publishToCRM",
-					configurationManager.get("AKS_PUBLISH_QUEUE"));
-		} catch (Exception exception) {
-			logger.logError("PublishUserDataObserver", "publishUserToCRM", "queueReaderJob catch block",
-					"Exception :" + exception);
-		}
-
-	}
+	
 
 	/**
 	 * This method is used to get user assessment details
@@ -204,7 +183,6 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 			// Set the assessment status
 			assessmentPublishData.setAssessments(assessmentService.getUserAssessmentStatus(userId));
 			// Publish user assessment status
-			this.publishToCRM(assessmentPublishData);
 		}
 
 	}
@@ -223,65 +201,6 @@ public class PublishUserDataObserver implements IAsyncWorkObserver {
 		return userDetails;
 	}
 
-	/**
-	 * This method is used to publish the user assessment status details to CRM
-	 * 
-	 * @param assessmentStatusPubishEntity
-	 *            This parameter contains the user assessment details like user
-	 *            total score ,user rank and list of all assessment,each element
-	 *            of list contain assessment name and its status,
-	 */
-	private void publishToCRM(AssessmentStatusPubishEntity assessmentStatusPubishEntity) {
-		Boolean isPublishReport = Boolean.valueOf(configurationManager.get("Is_Publish_Report"));
-		if (isPublishReport) {
-			PublishEntity publishEntity = this.createPublishEntity("PublishUserDataObserver.publishToCRM",
-					configurationManager.get("AKS_Assessment_Publish_Method"),
-					configurationManager.get("AKS_Assessment_Publish_Subject"), assessmentStatusPubishEntity,
-					configurationManager.get("AKS_Assessment_Publish_URL"),
-					configurationManager.get("AKS_Assessment_Publish_Template"),
-					configurationManager.get("AKS_Assessment_Dynamic_Publish_Url"));
-			if (subjects == null) {
-				subjects = new BoilerplateList<>();
-				subjects.add(configurationManager.get("AKS_PUBLISH_SUBJECT"));
-			}
-			try {
-				logger.logInfo("PublishUserDataObserver", "publishToCRM", "Publishing report",
-						"publish assessment status" + assessmentStatusPubishEntity.getUserId());
-				queueReaderJob.requestBackroundWorkItem(publishEntity, subjects, "CalculateTotalScoreObserver",
-						"publishToCRM", configurationManager.get("AKS_PUBLISH_QUEUE"));
-			} catch (Exception exception) {
-				logger.logError("PublishUserDataObserver", "publishToCRM", "queueReaderJob catch block",
-						"Exception :" + exception);
-			}
-		}
-	}
+	
 
-	/**
-	 * This method creates the publish entity.
-	 * 
-	 * @param method
-	 *            the publish method
-	 * @param publishMethod
-	 *            the publish method
-	 * @param publishSubject
-	 *            the publish subject
-	 * @param returnValue
-	 *            the object
-	 * @param url
-	 *            the publish url
-	 * @return the publish entity
-	 */
-	private PublishEntity createPublishEntity(String method, String publishMethod, String publishSubject,
-			Object returnValue, String url, String publishTemplate, String isDynamicPublishURl) {
-		PublishEntity publishEntity = new PublishEntity();
-		publishEntity.setInput(new Object[0]);
-		publishEntity.setMethod(method);
-		publishEntity.setPublishMethod(publishMethod);
-		publishEntity.setPublishSubject(publishSubject);
-		publishEntity.setReturnValue(returnValue);
-		publishEntity.setUrl(url);
-		publishEntity.setDynamicPublishURl(Boolean.parseBoolean(isDynamicPublishURl));
-		publishEntity.setPublishTemplate(publishTemplate);
-		return publishEntity;
-	}
 }

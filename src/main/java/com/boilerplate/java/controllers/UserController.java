@@ -248,7 +248,8 @@ public class UserController extends BaseController {
 	 *            existence
 	 * @throws ValidationFailedException
 	 *             thrown when userId is null or empty
-	 * @throws ConflictException  thrown when user with given user id already exists
+	 * @throws ConflictException
+	 *             thrown when user with given user id already exists
 	 */
 	@ApiOperation(value = "/checkUserExistence", notes = "only user id is required(which equals phone number)")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
@@ -257,4 +258,22 @@ public class UserController extends BaseController {
 			throws ValidationFailedException, ConflictException {
 		return userService.checkUserExistence(externalFacingUser);
 	}
+
+	/**
+	 * This method updates a user
+	 * 
+	 * @param updateUserEntity
+	 *            The user entity to be updated.
+	 * @return The updated user
+	 * @throws NotFoundException
+	 *             If user is not found
+	 */
+	@ApiOperation(value = "Updates A user", notes = "needs phoneNumber of user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/user/updateAUser", method = RequestMethod.PUT)
+	public @ResponseBody ExternalFacingReturnedUser updateAUser(@RequestBody UpdateUserEntity updateUserEntity)
+			throws Exception, ValidationFailedException, ConflictException, NotFoundException, BadRequestException {
+		return this.userService.updateAUser(updateUserEntity);
+	}
+
 }
