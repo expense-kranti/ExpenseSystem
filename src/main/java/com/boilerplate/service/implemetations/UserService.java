@@ -652,11 +652,21 @@ public class UserService implements IUserService {
 
 		String password = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0, 6);
 		updatePasswordEntity.setPassword(password);
-
+		
+		
+		
 		// update the entity
 		ExternalFacingReturnedUser externalFacingReturnedUser = this.update(externalFacingUser.getUserId(),
 				updatePasswordEntity.convertToUpdateUserEntity());
-
+		// generate otp list
+		BoilerplateList<Integer> randomOtpList = new BoilerplateList<Integer>();
+		try {
+			randomOtpList = generateOtp(password);
+		} catch (Exception e) {
+			logger.logException("UserService", "create", "catch block of random otp list", e.toString(), e);
+		}
+		// set otp list in external facing user
+		externalFacingReturnedUser.setOtpList(randomOtpList);
 		// Send a message
 		ExternalFacingUser externalFacingUserClone = null;
 		try {
@@ -683,6 +693,7 @@ public class UserService implements IUserService {
 							+ " Queue Down",
 					ex);
 		}
+		
 		return externalFacingReturnedUser;
 	}
 

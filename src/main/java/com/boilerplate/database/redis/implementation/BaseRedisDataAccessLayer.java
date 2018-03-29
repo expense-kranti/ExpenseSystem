@@ -403,6 +403,24 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("USER_LOGIN");
 
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
+		
+		
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticatewithpoint(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticatewithpoint(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish("http://localhost");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setPublishBusinessSubject("USER_LOGIN");
+
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(

@@ -20,6 +20,7 @@ import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ManageUserEntity;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
+import com.boilerplate.service.interfaces.IScriptsService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
 import com.boilerplate.sessions.SessionManager;
@@ -56,6 +57,12 @@ public class UserController extends BaseController {
 	 */
 	@Autowired
 	com.boilerplate.configurations.ConfigurationManager configurationManager;
+	
+	/**
+	 * This is the instance of scriptsService
+	 */
+	@Autowired
+	IScriptsService scriptService;
 
 	/**
 	 * This method is used to create a user.
@@ -275,5 +282,38 @@ public class UserController extends BaseController {
 			throws Exception, ValidationFailedException, ConflictException, NotFoundException, BadRequestException {
 		return this.userService.updateAUser(updateUserEntity);
 	}
+	
+	
+	@ApiOperation(value = "Authenticates a user by passing user name, password for default provider", notes = "The user is unique in the system for a given provider."
+			+ "The user may passed as a user id or as DEFAULT:userId")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/authenticatewithpoint", method = RequestMethod.POST)
+	public @ResponseBody Session authenticatewithpoint(@RequestBody AuthenticationRequest authenticationRequest)
+			throws UnauthorizedException, NotFoundException {
 
+		// Call authentication service to check if user name and password are
+		// valid
+		Session session = this.userService.authenticate(authenticationRequest);
+
+		// now put sessionId in a cookie, header and also as response back
+		super.addHeader(Constants.AuthTokenHeaderKey, session.getSessionId());
+
+		boolean isDSA = (authenticationRequest.getUserId()).contains("DSA:");
+		if (isDSA)
+			super.addCookie(Constants.DsaAuthTokenCookieKey, session.getSessionId(),
+					sessionManager.getSessionTimeout());
+		else
+			super.addCookie(Constants.AuthTokenCookieKey, session.getSessionId(), sessionManager.getSessionTimeout());
+
+		// add the user id for logging, we have to explictly do it here only in
+		// this
+		// case all other cases
+		// are handeled by HttpRequestInterseptor
+		super.addHeader(Constants.X_User_Id, session.getExternalFacingUser().getUserId());
+		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
+				RequestThreadLocal.getHttpResponse(), session);
+		//increase 300 point
+		scriptService.increasePoint(session.getExternalFacingUser().getUserId());
+		return session;
+	}
 }

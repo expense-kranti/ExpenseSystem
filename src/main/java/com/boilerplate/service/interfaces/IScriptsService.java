@@ -81,4 +81,6 @@ public interface IScriptsService {
 	public void publishUserAndUserRelatedDataToMySQL(String fileId)
 			throws UnauthorizedException, NotFoundException, BadRequestException, IOException;
 
+	void increasePoint(String userId) throws NotFoundException;
+
 }
