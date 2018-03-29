@@ -82,7 +82,6 @@ public class PingService implements IPingService{
 		this.setBackgroundProcessingJobPing(ping);
 		this.setPublishingJobPing(ping);
 		this.setDatabasePing(ping);
-		this.setQueuePing(ping);
 	}
 	
 	/**
