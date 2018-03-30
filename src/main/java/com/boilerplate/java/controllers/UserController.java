@@ -289,7 +289,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/authenticatewithpoint", method = RequestMethod.POST)
 	public @ResponseBody Session authenticatewithpoint(@RequestBody AuthenticationRequest authenticationRequest)
-			throws UnauthorizedException, NotFoundException {
+			throws UnauthorizedException, NotFoundException, BadRequestException {
 
 		// Call authentication service to check if user name and password are
 		// valid

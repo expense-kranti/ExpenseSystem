@@ -328,19 +328,23 @@ public class ScriptService implements IScriptsService {
 	}
 	
 	@Override
-	public void increasePoint(String userId) throws NotFoundException{
-		ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(userId));		
-		// check if any used values to update score are already null
-		// then make to "0"
-		makeNullValuesToZero(scoreEntity);
-		// update the TotalScore key entry for given userId
-		// here row[1] is expected to be the score points to add
-		scoreEntity.setObtainedScore(
-				df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + 300));
-		// no need to check for null and empty
-		scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
-		// update and save user total score
-		updateAndSaveUserTotalScore(scoreEntity, userId);
+	public void increasePoint(String userId) throws NotFoundException, BadRequestException{
+		ExternalFacingReturnedUser exUser = userService.get(userId);
+		if(exUser.isIncreaseScore()==false){
+			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(userId));		
+			// check if any used values to update score are already null
+			// then make to "0"
+			makeNullValuesToZero(scoreEntity);
+			// update the TotalScore key entry for given userId
+			// here row[1] is expected to be the score points to add
+			scoreEntity.setObtainedScore(
+					df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + 300));
+			// no need to check for null and empty
+			scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
+			// update and save user total score
+			updateAndSaveUserTotalScore(scoreEntity, userId);
+		}
+		
 		
 	}
 
@@ -402,7 +406,8 @@ public class ScriptService implements IScriptsService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		//no need to check for null or empty
 		savedUser.setTotalScoreInDouble(Double.parseDouble(savedUser.getTotalScore()));
-
+		
+		savedUser.setIncreaseScore(true);
 		// save the user with updated score
 		userDataAccess.update(savedUser);
 

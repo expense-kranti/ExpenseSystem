@@ -737,6 +737,20 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
+	 * @return the increaseScore
+	 */
+	public boolean isIncreaseScore() {
+		return increaseScore;
+	}
+
+	/**
+	 * @param increaseScore the increaseScore to set
+	 */
+	public void setIncreaseScore(boolean increaseScore) {
+		this.increaseScore = increaseScore;
+	}
+
+	/**
 	 * This is the income tax uuid used to refer to income tax data for the user
 	 */
 	private String incomeTaxUuid;
@@ -757,5 +771,8 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * interested in inputing his/her emailid
 	 */
 	private boolean hasSkippedEmailInput;
+	
+	
+	private boolean increaseScore;
 
 }

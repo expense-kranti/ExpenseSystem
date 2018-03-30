@@ -48,6 +48,9 @@
 		<property name="hasSkippedEmailInput" type="boolean">
 			<column name="HasSkippedEmailInput" sql-type="tinyint" />
 		</property>
+		<property name="increaseScore" type="boolean">
+			<column name="IncreaseScoreWithLanding" sql-type="tinyint" />
+		</property>
 	</class>
 
 </hibernate-mapping>
