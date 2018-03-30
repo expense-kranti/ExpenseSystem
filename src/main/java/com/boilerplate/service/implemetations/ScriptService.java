@@ -334,6 +334,10 @@ public class ScriptService implements IScriptsService {
 			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(userId));		
 			// check if any used values to update score are already null
 			// then make to "0"
+			if(scoreEntity==null){
+				scoreEntity = new ScoreEntity();
+				scoreEntity.setUserId(userId);
+			}
 			makeNullValuesToZero(scoreEntity);
 			// update the TotalScore key entry for given userId
 			// here row[1] is expected to be the score points to add
@@ -400,7 +404,8 @@ public class ScriptService implements IScriptsService {
 		redisAssessment.saveTotalScore(scoreEntity);
 
 		// update the Total Score in saved User in data store
-		ExternalFacingReturnedUser savedUser = userDataAccess.getUser(userService.normalizeUserId(userPhoneNumber),
+		ExternalFacingReturnedUser savedUser = userDataAccess.getUser(
+				userService.normalizeUserId(userPhoneNumber),
 				null);
 		savedUser.setTotalScore(df.format(
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
