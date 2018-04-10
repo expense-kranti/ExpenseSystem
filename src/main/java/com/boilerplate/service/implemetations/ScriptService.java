@@ -19,6 +19,7 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.PublishEntity;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.ScoreEntity;
@@ -294,62 +295,102 @@ public class ScriptService implements IScriptsService {
 
 		String[] headerLine = csvReader.readNext();
 		while ((row = csvReader.readNext()) != null) {
+			try {
+				ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(row[0]));
 
-			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(row[0]));
+				if (scoreEntity == null) {
+					scoreEntity = new ScoreEntity();
+					scoreEntity.setUserId(userService.normalizeUserId(row[0]));
+				}
 
-			if (row[2].equals(SUBTRACT) && scoreEntity != null) {
-				// check if any used values to update score are already null
-				// then make to "0"
-				makeNullValuesToZero(scoreEntity);
-				// update the TotalScore key entry for given userId
-				// here row[1] is expected to be the score points to subtract
-				scoreEntity.setObtainedScore(
-						df.format(Float.parseFloat(scoreEntity.getObtainedScore()) - Float.parseFloat(row[1])));
-				// no need to check for null and empty
-				scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
-				// update and save user total score
-				updateAndSaveUserTotalScore(scoreEntity, row[0]);
+				if (row[2].equals(SUBTRACT) && scoreEntity != null) {
+					// check if any used values to update score are already null
+					// then make to "0"
+					makeNullValuesToZero(scoreEntity);
+					// update the TotalScore key entry for given userId
+					// here row[1] is expected to be the score points to
+					// subtract
+					scoreEntity.setObtainedScore(
+							df.format(Float.parseFloat(scoreEntity.getObtainedScore()) - Float.parseFloat(row[1])));
+					// no need to check for null and empty
+					scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
 
-			} else if (row[2].equals(ADD) && scoreEntity != null) {
-				// check if any used values to update score are already null
-				// then make to "0"
-				makeNullValuesToZero(scoreEntity);
-				// update the TotalScore key entry for given userId
-				// here row[1] is expected to be the score points to add
-				scoreEntity.setObtainedScore(
-						df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(row[1])));
-				// no need to check for null and empty
-				scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
-				// update and save user total score
-				updateAndSaveUserTotalScore(scoreEntity, row[0]);
+					// update the Total Score in saved User in data store
+					ExternalFacingReturnedUser savedUser = userDataAccess.getUser(userService.normalizeUserId(row[0]),
+							null);
+					if (savedUser != null) {
+						// update and save user total score
+						updateAndSaveUserTotalScore(scoreEntity, savedUser);
+
+					} else {
+						logger.logError("ScriptService", "fetchScorePointsFromFileAndUpdateUserTotalScore",
+								"ExceptionInBulkUpdatingUserTotalScore",
+								"Exception is : " + "User Not Found For score update userId : " + row[0]);
+					}
+
+				} else if (row[2].equals(ADD) && scoreEntity != null) {
+					// check if any used values to update score are already null
+					// then make to "0"
+					makeNullValuesToZero(scoreEntity);
+					// update the TotalScore key entry for given userId
+					// here row[1] is expected to be the score points to add
+					scoreEntity.setObtainedScore(
+							df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(row[1])));
+					// no need to check for null and empty
+					scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
+
+					// update the Total Score in saved User in data store
+					ExternalFacingReturnedUser savedUser = userDataAccess.getUser(userService.normalizeUserId(row[0]),
+							null);
+					if (savedUser != null) {
+						// update and save user total score
+						updateAndSaveUserTotalScore(scoreEntity, savedUser);
+
+					} else {
+						logger.logError("ScriptService", "fetchScorePointsFromFileAndUpdateUserTotalScore",
+								"ExceptionInBulkUpdatingUserTotalScore",
+								"Exception is : " + "User Not Found For score update userId : " + row[0]);
+					}
+				}
+			} catch (Exception ex) {
+				logger.logException("ScriptService", "fetchScorePointsFromFileAndUpdateUserTotalScore",
+						"ExceptionInBulkUpdatingUserTotalScore", "Exception is : " + ex.getMessage(), ex);
 			}
 		}
 
 	}
-	
+
 	@Override
-	public void increasePoint(String userId) throws NotFoundException, BadRequestException{
+	public void increasePoint(String userId) throws NotFoundException, BadRequestException {
 		ExternalFacingReturnedUser exUser = userService.get(userId);
-		if(exUser.isIncreaseScore()==false){
-			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(userId));		
-			// check if any used values to update score are already null
-			// then make to "0"
-			if(scoreEntity==null){
+		if (exUser.isIncreaseScore() == false) {
+			ScoreEntity scoreEntity = redisAssessment.getTotalScore(userService.normalizeUserId(userId));
+
+			if (scoreEntity == null) {
 				scoreEntity = new ScoreEntity();
 				scoreEntity.setUserId(userId);
 			}
+			// check if any used values to update score are already null
+			// then make to "0"
 			makeNullValuesToZero(scoreEntity);
 			// update the TotalScore key entry for given userId
 			// here row[1] is expected to be the score points to add
-			scoreEntity.setObtainedScore(
-					df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + 300));
+			scoreEntity.setObtainedScore(df.format(Float.parseFloat(scoreEntity.getObtainedScore()) + 300));
 			// no need to check for null and empty
 			scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
-			// update and save user total score
-			updateAndSaveUserTotalScore(scoreEntity, userId);
+			// update the Total Score in saved User in data store
+			ExternalFacingReturnedUser savedUser = userDataAccess.getUser(userService.normalizeUserId(userId), null);
+			if (savedUser != null) {
+				// save user with user has increased score
+				savedUser.setIncreaseScore(true);
+				// update and save user total score
+				updateAndSaveUserTotalScore(scoreEntity, savedUser);
+			} else {
+				logger.logError("ScriptService", "increasePoint", "ExceptionInUpdatingUserTotalScore",
+						"Exception is : " + "User Not Found For score update, userId : " + userId);
+			}
 		}
-		
-		
+
 	}
 
 	/**
@@ -383,6 +424,12 @@ public class ScriptService implements IScriptsService {
 		if (scoreEntity.getReferScore() == null || scoreEntity.getObtainedScore().isEmpty()) {
 			scoreEntity.setReferScore("0");
 		}
+		// added for handling when score entity is newly made and on saving
+		// assessment we need max score to have a value that can be converted to
+		// Float value
+		if (scoreEntity.getMaxScore() == null || scoreEntity.getMaxScore().isEmpty()) {
+			scoreEntity.setMaxScore("0");
+		}
 	}
 
 	/**
@@ -397,22 +444,18 @@ public class ScriptService implements IScriptsService {
 	 * @throws NotFoundException
 	 *             thrown when user is not found
 	 */
-	private void updateAndSaveUserTotalScore(ScoreEntity scoreEntity, String userPhoneNumber) throws NotFoundException {
+	private void updateAndSaveUserTotalScore(ScoreEntity scoreEntity, ExternalFacingReturnedUser savedUser)
+			throws NotFoundException {
+
 		// save updated score in data store
 		// no relation in saving it to mysql so not making its entry in redis
 		// set as same total score is is updated and saved in user
 		redisAssessment.saveTotalScore(scoreEntity);
-
-		// update the Total Score in saved User in data store
-		ExternalFacingReturnedUser savedUser = userDataAccess.getUser(
-				userService.normalizeUserId(userPhoneNumber),
-				null);
+		// null or empty values have been handled before this method call
 		savedUser.setTotalScore(df.format(
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
-		//no need to check for null or empty
+		// no need to check for null or empty
 		savedUser.setTotalScoreInDouble(Double.parseDouble(savedUser.getTotalScore()));
-		
-		savedUser.setIncreaseScore(true);
 		// save the user with updated score
 		userDataAccess.update(savedUser);
 

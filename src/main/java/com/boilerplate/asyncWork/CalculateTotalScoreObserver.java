@@ -231,6 +231,12 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	 */
 	private void updateTotalScore(ScoreEntity scoreEntity, AssessmentEntity assessmentEntity)
 			throws NotFoundException, ConflictException {
+		// code to handle if maxscore is not present in scoreEntity when score
+		// Entity is made without of assessment enitity
+		if (scoreEntity.getMaxScore() == null || scoreEntity.getMaxScore().isEmpty()) {
+			// Set max score
+			scoreEntity.setMaxScore(assessmentEntity.getMaxScore());
+		}
 		// Calculate max score
 		Float maxScore = Float.valueOf(scoreEntity.getMaxScore()) + Float.valueOf(assessmentEntity.getMaxScore());
 		// Calculate total score
