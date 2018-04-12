@@ -57,7 +57,7 @@ public class UserController extends BaseController {
 	 */
 	@Autowired
 	com.boilerplate.configurations.ConfigurationManager configurationManager;
-	
+
 	/**
 	 * This is the instance of scriptsService
 	 */
@@ -282,8 +282,7 @@ public class UserController extends BaseController {
 			throws Exception, ValidationFailedException, ConflictException, NotFoundException, BadRequestException {
 		return this.userService.updateAUser(updateUserEntity);
 	}
-	
-	
+
 	@ApiOperation(value = "Authenticates a user by passing user name, password for default provider", notes = "The user is unique in the system for a given provider."
 			+ "The user may passed as a user id or as DEFAULT:userId")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
@@ -312,8 +311,11 @@ public class UserController extends BaseController {
 		super.addHeader(Constants.X_User_Id, session.getExternalFacingUser().getUserId());
 		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
 				RequestThreadLocal.getHttpResponse(), session);
-		//increase 300 point
+		// increase 300 point
 		scriptService.increasePoint(session.getExternalFacingUser().getUserId());
 		return session;
 	}
+
+	
+
 }

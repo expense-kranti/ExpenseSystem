@@ -381,6 +381,40 @@ public class UpdateUserEntity extends BaseEntity {
 	}
 
 	/**
+	 * Gets the scores to update
+	 * @return the scoresToUpdate
+	 */
+	public int getScoresToUpdate() {
+		return scoresToUpdate;
+	}
+
+	/**
+	 * Sets the score to update
+	 * @param scoresToUpdate
+	 *            the scoresToUpdate to set
+	 */
+	public void setScoresToUpdate(int scoresToUpdate) {
+		this.scoresToUpdate = scoresToUpdate;
+	}
+
+	/**
+	 * Gets the scoreupdateoperation
+	 * @return the scoreUpdateOperation
+	 */
+	public String getScoreUpdateOperation() {
+		return scoreUpdateOperation;
+	}
+
+	/**
+	 * Sets the score update operation
+	 * @param scoreUpdateOperation
+	 *            the scoreUpdateOperation to set
+	 */
+	public void setScoreUpdateOperation(String scoreUpdateOperation) {
+		this.scoreUpdateOperation = scoreUpdateOperation;
+	}
+
+	/**
 	 * This is state of user which tell us about milestones covered by the user.
 	 */
 	@ApiModelProperty(value = "This is state of the user", required = false)
@@ -413,5 +447,13 @@ public class UpdateUserEntity extends BaseEntity {
 	 * interested in inputing his/her emailid
 	 */
 	private boolean hasSkippedEmailInput;
+	/**
+	 * This is the scores to update
+	 */
+	private int scoresToUpdate;
+	/**
+	 * This is the update operation add or subtract
+	 */
+	private String scoreUpdateOperation;
 
 }

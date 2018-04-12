@@ -403,10 +403,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("USER_LOGIN");
 
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		
-		
-		
+
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticatewithpoint(com.boilerplate.java.entities.AuthenticationRequest)");
@@ -1054,6 +1051,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		
 
 		// save the method permission map in configuration
 		// in database
