@@ -349,7 +349,7 @@ public class ScriptService implements IScriptsService {
 					} else {
 						logger.logError("ScriptService", "fetchScorePointsFromFileAndUpdateUserTotalScore",
 								"ExceptionInBulkUpdatingUserTotalScore",
-								"Exception is : " + "User Not Found For score update userId : " + row[0]);
+								"Exception is : " + "User Not Found For score update, userId : " + row[0]);
 					}
 				}
 			} catch (Exception ex) {
@@ -447,18 +447,54 @@ public class ScriptService implements IScriptsService {
 	private void updateAndSaveUserTotalScore(ScoreEntity scoreEntity, ExternalFacingReturnedUser savedUser)
 			throws NotFoundException {
 
+		// set rank in scoreentity
+		scoreEntity.setRank(this.calculateRank(
+				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// save updated score in data store
 		// no relation in saving it to mysql so not making its entry in redis
-		// set as same total score is is updated and saved in user
+		// set as same total score is updated and saved in user
 		redisAssessment.saveTotalScore(scoreEntity);
 		// null or empty values have been handled before this method call
 		savedUser.setTotalScore(df.format(
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// no need to check for null or empty
 		savedUser.setTotalScoreInDouble(Double.parseDouble(savedUser.getTotalScore()));
+		// set rank of user
+		savedUser.setRank(calculateRank((float) savedUser.getTotalScoreInDouble()));
 		// save the user with updated score
 		userDataAccess.update(savedUser);
 
+	}
+
+	/**
+	 * This method set the rank of the user.
+	 * 
+	 * @param score
+	 *            This is the current user score.
+	 * @return The rank of the user.
+	 */
+	private String calculateRank(Float score) {
+		String rank = "";
+		if (score > 0 && score < 500) {
+			rank = configurationManager.get("Rank1");
+		} else if (score >= 500 && score < 1000) {
+			rank = configurationManager.get("Rank2");
+		} else if (score >= 1000 && score < 5000) {
+			rank = configurationManager.get("Rank3");
+		} else if (score >= 5000 && score < 10000) {
+			rank = configurationManager.get("Rank4");
+		} else if (score >= 10000 && score < 15000) {
+			rank = configurationManager.get("Rank5");
+		} else if (score >= 15000 && score < 20000) {
+			rank = configurationManager.get("Rank6");
+		} else if (score >= 20000 && score < 25000) {
+			rank = configurationManager.get("Rank7");
+		} else if (score >= 25000 && score < 30000) {
+			rank = configurationManager.get("Rank8");
+		} else if (score >= 30000) {
+			rank = configurationManager.get("Rank9");
+		}
+		return rank;
 	}
 
 }
