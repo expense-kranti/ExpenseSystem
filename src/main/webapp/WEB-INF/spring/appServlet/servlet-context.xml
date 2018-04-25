@@ -96,7 +96,7 @@
 		is in milliSeconds -->
 	<task:scheduled-tasks scheduler="scheduler">
 		<task:scheduled ref="queueReaderJob" method="readMySQLPublishQueueAndDispatch"
-			fixed-delay="3600000" /><!--3600000 are values used in test -->
+			fixed-delay="36000" /><!--3600000 are values used -->
 	</task:scheduled-tasks>
 
 	<!--here addRedisSetElementsInQueue method used to add Keys From Redis Set 
@@ -104,8 +104,8 @@
 
 	<task:scheduled-tasks scheduler="scheduler">
 		<task:scheduled ref="mySQLQueueWriterJob" method="addRedisSetElementsInQueue"
-			fixed-delay="1800000" />
-	<!-- 1800000 are values used in test -->
+			fixed-delay="18000" />
+	<!-- 1800000 are values used -->
 	</task:scheduled-tasks>
 
 
