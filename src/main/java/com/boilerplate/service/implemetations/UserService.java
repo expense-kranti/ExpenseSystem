@@ -1,6 +1,7 @@
 package com.boilerplate.service.implemetations;
 
 import java.nio.charset.CharacterCodingException;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Random;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendRegistrationEmailObserver;
 import com.boilerplate.asyncWork.SendSMSOnPasswordChange;
+import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.ISFUpdateHash;
 import com.boilerplate.database.interfaces.IUser;
@@ -31,6 +33,7 @@ import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ManageUserEntity;
 import com.boilerplate.java.entities.Role;
+import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.service.interfaces.IAssessmentService;
@@ -52,6 +55,17 @@ public class UserService implements IUserService {
 	 * This is an instance of the logger
 	 */
 	Logger logger = Logger.getInstance(UserService.class);
+
+	/**
+	 * These variables are used in checking the operation type to be done on
+	 * TotalScore with given score points
+	 */
+	public static final String SUBTRACT = "SUBTRACT";
+
+	public static final String ADD = "ADD";
+
+	// format of double values in two places decimal
+	DecimalFormat df = new DecimalFormat("#.##");
 
 	/**
 	 * This is the instance of the configuration manager.
@@ -314,6 +328,23 @@ public class UserService implements IUserService {
 	 */
 	public void setRedisSFUpdateHashAccess(ISFUpdateHash redisSFUpdateHashAccess) {
 		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
+	}
+
+
+	/**
+	 * This is the new instance of redis assessment
+	 */
+	@Autowired
+	IRedisAssessment redisAssessment;
+
+	/**
+	 * This method set the redisAssessment
+	 * 
+	 * @param redisAssessment
+	 *            the redisAssessment to set
+	 */
+	public void setRedisAssessment(IRedisAssessment redisAssessment) {
+		this.redisAssessment = redisAssessment;
 	}
 
 	/**
@@ -652,9 +683,7 @@ public class UserService implements IUserService {
 
 		String password = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0, 6);
 		updatePasswordEntity.setPassword(password);
-		
-		
-		
+
 		// update the entity
 		ExternalFacingReturnedUser externalFacingReturnedUser = this.update(externalFacingUser.getUserId(),
 				updatePasswordEntity.convertToUpdateUserEntity());
@@ -693,7 +722,7 @@ public class UserService implements IUserService {
 							+ " Queue Down",
 					ex);
 		}
-		
+
 		return externalFacingReturnedUser;
 	}
 
@@ -765,6 +794,42 @@ public class UserService implements IUserService {
 		if (updateUserEntity.getIsPasswordChanged()) {
 			// Set is password reset to true
 			returnedUser.setIsPasswordChanged(true);
+		}
+
+		if (updateUserEntity.getScoreUpdateOperation() != null && (updateUserEntity.getScoresToUpdate() > 0)) {
+			// for updating user score
+			if (updateUserEntity.getScoreUpdateOperation().equals(ADD)) {
+
+				ScoreEntity scoreEntity = null;
+
+				scoreEntity = prepareScoreEntityForScoreUpdate(scoreEntity, userId);
+
+				// update the TotalScore key entry for given userId
+				scoreEntity.setObtainedScore(df.format(
+						Float.parseFloat(scoreEntity.getObtainedScore()) + updateUserEntity.getScoresToUpdate()));
+				// no need to check for null and empty
+				scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
+
+				updateUserTotalScore(scoreEntity, returnedUser);
+
+			} else if (updateUserEntity.getScoreUpdateOperation().equals(SUBTRACT)) {
+				ScoreEntity scoreEntity = null;
+
+				scoreEntity = prepareScoreEntityForScoreUpdate(scoreEntity, userId);
+				// or for negative value case we can use,
+				// scoreEntity.getObtainedScore().contains("-") if applicable in
+				// future
+				if (scoreEntity.getObtainedScore().equals("0") == false) {
+					// update the TotalScore key entry for given userId
+					scoreEntity.setObtainedScore(df.format(
+							Float.parseFloat(scoreEntity.getObtainedScore()) - updateUserEntity.getScoresToUpdate()));
+					// no need to check for null and empty
+					scoreEntity.setObtainedScoreInDouble(Double.parseDouble(scoreEntity.getObtainedScore()));
+
+					updateUserTotalScore(scoreEntity, returnedUser);
+				}
+
+			}
 		}
 
 		if ((this.get(userId, true).getRoles()) != null && (this.get(userId, true).getRoles()).size() != 0)
@@ -981,6 +1046,74 @@ public class UserService implements IUserService {
 			}
 		}
 		return isAdmin;
+	}
+
+	/**
+	 * This method is used to prepare score entity to be able to be saved for
+	 * compatibility for assessments score addition to them
+	 * 
+	 * @param scoreEntity
+	 *            the score Entity
+	 * @param userId
+	 *            the userId of user
+	 * @return the prepared score entity
+	 */
+	private ScoreEntity prepareScoreEntityForScoreUpdate(ScoreEntity scoreEntity, String userId) {
+		scoreEntity = redisAssessment.getTotalScore(userId);
+
+		if (scoreEntity == null) {
+			scoreEntity = new ScoreEntity();
+			scoreEntity.setUserId(userId);
+		}
+
+		// check if any used values to update score are already null
+		// then make to "0"
+		makeNullValuesToZero(scoreEntity);
+
+		return scoreEntity;
+	}
+
+	// This method is used to make the null values to "0"
+	private void makeNullValuesToZero(ScoreEntity scoreEntity) {
+		if (scoreEntity.getObtainedScore() == null || scoreEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setObtainedScore("0");
+		}
+		if (scoreEntity.getReferScore() == null || scoreEntity.getObtainedScore().isEmpty()) {
+			scoreEntity.setReferScore("0");
+		}
+		// added for handling when score entity is newly made and on saving
+		// assessment we need max score to have a value that can be converted to
+		// Float value
+		if (scoreEntity.getMaxScore() == null || scoreEntity.getMaxScore().isEmpty()) {
+			scoreEntity.setMaxScore("0");
+		}
+	}
+
+	/**
+	 * This method is used to update and save user total score
+	 * 
+	 * @param scoreEntity
+	 *            the score entity that contains the updated score to be saved
+	 *            and updated in User's TotalScore
+	 * @param userPhoneNumber
+	 *            the phone number to get user from data store to update its
+	 *            total score
+	 * @throws NotFoundException
+	 *             thrown when user is not found
+	 */
+	private void updateUserTotalScore(ScoreEntity scoreEntity, ExternalFacingReturnedUser returnedUser)
+			throws NotFoundException {
+
+		// save updated score in data store
+		// no relation in saving it to mysql so not making its entry in redis
+		// set as same total score is is updated and saved in user
+		redisAssessment.saveTotalScore(scoreEntity);
+		// null or empty values have been handled before this method call
+		returnedUser.setTotalScore(df.format(
+				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
+		// no need to check for null or empty
+		returnedUser.setTotalScoreInDouble(Double.parseDouble(returnedUser.getTotalScore()));
+
 	}
 
 }
