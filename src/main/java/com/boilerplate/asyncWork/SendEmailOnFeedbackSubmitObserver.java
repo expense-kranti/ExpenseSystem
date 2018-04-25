@@ -152,10 +152,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(configurationManager.get("FEEDBACK_EMAIL"));
-		if(configurationManager.get("Enviornment").equals("PRODUCTION")){
-			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED"));
-			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID4_FOR_FEEDBACK_SUBMITTED"));
-		}
+//		if(configurationManager.get("Enviornment").equals("PRODUCTION")){
+//			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED"));
+//			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID4_FOR_FEEDBACK_SUBMITTED"));
+//		}
 		try {
 			this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, 
 					feedbackEntity,user);

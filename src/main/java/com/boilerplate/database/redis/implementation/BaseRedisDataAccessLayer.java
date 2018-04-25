@@ -1406,11 +1406,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
 				"d6085bc0-9827-45e2-b72a-2afe565e7c84_referFriendhtml");
 		vAllEProduction.put("FEEDBACK_EMAIL", "feedback@projectakshar.com");
-		vAllEProduction.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "ravi.kala@axisbank.com");
-		vAllEProduction.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "ashish.sharma@axisbank.com");
+		vAllEProduction.put("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED", "ashish.sharma@axisbank.com");
 
-		vAllEProduction.put("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED", "ravikala2000@gmail.com");
-		vAllEProduction.put("AXISBANK_EMAILID4_FOR_FEEDBACK_SUBMITTED", "aashish902@gmail.com");
+		vAllEProduction.put("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED", "aashish902@gmail.com");
 
 		vAllEProduction.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
 				"7a5f568f-8f16-4642-a3ce-f473fd326d02_feedbackemailerhtml");
