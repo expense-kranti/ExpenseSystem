@@ -459,7 +459,7 @@ public class ScriptService implements IScriptsService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// no need to check for null or empty
 		savedUser.setTotalScoreInDouble(Double.parseDouble(savedUser.getTotalScore()));
-		// set rank of user
+		// set rank of user downcasting to float from double cause score not gonna increase to that precision
 		savedUser.setRank(calculateRank((float) savedUser.getTotalScoreInDouble()));
 		// save the user with updated score
 		userDataAccess.update(savedUser);

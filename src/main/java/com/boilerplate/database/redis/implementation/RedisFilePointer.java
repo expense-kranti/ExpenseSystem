@@ -165,7 +165,7 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 	 */
 	@Override
 	public void addInRedisSet(FileEntity fileEntity) {
-		super.sadd(UserFileKeyForSet, fileEntity.getFileName());
+		super.sadd(UserFileKeyForSet, fileEntity.getFileName().toUpperCase());
 	}
 
 	/**

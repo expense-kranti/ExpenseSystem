@@ -330,7 +330,6 @@ public class UserService implements IUserService {
 		this.redisSFUpdateHashAccess = redisSFUpdateHashAccess;
 	}
 
-
 	/**
 	 * This is the new instance of redis assessment
 	 */
@@ -836,6 +835,7 @@ public class UserService implements IUserService {
 			returnedUser.setRoles(get(userId, true).getRoles());
 		else
 			returnedUser.setRoles(new BoilerplateList<Role>());
+
 		// update the user in the database
 		this.userDataAccess.update(returnedUser);
 
@@ -1104,6 +1104,10 @@ public class UserService implements IUserService {
 	private void updateUserTotalScore(ScoreEntity scoreEntity, ExternalFacingReturnedUser returnedUser)
 			throws NotFoundException {
 
+		// set rank in scoreentity
+		scoreEntity.setRank(this.calculateRank(
+				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
+
 		// save updated score in data store
 		// no relation in saving it to mysql so not making its entry in redis
 		// set as same total score is is updated and saved in user
@@ -1113,7 +1117,40 @@ public class UserService implements IUserService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// no need to check for null or empty
 		returnedUser.setTotalScoreInDouble(Double.parseDouble(returnedUser.getTotalScore()));
+		// set rank of user downcasting to float from double cause score not gonna increase to that precision
+		returnedUser.setRank(calculateRank((float) returnedUser.getTotalScoreInDouble()));
 
+	}
+
+	/**
+	 * This method set the rank of the user.
+	 * 
+	 * @param score
+	 *            This is the current user score.
+	 * @return The rank of the user.
+	 */
+	private String calculateRank(Float score) {
+		String rank = "";
+		if (score > 0 && score < 500) {
+			rank = configurationManager.get("Rank1");
+		} else if (score >= 500 && score < 1000) {
+			rank = configurationManager.get("Rank2");
+		} else if (score >= 1000 && score < 5000) {
+			rank = configurationManager.get("Rank3");
+		} else if (score >= 5000 && score < 10000) {
+			rank = configurationManager.get("Rank4");
+		} else if (score >= 10000 && score < 15000) {
+			rank = configurationManager.get("Rank5");
+		} else if (score >= 15000 && score < 20000) {
+			rank = configurationManager.get("Rank6");
+		} else if (score >= 20000 && score < 25000) {
+			rank = configurationManager.get("Rank7");
+		} else if (score >= 25000 && score < 30000) {
+			rank = configurationManager.get("Rank8");
+		} else if (score >= 30000) {
+			rank = configurationManager.get("Rank9");
+		}
+		return rank;
 	}
 
 }

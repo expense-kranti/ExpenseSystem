@@ -87,24 +87,19 @@ public class MySQLCreateUserFileObserver implements IAsyncWorkObserver {
 			mySqlUserFile.save(fileEntity);
 		} catch (Exception ex) {
 			logger.logException("MySQLCreateUserFileObserver", "save", "try-catch block calling save method",
-					"Exception cause is : " + ex.getCause().toString() + "- Exception message is : " + ex.getMessage(),
+					"Exception cause is : " + ex.getCause().toString() + " file Name is : " + fileEntity.getFileName()
+							+ "- Exception message is : " + ex.getMessage(),
 					ex);
-			// check if exception cause is "Duplicate entry"
-			if (ex.getCause().toString().contains("Duplicate entry")) {
-				// then remove the file name from Redis Set by making it in
-				// upper case(making in upper case is must)
-				filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
-			}
 			// after getting work done by using file name delete that filename
 			// from
 			// set
-			filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
+			filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName());
 			throw ex;
 		}
 
 		// after getting work done by using file name delete that filename from
 		// set
-		filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName().toUpperCase());
+		filePointer.deleteItemFromRedisUserFileSet(fileEntity.getFileName());
 
 	}
 
