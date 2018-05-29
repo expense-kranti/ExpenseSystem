@@ -175,4 +175,24 @@ public class HibernateUtility {
 		} // end finally
 		return coreConnection;
 	}// end method
+	
+	
+	/**
+	 * This method rebulid 
+	 * @param hibernateCfgFileName
+	 */
+	public static void reBuildSessionFactory(String hibernateCfgFileName) {
+		SessionFactory sessionFactory = new org.hibernate.cfg.Configuration().configure(hibernateCfgFileName)
+				.buildSessionFactory();
+		sessionFactoryMap.put(hibernateCfgFileName, sessionFactory);		
+	}
+
+	/**
+	 * This method returns session factory for core connection file
+	 * 
+	 * @return The session factory
+	 */
+	public static void reBuildSessionFactory() {
+		HibernateUtility.reBuildSessionFactory(coreConnectionStringFileName);
+	}
 }

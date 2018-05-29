@@ -11,6 +11,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
 import com.boilerplate.framework.HibernateUtility;
@@ -371,6 +372,9 @@ public class MySQLBaseDataAccessLayer {
 			List<Map<String, Object>> aliasToValueMapList = query.list();
 			session.getTransaction().commit();
 			return aliasToValueMapList;
+		} catch (JDBCConnectionException jce) {
+			this.reinitializeSessionFactory();
+			throw jce;
 		} catch (Exception ex) {
 			logger.logException("MySQLBaseDataAccessLayer", "executeSelectNative returning list of map",
 					"try-catch block", ex.getMessage(), ex);
@@ -462,4 +466,17 @@ public class MySQLBaseDataAccessLayer {
 			}
 		} // end finally
 	}// end method
+	
+	
+	
+	/**
+	 * This method reinitialize the session factory when 
+	 * 	the jdbc exception occurs so that invoking between the java and mysql not affect.
+	 */
+	private void reinitializeSessionFactory(){
+		logger.logInfo("MySQLBaseDataAccessLayer", "reinitializeSessionFactory", "jdbc connection occurs","");
+		//rebuild main session factory
+		HibernateUtility.reBuildSessionFactory();
+	
+	}
 }
