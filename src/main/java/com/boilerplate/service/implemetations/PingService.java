@@ -126,7 +126,7 @@ public class PingService implements IPingService {
 			}
 		} // fail if there is an exception in accessing queue
 		catch (Exception ex) {
-			ping.addStatus("Queue", "FAILED", true);
+			ping.addStatus("Queue", "FAILED", false);
 			logger.logException("PingService", "setQueuePing", "Exception Handler", ex.toString(), ex);
 		}
 	}
@@ -166,7 +166,7 @@ public class PingService implements IPingService {
 				ping.addStatus("Background Queue Processing", "FAILED", true);
 			}
 		} catch (Exception ex) {
-			ping.addStatus("Background Queue Processing", "FAILED", false);
+			ping.addStatus("Background Queue Processing", "FAILED", true);
 			logger.logException("PingService", "setBackgroundProcessingJobPing", "Exception Handler", ex.toString(),
 					ex);
 		}
@@ -190,7 +190,7 @@ public class PingService implements IPingService {
 			ping.addStatus("Database", "OK", true);
 
 		} catch (Exception ex) {
-			ping.addStatus("Database", "FAILED", true);
+			ping.addStatus("Database", "FAILED", false);
 			logger.logException("PingService", "setDatabasePing", "Exception Handler", ex.toString(), ex);
 		}
 	}
