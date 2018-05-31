@@ -466,17 +466,15 @@ public class MySQLBaseDataAccessLayer {
 			}
 		} // end finally
 	}// end method
-	
-	
-	
+
 	/**
-	 * This method reinitialize the session factory when 
-	 * 	the jdbc exception occurs so that invoking between the java and mysql not affect.
+	 * This method reinitialize the session factory when the jdbc exception
+	 * occurs so that invoking between the java and mysql not affect.
 	 */
-	private void reinitializeSessionFactory(){
-		logger.logInfo("MySQLBaseDataAccessLayer", "reinitializeSessionFactory", "jdbc connection occurs","");
-		//rebuild main session factory
+	private void reinitializeSessionFactory() {
+		logger.logInfo("MySQLBaseDataAccessLayer", "reinitializeSessionFactory", "jdbc connection occurs", "");
+		// rebuild main session factory
 		HibernateUtility.reBuildSessionFactory();
-	
+
 	}
 }
