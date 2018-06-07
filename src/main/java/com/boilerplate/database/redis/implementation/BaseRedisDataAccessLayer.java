@@ -1563,6 +1563,14 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEAll.put("MYSQL_QUERY_TO_GET_INCOME_TAX_DATA", "From IncomeTaxEntity where uuidOrUserId = :uuidOrUserId");
 		vAllEAll.put("GENERAL_UUID_LENGTH", "8");
+		// query related to getting articles statistics
+		vAllEAll.put("GET_NEW_ADDED_ARTICLES",
+				"SELECT  post_title , DATE( post_date ) FROM  wp_posts WHERE post_status =  'publish' ORDER BY id DESC LIMIT 5");
+		vAllEAll.put("GET_TOTAL_ARTICLES_COUNT",
+				"SELECT COUNT( id ) as count FROM  wp_posts WHERE post_status = 'publish'");
+		
+		vAllEAll.put("GET_TOP_SEARCHED_ARTICLES","SELECT t2.post_title AS topTittle, t1.date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID ORDER BY t1.date DESC LIMIT 10");
+
 		return vAllEAll;
 
 	}

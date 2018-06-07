@@ -49,8 +49,8 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 	 */
 	@Override
 	public List<Map<String, Object>> getTopNewArticles() throws BadRequestException {
-		// query for getting articles in descending order
-		String sqlQuery = "SELECT  post_title , DATE( post_date ) FROM  wp_posts WHERE post_status =  'publish' ORDER BY id DESC LIMIT 5";
+		// query for getting articles in descending order with top 5
+		String sqlQuery = configurationManager.get("GET_NEW_ADDED_ARTICLES");
 		// set parametes map
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 
@@ -78,7 +78,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 	@Override
 	public List<Map<String, Object>> getArticleCounts() {
 		// query for getting articles count
-		String sqlQuery = "SELECT COUNT( id ) as count FROM  wp_posts WHERE post_status = 'publish'";
+		String sqlQuery = configurationManager.get("GET_TOTAL_ARTICLES_COUNT");
 		// set parametes map
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 		// create session
@@ -106,7 +106,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 	@Override
 	public List<Map<String, Object>> getTopSearchedArticles() throws BadRequestException {
 		// query for getting top searched articles
-		String sqlQuery = "SELECT t2.post_title AS topTittle, t1.date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID ORDER BY t1.date DESC LIMIT 10";
+		String sqlQuery = configurationManager.get("GET_TOP_SEARCHED_ARTICLES");
 		// set parametes map
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 		// create session
