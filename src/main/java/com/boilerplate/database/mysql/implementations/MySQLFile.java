@@ -54,11 +54,7 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 		return null;
 	}
 
-	@Override
-	public void addInRedisSet(FileEntity fileEntity) {
-		// TODO Auto-generated method stub
-
-	}
+	
 
 	@Override
 	public Set<String> fetchUserFileAndAddInQueue() {

@@ -109,7 +109,7 @@ public class FileService implements IFileService {
 			
 			// if true the add redis key in set for database migration
 			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
-				filePointer.addInRedisSet(fileEntity);
+				filePointer.addInRedisSet(fileEntity.getFileName());
 			}
 			return fileEntity;
 		} catch (IOException ex) {
