@@ -97,6 +97,10 @@ public class LogAndTraceExceptionAspect {
 			String methodExecuted = proceedingJoinPoint.getSignature().toLongString();
 			methodPermissions = this.methodPermissionService.getMethodPermissions().get(methodExecuted);
 
+			if (methodPermissions == null) {
+				throw new UnauthorizedException("Api Permissions", "Api do not have permissions", null);
+			}
+
 			if (methodPermissions != null) {
 				// check if user needs to be authenticated to execute the method
 				if (methodPermissions.getIsAuthenticationRequired()) {

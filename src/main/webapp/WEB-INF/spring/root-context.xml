@@ -997,6 +997,17 @@
 		</property>
 	</bean>
 
+	<!-- dependency for statistics related apis -->
+	<bean id="statisticsService"
+		class="com.boilerplate.service.implemetations.StatisticsService">
+		<property name="mySQLWordPress" ref="mySQLWordPress"></property>
+		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
+	</bean>
+
+	<bean id="mySQLWordPress"
+		class="com.boilerplate.database.mysql.implementations.MySQLWordPress">
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
 
 </beans>
  

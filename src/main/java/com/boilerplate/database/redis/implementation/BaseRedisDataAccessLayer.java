@@ -1052,7 +1052,16 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		
+		// method permission for getWordPressDataStatistics method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.WordpressDataEntity com.boilerplate.java.controllers.StatisticsController.getWordPressDataStatistics()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.WordpressDataEntity com.boilerplate.java.controllers.StatisticsController.getWordPressDataStatistics()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// save the method permission map in configuration
 		// in database
