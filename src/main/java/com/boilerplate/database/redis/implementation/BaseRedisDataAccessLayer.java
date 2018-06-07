@@ -1408,9 +1408,10 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEProduction.put("BASE_REFERRAL_LINK",
 				"https://www.projectakshar.com/#/?utm_medium=@utm_medium&&utm_source=@utm_campaign");
+		// vAllEProduction.put("URL_SHORTENER_API_URL",
+		// "https://exzxzxudn4.execute-api.ap-southeast-1.amazonaws.com/aks/urlshortener");
 		vAllEProduction.put("URL_SHORTENER_API_URL",
-				"https://exzxzxudn4.execute-api.ap-southeast-1.amazonaws.com/aks/urlshortener");
-
+				"https://27ir3npea4.execute-api.ap-south-1.amazonaws.com/aks/urlshortener");
 		vAllEProduction.put("REGISTERATION_REFER_EMAIL_CONTENT",
 				"d6085bc0-9827-45e2-b72a-2afe565e7c84_referFriendhtml");
 		vAllEProduction.put("FEEDBACK_EMAIL", "feedback@projectakshar.com");
