@@ -160,20 +160,13 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 		return super.keys(File + "*");
 	}
 
-	/**
-	 * @see IReferral.addInRedisSet
-	 */
-	@Override
-	public void addInRedisSet(FileEntity fileEntity) {
-		super.sadd(UserFileKeyForSet, fileEntity.getFileName().toUpperCase());
-	}
 
 	/**
 	 * @see IReferral.addInRedisSet
 	 */
 	@Override
 	public void addInRedisSet(String fileName) {
-		super.sadd(UserFileKeyForSet, fileName.toUpperCase());
+		super.sadd(UserFileKeyForSet, fileName);
 	}
 
 	/**
@@ -189,7 +182,7 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 	 */
 	@Override
 	public void deleteItemFromRedisUserFileSet(String fileName) {
-		super.srem(UserFileKeyForSet, fileName.toUpperCase());
+		super.srem(UserFileKeyForSet, fileName);
 	}
 
 	/**

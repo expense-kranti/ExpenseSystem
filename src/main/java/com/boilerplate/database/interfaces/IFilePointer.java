@@ -81,12 +81,7 @@ public interface IFilePointer {
 	 */
 	public BoilerplateList<FileEntity> getAllFilesOnMasterTag(String id, String fileMasterTag);
 
-	/**
-	 * This method is used to add key in Redis
-	 * 
-	 * @param referalEntity
-	 */
-	void addInRedisSet(FileEntity fileEntity);
+	
 
 	/**
 	 * This method is used to fetch UserFile key which is stored in redis
