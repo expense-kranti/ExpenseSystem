@@ -88,10 +88,10 @@ public class StatisticsService implements IStatisticsService {
 			// get logged in users articles likes from redis
 			Map<String, String> userArticlesLiked = blogActivityDataAccess
 					.getBlogActivityMap(LIKE_KEY + RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-			// get liked articles of logged in user
+			// get liked articles of logged in user 
 			wordpressDataEntity.setTotalArticlesLiked(userArticlesLiked.size());
 		} catch (Exception ex) {
-			logger.logException("", "getWordPressStatistics", "ExceptiongetWordPressStatistics",
+			logger.logException("", "getWordPressStatistics", "ExceptionGetWordPressStatistics",
 					"Exception is : " + ex.toString(), ex);
 		}
 		// return entity

@@ -312,6 +312,6 @@ public interface IReferral {
 	 * 
 	 * @return the list of map of count value map
 	 */
-	public List<Map<String, Object>> getCurrentMonthlSignUpCount(String userId, String startDate, String endDate);
+	public List<Map<String, Object>> getCurrentMonthSignUpCount(String userId, String startDate, String endDate);
 
 }

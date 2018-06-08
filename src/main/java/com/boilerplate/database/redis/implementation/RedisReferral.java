@@ -360,9 +360,10 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	}
 
 	@Override
-	public List<Map<String, Object>> getCurrentMonthlySignUpCount(String userId) {
+	public List<Map<String, Object>> getCurrentMonthSignUpCount(String userId, String startDate, String endDate) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

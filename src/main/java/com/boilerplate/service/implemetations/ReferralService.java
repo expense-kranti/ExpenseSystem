@@ -578,7 +578,7 @@ public class ReferralService implements IReferralService {
 		String datePart = currentDate.substring(0, 7);
 		// get sign up user refered by logged in user by preparing first date
 		// and lastdate of current month
-		return mySqlRefralContact.getCurrentMonthlSignUpCount(
+		return mySqlRefralContact.getCurrentMonthSignUpCount(
 				RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), datePart + "-01",
 				datePart + "-31");
 	}
