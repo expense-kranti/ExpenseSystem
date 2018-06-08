@@ -1,6 +1,8 @@
 package com.boilerplate.service.interfaces;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -114,4 +116,12 @@ public interface IReferralService {
 	 */
 	public UserReferredSignedUpUsersCountEntity getLoggedInUserReferredSignedUpUsersCount()
 			throws UnauthorizedException;
+
+	/**
+	 * This method is used to get the sign up user counts referred by logged in
+	 * user
+	 * 
+	 * @return the list of map containing sign up user counts
+	 */
+	public List<Map<String, Object>> getLoggedInUserReferredSignedUpUsersCountCurrentMonth();
 }

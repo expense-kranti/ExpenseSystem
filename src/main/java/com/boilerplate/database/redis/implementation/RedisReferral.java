@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -356,6 +357,12 @@ public class RedisReferral extends BaseRedisDataAccessLayer implements IReferral
 	public String getUserReferralLink(String redisReferalExpiredKey) {
 		// TODO Auto-generated method stub
 		return super.get(ReferredExpireContact + redisReferalExpiredKey);
+	}
+
+	@Override
+	public List<Map<String, Object>> getCurrentMonthlySignUpCount(String userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

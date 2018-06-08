@@ -1,6 +1,7 @@
 package com.boilerplate.database.interfaces;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -300,5 +301,17 @@ public interface IReferral {
 	 */
 	public Set<String> getAllReferredExpireContactKeys();
 
-	
+	/**
+	 * This method is used to get the sign up count per current month
+	 * 
+	 * @param userId
+	 *            the userId of referring user id
+	 * @param startDate
+	 *            the start date
+	 * @parama endDate the end date
+	 * 
+	 * @return the list of map of count value map
+	 */
+	public List<Map<String, Object>> getCurrentMonthlSignUpCount(String userId, String startDate, String endDate);
+
 }

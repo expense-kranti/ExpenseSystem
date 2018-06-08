@@ -1,8 +1,12 @@
 package com.boilerplate.database.mysql.implementations;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -13,6 +17,21 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements IReferral {
+
+	/**
+	 * This is the instance of the configuration manager.
+	 */
+	@Autowired
+	com.boilerplate.configurations.ConfigurationManager configurationManager;
+
+	/**
+	 * The setter to set the configuration manager
+	 * 
+	 * @param configurationManager
+	 */
+	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
+		this.configurationManager = configurationManager;
+	}
 
 	public void saveUserReferUUID(ReferalEntity referalEntity) {
 		// TODO Auto-generated method stub
@@ -83,7 +102,6 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 
 	@Override
 	public String getSignUpCount(ReferalEntity referalEntity) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -195,6 +213,22 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	public Set<String> getAllReferredExpireContactKeys() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @see IReferral.getCurrentMonthlSignUpCount
+	 */
+	@Override
+	public List<Map<String, Object>> getCurrentMonthlSignUpCount(String userId, String startDate, String endDate) {
+		// query to get signed up users were referred by logged in user
+		String sqlQuery = configurationManager.get("GET_MONTHLY_SIGN_UP_COUNT_of_REFFERD_USER");
+		// prepare sqlQuery
+		sqlQuery = sqlQuery.replace("@userId", userId);
+		sqlQuery = sqlQuery.replace("@startDate", startDate);
+		sqlQuery = sqlQuery.replace("@endDate", endDate);
+		// set parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		return super.executeSelectNative(sqlQuery, queryParameterMap);
 	}
 
 }

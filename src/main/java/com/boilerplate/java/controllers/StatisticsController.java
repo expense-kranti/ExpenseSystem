@@ -23,7 +23,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
  * @author urvij
  *
  */
-@Api(description = "This api has controllers for getting statistical data from various modules in the system like articles etc", value = "Statistical API's", basePath = "/statistics")
+@Api(description = "This api has controllers for getting statistical data from various modules in the system like articles etc", value = "Statistics API's", basePath = "/statistics")
 @Controller
 public class StatisticsController extends BaseController {
 

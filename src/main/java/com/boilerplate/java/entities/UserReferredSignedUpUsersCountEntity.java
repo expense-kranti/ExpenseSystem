@@ -22,6 +22,10 @@ public class UserReferredSignedUpUsersCountEntity extends BaseEntity implements 
 	 * This is the logged in user's referred users signup count
 	 */
 	private int referredUsersTotalSignUpCount;
+	/**
+	 * This is the users current month refereduser signup count
+	 */
+	private int referredUsersCurrentMonthSignUpCount;
 
 	/**
 	 * Gets the userId
@@ -59,6 +63,25 @@ public class UserReferredSignedUpUsersCountEntity extends BaseEntity implements 
 	 */
 	public void setReferredUsersTotalSignUpCount(int referredUsersTotalSignUpCount) {
 		this.referredUsersTotalSignUpCount = referredUsersTotalSignUpCount;
+	}
+
+	/**
+	 * Gets the referredUsersCurrentMonthSignUpCount
+	 * 
+	 * @return the referredUsersCurrentMonthSignUpCount
+	 */
+	public int getReferredUsersCurrentMonthSignUpCount() {
+		return referredUsersCurrentMonthSignUpCount;
+	}
+
+	/**
+	 * Sets referredUsersCurrentMonthSignUpCount
+	 * 
+	 * @param referredUsersCurrentMonthSignUpCount
+	 *            the referredUsersCurrentMonthSignUpCount to set
+	 */
+	public void setReferredUsersCurrentMonthSignUpCount(int referredUsersCurrentMonthSignUpCount) {
+		this.referredUsersCurrentMonthSignUpCount = referredUsersCurrentMonthSignUpCount;
 	}
 
 	/**

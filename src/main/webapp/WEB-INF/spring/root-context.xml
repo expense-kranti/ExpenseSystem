@@ -18,7 +18,6 @@
 		class="com.boilerplate.database.redis.implementation.RedisSession">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
-
 	<!-- Beans for Users, use either MySQLUsers or one of the other implementations 
 		of users -->
 	<bean id="userService" class="com.boilerplate.service.implemetations.UserService"
@@ -542,6 +541,7 @@
 	<bean id="referral"
 		class="com.boilerplate.database.redis.implementation.RedisReferral">
 		<property name="configurationManager" ref="configurationManager"></property>
+
 	</bean>
 	<!-- Bean for contact us service -->
 	<bean id="contactUsService" class="com.boilerplate.service.implemetations.ContactUsService"
@@ -558,6 +558,7 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="userDataAccess" ref="userDataAccess"></property>
+		<property name="mySqlRefralContact" ref="mySqlRefralContact" />
 	</bean>
 
 	<!-- Contact us AsyncWorkDispatcherObserverList -->
@@ -952,6 +953,7 @@
 	<!-- Dependencies for saving BlogActivity in mySql database -->
 	<bean id="mySqlRefralContact"
 		class="com.boilerplate.database.mysql.implementations.MySQLReferralContacts">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 	<bean id="mySQLCreateReferalContactObserver"

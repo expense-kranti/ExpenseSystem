@@ -1063,6 +1063,17 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for getWordPressDataStatistics method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCountCurrentMonth()");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCountCurrentMonth()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1568,9 +1579,11 @@ public class BaseRedisDataAccessLayer {
 				"SELECT  post_title ,post_name ,DATE( post_date ) FROM  wp_posts WHERE post_status =  'publish' ORDER BY id DESC LIMIT 5");
 		vAllEAll.put("GET_TOTAL_ARTICLES_COUNT",
 				"SELECT COUNT( id ) as count FROM  wp_posts WHERE post_status = 'publish'");
-		
-		vAllEAll.put("GET_TOP_SEARCHED_ARTICLES","SELECT t2.post_title AS topTittle ,t2.post_name , t1.date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID ORDER BY t1.date DESC LIMIT 10");
-
+		vAllEAll.put("GET_TOP_SEARCHED_ARTICLES",
+				"SELECT t2.post_title AS topTittle ,t2.post_name , t1.date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID ORDER BY t1.date DESC LIMIT 10");
+		// query for signed up users per month
+		vAllEAll.put("GET_MONTHLY_SIGN_UP_COUNT_of_REFFERD_USER",
+				"SELECT count(ComingUserId) as count FROM Aks_ReferalContacts WHERE UserId = '@userId' and ComingUserId is not null and Date(CreationDate) between ('@startDate') and ('@endDate')");
 		return vAllEAll;
 
 	}

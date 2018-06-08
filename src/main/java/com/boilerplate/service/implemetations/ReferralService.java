@@ -1,6 +1,11 @@
 package com.boilerplate.service.implemetations;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +44,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class ReferralService implements IReferralService {
+
+	/**
+	 * The dates will be stored in yyyy-MM-dd format
+	 */
+	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Autowired
 	ISFUpdateHash redisSFUpdateHashAccess;
@@ -86,6 +96,21 @@ public class ReferralService implements IReferralService {
 	 */
 	public void setReferral(IReferral referral) {
 		this.referral = referral;
+	}
+
+	/**
+	 * This is the instance of Referral Contact for mysql
+	 */
+	IReferral mySqlRefralContact;
+
+	/**
+	 * Set the mySqlRefralContact
+	 * 
+	 * @param mySqlRefralContact
+	 *            this is the mySqlRefralContact
+	 */
+	public void setMySqlRefralContact(IReferral mySqlRefralContact) {
+		this.mySqlRefralContact = mySqlRefralContact;
 	}
 
 	/**
@@ -540,6 +565,22 @@ public class ReferralService implements IReferralService {
 	public void deleteUserAllReferralData(String userReferId) {
 		referral.deleteUserAllReferredContactsData(userReferId);
 		referral.deleteUserAllReferSignUpCountData(userReferId);
+	}
+
+	/**
+	 * @see IReferralService.getLoggedInUserReferredSignedUpUsersCountCurrentMonth
+	 */
+	@Override
+	public List<Map<String, Object>> getLoggedInUserReferredSignedUpUsersCountCurrentMonth() {
+		// get current date for year and month
+		String currentDate = formatter.format(new Date());
+		// get date portion with current month and year in yyyy-MM format
+		String datePart = currentDate.substring(0, 7);
+		// get sign up user refered by logged in user by preparing first date
+		// and lastdate of current month
+		return mySqlRefralContact.getCurrentMonthlSignUpCount(
+				RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), datePart + "-01",
+				datePart + "-31");
 	}
 
 }

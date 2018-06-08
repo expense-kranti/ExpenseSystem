@@ -1,5 +1,8 @@
 package com.boilerplate.java.controllers;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -132,6 +135,22 @@ public class ReferralController extends BaseController {
 	public @ResponseBody UserReferredSignedUpUsersCountEntity getUserReferredSignedUpUsersCount()
 			throws UnauthorizedException {
 		return referralService.getLoggedInUserReferredSignedUpUsersCount();
+	}
+
+	/**
+	 * This api is used to get the logged in users monthly sign up user count of
+	 * referred users
+	 * 
+	 * @return the list of map of cout value
+	 * @throws UnauthorizedException
+	 *             thrown when user not logged in
+	 */
+	@ApiOperation(value = "Gets the logged in user's monthly count of referred signed-up users ")
+	@ApiResponses({ @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/userReferredSignedUpUsersMonthlyCount", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> getUserReferredSignedUpUsersCountCurrentMonth()
+			throws UnauthorizedException {
+		return referralService.getLoggedInUserReferredSignedUpUsersCountCurrentMonth();
 	}
 
 }
