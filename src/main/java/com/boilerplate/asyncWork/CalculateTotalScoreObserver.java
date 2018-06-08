@@ -112,6 +112,21 @@ public class CalculateTotalScoreObserver implements IAsyncWorkObserver {
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
 		AssessmentEntity assessmentEntity = (AssessmentEntity) asyncWorkItem.getPayload();
+		calculateOverAllScore(assessmentEntity);
+	}
+
+	/**
+	 * This method is used to perform all the scores calculation operations like
+	 * total score, monthly score calculation and publishing them
+	 * 
+	 * @param assessmentEntity
+	 *            contains details of score
+	 * @throws NotFoundException
+	 *             thrown when user not found
+	 * @throws ConflictException
+	 *             thrown when user already present
+	 */
+	public void calculateOverAllScore(AssessmentEntity assessmentEntity) throws NotFoundException, ConflictException {
 		this.calculateTotalScore(assessmentEntity);
 		this.calculateMonthlyScore(assessmentEntity);
 		this.publishAssessmentStatus(assessmentEntity);

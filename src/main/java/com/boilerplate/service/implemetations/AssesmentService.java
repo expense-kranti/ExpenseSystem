@@ -322,7 +322,7 @@ public class AssesmentService implements IAssessmentService {
 		} catch (Exception ex) {
 			// now if the queue is not working we calculate user total score on
 			// the thread
-			calculateTotalScoreObserver.calculateTotalScore(assessmentScore);
+			calculateTotalScoreObserver.calculateOverAllScore(assessmentScore);
 		}
 		return assessmentScore;
 	}
