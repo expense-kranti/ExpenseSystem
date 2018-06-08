@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.java.entities.WordpressDataEntity;
+import com.boilerplate.java.entities.StatisticsDataEntity;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.service.interfaces.IStatisticsService;
 import com.wordnik.swagger.annotations.Api;
@@ -37,16 +37,16 @@ public class StatisticsController extends BaseController {
 	/**
 	 * This api is used to get the wordpress required details for statistics
 	 * 
-	 * @return the WordpressDataEntity containing the required statistical
-	 *         wordpress details
+	 * @return the StatisticsDataEntity containing the required statistical
+	 *         details like top new and searched articles, surveys
 	 * @throws BadRequestException
 	 *             thrown when wrong query mechanismm is used to mysql database
 	 */
-	@ApiOperation(value = "Used to get wordpress details")
+	@ApiOperation(value = "Used to get statistics ")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/statistics/wordPress", method = RequestMethod.GET)
-	public @ResponseBody WordpressDataEntity getWordPressDataStatistics() throws BadRequestException, Exception {
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	public @ResponseBody StatisticsDataEntity getStatistics() throws BadRequestException, Exception {
 		// call service layer
-		return statisticsService.getWordPressStatistics();
+		return statisticsService.getStatistics();
 	}
 }

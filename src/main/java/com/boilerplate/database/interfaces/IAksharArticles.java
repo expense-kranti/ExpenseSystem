@@ -6,12 +6,13 @@ import java.util.Map;
 import com.boilerplate.exceptions.rest.BadRequestException;
 
 /**
- * This interface contains methods to operate on data base of wordpress
+ * This interface contains methods to operate on data base of wordpress for
+ * getting details of articles published on akshar
  * 
  * @author urvij
  *
  */
-public interface IWordPress {
+public interface IAksharArticles {
 
 	/**
 	 * This method is used to get the article details from wordpress

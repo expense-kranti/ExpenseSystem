@@ -1055,9 +1055,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for getWordPressDataStatistics method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.WordpressDataEntity com.boilerplate.java.controllers.StatisticsController.getWordPressDataStatistics()");
+				"public com.boilerplate.java.entities.StatisticsDataEntity com.boilerplate.java.controllers.StatisticsController.getStatistics()");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.WordpressDataEntity com.boilerplate.java.controllers.StatisticsController.getWordPressDataStatistics()");
+				"public com.boilerplate.java.entities.StatisticsDataEntity com.boilerplate.java.controllers.StatisticsController.getStatistics()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
@@ -1584,6 +1584,14 @@ public class BaseRedisDataAccessLayer {
 		// query for signed up users per month
 		vAllEAll.put("GET_MONTHLY_SIGN_UP_COUNT_of_REFFERD_USER",
 				"SELECT count(ComingUserId) as count FROM Aks_ReferalContacts WHERE UserId = '@userId' and ComingUserId is not null and Date(CreationDate) between ('@startDate') and ('@endDate')");
+
+		// query for signed up users per month
+		vAllEAll.put("GET_TOPMOST_PLAYED_SURVEYS",
+				"Select t2.Name surveyName, Date(t1.CreationDate) as datePlayed from Aks_UserAssessment t1 join Aks_Assessment t2 on t1.AssessmentId = t2.Id where t2.IsSurvey = 1 ORDER BY t1.CreationDate DESC limit 2");
+		// query for signed up users per month
+		vAllEAll.put("GET_TOPMOST_PLAYED_QUIZZES",
+				"Select t2.Name quizName, Date(t1.CreationDate) as datePlayed from Aks_UserAssessment t1 join Aks_Assessment t2 on t1.AssessmentId = t2.Id where t2.IsSurvey = 0 ORDER BY t1.CreationDate DESC limit 2");
+
 		return vAllEAll;
 
 	}

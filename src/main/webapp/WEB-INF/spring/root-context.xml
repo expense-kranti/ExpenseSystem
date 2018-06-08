@@ -1002,12 +1002,13 @@
 	<!-- dependency for statistics related apis -->
 	<bean id="statisticsService"
 		class="com.boilerplate.service.implemetations.StatisticsService">
-		<property name="mySQLWordPress" ref="mySQLWordPress"></property>
+		<property name="mySQLAksharArticles" ref="mySQLAksharArticles"></property>
 		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
+		<property name="assessment" ref="assessment"></property>
 	</bean>
 
-	<bean id="mySQLWordPress"
-		class="com.boilerplate.database.mysql.implementations.MySQLWordPress">
+	<bean id="mySQLAksharArticles"
+		class="com.boilerplate.database.mysql.implementations.MySQLAksharArticles">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 

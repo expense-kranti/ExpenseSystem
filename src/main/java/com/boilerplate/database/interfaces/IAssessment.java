@@ -4,6 +4,8 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 
 import java.util.List;
+import java.util.Map;
+
 import com.boilerplate.java.entities.AssessmentEntity;
 import com.boilerplate.java.entities.MultipleChoiceQuestionEntity;
 import com.boilerplate.java.entities.ScoreEntity;
@@ -105,4 +107,18 @@ public interface IAssessment {
 	 *             thrown when exception occurs in saving entity in MYSQL
 	 */
 	public void saveUserMonthlyScore(UserMonthlyScoreEntity userMonthlyScoreEntity) throws Exception;
+
+	/**
+	 * This method is used to get the top most played surveys
+	 * 
+	 * @return the list of map of surveys details like date played, name
+	 */
+	public List<Map<String, Object>> getTopPlayedSurveys();
+
+	/**
+	 * This method is used to get the top most played quizes
+	 * 
+	 * @return the list of map of quizzes details like date played, name
+	 */
+	public List<Map<String, Object>> getTopPlayedQuizzes();
 }

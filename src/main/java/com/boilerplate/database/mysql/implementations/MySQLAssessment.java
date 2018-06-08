@@ -279,7 +279,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	}
 
 	/**
-	 * @see MySQLUserAssessment.saveUserAssessmentData
+	 * @see IAssessment.saveUserAssessmentData
 	 */
 	@Override
 	public void saveUserAssessmentData(UserAssessmentDetailEntity userAssessmentDetail) throws Exception {
@@ -287,7 +287,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	}
 
 	/**
-	 * @see MySQLUserAssessment.saveUserAssessmentScore
+	 * @see IAssessment.saveUserAssessmentScore
 	 */
 	@Override
 	public void saveUserAssessmentScore(ScoreEntity scoreEntity) throws Exception {
@@ -295,7 +295,7 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 	}
 
 	/**
-	 * @see MySQLUserAssessment.saveUserMonthlyScore
+	 * @see IAssessment.saveUserMonthlyScore
 	 */
 	@Override
 	public void saveUserMonthlyScore(UserMonthlyScoreEntity userMonthlyScoreEntity) throws Exception {
@@ -312,11 +312,36 @@ public class MySQLAssessment extends MySQLBaseDataAccessLayer implements IAssess
 		// check for updating the monthly score if not done then add new record
 		// in MySQL
 		if (super.executeScalorNative(queryObtainedScoreUpdate, queryParameterMap) == 0) {
-			// if monthly score record for given userId id not present hence not updated then
+			// if monthly score record for given userId id not present hence not
+			// updated then
 			// create one record
 			super.create(userMonthlyScoreEntity);
 		}
 
+	}
+
+	/**
+	 * @see IAssessment.getTopPlayedSurveys
+	 */
+	@Override
+	public List<Map<String, Object>> getTopPlayedSurveys() {
+		// get the top most played surveys
+		String sqlQuery = configurationManager.get("GET_TOPMOST_PLAYED_SURVEYS");
+		// prepare query parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		return super.executeSelectNative(sqlQuery, queryParameterMap);
+	}
+
+	/**
+	 * @see IAssessment.getTopPlayedQuizzes
+	 */
+	@Override
+	public List<Map<String, Object>> getTopPlayedQuizzes() {
+		// get the top most played surveys
+		String sqlQuery = configurationManager.get("GET_TOPMOST_PLAYED_QUIZZES");
+		// prepare query parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		return super.executeSelectNative(sqlQuery, queryParameterMap);
 	}
 
 }

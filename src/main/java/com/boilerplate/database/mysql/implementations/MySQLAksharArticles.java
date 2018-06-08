@@ -6,19 +6,26 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.database.interfaces.IWordPress;
+import com.boilerplate.database.interfaces.IAksharArticles;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.service.implemetations.StatisticsService;
 
-public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPress {
+/**
+ * This class implements IAksharArticles interface means it has methods
+ * operating on articles published on akshar 
+ * 
+ * @author urvij
+ *
+ */
+public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAksharArticles {
 
 	/**
 	 * This is an instance of the logger
 	 */
-	Logger logger = Logger.getInstance(MySQLWordPress.class);
+	Logger logger = Logger.getInstance(MySQLAksharArticles.class);
 
 	/**
 	 * This is the wordpress hibernate configuration
@@ -45,7 +52,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 	}
 
 	/**
-	 * @see IWordPress.getArticlesDetails
+	 * @see IAksharArticles.getArticlesDetails
 	 */
 	@Override
 	public List<Map<String, Object>> getTopNewArticles() throws BadRequestException {
@@ -63,7 +70,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
 		} catch (Exception ex) {
 			// log exception
-			logger.logException("MySQLWordPress", "getTopNewArticles", "ExceptionGetTopNewArticles",
+			logger.logException("MySQLAksharArticles", "getTopNewArticles", "ExceptionGetTopNewArticles",
 					"Exception is : " + ex.toString(), ex);
 		} finally {
 			session.flush();
@@ -73,7 +80,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 	}
 
 	/**
-	 * @see IWordPress.getArticleCounts
+	 * @see IAksharArticles.getArticleCounts
 	 */
 	@Override
 	public List<Map<String, Object>> getArticleCounts() {
@@ -91,7 +98,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
 		} catch (Exception ex) {
 			// log exception
-			logger.logException("MySQLWordPress", "getArticleCounts", "ExceptionGetArticleCounts",
+			logger.logException("MySQLAksharArticles", "getArticleCounts", "ExceptionGetArticleCounts",
 					"Exception is : " + ex.toString(), ex);
 		} finally {
 			session.flush();
@@ -101,7 +108,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 	}
 
 	/**
-	 * @see IWordPress.getTopSearchedArticles
+	 * @see IAksharArticles.getTopSearchedArticles
 	 */
 	@Override
 	public List<Map<String, Object>> getTopSearchedArticles() throws BadRequestException {
@@ -119,7 +126,7 @@ public class MySQLWordPress extends MySQLBaseDataAccessLayer implements IWordPre
 			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
 		} catch (Exception ex) {
 			// log exception
-			logger.logException("MySQLWordPress", "getTopSearchedArticles", "ExceptionGetTopSearchedArticles",
+			logger.logException("MySQLAksharArticles", "getTopSearchedArticles", "ExceptionGetTopSearchedArticles",
 					"Exception is : " + ex.toString(), ex);
 		} finally {
 			session.flush();

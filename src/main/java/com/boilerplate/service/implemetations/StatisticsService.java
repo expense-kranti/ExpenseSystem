@@ -4,13 +4,16 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.boilerplate.database.interfaces.IAssessment;
 import com.boilerplate.database.interfaces.IBlogActivity;
-import com.boilerplate.database.interfaces.IWordPress;
+import com.boilerplate.database.interfaces.IAksharArticles;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.BaseEntity;
-import com.boilerplate.java.entities.WordpressDataEntity;
+import com.boilerplate.java.entities.StatisticsDataEntity;
 import com.boilerplate.service.interfaces.IStatisticsService;
 
 /**
@@ -34,14 +37,16 @@ public class StatisticsService implements IStatisticsService {
 	/**
 	 * This is the instance of IWordPress
 	 */
-	IWordPress mySQLWordPress;
+	IAksharArticles mySQLAksharArticles;
 
 	/**
-	 * @param mySQLWordPress
-	 *            the mySQLWordPress to set
+	 * Sets the mySQLAksharArticles
+	 * 
+	 * @param mySQLAksharArticles
+	 *            the mySQLAksharArticles to set
 	 */
-	public void setMySQLWordPress(IWordPress mySQLWordPress) {
-		this.mySQLWordPress = mySQLWordPress;
+	public void setMySQLAksharArticles(IAksharArticles mySQLAksharArticles) {
+		this.mySQLAksharArticles = mySQLAksharArticles;
 	}
 
 	/**
@@ -59,43 +64,62 @@ public class StatisticsService implements IStatisticsService {
 	}
 
 	/**
-	 * IStatisticalService.getArticlesDetails
+	 * This is the new instance of assessment class of data layer
+	 */
+	@Autowired
+	IAssessment assessment;
+
+	/**
+	 * This method is used to set the assessment
+	 * 
+	 * @param assessment
+	 */
+	public void setAssessment(IAssessment assessment) {
+		this.assessment = assessment;
+	}
+
+	/**
+	 * IStatisticalService.getStatistics
 	 */
 	@Override
-	public WordpressDataEntity getWordPressStatistics() throws BadRequestException {
+	public StatisticsDataEntity getStatistics() throws BadRequestException {
 
 		// create wordpressDataEntity
-		WordpressDataEntity wordpressDataEntity = new WordpressDataEntity();
+		StatisticsDataEntity statisticsDataEntity = new StatisticsDataEntity();
 		// initialize the value to 0
-		wordpressDataEntity.setTotalArticles(BigInteger.ZERO);
+		statisticsDataEntity.setTotalArticles(BigInteger.ZERO);
 		try {
 			// get top 5 upload article limit is 5 which is hard
 			// coded in query
-			wordpressDataEntity.setTopNewArticles(mySQLWordPress.getTopNewArticles());
+			statisticsDataEntity.setTopNewArticles(mySQLAksharArticles.getTopNewArticles());
 			// get total article count
-			List<Map<String, Object>> result = mySQLWordPress.getArticleCounts();
+			List<Map<String, Object>> result = mySQLAksharArticles.getArticleCounts();
 			// check if there is any result
 			if (result.size() > 0) {
 				// cast the value to integer
-				wordpressDataEntity.setTotalArticles((BigInteger) result.get(0).get("count"));
+				statisticsDataEntity.setTotalArticles((BigInteger) result.get(0).get("count"));
 			} else {
 				// if not data found then set it to 0
-				wordpressDataEntity.setTotalArticles(BigInteger.ZERO);
+				statisticsDataEntity.setTotalArticles(BigInteger.ZERO);
 			}
 			// get the top recent searches currently top 10 which is hardcoded
 			// in query
-			wordpressDataEntity.setTopSearchedArticles(mySQLWordPress.getTopSearchedArticles());
+			statisticsDataEntity.setTopSearchedArticles(mySQLAksharArticles.getTopSearchedArticles());
 			// get logged in users articles likes from redis
 			Map<String, String> userArticlesLiked = blogActivityDataAccess
 					.getBlogActivityMap(LIKE_KEY + RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-			// get liked articles of logged in user 
-			wordpressDataEntity.setTotalArticlesLiked(userArticlesLiked.size());
+			// get liked articles of logged in user
+			statisticsDataEntity.setTotalArticlesLiked(userArticlesLiked.size());
+			// get top most played surveys in akshar
+			statisticsDataEntity.setTopMostPlayedSurveys(assessment.getTopPlayedSurveys());
+			// get top most played quizzes in akshar
+			statisticsDataEntity.setTopMostPlayedQuizzes(assessment.getTopPlayedQuizzes());
 		} catch (Exception ex) {
 			logger.logException("", "getWordPressStatistics", "ExceptionGetWordPressStatistics",
 					"Exception is : " + ex.toString(), ex);
 		}
 		// return entity
-		return wordpressDataEntity;
+		return statisticsDataEntity;
 	}
 
 }

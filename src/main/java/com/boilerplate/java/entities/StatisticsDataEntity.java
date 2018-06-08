@@ -8,13 +8,13 @@ import java.util.Map;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
- * This entity contains the wordpress data from db like list of articles ,
+ * This entity contains the statistical data from db like list of articles ,
  * searches etc
  * 
  * @author urvij
  *
  */
-public class WordpressDataEntity extends BaseEntity implements Serializable {
+public class StatisticsDataEntity extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the list of map of articles details posted present in wordpress
@@ -30,6 +30,14 @@ public class WordpressDataEntity extends BaseEntity implements Serializable {
 	 * This is the total articles like count
 	 */
 	private int totalArticlesLiked;
+	/**
+	 * This is the list of map of top most played surveys
+	 */
+	private List<Map<String, Object>> topMostPlayedSurveys;
+	/**
+	 * This is the list of map of top most played surveys
+	 */
+	private List<Map<String, Object>> topMostPlayedQuizzes;
 
 	/**
 	 * Gets the total articles liked
@@ -110,6 +118,44 @@ public class WordpressDataEntity extends BaseEntity implements Serializable {
 	 */
 	public void setTopSearchedArticles(List<Map<String, Object>> topSearchedArticles) {
 		this.topSearchedArticles = topSearchedArticles;
+	}
+
+	/**
+	 * Gets the topMostPlayedSurveys
+	 * 
+	 * @return the topMostPlayedSurveys
+	 */
+	public List<Map<String, Object>> getTopMostPlayedSurveys() {
+		return topMostPlayedSurveys;
+	}
+
+	/**
+	 * Sets the topMostPlayedSurveys
+	 * 
+	 * @param topMostPlayedSurveys
+	 *            the topMostPlayedSurveys to set
+	 */
+	public void setTopMostPlayedSurveys(List<Map<String, Object>> topMostPlayedSurveys) {
+		this.topMostPlayedSurveys = topMostPlayedSurveys;
+	}
+
+	/**
+	 * Gets the topMostPlayedQuizzes
+	 * 
+	 * @return the topMostPlayedQuizzes
+	 */
+	public List<Map<String, Object>> getTopMostPlayedQuizzes() {
+		return topMostPlayedQuizzes;
+	}
+
+	/**
+	 * Sets the topMostPlayedQuizzes
+	 * 
+	 * @param topMostPlayedQuizzes
+	 *            the topMostPlayedQuizzes to set
+	 */
+	public void setTopMostPlayedQuizzes(List<Map<String, Object>> topMostPlayedQuizzes) {
+		this.topMostPlayedQuizzes = topMostPlayedQuizzes;
 	}
 
 	@Override
