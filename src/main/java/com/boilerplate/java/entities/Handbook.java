@@ -118,7 +118,7 @@ public class Handbook extends BaseEntity implements Serializable, ICRMPublishDyn
 			throw new ValidationFailedException("MyHandbook", "Category is null or empty", null);
 		if (this.isNullOrEmpty(this.getCategoryType()))
 			throw new ValidationFailedException("MyHandbook", "CategoryType is null or empty", null);
-		return false;
+		return true;
 	}
 
 	/**

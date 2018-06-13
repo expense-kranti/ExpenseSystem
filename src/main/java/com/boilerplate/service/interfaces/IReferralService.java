@@ -118,10 +118,10 @@ public interface IReferralService {
 			throws UnauthorizedException;
 
 	/**
-	 * This method is used to get the sign up user counts referred by logged in
+	 * This method is used to get the total user counts referred by logged in
 	 * user
 	 * 
 	 * @return the list of map containing sign up user counts
 	 */
-	public List<Map<String, Object>> getLoggedInUserReferredSignedUpUsersCountCurrentMonth();
+	public List<Map<String, Object>> getLoggedInUserReferredUsersCountCurrentMonth();
 }

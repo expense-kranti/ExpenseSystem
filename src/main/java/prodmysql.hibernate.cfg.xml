@@ -57,6 +57,8 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLReferralContacts.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLIncomeTax.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLHandBook.hbm.xml" />
 
 	</session-factory>
 </hibernate-configuration>

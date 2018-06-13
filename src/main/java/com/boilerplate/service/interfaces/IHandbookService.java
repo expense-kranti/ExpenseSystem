@@ -20,7 +20,9 @@ public interface IHandbookService {
 	 * @return the handbook entity containing logged in user's userId
 	 * @throws ValidationFailedException
 	 *             thrown if required input are not filled
+	 * @throws Exception
+	 *             thrown when any exception occurs
 	 */
-	public Handbook publishHandBook(Handbook handbook) throws ValidationFailedException;
+	public Handbook publishHandBook(Handbook handbook) throws ValidationFailedException, Exception;
 
 }

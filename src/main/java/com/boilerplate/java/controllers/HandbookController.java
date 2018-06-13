@@ -50,16 +50,13 @@ public class HandbookController extends BaseController {
 	 *            the handbook entity with data to be saved
 	 * @return the handbook entity with userId of logged in user against whom
 	 *         data is saved
-	 * @throws ValidationFailedException
-	 *             thrown when required input is not filled in request body
-	 * @throws UnauthorizedException
-	 *             thrown when user is not logged in
+	 * @throws Exception
+	 *             thrown when any exception occurs
 	 */
 	@ApiOperation(value = "This api is used to publish user's hand book data to SalesForce")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/handbook", method = RequestMethod.POST)
-	public @ResponseBody Handbook publishHandbook(@RequestBody Handbook handbook)
-			throws ValidationFailedException, UnauthorizedException {
+	public @ResponseBody Handbook publishHandbook(@RequestBody Handbook handbook) throws Exception {
 		return handbookService.publishHandBook(handbook);
 	}
 
