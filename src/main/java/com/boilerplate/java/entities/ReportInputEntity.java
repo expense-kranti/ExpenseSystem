@@ -54,7 +54,8 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	@JsonIgnore
 	private String voucherCode;
 
-	// This is the voucher expiry for voucher given to the customer for the given
+	// This is the voucher expiry for voucher given to the customer for the
+	// given
 	// session.
 	@JsonIgnore
 	private java.util.Date voucherExpiry;
@@ -330,6 +331,8 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	}
 
 	/**
+	 * Gets the report version enum
+	 * 
 	 * @return the reportVersionEnum
 	 */
 	public ReportVersion getReportVersionEnum() {
@@ -337,24 +340,32 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	}
 
 	/**
-	 * @param reportVersionEnum the reportVersionEnum to set
+	 * Sets the report version enum
+	 * 
+	 * @param reportVersionEnum
+	 *            the reportVersionEnum to set
 	 */
-	public void setReportVersionEnum(ReportVersion reportVersion) {
+	public void setReportVersionEnum(ReportVersion reportVersionEnum) {
 		this.reportVersionEnum = reportVersionEnum;
-	}
-	
-	/**
-	 * @return the reportVersionEnum
-	 */
-	public ReportVersion getReportVersion() {
-		return reportVersionEnum;
 	}
 
 	/**
-	 * @param reportVersionEnum the reportVersionEnum to set
+	 * Gets the report version
+	 * 
+	 * @return the reportversion number
 	 */
-	public void setReportVersion(ReportVersion reportVersion) {
-		this.reportVersionEnum = reportVersionEnum;
+	public int getReportVersion() {
+		return this.reportVersionEnum.ordinal();
+	}
+
+	/**
+	 * Sets the report version number
+	 * 
+	 * @param reportVersion
+	 *            to set
+	 */
+	public void setReportVersion(int reportVersion) {
+		this.reportVersionEnum = ReportVersion.values()[reportVersion];
 	}
 
 }

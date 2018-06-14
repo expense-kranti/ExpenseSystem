@@ -559,7 +559,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 *            number is required
 	 */
 	private void setPanNumberInHash(ReportInputEntity reportInputEntiity) {
-		if (reportInputEntiity.getReport().getReportVersion() == 1) {
+		if (reportInputEntiity.getReportVersion() == 1) {
 			if (reportInputEntiity.getPanNumber() != null) {
 				this.redisSFUpdateHashAccess.hset(configurationManager.get("PanNumberHash_Base_Tag"),
 						reportInputEntiity.getPanNumber().toUpperCase(), reportInputEntiity.getUserId());
