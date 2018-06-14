@@ -47,7 +47,7 @@ import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.HttpEntity;
 import com.boilerplate.java.entities.MethodState;
 import com.boilerplate.java.entities.Report;
-import com.boilerplate.java.entities.ReportInputEntiity;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportSource;
 import com.boilerplate.java.entities.ReportStatus;
 import com.boilerplate.java.entities.ReportVersion;
@@ -220,59 +220,58 @@ public class ExperianBureauService implements IExperianService {
 	 * @see IExperianService.startSingle
 	 */
 	@Override
-	public ReportInputEntiity startSingle(ReportInputEntiity reportInputEntiity)
+	public ReportInputEntity startSingle(ReportInputEntity reportInputEntity)
 			throws ConflictException, UnauthorizedException, ValidationFailedException, NotFoundException,
 			BadRequestException, IOException, PreconditionFailedException {
 		// check if pan number exists
-		this.panNumberValidation(reportInputEntiity);
+		this.panNumberValidation(reportInputEntity);
 
-		reportInputEntiity.setExperianAttemptDate(new java.util.Date().toString());
-		reportInputEntiity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
-		reportInputEntiity.setUserLoginId(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-		reportInputEntiity.validate();
+		reportInputEntity.setExperianAttemptDate(new java.util.Date().toString());
+		reportInputEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
+		reportInputEntity.validate();
 
 		// Save this information into the current users metadata for future
 		// reference
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-		user.setExperianRequestUniqueKey(reportInputEntiity.getMobileNumber());
-		user.setReportInputEntitty(reportInputEntiity);
+		user.setExperianRequestUniqueKey(reportInputEntity.getMobileNumber());
+		user.setReportInputEntity(reportInputEntity);
 		userService.update(user);
 
 		// now get the voucher code for this user
-		if (reportInputEntiity.getVoucherCode() == null || reportInputEntiity.getVoucherCode().equals("")) {
+		if (reportInputEntity.getVoucherCode() == null || reportInputEntity.getVoucherCode().equals("")) {
 			Voucher voucher = experianDataAccess.getVoucherCode(user.getId(),
 					RequestThreadLocal.getSession().getSessionId());
-			reportInputEntiity.setVoucherCode(voucher.getVoucherCode());
-			reportInputEntiity.setVoucherExpiry(voucher.getExpiryDate());
+			reportInputEntity.setVoucherCode(voucher.getVoucherCode());
+			reportInputEntity.setVoucherExpiry(voucher.getExpiryDate());
 		}
 		// Save this into the session for easy access
-		RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
+		RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
 		// make experian integration request
-		reportInputEntiity = this.doStartSingleURLIntegration(reportInputEntiity, user);
+		reportInputEntity = this.doStartSingleURLIntegration(reportInputEntity, user);
 
-		user.setReportInputEntitty(reportInputEntiity);
+		user.setReportInputEntity(reportInputEntity);
 		userService.update(user);
 		logger.logInfo("ExperianBureauService", "Single Request API",
-				"Complete processing" + reportInputEntiity.getUserId(), "");
-		return reportInputEntiity;
+				"Complete processing" + reportInputEntity.getUserId(), "");
+		return reportInputEntity;
 	}
 
 	/**
-	 * This method throws ConflictException if report with this pan already
-	 * exists or not
+	 * This method throws ConflictException if report with this pan already exists
+	 * or not
 	 * 
 	 * @param reportInputEntiity
-	 *            The reportInputEntiity contains the pan number to check
-	 *            existence for
+	 *            The reportInputEntiity contains the pan number to check existence
+	 *            for
 	 * @throws ConflictException
-	 *             The ConflictException thrown when report for this pan number
-	 *             user already been generated and exists
+	 *             The ConflictException thrown when report for this pan number user
+	 *             already been generated and exists
 	 */
-	private void panNumberValidation(ReportInputEntiity reportInputEntiity) throws ConflictException {
-		if (reportInputEntiity.getPanNumber() != null) {
+	private void panNumberValidation(ReportInputEntity reportInputEntity) throws ConflictException {
+		if (reportInputEntity.getPanNumber() != null) {
 			if (this.redisSFUpdateHashAccess.hget(configurationManager.get("PanNumberHash_Base_Tag"),
-					reportInputEntiity.getPanNumber().toUpperCase()) != null) {
+					reportInputEntity.getPanNumber().toUpperCase()) != null) {
 				throw new ConflictException("Report", "Report with given pan number already exists", null);
 			}
 		}
@@ -288,8 +287,8 @@ public class ExperianBureauService implements IExperianService {
 	 * @param user
 	 *            the user against which experian report to generate thus
 	 *            integration been started
-	 * @return the reportInputEntity containing the returned sessionIds,
-	 *         stageOneId, stageTwoId, report etc. in response to requests
+	 * @return the reportInputEntity containing the returned sessionIds, stageOneId,
+	 *         stageTwoId, report etc. in response to requests
 	 * @throws IOException
 	 *             thrown if IOException occurs in while making http requests to
 	 *             experian server
@@ -303,12 +302,12 @@ public class ExperianBureauService implements IExperianService {
 	 * @throws BadRequestException
 	 *             when userId is not found
 	 */
-	private ReportInputEntiity doStartSingleURLIntegration(ReportInputEntiity reportInputEntiity,
+	private ReportInputEntity doStartSingleURLIntegration(ReportInputEntity reportInputEntiity,
 			ExternalFacingReturnedUser user)
 			throws IOException, PreconditionFailedException, NotFoundException, BadRequestException, ConflictException {
 		// set reportInputEntity current state in experian request making
 		// process
-		reportInputEntiity.setStateEnum(ReportInputEntiity.State.SessionSetup);
+		reportInputEntiity.setStateEnum(ReportInputEntity.State.SessionSetup);
 		String requestData = createExperianSingleURLRequestBody(reportInputEntiity);
 
 		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = createExperianSingleUrlRequestHeaders();
@@ -367,7 +366,6 @@ public class ExperianBureauService implements IExperianService {
 				// parse report and get report contents which are required
 				reportInputEntiity = parseReportAndGetReportNumber(reportInputEntiity, responseBodyMap);
 				user = observeReport(reportInputEntiity, user);
-				user.setExperianReportUrl(reportInputEntiity.getReportFileEntity().getFullFileNameOnDisk());
 				user.setUserState(MethodState.ReportGenerated);
 				// updates the experianStatus:(15-11-2016)
 				experianStatusUpdate(reportInputEntiity,
@@ -376,7 +374,7 @@ public class ExperianBureauService implements IExperianService {
 								+ getErrorStringAndResponseJsonFields(responseBodyMap),
 						false);
 
-				user.setReportInputEntitty(reportInputEntiity);
+				user.setReportInputEntity(reportInputEntiity);
 				userService.update(user);
 				// publishUserStateToCRM(user);
 				RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
@@ -389,11 +387,10 @@ public class ExperianBureauService implements IExperianService {
 						responseBodyMap.get("errorString").toString(), "");
 				if (responseBodyMap.get("errorString").toString().contains("consumer record not found") == true) {
 					// updates the experianStatus:(15-11-2016)
-					experianStatusUpdate(reportInputEntiity,
-							"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
-									+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
-									+ getErrorStringAndResponseJsonFields(responseBodyMap),
-							true);
+					experianStatusUpdate(reportInputEntiity, "--- Method Name: singleAction --- Response status: "
+							+ httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap), true);
 					// sets the pan number in pan number hash
 					setPanNumberInHash(reportInputEntiity);
 					throw new NotFoundException("Experian Server",
@@ -402,11 +399,10 @@ public class ExperianBureauService implements IExperianService {
 				}
 				if (responseBodyMap.get("errorString").toString().contains("Voucher Code is invalid") == true) {
 					// updates the experianStatus:(15-11-2016)
-					experianStatusUpdate(reportInputEntiity,
-							"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
-									+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
-									+ getErrorStringAndResponseJsonFields(responseBodyMap),
-							true);
+					experianStatusUpdate(reportInputEntiity, "--- Method Name: singleAction --- Response status: "
+							+ httpResponse.getHttpStatus()
+							+ "--- Generic Error Message: User not found in Bureau database - Dual Integration --- Error String and Response Json: "
+							+ getErrorStringAndResponseJsonFields(responseBodyMap), true);
 					throw new PreconditionFailedException("Experian Server",
 							"Voucher code invalid - Dual Integration Voucher code invalid. Please re-submit your request. ",
 							null);
@@ -420,17 +416,16 @@ public class ExperianBureauService implements IExperianService {
 				reportInputEntiity.setStage1Id(responseBodyMap.get("stageOneId_").toString());
 				reportInputEntiity.setStage2Id(responseBodyMap.get("stageTwoId_").toString());
 				reportInputEntiity.setjSessionId2(ecvSessionValue);
-				reportInputEntiity.setStateEnum(ReportInputEntiity.State.SessionSetup);
+				reportInputEntiity.setStateEnum(ReportInputEntity.State.SessionSetup);
 				logger.logInfo("ExperianBureauService", "Single Action",
 						"set response parameters" + reportInputEntiity.getUserId(), "");
 			} // in case of any error
 			else {
 				// updates the experianStatus:(15-11-2016)
-				experianStatusUpdate(reportInputEntiity,
-						"--- Method Name: singleAction --- Response status: " + httpResponse.getHttpStatus()
-								+ "--- Generic Error Message: Stageone id or stage2 id or cookie not returned - singleAction data not returned --- Error String and Response Json: "
-								+ getErrorStringAndResponseJsonFields(responseBodyMap),
-						true);
+				experianStatusUpdate(reportInputEntiity, "--- Method Name: singleAction --- Response status: "
+						+ httpResponse.getHttpStatus()
+						+ "--- Generic Error Message: Stageone id or stage2 id or cookie not returned - singleAction data not returned --- Error String and Response Json: "
+						+ getErrorStringAndResponseJsonFields(responseBodyMap), true);
 				throw new PreconditionFailedException("Experian Server",
 						"Data not returned - singleAction url not returned", null);
 			}
@@ -457,8 +452,7 @@ public class ExperianBureauService implements IExperianService {
 	 * This method creates the request for sending the data to experian server.
 	 * 
 	 * @param requestHeaders
-	 *            The request headers which is use for sending the experian
-	 *            request.
+	 *            The request headers which is use for sending the experian request.
 	 * @param requestBody
 	 *            The request body of the request
 	 * @return The request body to be used in making request
@@ -498,7 +492,7 @@ public class ExperianBureauService implements IExperianService {
 	 *            request body for request
 	 * @return The required request body
 	 */
-	private String createExperianSingleURLRequestBody(ReportInputEntiity reportInputEntiity) {
+	private String createExperianSingleURLRequestBody(ReportInputEntity reportInputEntiity) {
 		String requestBody = configurationManager.get("Experian_Single_Url_Request_Template");
 		requestBody = requestBody.replace("{voucherCode}", reportInputEntiity.getVoucherCode());
 		requestBody = requestBody.replace("{firstName}", reportInputEntiity.getFirstName());
@@ -594,7 +588,7 @@ public class ExperianBureauService implements IExperianService {
 	 * @throws BadRequestException
 	 *             The BadRequestException if user id is not populated
 	 */
-	private void setPanNumberInHash(ReportInputEntiity reportInputEntiity)
+	private void setPanNumberInHash(ReportInputEntity reportInputEntiity)
 			throws NotFoundException, BadRequestException {
 		if (reportInputEntiity.getPanNumber() != null) {
 			this.redisSFUpdateHashAccess.hset(configurationManager.get("PanNumberHash_Base_Tag"),
@@ -610,7 +604,7 @@ public class ExperianBureauService implements IExperianService {
 	 *            The reportInputEntity containing voucher related data in this
 	 *            context
 	 */
-	private void reInsertUnusedVouchers(ReportInputEntiity reportInputEntity) {
+	private void reInsertUnusedVouchers(ReportInputEntity reportInputEntity) {
 		logger.logInfo("ExperianBureauService", "reInsertUnusedVouchers", "Starts creating voucher List", "");
 		Voucher voucher = new Voucher();
 		voucher.setVoucherCode(reportInputEntity.getVoucherCode());
@@ -623,12 +617,12 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This method re insert voucher if it is unused, updates the experian
-	 * attempt status and also publish to CRM
+	 * This method re insert voucher if it is unused, updates the experian attempt
+	 * status and also publish to CRM
 	 * 
 	 * @param reportInputEntity
-	 *            the reportInputEntity whose experian attempt status will be
-	 *            set or updated
+	 *            the reportInputEntity whose experian attempt status will be set or
+	 *            updated
 	 * @throws ConflictException
 	 *             when there is an error in updating a user
 	 * @throws BadRequestException
@@ -636,7 +630,7 @@ public class ExperianBureauService implements IExperianService {
 	 * @throws NotFoundException
 	 *             user with given userId not found
 	 */
-	private void experianStatusUpdate(ReportInputEntiity reportInputEntity, String experianStatus,
+	private void experianStatusUpdate(ReportInputEntity reportInputEntity, String experianStatus,
 			boolean isVoucherUnUsed) throws ConflictException, NotFoundException, BadRequestException {
 		if (isVoucherUnUsed) {
 			reInsertUnusedVouchers(reportInputEntity);
@@ -647,7 +641,7 @@ public class ExperianBureauService implements IExperianService {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
-		user.setReportInputEntitty(reportInputEntity);
+		user.setReportInputEntity(reportInputEntity);
 		userService.update(user);
 		if (reportInputEntity.getStage1Id() != null && reportInputEntity.getStage1Id() != "") {
 			// publishUserStateToCRM(user);
@@ -656,9 +650,8 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This is the overloaded method of method
-	 * getErrorStringAndResponseJsonFields which gets the error string from http
-	 * response
+	 * This is the overloaded method of method getErrorStringAndResponseJsonFields
+	 * which gets the error string from http response
 	 * 
 	 * @param httpResponse
 	 *            The httpResponse
@@ -717,8 +710,8 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This method is used to parse experian report for fetching all the
-	 * required data in it
+	 * This method is used to parse experian report for fetching all the required
+	 * data in it
 	 * 
 	 * @param reportInputEntity
 	 *            the report input entity for storing report and its metadata
@@ -729,23 +722,18 @@ public class ExperianBureauService implements IExperianService {
 	 * @throws ConflictException
 	 *             if report cannot be parsed
 	 */
-	private ExternalFacingReturnedUser observeReport(ReportInputEntiity reportInputEntity,
+	private ExternalFacingReturnedUser observeReport(ReportInputEntity reportInputEntity,
 			ExternalFacingReturnedUser user) throws ConflictException {
 		try {
 			// make an entry for the report
 			Report report = new Report();
 			// set report version
 			report = checkOrSetReportVersion(reportInputEntity, report);
-			report.setFileId(reportInputEntity.getReportFileEntity().getId());
 			report.setUserId(reportInputEntity.getUserId());
-			report.setReportSourceEnum(ReportSource.Experian);
 			report.setReportStatusEnum(ReportStatus.InProgress);
 			report.setQuestionCount(reportInputEntity.getQuestionCount());
-			report.setReportNumber(reportInputEntity.getReportNumber());
 			// save report data
 			reportService.save(report);
-			reportInputEntity.setReport(report);
-			user = userService.get(reportInputEntity.getUserLoginId(), false);
 			user.setUserState(MethodState.Report);
 			userService.update(user);
 			// create a report entity
@@ -768,8 +756,8 @@ public class ExperianBureauService implements IExperianService {
 	 * This method set the report version.
 	 * 
 	 * @param reportInputEntiity
-	 *            The report input Entity it contains data to be used like
-	 *            userId being used here
+	 *            The report input Entity it contains data to be used like userId
+	 *            being used here
 	 * @param report
 	 *            The Report whose version is to be set
 	 * @return the report with updated report version
@@ -777,24 +765,22 @@ public class ExperianBureauService implements IExperianService {
 	 *             Thrown when logged in user is not authorized to get report
 	 *             metadata
 	 */
-	private Report checkOrSetReportVersion(ReportInputEntiity reportInputEntiity, Report report)
+	private Report checkOrSetReportVersion(ReportInputEntity reportInputEntiity, Report report)
 			throws UnauthorizedException {
 		BoilerplateMap<String, Report> reportMap = this.reportService.getReports(reportInputEntiity.getUserId());
 		int size = reportMap.size();
-		report.setReportVersionEnum(ReportVersion.values()[size + 1]);
 		return report;
 	}
 
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 * @see IExperianService.fetchNextItem
 	 */
 	@Override
-	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
-			throws Exception {
+	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2) throws Exception {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-		ReportInputEntiity reportInputEntity = user.getReportInputEntitty();
+		ReportInputEntity reportInputEntity = user.getReportInputEntitty();
 		if (reportInputEntity == null) {
 			// updates the experianStatus:(15-11-2016)
 			experianStatusUpdate(reportInputEntity,
@@ -839,7 +825,7 @@ public class ExperianBureauService implements IExperianService {
 			experianQuestionAnswer.setOptionSet1Answer(answerPart1);
 			experianQuestionAnswer.setOptionSet2Answer(answerPart2);
 		}
-		user.setReportInputEntitty(reportInputEntity);
+		user.setReportInputEntity(reportInputEntity);
 		userService.update(user);
 
 		String answerTemplate = (answerPart1 == null ? "" : answerPart1.replace(" ", "+")) + "%3A"
@@ -894,11 +880,10 @@ public class ExperianBureauService implements IExperianService {
 		if (responseBodyMap.get("responseJson") == null) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(23-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Generic Error Message: responseJson is not returned --- Error String and Response Json: "
-							+ getErrorStringAndResponseJsonFields(responseBodyMap),
-					true);
+			experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem --- Response status: "
+					+ httpResponse.getHttpStatus()
+					+ "--- Generic Error Message: responseJson is not returned --- Error String and Response Json: "
+					+ getErrorStringAndResponseJsonFields(responseBodyMap), true);
 			throw new PreconditionFailedException("Experian Server",
 					"responseJson is not returned " + getErrorStringAndResponseJsonFields(responseBodyMap), null);
 		}
@@ -920,7 +905,7 @@ public class ExperianBureauService implements IExperianService {
 			reportInputEntity.getQuestion().put(nextQuestionId, newExperianQuestionAnswer);
 			reportInputEntity.setCurrentQuestion(newExperianQuestionAnswer);
 			reportInputEntity.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
-			user.setReportInputEntitty(reportInputEntity);
+			user.setReportInputEntity(reportInputEntity);
 			user.setUserState(MethodState.AuthQuestions);
 			userService.update(user);
 			RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
@@ -936,7 +921,7 @@ public class ExperianBureauService implements IExperianService {
 			// parse report and get report contents which are required
 			reportInputEntity = parseReportAndGetReportNumber(reportInputEntity, responseBodyMap);
 			user = observeReport(reportInputEntity, user);
-			user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
+			// user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
 			user.setUserState(MethodState.ReportGenerated);
 			// updates the experianStatus:(15-11-2016)
 			experianStatusUpdate(reportInputEntity,
@@ -949,7 +934,7 @@ public class ExperianBureauService implements IExperianService {
 		handleError(user, reportInputEntity, responseBodyMap, httpResponse);
 
 		user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
-		user.setReportInputEntitty(reportInputEntity);
+		user.setReportInputEntity(reportInputEntity);
 		userService.update(user);
 		// publishUserStateToCRM(user);
 		RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
@@ -977,17 +962,16 @@ public class ExperianBureauService implements IExperianService {
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
 	 */
-	private void handleError(ExternalFacingReturnedUser user, ReportInputEntiity reportInputEntity,
+	private void handleError(ExternalFacingReturnedUser user, ReportInputEntity reportInputEntity,
 			Map<String, Object> responseBodyMap, HttpResponse httpResponse)
 			throws NotFoundException, BadRequestException, PreconditionFailedException, ConflictException {
 		if (responseBodyMap.get("responseJson").equals("systemError") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Generic Error Message:  Issue in accessing server - Experian_CRQ_Request -  systemError --- Error String and Response Json: "
-							+ getErrorStringAndResponseJsonFields(responseBodyMap),
-					false);
+			experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem --- Response status: "
+					+ httpResponse.getHttpStatus()
+					+ "--- Generic Error Message:  Issue in accessing server - Experian_CRQ_Request -  systemError --- Error String and Response Json: "
+					+ getErrorStringAndResponseJsonFields(responseBodyMap), false);
 			throw new PreconditionFailedException("Experian Server",
 					"Issue in accessing server - Experian_CRQ_Request -  systemError", null);
 		}
@@ -995,11 +979,10 @@ public class ExperianBureauService implements IExperianService {
 		if (responseBodyMap.get("responseJson").equals("error") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request -  error --- Error String and Response Json: "
-							+ getErrorStringAndResponseJsonFields(responseBodyMap),
-					false);
+			experianStatusUpdate(reportInputEntity, "--- Method Name: fetchNextItem --- Response status: "
+					+ httpResponse.getHttpStatus()
+					+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request -  error --- Error String and Response Json: "
+					+ getErrorStringAndResponseJsonFields(responseBodyMap), false);
 			throw new PreconditionFailedException("Experian Server",
 					"Issue in accessing server - Experian_CRQ_Request -  systemError", null);
 		}
@@ -1042,15 +1025,15 @@ public class ExperianBureauService implements IExperianService {
 	}
 
 	/**
-	 * This method is used to fetch report number from xml document(experian
-	 * report file xml data)
+	 * This method is used to fetch report number from xml document(experian report
+	 * file xml data)
 	 * 
 	 * @param xmlFile
 	 *            the xml document(experian report file xml data)
 	 * @return the fetched report number
 	 * @throws ParserConfigurationException
-	 *             thrown if a DocumentBuilder cannot be created which satisfies
-	 *             the configuration requested.
+	 *             thrown if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested.
 	 * @throws SAXException
 	 *             thrown when exception occurs in parsing the xml document
 	 * @throws IOException
@@ -1109,12 +1092,11 @@ public class ExperianBureauService implements IExperianService {
 	 * @throws NotFoundException
 	 *             if user with given user id not found
 	 */
-	private void pushIntoQueueToSendKYCUploadSMS(ReportInputEntiity reportInputEntity)
+	private void pushIntoQueueToSendKYCUploadSMS(ReportInputEntity reportInputEntity)
 			throws NotFoundException, BadRequestException {
-		ReportInputEntiity ReportInputEntiityClone = null;
-		ReportInputEntiityClone = (ReportInputEntiity) reportInputEntity.clone();
-		ExternalFacingReturnedUser externalFacingReturnedUser = this.userService
-				.get(reportInputEntity.getUserLoginId());
+		ReportInputEntity ReportInputEntiityClone = null;
+		ReportInputEntiityClone = (ReportInputEntity) reportInputEntity.clone();
+		ExternalFacingReturnedUser externalFacingReturnedUser = this.userService.get(reportInputEntity.getUserId());
 
 		try {
 			if (reportInputEntity.isDontSendKycSms() == false || !(reportInputEntity.isDontSendKycSms())) {
@@ -1164,9 +1146,9 @@ public class ExperianBureauService implements IExperianService {
 	 * @param responseBodyMap
 	 * @return the reportInputEntity that contains experian integration state,
 	 *         report number
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private ReportInputEntiity parseReportAndGetReportNumber(ReportInputEntiity reportInputEntity,
+	private ReportInputEntity parseReportAndGetReportNumber(ReportInputEntity reportInputEntity,
 			Map<String, Object> responseBodyMap) throws Exception {
 		// we have a report
 		// save this to the users context
@@ -1176,7 +1158,6 @@ public class ExperianBureauService implements IExperianService {
 		MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html", "text/html",
 				report.getBytes());
 		FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
-		reportInputEntity.setReportFileEntity(fileEntity);
 		// saves the experian report url in the corresponding user
 
 		// Open the file
@@ -1187,7 +1168,6 @@ public class ExperianBureauService implements IExperianService {
 		int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
 		String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
 		String reportNumber = getReportNumber(xmlFile);
-		reportInputEntity.setReportNumber(reportNumber);
 		return reportInputEntity;
 
 	}

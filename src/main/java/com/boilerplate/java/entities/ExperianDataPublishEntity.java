@@ -5,7 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
-
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -22,38 +22,38 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		if(this.firstName == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.firstName == null) throw new ValidationFailedException("ReportInputEntity"
 				, "First Name is null", null);
 		
-		if(this.surname == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.surname == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Surame is null", null);
 		
-		if(this.dateOfBirth == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.dateOfBirth == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Date of Birth is null", null);
 		try {
 			this.dateOfBirthAsDate = dateFormat.parse(this.dateOfBirth);
 		} catch (ParseException ex) {
-			throw new ValidationFailedException("ReportInputEntiity"
+			throw new ValidationFailedException("ReportInputEntity"
 				, ex.toString(), ex);
 		}
 		
-		if(this.gender == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.gender == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Gender is null", null);
 		
-		if(this.addressLine1 == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.addressLine1 == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Address Line 1 is null", null);
-		if(this.city == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.city == null) throw new ValidationFailedException("ReportInputEntity"
 				, "City is null", null);
-		if(this.stateId == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.stateId == null) throw new ValidationFailedException("ReportInputEntity"
 				, "State Id is null", null);
-		if(this.pinCode == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.pinCode == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Pin code is null", null);
-		if(this.email == null) throw new ValidationFailedException("ReportInputEntiity"
+		if(this.email == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Email is null", null);
 		Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 		if(pattern.matcher(this.email).matches() == false){
-			 throw new ValidationFailedException("ReportInputEntiity"
+			 throw new ValidationFailedException("ReportInputEntity"
 						, "Email is not in the proper email format", null);
 		}
 //		
@@ -64,7 +64,7 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 //			(this.universalIdNumber == null)	&&
 //			(this.driverLicenseNumber == null)
 //		  ){
-//			throw new ValidationFailedException("ReportInputEntiity"
+//			throw new ValidationFailedException("ReportInputEntity"
 //					, "One of Pan number, Passport number, voter Id number or driver license number is a required field", null);
 //		}
 		return true;
@@ -670,31 +670,31 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 //	@JsonIgnore
 	private State stateEnum;
 	
-public ExperianDataPublishEntity getExperianDataByReportInputEntiity(ReportInputEntiity reportInputEntiity){
-	this.setAddressLine1(reportInputEntiity.getAddressLine1());
-	this.setAddressLine2(reportInputEntiity.getAddressLine2());
-	this.setCity(reportInputEntiity.getCity());
-	this.setDateOfBirth(reportInputEntiity.getDateOfBirth());
-	this.setDriverLicenseNumber(reportInputEntiity.getDriverLicenseNumber());
-	this.setEmail(reportInputEntiity.getEmail());
-	this.setFirstName(reportInputEntiity.getFirstName());
-	this.setMiddleName(reportInputEntiity.getMiddleName());
-	this.setMobileNumber(reportInputEntiity.getMobileNumber());
-	this.setPinCode(reportInputEntiity.getPinCode());
-	this.setPanNumber(reportInputEntiity.getPanNumber());
-	this.setPassportNumber(reportInputEntiity.getPassportNumber());
-	this.setGender(reportInputEntiity.getGender());
-	this.setGenderEnum(reportInputEntiity.getGenderEnum());
-	this.setSurname(reportInputEntiity.getSurname());
-	this.setStateId(reportInputEntiity.getStateId());
-	this.setStateEnum(reportInputEntiity.getStateEnum());
-	this.setTelephoneTypeId(reportInputEntiity.getTelephoneTypeId());
-	this.setTelephoneNumber(reportInputEntiity.getTelephoneNumber());
-	this.setVoterIdNumber(reportInputEntiity.getVoterIdNumber());
-	this.setUniversalIdNumber(reportInputEntiity.getUniversalIdNumber());
-	this.setStage1Id(reportInputEntiity.getStage1Id());
-	this.setExperianStatus(reportInputEntiity.getExperianStatus());
-	this.setExperianAttemptDate(reportInputEntiity.getExperianAttemptDate());
+	public ExperianDataPublishEntity getExperianDataByReportInputEntity(ReportInputEntity ReportInputEntity){
+	this.setAddressLine1(ReportInputEntity.getAddressLine1());
+	this.setAddressLine2(ReportInputEntity.getAddressLine2());
+	this.setCity(ReportInputEntity.getCity());
+	this.setDateOfBirth(ReportInputEntity.getDateOfBirth());
+	this.setDriverLicenseNumber(ReportInputEntity.getDriverLicenseNumber());
+	this.setEmail(ReportInputEntity.getEmail());
+	this.setFirstName(ReportInputEntity.getFirstName());
+	this.setMiddleName(ReportInputEntity.getMiddleName());
+	this.setMobileNumber(ReportInputEntity.getMobileNumber());
+	this.setPinCode(ReportInputEntity.getPinCode());
+	this.setPanNumber(ReportInputEntity.getPanNumber());
+	this.setPassportNumber(ReportInputEntity.getPassportNumber());
+	this.setGender(ReportInputEntity.getGender());
+	this.setGenderEnum(ReportInputEntity.getGenderEnum());
+	this.setSurname(ReportInputEntity.getSurname());
+	this.setStateId(ReportInputEntity.getStateId());
+	this.setStateEnum(ReportInputEntity.getStateEnum());
+	this.setTelephoneTypeId(ReportInputEntity.getTelephoneTypeId());
+	this.setTelephoneNumber(ReportInputEntity.getTelephoneNumber());
+	this.setVoterIdNumber(ReportInputEntity.getVoterIdNumber());
+	this.setUniversalIdNumber(ReportInputEntity.getUniversalIdNumber());
+	this.setStage1Id(ReportInputEntity.getStage1Id());
+	this.setExperianStatus(ReportInputEntity.getExperianStatus());
+	this.setExperianAttemptDate(ReportInputEntity.getExperianAttemptDate());
 	return this;
 }
 

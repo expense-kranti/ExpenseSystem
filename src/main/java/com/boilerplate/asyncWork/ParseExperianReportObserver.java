@@ -31,7 +31,7 @@ import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.ExperianTradelineStatus;
 
 import com.boilerplate.java.entities.Report;
-import com.boilerplate.java.entities.ReportInputEntiity;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportStatus;
 import com.boilerplate.java.entities.ReportTradeline;
 import com.boilerplate.java.entities.ReportTradelineStatus;
@@ -108,7 +108,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
-		this.parse((ReportInputEntiity) asyncWorkItem.getPayload());
+		this.parse((ReportInputEntity) asyncWorkItem.getPayload());
 
 	}
 
@@ -143,8 +143,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * Converts an expeirna string sent back as date month and year to a date
-	 * string
+	 * Converts an expeirna string sent back as date month and year to a date string
 	 * 
 	 * @param year
 	 *            The year of date
@@ -194,11 +193,11 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * This method converts an experian status code and DPD into a tradeline
-	 * status to group a tradeline as good bad or ugly. A good tradeline is
-	 * anything with DPD <90, while anything >90 is a case for concern in CMD
-	 * even if it is not for the bureau. Other than that standard bureau codes
-	 * are used. Which are magic numbers
+	 * This method converts an experian status code and DPD into a tradeline status
+	 * to group a tradeline as good bad or ugly. A good tradeline is anything with
+	 * DPD <90, while anything >90 is a case for concern in CMD even if it is not
+	 * for the bureau. Other than that standard bureau codes are used. Which are
+	 * magic numbers
 	 * 
 	 * @param experinStatusCode
 	 *            The code from experian
@@ -349,14 +348,14 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 * @throws SAXException
 	 *             thrown when exception occurs in parsing the xml document
 	 * @throws ParserConfigurationException
-	 *             thrown if a DocumentBuilder cannot be created which satisfies
-	 *             the configuration requested.
+	 *             thrown if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested.
 	 */
-	public void parse(ReportInputEntiity reportInputEntity)
+	public void parse(ReportInputEntity reportInputEntity)
 			throws IOException, SAXException, ParserConfigurationException {
 		// load the html file as a string
-		String htmlFile = FileUtils.readFileToString(new File(configurationManager.get("RootFileDownloadLocation")
-				+ reportInputEntity.getReportFileEntity().getFileNameOnDisk()));
+		String htmlFile = FileUtils.readFileToString(new File(
+				configurationManager.get("RootFileDownloadLocation") + reportInputEntity.getReportFileNameOnDisk()));
 
 		// cut out the xml part from it, again due to issues this can only be
 		// done as a magic number
@@ -559,7 +558,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 *            The reportInputEntiity contains required input data here pan
 	 *            number is required
 	 */
-	private void setPanNumberInHash(ReportInputEntiity reportInputEntiity) {
+	private void setPanNumberInHash(ReportInputEntity reportInputEntiity) {
 		if (reportInputEntiity.getReport().getReportVersion() == 1) {
 			if (reportInputEntiity.getPanNumber() != null) {
 				this.redisSFUpdateHashAccess.hset(configurationManager.get("PanNumberHash_Base_Tag"),

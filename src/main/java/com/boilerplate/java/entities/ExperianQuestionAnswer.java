@@ -7,52 +7,53 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
- * This entity mantians the Q&A for the report.
+ * This entity maintains the Q&A for the report.
+ * 
  * @author gaurav.verma.icloud
  *
  */
-@ApiModel(value="The question/answer asked for a user"
-, description="The question/answer asked for a user")
+@ApiModel(value = "The question/answer asked for a user", description = "The question/answer asked for a user")
 public class ExperianQuestionAnswer implements Serializable {
-	
+
 	/**
 	 * This is the id of the question
 	 */
-	@ApiModelProperty(value="This is the id of the question")
+	@ApiModelProperty(value = "This is the id of the question")
 	private String questionId;
-	
+
 	/**
 	 * This is the text of the question
 	 */
-	@ApiModelProperty(value="This is the text of the question")
+	@ApiModelProperty(value = "This is the text of the question")
 	private String questionText;
-	
+
 	/**
 	 * This is the list of answers from option set 1
 	 */
-	@ApiModelProperty(value="This is the list of option set 1 questions")
+	@ApiModelProperty(value = "This is the list of option set 1 questions")
 	private BoilerplateList<String> optionSet1 = new BoilerplateList<>();
-	
+
 	/**
 	 * This is the list of answers from option set 2
 	 */
-	@ApiModelProperty(value="This is the list of option set 2 questions")
-	private  BoilerplateList<String> optionSet2= new BoilerplateList<>();
-	
+	@ApiModelProperty(value = "This is the list of option set 2 questions")
+	private BoilerplateList<String> optionSet2 = new BoilerplateList<>();
+
 	/**
 	 * This is the answer for option set 1
 	 */
-	@ApiModelProperty(value="This is the option 1 answer")
+	@ApiModelProperty(value = "This is the option 1 answer")
 	private String optionSet1Answer;
-	
+
 	/**
 	 * This is the list of answers for option set 2
 	 */
-	@ApiModelProperty(value="This is the option 2 answer")
+	@ApiModelProperty(value = "This is the option 2 answer")
 	private String optionSet2Answer;
 
 	/**
 	 * This gets the question id
+	 * 
 	 * @return The question id
 	 */
 	public String getQuestionId() {
@@ -61,7 +62,9 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * This method sets the question id
-	 * @param questionId The question id
+	 * 
+	 * @param questionId
+	 *            The question id
 	 */
 	public void setQuestionId(String questionId) {
 		this.questionId = questionId;
@@ -69,6 +72,7 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * This gets the question text
+	 * 
 	 * @return The question text
 	 */
 	public String getQuestionText() {
@@ -77,7 +81,9 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * This sets the question text
-	 * @param questionText The question text
+	 * 
+	 * @param questionText
+	 *            The question text
 	 */
 	public void setQuestionText(String questionText) {
 		this.questionText = questionText;
@@ -85,6 +91,7 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Gets the option set 1
+	 * 
 	 * @return option set 1
 	 */
 	public BoilerplateList<String> getOptionSet1() {
@@ -93,7 +100,9 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Sets the option set 1
-	 * @param optionSet1 The option set 1
+	 * 
+	 * @param optionSet1
+	 *            The option set 1
 	 */
 	public void setOptionSet1(BoilerplateList<String> optionSet1) {
 		this.optionSet1 = optionSet1;
@@ -101,6 +110,7 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Gets option set 2
+	 * 
 	 * @return The option set 2
 	 */
 	public BoilerplateList<String> getOptionSet2() {
@@ -109,7 +119,9 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Sets the option set 2
-	 * @param optionSet2 The option set 2
+	 * 
+	 * @param optionSet2
+	 *            The option set 2
 	 */
 	public void setOptionSet2(BoilerplateList<String> optionSet2) {
 		this.optionSet2 = optionSet2;
@@ -117,6 +129,7 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Gets the option set 1 answer
+	 * 
 	 * @return The option set 1 answer
 	 */
 	public String getOptionSet1Answer() {
@@ -125,14 +138,17 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Sets the option set 1 answer
-	 * @param optionSet1Answer The  option set 1 answer
+	 * 
+	 * @param optionSet1Answer
+	 *            The option set 1 answer
 	 */
 	public void setOptionSet1Answer(String optionSet1Answer) {
 		this.optionSet1Answer = optionSet1Answer;
 	}
-	
+
 	/**
 	 * Gets the option set 2 answer
+	 * 
 	 * @return The option set 2 answer
 	 */
 	public String getOptionSet2Answer() {
@@ -141,11 +157,12 @@ public class ExperianQuestionAnswer implements Serializable {
 
 	/**
 	 * Sets the option set 2 answer
-	 * @param optionSet2Answer The option set 2 answer
+	 * 
+	 * @param optionSet2Answer
+	 *            The option set 2 answer
 	 */
 	public void setOptionSet2Answer(String optionSet2Answer) {
 		this.optionSet2Answer = optionSet2Answer;
 	}
-	
-	
+
 }

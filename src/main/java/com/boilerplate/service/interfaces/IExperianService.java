@@ -15,7 +15,7 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.ReportInputEntiity;
+import com.boilerplate.java.entities.ReportInputEntity;
 
 /**
  * This interface has methods for starting experian integration like starting
@@ -56,7 +56,7 @@ public interface IExperianService {
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
 	 */
-	public ReportInputEntiity startSingle(ReportInputEntiity reportInputEntiity)
+	public ReportInputEntity startSingle(ReportInputEntity reportInputEntiity)
 			throws ConflictException, UnauthorizedException, ValidationFailedException, NotFoundException,
 			BadRequestException, IOException, PreconditionFailedException;
 
@@ -96,7 +96,7 @@ public interface IExperianService {
 	 *             server is not received
 	 * @throws Exception 
 	 */
-	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
+	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2)
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
 

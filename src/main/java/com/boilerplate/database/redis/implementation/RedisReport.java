@@ -33,7 +33,7 @@ public class RedisReport extends BaseRedisDataAccessLayer implements IReport {
 		report.setId((report.getUserId().toUpperCase()+":"+report.getReportNumber()).toUpperCase());
 		for(Object object : report.getReportTradelines()){
 			ReportTradeline reportTradeLine = (ReportTradeline)object;
-			reportTradeLine.setId((report.getId()+":"+reportTradeLine.getOrganizationId()+":"+reportTradeLine.getProductId()+":" +reportTradeLine.getAccountNumber()).toUpperCase());
+			reportTradeLine.setId((report.getId()+":"+reportTradeLine.getOrganizationName()+":"+reportTradeLine.getProductName()+":" +reportTradeLine.getAccountNumber()).toUpperCase());
 		}
 		super.set(Report+report.getId(),report);
 		return report;

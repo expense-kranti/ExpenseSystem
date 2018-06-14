@@ -13,7 +13,7 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.ReportInputEntiity;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IExperianService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -46,8 +46,8 @@ public class ExperianController extends BaseController {
 				,	@ApiResponse(code=400, message="Data not completly filled")
 				})
 	@RequestMapping(value = "/experian/startSingle", method = RequestMethod.POST)
-	public @ResponseBody ReportInputEntiity startSingle(@RequestBody ReportInputEntiity reportInputEntiity) throws Exception, ValidationFailedException,ConflictException, NotFoundException,IOException,PreconditionFailedException, BadRequestException,UnauthorizedException{
-		return this.experianBureauService.startSingle(reportInputEntiity);
+	public @ResponseBody ReportInputEntity startSingle(@RequestBody ReportInputEntity reportInputEntity) throws Exception, ValidationFailedException,ConflictException, NotFoundException,IOException,PreconditionFailedException, BadRequestException,UnauthorizedException{
+		return this.experianBureauService.startSingle(reportInputEntity);
 	}
 
 }
