@@ -15,6 +15,8 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ReportInputEntity;
 
 /**
@@ -94,10 +96,12 @@ public interface IExperianService {
 	 * @throws PreconditionFailedException
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2)
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
+
+	
 
 }

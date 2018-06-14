@@ -10,67 +10,72 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
+import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.Voucher;
 import com.boilerplate.queue.RedisQueue;
 
 /**
  * This is the class used to implements Redis Voucher
+ * 
  * @author mohit
  *
  */
 public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian {
-	
+
 	/**
 	 * This is the key used to store voucher queue name
 	 */
-	private static final String VOUCHER_QUEUE_NAME ="VOUCHER";
+	private static final String VOUCHER_QUEUE_NAME = "VOUCHER";
 
 	/**
 	 * This is the key used to store used voucher queue name
 	 */
-	private static final String USED_VOUCHER_QUEUE_NAME ="USED_VOUCHER";
+	private static final String USED_VOUCHER_QUEUE_NAME = "USED_VOUCHER";
 	
 	/**
 	 * This is the instance of the Logger
 	 */
 	Logger logger = Logger.getInstance(RedisVoucher.class);
-	
+
 	/**
 	 * This is the configuration manager
 	 */
 	@Autowired
 	ConfigurationManager configurationManager;
-	
+
 	/**
 	 * This sets the configuration Manager
+	 * 
 	 * @param configurationManager
 	 */
-	public void setConfigurationManager(ConfigurationManager configurationManager){
+	public void setConfigurationManager(ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-	
+
 	/**
-	 * This is an instance of the queue job, to save the session
-	 * back on to the database async
+	 * This is an instance of the queue job, to save the session back on to the
+	 * database async
 	 */
 	@Autowired
 	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
-	
+
 	/**
 	 * This sets the queue reader jon
-	 * @param queueReaderJob The queue reader jon
+	 * 
+	 * @param queueReaderJob
+	 *            The queue reader jon
 	 */
-	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob){
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
 		this.queueReaderJob = queueReaderJob;
 	}
-	
+
 	BoilerplateList<String> subjectsForVoucherAlertToAdmin = new BoilerplateList();
-	
+
 	/**
 	 * Initializes the bean
 	 */
-	public void initialize(){
+	public void initialize() {
 		subjectsForVoucherAlertToAdmin.add("VoucherAlert");
 	}
 
@@ -80,7 +85,7 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 	@Override
 	public void create(BoilerplateList<Voucher> vouchers) {
 		List<Voucher> vouchersList = vouchers;
-		for(Voucher voucher :vouchersList){
+		for (Voucher voucher : vouchersList) {
 			super.insert(VOUCHER_QUEUE_NAME, voucher);
 		}
 	}
@@ -90,12 +95,13 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 	 */
 	@Override
 	public Voucher getVoucherCode(String userId, String sessionId) throws NotFoundException {
-		if(super.getQueueSize(VOUCHER_QUEUE_NAME)%Integer.parseInt(configurationManager.get("Voucher_Count_Alert_Frequency"))==0){
+		if (super.getQueueSize(VOUCHER_QUEUE_NAME)
+				% Integer.parseInt(configurationManager.get("Voucher_Count_Alert_Frequency")) == 0) {
 			// This method will send voucher alert sms and email to the admin
-			//this.sendVoucherAlertToAdmin();
+			// this.sendVoucherAlertToAdmin();
 		}
 		Voucher voucher = super.remove(VOUCHER_QUEUE_NAME, Voucher.class);
-		if(voucher == null){
+		if (voucher == null) {
 			logger.logWarning("RedisVoucher", "getVoucherCode", "Fetching Voucher from DB", "Voucher Not available");
 			throw new NotFoundException("Voucher", "Voucher Not available", null);
 		}
@@ -112,5 +118,6 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 	public void logToExperianDatabase(String userId, String purpose, String httpContent) {
 		logger.logInfo("RedisVoucher", "logToExperianDatabase", "Log", Base.toJSON(httpContent));
 	}
+
 
 }
