@@ -712,6 +712,8 @@
 		<property name="parseExperianReportObserver" ref="parseExperianReportObserver"></property>
 		<property name="reportService" ref="reportService"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="expressDataAccess" ref="expressDataAccess"></property>
+
 	</bean>
 	<bean id="experianDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisVoucher"
@@ -775,7 +777,8 @@
 		<property name="mySqlHandbook" ref="mySqlHandbook"></property>
 	</bean>
 
-	<bean id="mySqlHandbook" class="com.boilerplate.database.mysql.implementations.MySQLHandbook">	
+	<bean id="mySqlHandbook"
+		class="com.boilerplate.database.mysql.implementations.MySQLHandbook">
 	</bean>
 
 
@@ -1014,6 +1017,14 @@
 	<bean id="mySQLAksharArticles"
 		class="com.boilerplate.database.mysql.implementations.MySQLAksharArticles">
 		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+	<bean id="expressDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisExpress">
+
+	</bean>
+	<bean id="expressService" class="com.boilerplate.service.implemetations.ExpressService">
+
 	</bean>
 
 </beans>

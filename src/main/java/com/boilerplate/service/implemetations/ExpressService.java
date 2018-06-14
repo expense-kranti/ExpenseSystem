@@ -44,6 +44,7 @@ public class ExpressService implements IExpressService {
 		} else {
 			throw new PreconditionFailedException("ExpressEntity", "No initial Express Attempt found", null);
 		}
+		return expressEntityFromDB;
 	}
 
 }

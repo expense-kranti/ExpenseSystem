@@ -26,4 +26,13 @@ public class RedisExpress extends BaseRedisDataAccessLayer implements IExpress {
 		return super.get(User + Express + PHONE_NUMBER + mobileNumber, ExpressEntity.class);
 	}
 
+	/**
+	 * @see IExpress.saveUserExpressDetails
+	 */
+	@Override
+	public ExpressEntity saveUserExpressDetails(ExpressEntity expressEntity) {
+		super.set(User + Express + PHONE_NUMBER + expressEntity.getMobileNumber(), expressEntity);
+		return expressEntity;
+
+	}
 }
