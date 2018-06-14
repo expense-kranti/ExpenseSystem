@@ -1,7 +1,9 @@
 package com.boilerplate.service.interfaces;
 
-import com.boilerplate.exceptions.rest.NotFoundException;
+import java.io.IOException;
+
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpressEntity;
 
 public interface IExpressService {
@@ -18,5 +20,19 @@ public interface IExpressService {
 	 *             validating name
 	 */
 	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException;
+
+	/**
+	 * This method is used to get the list of name for the given mobile number
+	 * 
+	 * @param expressEntity
+	 *            This is the express entity which contains the mobile number
+	 *            for which tha list of names has to be fetched
+	 * @return the list of names
+	 * @throws ValidationFailedException
+	 * @throws IOException
+	 */
+
+	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
+			throws ValidationFailedException, IOException;
 
 }

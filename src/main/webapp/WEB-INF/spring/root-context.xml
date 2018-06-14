@@ -1021,10 +1021,10 @@
 
 	<bean id="expressDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisExpress">
-
 	</bean>
 	<bean id="expressService" class="com.boilerplate.service.implemetations.ExpressService">
-
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="expressDataAccess" ref="expressDataAccess"></property>
 	</bean>
 
 </beans>

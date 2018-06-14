@@ -99,18 +99,6 @@ public interface IExperianService {
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
 
-	/**
-	 * This method is used to get the list of name for the given mobile number
-	 * 
-	 * @param expressEntity
-	 *            This is the express entity which contains the mobile number
-	 *            for which tha list of names has to be fetched
-	 * @return the list of names
-	 * @throws ValidationFailedException
-	 * @throws IOException
-	 */
-
-	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
-			throws ValidationFailedException, IOException;
+	
 
 }

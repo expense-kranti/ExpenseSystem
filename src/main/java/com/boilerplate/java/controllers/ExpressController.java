@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 import com.wordnik.swagger.annotations.Api;
@@ -41,8 +44,33 @@ public class ExpressController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 400, message = "Data not completely filled") })
 	@RequestMapping(value = "/experian/express/validateUser", method = RequestMethod.POST)
-	public @ResponseBody ExpressEntity validateName(@RequestBody ExpressEntity expressEntity)
+	public @ResponseBody void validateName(@RequestBody ExpressEntity expressEntity)
 			throws PreconditionFailedException {
-		return expressService.validateAndRegisterUser(expressEntity);
+		expressService.validateName(expressEntity);
+	}
+
+	/**
+	 * This method is used to get the list of names
+	 * 
+	 * @param expressEntity
+	 *            This is the express entity
+	 * @return the list of names
+	 * @throws Exception
+	 *             This is the parent exception
+	 * @throws ValidationFailedException
+	 *             this exception occurred when mobile number is null or empty
+	 * @throws NotFoundException
+	 *             when the user is not found in database against whom experian
+	 * @throws BadRequestException
+	 *             if proper required input is not provided
+	 * @throws UnauthorizedException
+	 * 
+	 */
+	@ApiOperation(value = "gets the list of names for a given mobile number from our api")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/experian/namesForMobileNumber", method = RequestMethod.POST)
+	public @ResponseBody ExpressEntity getNamesByMobileNumber(@RequestBody ExpressEntity expressEntity)
+			throws Exception, ValidationFailedException, NotFoundException, BadRequestException {
+		return expressService.getNamesByMobileNumber(expressEntity);
 	}
 }

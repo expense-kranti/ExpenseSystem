@@ -1067,9 +1067,9 @@ public class BaseRedisDataAccessLayer {
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExperianController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
+				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExpressController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExperianController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
+				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExpressController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
@@ -1078,7 +1078,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for getWordPressDataStatistics method
+		// method permission for getUserReferredUsersCountCurrentMonth method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredUsersCountCurrentMonth()");
@@ -1088,6 +1088,22 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		//method permission for validateName
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ExpressController.validateName(com.boilerplate.java.entities.ExpressEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ExpressController.validateName(com.boilerplate.java.entities.ExpressEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		
 
 		// save the method permission map in configuration
 		// in database
@@ -1388,8 +1404,6 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL reader queue
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
 
-		// url for getting the names
-		vAllEDev.put("Experian_Get_Name_Url_Request_Template", " {\"mobileNumber\":\"@mobileNumber\"}");
 		vAllEDev.put("GET_NAMES_BY_MOBILE_NUMBER",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname \n");
 
@@ -1472,6 +1486,9 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL
 		vAllEProduction.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllEProduction.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+
+		vAllEProduction.put("GET_NAMES_BY_MOBILE_NUMBER",
+				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatadistinctname");
 
 		return vAllEProduction;
 	}
@@ -1612,6 +1629,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("GET_TOPMOST_PLAYED_QUIZZES",
 				"Select t2.Name quizName, Date(t1.CreationDate) as datePlayed from Aks_UserAssessment t1 join Aks_Assessment t2 on t1.AssessmentId = t2.Id where t2.IsSurvey = 0 ORDER BY t1.CreationDate DESC limit 2");
 
+		vAllEAll.put("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\"}");
 		return vAllEAll;
 
 	}

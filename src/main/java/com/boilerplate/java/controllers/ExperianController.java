@@ -56,29 +56,6 @@ public class ExperianController extends BaseController {
 		return experianBureauService.startSingle(reportInputEntity);
 	}
 
-	/**
-	 * This method is used to get the list of names
-	 * 
-	 * @param expressEntity
-	 *            This is the express entity
-	 * @return the list of names
-	 * @throws Exception
-	 *             This is the parent exception
-	 * @throws ValidationFailedException
-	 *             this exception occurred when mobile number is null or empty
-	 * @throws NotFoundException
-	 *             when the user is not found in database against whom experian
-	 * @throws BadRequestException
-	 *             if proper required input is not provided
-	 * @throws UnauthorizedException
-	 * 
-	 */
-	@ApiOperation(value = "gets the list of names from the database")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/experian/getNamesBMobileNumber", method = RequestMethod.POST)
-	public @ResponseBody ExpressEntity getNamesByMobileNumber(@RequestBody ExpressEntity expressEntity)
-			throws Exception, ValidationFailedException, NotFoundException, BadRequestException {
-		return experianBureauService.getNamesByMobileNumber(expressEntity);
-	}
+	
 
 }
