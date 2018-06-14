@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpCookie;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.boilerplate.asyncWork.ParseExperianReportObserver;
+import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IExperian;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
@@ -41,6 +43,7 @@ import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExperianQuestionAnswer;
+import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.FileEntity;
@@ -1170,6 +1173,97 @@ public class ExperianBureauService implements IExperianService {
 		String reportNumber = getReportNumber(xmlFile);
 		return reportInputEntity;
 
+	}
+
+	@Override
+	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
+			throws ValidationFailedException, IOException {
+
+		// check the expressEntity having mobile number or not
+		if (expressEntity.validate() != true) {
+			throw new ValidationFailedException("ExpressEntity", "mobile number can not be null or empty", null);
+		}
+		String requestData = createExperianURLRequestBodyForGettingName(expressEntity);
+
+		// prepare request headers and request body for our experian request
+		// Mediator(named Java)
+		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
+		BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
+		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
+		contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
+		requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
+
+		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("GET_NAMES_BY_MOBILE_NUMBER"),
+				requestHeadersJava, null, requestData, "POST");
+		// throw exception if status is not 200
+		if (httpResponse.getHttpStatus() != 200) {
+			// Throw exception
+		}
+		ObjectMapper objectMapper = new ObjectMapper();
+		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
+		List<String> names = (List<String>) responseBodyMap.get("nameList");
+
+		
+		List<String> randomNames = new ArrayList<>();
+		// Check if random names are required, if list of names fetched is less
+		// than 4
+		if (names.size() < 4) {
+			// get random names
+			randomNames = getRandomNames(4 - names.size());
+		}
+		names.addAll(randomNames);
+		expressEntity.setFullNameList(names);
+
+		return expressEntity;
+	}
+
+	/**
+	 * This method creates the request body for experian request.
+	 * 
+	 * @param reportInputEntiity
+	 *            The report input entity containing required data for making
+	 *            request body for request
+	 * @return The required request body
+	 */
+	private String createExperianURLRequestBodyForGettingName(ExpressEntity expressEntity) {
+		String requestBody = configurationManager.get("Experian_Get_Name_Url_Request_Template");
+		requestBody = requestBody.replace("@mobileNumber", expressEntity.getMobileNumber());
+		return requestBody;
+	}
+
+	/**
+	 * This method return a list of random names
+	 * 
+	 * @param count
+	 *            number of names to be returned
+	 * @return namesReturned list of names
+	 */
+	private List<String> getRandomNames(int count) {
+
+		List<String> namesReturned = new ArrayList();
+		List<String> names = new ArrayList();
+		names.add("Shiva Gupta");
+		names.add("Raju");
+		names.add("Amit");
+		names.add("Ashima");
+		names.add("Urvij Pratap Singh");
+		names.add("Love");
+		names.add("Pawan");
+		names.add("Sandeep");
+		names.add("Aman");
+		names.add("Madu");
+
+		// generate a list of random names
+		while (namesReturned.size() < count) {
+			String randomName = names.get((int) (Math.random() * ((10 - 1))) + 1);
+			if (namesReturned.contains(randomName))
+				continue;
+			else
+				namesReturned.add(randomName);
+		}
+
+		// return the list of random names generated
+		return namesReturned;
 	}
 
 }

@@ -15,6 +15,7 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.java.entities.ReportInputEntity;
 
 /**
@@ -31,19 +32,18 @@ public interface IExperianService {
 	 * This method starts the experian integration requests
 	 * 
 	 * @param reportInputEntiity
-	 *            it contains the data required to send request to server for
-	 *            making experian integration
-	 * @return the reportInputEntity containing the returned sessionIds,
-	 *         stageIds and report etc. got in response to experian integration
-	 *         requests
+	 *            it contains the data required to send request to server for making
+	 *            experian integration
+	 * @return the reportInputEntity containing the returned sessionIds, stageIds
+	 *         and report etc. got in response to experian integration requests
 	 * @throws ConflictException
 	 *             thrown when there is an error in updating the user
 	 * @throws UnauthorizedException
-	 *             thrown when logged in user is not authorized for getting
-	 *             report meta data like version etc.
+	 *             thrown when logged in user is not authorized for getting report
+	 *             meta data like version etc.
 	 * @throws ValidationFailedException
-	 *             thrown when some of the required inputs of reportInputEntity
-	 *             are not provided(or are null/empty)
+	 *             thrown when some of the required inputs of reportInputEntity are
+	 *             not provided(or are null/empty)
 	 * @throws NotFoundException
 	 *             when the user is not found in database against whom experian
 	 *             report to be generated
@@ -62,8 +62,7 @@ public interface IExperianService {
 
 	/**
 	 * This method is used to start question answer session with the user for
-	 * getting authentication for getting experian report of the authenticated
-	 * user
+	 * getting authentication for getting experian report of the authenticated user
 	 * 
 	 * @param questionId
 	 *            the question id of the question
@@ -71,9 +70,9 @@ public interface IExperianService {
 	 *            answer part 1 of the answer of the question
 	 * @param answerPart2
 	 *            answer part 2 of the answer of the question
-	 * @return the reportInputEntity that contains data produced during this
-	 *         process of experian integration like question data for request,
-	 *         report data got in response
+	 * @return the reportInputEntity that contains data produced during this process
+	 *         of experian integration like question data for request, report data
+	 *         got in response
 	 * @throws ConflictException
 	 *             thrown when there is an error in updating the user
 	 * @throws NotFoundException
@@ -85,8 +84,8 @@ public interface IExperianService {
 	 * @throws BadRequestException
 	 *             if proper required input is not provided
 	 * @throws ParserConfigurationException
-	 *             thrown if a DocumentBuilder cannot be created which satisfies
-	 *             the configuration requested.
+	 *             thrown if a DocumentBuilder cannot be created which satisfies the
+	 *             configuration requested.
 	 * @throws SAXException
 	 *             thrown when exception occurs in parsing the xml document
 	 * @throws UpdateFailedException
@@ -94,10 +93,23 @@ public interface IExperianService {
 	 * @throws PreconditionFailedException
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2)
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
+
+	/**
+	 * This method is used to get the list of name for the given mobile number
+	 * 
+	 * @param expressEntity
+	 *            This is the express entity which contains the mobile number for
+	 *            which tha list of names has to be fetched
+	 * @return the list of names
+	 * @throws ValidationFailedException 
+	 * @throws IOException 
+	 */
+
+	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity) throws ValidationFailedException, IOException;
 
 }

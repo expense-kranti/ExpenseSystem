@@ -1063,6 +1063,21 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// express controller
+
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExperianController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExperianController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permission for getWordPressDataStatistics method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
@@ -1372,6 +1387,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		// config for SaveInMySQL reader queue
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+
+		// url for getting the names
+		vAllEDev.put("Experian_Get_Name_Url_Request_Template", " {\"mobileNumber\":\"@mobileNumber\"}");
+		vAllEDev.put("GET_NAMES_BY_MOBILE_NUMBER",
+				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname \n");
 
 		return vAllEDev;
 
