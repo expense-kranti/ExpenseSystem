@@ -27,6 +27,5 @@
 
 		<property name="fileEntity" column="FileEntity" />
 
-		<property name="reportTradelines" colomn="ReportTradeLine">
 	</class>
 </hibernate-mapping>

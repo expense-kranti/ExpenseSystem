@@ -73,8 +73,11 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		if (this.getMobileNumber() == null || this.getMobileNumber().isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override

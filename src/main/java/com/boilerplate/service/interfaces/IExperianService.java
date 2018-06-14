@@ -2,8 +2,6 @@ package com.boilerplate.service.interfaces;
 
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -16,7 +14,6 @@ import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpressEntity;
-import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ReportInputEntity;
 
 /**
@@ -102,6 +99,18 @@ public interface IExperianService {
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
 
-	
+	/**
+	 * This method is used to get the list of name for the given mobile number
+	 * 
+	 * @param expressEntity
+	 *            This is the express entity which contains the mobile number
+	 *            for which tha list of names has to be fetched
+	 * @return the list of names
+	 * @throws ValidationFailedException
+	 * @throws IOException
+	 */
+
+	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
+			throws ValidationFailedException, IOException;
 
 }

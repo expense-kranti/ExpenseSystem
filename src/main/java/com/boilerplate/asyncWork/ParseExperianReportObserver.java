@@ -93,6 +93,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	@Autowired
 	IReportService reportService;
 
+	private Report report;
+
 	/**
 	 * Sets the report service
 	 * 
@@ -373,7 +375,6 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 		xmlFile = StringEscapeUtils.unescapeHtml(xmlFile);
 		// for each tradeline save in the DB
 
-		Report report = reportInputEntity.getReport();
 		BoilerplateList<ReportTradeline> tradelines = new BoilerplateList<>();
 		ReportTradeline tradeline = null;
 
@@ -404,27 +405,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 			try {
 				NodeList cAISAccountDETAILS = accountDetails.item(i).getChildNodes();
 				tradeline = new ReportTradeline();
-				tradeline.setReportId(report.getId());
 				String accountNumber = getNodeValue("Account_Number", cAISAccountDETAILS);
 				tradeline.setAccountNumber(accountNumber);
-				tradeline.setHighCreditLoanAmount(checkDoubleorAssign(
-						getNodeValue("Highest_Credit_or_Original_Loan_Amount", cAISAccountDETAILS), -1.0));
-				String rePaymentTenure = getNodeValue("Repayment_Tenure", cAISAccountDETAILS);
-				tradeline.setRepaymentTenure(
-						checkDoubleorAssign(getNodeValue("Repayment_Tenure", cAISAccountDETAILS), -1.0));
-				tradeline.setDateOpened(this.experianStringToDate(getNodeValue("Open_Date", cAISAccountDETAILS)));
-				if (getNodeValue("Date_Closed", cAISAccountDETAILS) != "") {
-					tradeline.setDateClosed(
-							this.experianStringToDate(getNodeValue("Date_Closed", cAISAccountDETAILS).toString()));
-				}
-				if (getNodeValue("Open_Date", cAISAccountDETAILS) != "") {
-					tradeline.setDateOpened(
-							this.experianStringToDate(getNodeValue("Open_Date", cAISAccountDETAILS).toString()));
-				}
-				if (getNodeValue("Date_of_Last_Payment", cAISAccountDETAILS) != "") {
-					tradeline.setDateOfLastPayment(this
-							.experianStringToDate(getNodeValue("Date_of_Last_Payment", cAISAccountDETAILS).toString()));
-				}
 
 				tradeline.setAccountHolderType(getNodeValue("AccountHoldertypeCode", cAISAccountDETAILS));
 
@@ -439,18 +421,12 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 					year = getNodeValue("Year", cAISAccountHistory);
 					month = getNodeValue("Month", cAISAccountHistory);
 
-					tradeline.setDaysPastDue(
-							parseExperinaStringToInteger(getNodeValue("Days_Past_Due", cAISAccountHistory)));
-
 				}
 				if (year == "" || month == "") {
 					year = "1900";
 					month = "1";
-				} else {
-					tradeline.setLastHistoryDate(this.experianStringToDate(year, month, "1"));
 				}
-				tradeline.setSettlementAmount(
-						checkDoubleorAssign(getNodeValue("Settlement_Amount", cAISAccountDETAILS), -1.0));
+
 				tradeline.setCurrentBalance(
 						checkDoubleorAssign(getNodeValue("Current_Balance", cAISAccountDETAILS), -1.0));
 				if (getNodeValue("Date_Reported", cAISAccountDETAILS) != "") {
@@ -458,12 +434,6 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 							this.experianStringToDate(getNodeValue("Date_Reported", cAISAccountDETAILS).toString()));
 				}
 				tradeline.setAmountDue(checkDoubleorAssign(getNodeValue("Amount_Past_Due", cAISAccountDETAILS), -1.0));
-				tradeline.setValueCollateral(getNodeValue("Value_of_Collateral", cAISAccountDETAILS));
-				tradeline.setTypeCollateral(getNodeValue("Type_of_Collateral", cAISAccountDETAILS));
-				tradeline.setOccupation(getNodeValue("Occupation_Code", cAISAccountDETAILS));
-				tradeline.setRateOfIntererst(
-						checkDoubleorAssign(getNodeValue("Rate_of_Interest", cAISAccountDETAILS), -1.0));
-				tradeline.setIncome(checkDoubleorAssign(getNodeValue("Income", cAISAccountDETAILS), -1.0));
 				// get all address nodes
 				Element addressElement = (Element) cAISAccountDETAILS;
 				NodeList addressNodeList = addressElement.getElementsByTagName("CAIS_Holder_Address_Details");
@@ -521,14 +491,12 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 				// Product product = productMap.get(accountType + "");
 				// String productId = product.getId();
 				// tradeline.setOrganizationId(organizationId);
-				tradeline.setOrganizationId(organizationName.toUpperCase());
+				tradeline.setOrganizationName(organizationName.toUpperCase());
 				// organizationService.checkOrAssignProductToOrganization(
 				// organizationId, productId);
 				// tradeline.setProductId(productId);
-				tradeline.setProductId("xx");
-				tradeline.setExperianTradelineStatusEnum(
-						this.getStatus(parseExperinaStringToInteger(getNodeValue("Account_Status", cAISAccountDETAILS)),
-								tradeline.getDaysPastDue()));
+				tradeline.setProductName("xx");
+				
 				tradeline.setUserId(reportInputEntity.getUserId());
 				tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
 
@@ -536,14 +504,13 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 				logger.logInfo("ParseExperianReportObserver", "parse", "tradeline parse exception", ex.toString());
 			}
 		}
+		
 		report.setBureauScore(Integer.parseInt(
 				getNodeValue("BureauScore", scoreNodes) == "" ? "0" : getNodeValue("BureauScore", scoreNodes)));
 		report.setReportNumber(getNodeValue("ReportNumber", creditProfileHeaderNodes));
-		report.setCreditRating(getNodeValue("BureauScoreConfidLevel", scoreNodes));
 		report.setReportStatusEnum(ReportStatus.Complete);
 		report.setReportTradelines(tradelines);
 		report.setReportDateTime(getNodeValue("ReportDate", creditProfileHeaderNodes));
-		report.setUniqueTransitionId(reportInputEntity.getStage1Id() == null ? "" : reportInputEntity.getStage1Id());
 		// save report's remaining items.
 		reportService.save(report);
 		// sets the pan number in pan number hash
