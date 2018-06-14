@@ -147,10 +147,10 @@ public class ReferralController extends BaseController {
 	 */
 	@ApiOperation(value = "Gets the logged in user's monthly count of referred signed-up users ")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/userReferredSignedUpUsersMonthlyCount", method = RequestMethod.GET)
-	public @ResponseBody List<Map<String, Object>> getUserReferredSignedUpUsersCountCurrentMonth()
+	@RequestMapping(value = "/userReferredUsersCurrentMonthCount", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> getUserReferredUsersCountCurrentMonth()
 			throws UnauthorizedException {
-		return referralService.getLoggedInUserReferredSignedUpUsersCountCurrentMonth();
+		return referralService.getLoggedInUserReferredUsersCountCurrentMonth();
 	}
 
 }

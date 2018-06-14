@@ -571,14 +571,14 @@ public class ReferralService implements IReferralService {
 	 * @see IReferralService.getLoggedInUserReferredSignedUpUsersCountCurrentMonth
 	 */
 	@Override
-	public List<Map<String, Object>> getLoggedInUserReferredSignedUpUsersCountCurrentMonth() {
+	public List<Map<String, Object>> getLoggedInUserReferredUsersCountCurrentMonth() {
 		// get current date for year and month
 		String currentDate = formatter.format(new Date());
 		// get date portion with current month and year in yyyy-MM format
 		String datePart = currentDate.substring(0, 7);
 		// get sign up user refered by logged in user by preparing first date
 		// and lastdate of current month
-		return mySqlRefralContact.getCurrentMonthSignUpCount(
+		return mySqlRefralContact.getCurrentMonthReferalCount(
 				RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), datePart + "-01",
 				datePart + "-31");
 	}

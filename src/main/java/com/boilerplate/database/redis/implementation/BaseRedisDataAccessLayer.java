@@ -1066,9 +1066,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for getWordPressDataStatistics method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCountCurrentMonth()");
+				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredUsersCountCurrentMonth()");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCountCurrentMonth()");
+				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredUsersCountCurrentMonth()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
@@ -1580,10 +1580,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("GET_TOTAL_ARTICLES_COUNT",
 				"SELECT COUNT( id ) as count FROM  wp_posts WHERE post_status = 'publish'");
 		vAllEAll.put("GET_TOP_SEARCHED_ARTICLES",
-				"SELECT t2.post_title AS topTitle ,t2.post_name as postLink, t1.date as date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID where t2.post_title != 'Home page sample' ORDER BY t1.date DESC LIMIT 10");
+				"SELECT distinct(t2.post_title) AS topTitle ,t2.post_name as postLink, t1.date as date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID where t2.post_title != 'Home page sample' ORDER BY t1.date DESC LIMIT 10");
 		// query for signed up users per month
-		vAllEAll.put("GET_MONTHLY_SIGN_UP_COUNT_of_REFFERD_USER",
-				"SELECT count(ComingUserId) as count FROM Aks_ReferalContacts WHERE UserId = '@userId' and ComingUserId is not null and Date(CreationDate) between ('@startDate') and ('@endDate')");
+		vAllEAll.put("GET_MONTHLY_REFERRED_USERS_COUNT",
+				"SELECT count(*) as count FROM Aks_ReferalContacts WHERE UserId = '@userId' and Date(CreationDate) between ('@startDate') and ('@endDate')");
 
 		// query for signed up users per month
 		vAllEAll.put("GET_TOPMOST_PLAYED_SURVEYS",

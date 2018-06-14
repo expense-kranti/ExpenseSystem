@@ -219,9 +219,9 @@ public class MySQLReferralContacts extends MySQLBaseDataAccessLayer implements I
 	 * @see IReferral.getCurrentMonthlSignUpCount
 	 */
 	@Override
-	public List<Map<String, Object>> getCurrentMonthSignUpCount(String userId, String startDate, String endDate) {
+	public List<Map<String, Object>> getCurrentMonthReferalCount(String userId, String startDate, String endDate) {
 		// query to get signed up users were referred by logged in user
-		String sqlQuery = configurationManager.get("GET_MONTHLY_SIGN_UP_COUNT_of_REFFERD_USER");
+		String sqlQuery = configurationManager.get("GET_MONTHLY_REFERRED_USERS_COUNT");
 		// prepare sqlQuery
 		sqlQuery = sqlQuery.replace("@userId", userId);
 		sqlQuery = sqlQuery.replace("@startDate", startDate);

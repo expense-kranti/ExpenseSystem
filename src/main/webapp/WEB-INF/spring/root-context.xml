@@ -772,6 +772,10 @@
 
 	<!-- Dependencies related to Handbook apis -->
 	<bean id="handbookService" class="com.boilerplate.service.implemetations.HandbookService">
+		<property name="mySqlHandbook" ref="mySqlHandbook"></property>
+	</bean>
+
+	<bean id="mySqlHandbook" class="com.boilerplate.database.mysql.implementations.MySQLHandbook">	
 	</bean>
 
 
