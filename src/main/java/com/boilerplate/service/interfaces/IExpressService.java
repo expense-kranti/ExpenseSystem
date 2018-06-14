@@ -17,6 +17,6 @@ public interface IExpressService {
 	 *             thrown when no express attempt found for mobilenumber for
 	 *             validating name
 	 */
-	public ExpressEntity validateAndRegisterUser(ExpressEntity expressEntity) throws PreconditionFailedException;
+	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException;
 
 }
