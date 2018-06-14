@@ -18,4 +18,14 @@ public interface IExpress {
 	 * @return the express entity containing the list of names
 	 */
 	public ExpressEntity getUserExpressDetails(String phoneNumber);
+
+	/**
+	 * This method is used to save the user names into the redis database
+	 * 
+	 * @param expressEntity
+	 *            this entity cotains the list of names
+	 * @return the list of names
+	 */
+	public ExpressEntity saveUserExpressDetails(ExpressEntity expressEntity);
+
 }
