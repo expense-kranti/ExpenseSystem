@@ -30,26 +30,6 @@ public class ExpressController extends BaseController {
 	IExpressService expressService;
 
 	/**
-	 * This api is used to validate the user and register the user on validation
-	 * success and then gets the user details on basis of phone number and name
-	 * 
-	 * @param expressEntity
-	 *            contains the phone number and name of user
-	 * @return the express entity
-	 * @throws PreconditionFailedException
-	 *             thrown when no express attempt found for user for validating
-	 *             input name with express attempt generated name
-	 */
-	@ApiOperation(value = "Validates input name and registers user if name validated")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
-			@ApiResponse(code = 400, message = "Data not completely filled") })
-	@RequestMapping(value = "/experian/express/validateUser", method = RequestMethod.POST)
-	public @ResponseBody void validateName(@RequestBody ExpressEntity expressEntity)
-			throws PreconditionFailedException {
-		expressService.validateName(expressEntity);
-	}
-
-	/**
 	 * This method is used to get the list of names
 	 * 
 	 * @param expressEntity
@@ -68,9 +48,30 @@ public class ExpressController extends BaseController {
 	 */
 	@ApiOperation(value = "gets the list of names for a given mobile number from our api")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
-	@RequestMapping(value = "/experian/namesForMobileNumber", method = RequestMethod.POST)
+	@RequestMapping(value = "/express/namesForMobileNumber", method = RequestMethod.POST)
 	public @ResponseBody ExpressEntity getNamesByMobileNumber(@RequestBody ExpressEntity expressEntity)
 			throws Exception, ValidationFailedException, NotFoundException, BadRequestException {
 		return expressService.getNamesByMobileNumber(expressEntity);
 	}
+
+	/**
+	 * This api is used to validate the user and register the user on validation
+	 * success and then gets the user details on basis of phone number and name
+	 * 
+	 * @param expressEntity
+	 *            contains the phone number and name of user
+	 * @return the express entity
+	 * @throws PreconditionFailedException
+	 *             thrown when no express attempt found for user for validating
+	 *             input name with express attempt generated name
+	 */
+	@ApiOperation(value = "Validates input name and registers user if name validated")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 400, message = "Data not completely filled") })
+	@RequestMapping(value = "/express/validateName", method = RequestMethod.POST)
+	public @ResponseBody void validateName(@RequestBody ExpressEntity expressEntity)
+			throws PreconditionFailedException {
+		expressService.validateName(expressEntity);
+	}
+
 }

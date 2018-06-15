@@ -90,11 +90,7 @@ public class ExpressService implements IExpressService {
 
 		// prepare request headers and request body for our experian request
 		// Mediator(named Java)
-		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
-		BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
-		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
-		contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
-		requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
+		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = getRequestHeaders("Content-Type", "application/json;charset=UTF-8");
 
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("GET_NAMES_BY_MOBILE_NUMBER"),
 				requestHeadersJava, null, requestData, "POST");
@@ -118,6 +114,18 @@ public class ExpressService implements IExpressService {
 		expressEntity.setFullNameList(names);
 		expressDataAccess.saveUserExpressDetails(expressEntity);
 		return expressEntity;
+	}
+
+	/**
+	 * This method generates request headers
+	 * @return
+	 */
+	public BoilerplateMap<String, BoilerplateList<String>> getRequestHeaders(String headerName, String headerValue) {
+		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
+		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
+		contentTypeHeaderValueJava.add(headerValue);
+		requestHeadersJava.put(headerName, contentTypeHeaderValueJava);
+		return requestHeadersJava;
 	}
 
 	/**
