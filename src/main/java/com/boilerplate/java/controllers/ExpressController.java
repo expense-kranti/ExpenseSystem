@@ -71,13 +71,15 @@ public class ExpressController extends BaseController {
 	 * @throws PreconditionFailedException
 	 *             thrown when no express attempt found for user for validating
 	 *             input name with express attempt generated name
+	 * @throws ValidationFailedException
+	 *             thrown when required input not found
 	 */
 	@ApiOperation(value = "Validates input name and registers user if name validated")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 400, message = "Data not completely filled") })
 	@RequestMapping(value = "/express/validateName", method = RequestMethod.POST)
 	public @ResponseBody void validateName(@RequestBody ExpressEntity expressEntity)
-			throws PreconditionFailedException {
+			throws PreconditionFailedException, ValidationFailedException {
 		expressService.validateName(expressEntity);
 	}
 

@@ -16,6 +16,7 @@ import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 
@@ -27,7 +28,6 @@ import com.boilerplate.service.interfaces.IExpressService;
  */
 public class ExpressService implements IExpressService {
 
-	// TODO ADD DEPENDENCY
 	/**
 	 * This is an instance of expressDataAccess
 	 */
@@ -43,8 +43,6 @@ public class ExpressService implements IExpressService {
 		this.expressDataAccess = expressDataAccess;
 	}
 
-	// TODO ADD DEPENDENCY// TODO ADD DEPENDENCY// TODO ADD DEPENDENCY// TODO
-	// ADD DEPENDENCY
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -61,11 +59,17 @@ public class ExpressService implements IExpressService {
 	}
 
 	/**
-	 * @see IExpressService.validateAndRegisterUser
+	 * @see IExpressService.validateName
 	 */
 	@Override
-	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException {
-
+	public void validateName(ExpressEntity expressEntity)
+			throws PreconditionFailedException, ValidationFailedException {
+		// validating phonenumber
+		expressEntity.validate();
+		// check full name
+		if (BaseEntity.isNullOrEmpty(expressEntity.getFullName())) {
+			throw new ValidationFailedException("ExpressEntity", "Full name is null or empty", null);
+		}
 		// get list name from express entity from db for given phone number
 		ExpressEntity expressEntityFromDB = expressDataAccess.getUserExpressDetails(expressEntity.getMobileNumber());
 		if (expressEntityFromDB != null) {
@@ -85,10 +89,8 @@ public class ExpressService implements IExpressService {
 	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
 			throws ValidationFailedException, IOException {
 
-		// check the expressEntity having mobile number or not
-		if (expressEntity.validate() != true) {
-			throw new ValidationFailedException("ExpressEntity", "mobile number can not be null or empty", null);
-		}
+		// validate express entity
+		expressEntity.validate();
 		String requestData = createRequestBodyForGettingName(expressEntity);
 
 		// prepare request headers and request body for our experian request
@@ -107,7 +109,7 @@ public class ExpressService implements IExpressService {
 		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 		// Get the list of names from the response
 		List<String> names = (List<String>) responseBodyMap.get("nameList");
-		// Creating the list for holdin the random name which will be added to the
+		// Creating the list for holding the random name which will be added to the
 		// response names list
 		List<String> randomNames = new ArrayList<>();
 		// Check if random names are required, if list of names fetched is less
@@ -185,7 +187,6 @@ public class ExpressService implements IExpressService {
 		names.add("Ankur Singh");
 		names.add("Aman Bindal");
 		names.add("Madu");
-
 		// generate a list of required size random names
 		while (namesReturned.size() < count) {
 			String randomName = names.get((int) (Math.random() * ((10 - 1))) + 1);
@@ -194,7 +195,6 @@ public class ExpressService implements IExpressService {
 			else
 				namesReturned.add(randomName);
 		}
-
 		// return the list of random names generated
 		return namesReturned;
 	}
