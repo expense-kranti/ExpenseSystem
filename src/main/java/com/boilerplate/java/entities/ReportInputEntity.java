@@ -71,6 +71,14 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 * This is the reportVersion
 	 */
 	private ReportVersion reportVersionEnum;
+	/**
+	 * This is the reportVersion
+	 */
+	private String reportNumber;
+	/**
+	 * This is the reportVersion
+	 */
+	private String reportFileId;
 
 	/**
 	 * This method is used to get the question
@@ -366,6 +374,44 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 */
 	public void setReportVersion(int reportVersion) {
 		this.reportVersionEnum = ReportVersion.values()[reportVersion];
+	}
+
+	/**
+	 * Gets the report number
+	 * 
+	 * @return the reportNumber
+	 */
+	public String getReportNumber() {
+		return reportNumber;
+	}
+
+	/**
+	 * Sets the report number
+	 * 
+	 * @param reportNumber
+	 *            the reportNumber to set
+	 */
+	public void setReportNumber(String reportNumber) {
+		this.reportNumber = reportNumber;
+	}
+
+	/**
+	 * Gets the report file id
+	 * 
+	 * @return the reportFileId
+	 */
+	public String getReportFileId() {
+		return reportFileId;
+	}
+
+	/**
+	 * Sets the report file id
+	 * 
+	 * @param reportFileId
+	 *            the reportFileId to set
+	 */
+	public void setReportFileId(String reportFileId) {
+		this.reportFileId = reportFileId;
 	}
 
 }
