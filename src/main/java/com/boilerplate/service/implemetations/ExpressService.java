@@ -14,6 +14,7 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.BaseEntity;
@@ -27,6 +28,11 @@ import com.boilerplate.service.interfaces.IExpressService;
  *
  */
 public class ExpressService implements IExpressService {
+
+	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(ExpressService.class);
 
 	/**
 	 * This is an instance of expressDataAccess
@@ -89,6 +95,8 @@ public class ExpressService implements IExpressService {
 	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
 			throws ValidationFailedException, IOException {
 
+		logger.logInfo("ExpressService", "getNamesByMobileNumber", "This is the express entity:" + expressEntity, null);
+
 		// validate express entity
 		expressEntity.validate();
 		String requestData = createRequestBodyForGettingName(expressEntity);
@@ -97,9 +105,15 @@ public class ExpressService implements IExpressService {
 		// Mediator(named Java)
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = getRequestHeaders("Content-Type",
 				"application/json;charset=UTF-8");
+
+		logger.logInfo("ExpressService", "getNamesByMobileNumber",
+				"Before making the http call the value of request header is:" + requestHeadersJava, null);
 		// Making the http call for generating the response
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("GET_NAMES_BY_MOBILE_NUMBER"),
 				requestHeadersJava, null, requestData, "POST");
+		logger.logInfo("ExpressService", "getNamesByMobileNumber",
+				"after making the http call the http response is as:" + httpResponse, null);
+
 		// Throw exception if status is not 200
 		if (httpResponse.getHttpStatus() != 200) {
 			// Throw exception
@@ -109,6 +123,9 @@ public class ExpressService implements IExpressService {
 		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 		// Get the list of names from the response
 		List<String> names = (List<String>) responseBodyMap.get("nameList");
+
+		logger.logInfo("ExpressService", "getNamesByMobileNumber",
+				"after getting the names for the response is as:" + names, null);
 		// Creating the list for holding the random name which will be added to the
 		// response names list
 		List<String> randomNames = new ArrayList<>();
@@ -122,8 +139,11 @@ public class ExpressService implements IExpressService {
 		names.addAll(randomNames);
 		// Shuffle the list of names
 		Collections.shuffle(names);
+
 		// Setting the list of required list of names
 		expressEntity.setFullNameList(names);
+		logger.logInfo("ExpressService", "getNamesByMobileNumber",
+				"before saving the names into the redis entity is as:" + expressEntity, null);
 		// Save this list of name into the redis database
 		expressDataAccess.saveUserExpressDetails(expressEntity);
 		return expressEntity;
@@ -140,6 +160,10 @@ public class ExpressService implements IExpressService {
 	 * @return requestHeadersJava This is the required header value
 	 */
 	public BoilerplateMap<String, BoilerplateList<String>> getRequestHeaders(String headerName, String headerValue) {
+
+		logger.logInfo("ExpressService", "getRequestHeaders",
+				"the input data is as:" + headerName + " header value" + headerValue, null);
+
 		// creating the map for containing the value of required header
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
 		// This contains the value for header
@@ -159,10 +183,14 @@ public class ExpressService implements IExpressService {
 	 * @return The required request body
 	 */
 	private String createRequestBodyForGettingName(ExpressEntity expressEntity) {
+		logger.logInfo("ExpressService", "createRequestBodyForGettingName", "the express entity is as:" + expressEntity,
+				null);
+
 		// getting the required request body from the configuration
 		String requestBody = configurationManager.get("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY");
 		// replacing the @mobile number with mobile number provided by user
 		requestBody = requestBody.replace("@mobileNumber", expressEntity.getMobileNumber());
+		logger.logInfo("ExpressService", "createRequestBodyForGettingName", "requestBody is as:" + requestBody, null);
 		return requestBody;
 	}
 

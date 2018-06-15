@@ -1,9 +1,15 @@
 package com.boilerplate.database.redis.implementation;
 
 import com.boilerplate.database.interfaces.IExpress;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ExpressEntity;
 
 public class RedisExpress extends BaseRedisDataAccessLayer implements IExpress {
+
+	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(RedisExpress.class);
 
 	/**
 	 * This is the key used to represent user key
@@ -31,6 +37,7 @@ public class RedisExpress extends BaseRedisDataAccessLayer implements IExpress {
 	 */
 	@Override
 	public ExpressEntity saveUserExpressDetails(ExpressEntity expressEntity) {
+		logger.logInfo("ExpressService", "saveUserExpressDetails", "express entity is as:" + expressEntity, null);
 		super.set(User + Express + PHONE_NUMBER + expressEntity.getMobileNumber(), expressEntity);
 		return expressEntity;
 
