@@ -20,11 +20,11 @@ public interface IExpress {
 	public ExpressEntity getUserExpressDetails(String phoneNumber);
 
 	/**
-	 * This method is used to save the user names into the redis database
+	 * This method is used to save the list of user names into the redis database
 	 * 
 	 * @param expressEntity
-	 *            this entity cotains the list of names
-	 * @return the list of names
+	 *            this entity contains the list of names names and mobile number
+	 * @return the expressEntity
 	 */
 	public ExpressEntity saveUserExpressDetails(ExpressEntity expressEntity);
 

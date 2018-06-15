@@ -78,6 +78,9 @@ public class ExpressService implements IExpressService {
 		}
 	}
 
+	/**
+	 * @see IExpressService.getNamesByMobileNumber
+	 */
 	@Override
 	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
 			throws ValidationFailedException, IOException {
@@ -90,18 +93,22 @@ public class ExpressService implements IExpressService {
 
 		// prepare request headers and request body for our experian request
 		// Mediator(named Java)
-		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = getRequestHeaders("Content-Type", "application/json;charset=UTF-8");
-
+		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = getRequestHeaders("Content-Type",
+				"application/json;charset=UTF-8");
+		// Making the http call for generating the response
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("GET_NAMES_BY_MOBILE_NUMBER"),
 				requestHeadersJava, null, requestData, "POST");
-		// throw exception if status is not 200
+		// Throw exception if status is not 200
 		if (httpResponse.getHttpStatus() != 200) {
 			// Throw exception
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
+		// Converting the response into the map
 		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
+		// Get the list of names from the response
 		List<String> names = (List<String>) responseBodyMap.get("nameList");
-
+		// Creating the list for holdin the random name which will be added to the
+		// response names list
 		List<String> randomNames = new ArrayList<>();
 		// Check if random names are required, if list of names fetched is less
 		// than 4
@@ -109,35 +116,50 @@ public class ExpressService implements IExpressService {
 			// get random names
 			randomNames = getRandomNames(4 - names.size());
 		}
+		// Adding the list of random names to the response data names
 		names.addAll(randomNames);
+		// Shuffle the list of names
 		Collections.shuffle(names);
+		// Setting the list of required list of names
 		expressEntity.setFullNameList(names);
+		// Save this list of name into the redis database
 		expressDataAccess.saveUserExpressDetails(expressEntity);
 		return expressEntity;
 	}
 
 	/**
-	 * This method generates request headers
-	 * @return
+	 * This method is used to generates request headers
+	 * 
+	 * @param headerName
+	 *            This is the key
+	 * @param headerValue
+	 *            This contains the value of key means content type
+	 * 
+	 * @return requestHeadersJava This is the required header value
 	 */
 	public BoilerplateMap<String, BoilerplateList<String>> getRequestHeaders(String headerName, String headerValue) {
+		// creating the map for containing the value of required header
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
+		// This contains the value for header
 		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
+		// Adding the value of content type of the required header
 		contentTypeHeaderValueJava.add(headerValue);
 		requestHeadersJava.put(headerName, contentTypeHeaderValueJava);
 		return requestHeadersJava;
 	}
 
 	/**
-	 * This method creates the request body for experian request.
+	 * This method creates the request body for getting the list of names request.
 	 * 
-	 * @param reportInputEntiity
-	 *            The report input entity containing required data for making
+	 * @param expressEntity
+	 *            The expressEntity containing required mobile number for making
 	 *            request body for request
 	 * @return The required request body
 	 */
 	private String createRequestBodyForGettingName(ExpressEntity expressEntity) {
+		// getting the required request body from the configuration
 		String requestBody = configurationManager.get("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY");
+		// replacing the @mobile number with mobile number provided by user
 		requestBody = requestBody.replace("@mobileNumber", expressEntity.getMobileNumber());
 		return requestBody;
 	}
@@ -147,7 +169,7 @@ public class ExpressService implements IExpressService {
 	 * 
 	 * @param count
 	 *            number of names to be returned
-	 * @return namesReturned list of names
+	 * @return required list of names
 	 */
 	private List<String> getRandomNames(int count) {
 
@@ -164,7 +186,7 @@ public class ExpressService implements IExpressService {
 		names.add("Aman Bindal");
 		names.add("Madu");
 
-		// generate a list of random names
+		// generate a list of required size random names
 		while (namesReturned.size() < count) {
 			String randomName = names.get((int) (Math.random() * ((10 - 1))) + 1);
 			if (namesReturned.contains(randomName))

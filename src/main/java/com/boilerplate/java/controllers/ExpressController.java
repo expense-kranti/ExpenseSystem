@@ -19,6 +19,12 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+/**
+ * 
+ * @author kranti-tech
+ *
+ */
+
 @Api(value = "API's for Express registration and report generation", basePath = "/express", description = "API's for express registration and report generation")
 @Controller
 public class ExpressController extends BaseController {
@@ -30,10 +36,11 @@ public class ExpressController extends BaseController {
 	IExpressService expressService;
 
 	/**
-	 * This method is used to get the list of names
+	 * This API is used to get the list of names with the help of mobile number and
+	 * this API hits the another API which provide us the list of names
 	 * 
 	 * @param expressEntity
-	 *            This is the express entity
+	 *            This is the express entity which contains the mobile number
 	 * @return the list of names
 	 * @throws Exception
 	 *             This is the parent exception
@@ -50,7 +57,7 @@ public class ExpressController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/express/namesForMobileNumber", method = RequestMethod.POST)
 	public @ResponseBody ExpressEntity getNamesByMobileNumber(@RequestBody ExpressEntity expressEntity)
-			throws Exception, ValidationFailedException, NotFoundException, BadRequestException {
+			throws ValidationFailedException, NotFoundException, BadRequestException, Exception {
 		return expressService.getNamesByMobileNumber(expressEntity);
 	}
 
