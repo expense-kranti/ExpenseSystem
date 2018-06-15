@@ -73,11 +73,10 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		if (this.getMobileNumber() == null || this.getMobileNumber().isEmpty()) {
-			return false;
-		} else {
-			return true;
-		}
+		if (this.getMobileNumber() == null || this.getMobileNumber().isEmpty())
+			throw new ValidationFailedException("ExpressEntity", "mobile number can not be null or empty", null);
+		return true;
+
 	}
 
 	@Override

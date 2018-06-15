@@ -18,8 +18,9 @@ public interface IExpressService {
 	 * @throws PreconditionFailedException
 	 *             thrown when no express attempt found for mobilenumber for
 	 *             validating name
+	 * @throws ValidationFailedException  thrown when required input not provided
 	 */
-	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException;
+	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException, ValidationFailedException;
 
 	/**
 	 * This method is used to get the list of name for the given mobile number

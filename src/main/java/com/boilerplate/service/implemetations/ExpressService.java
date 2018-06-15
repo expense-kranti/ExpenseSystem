@@ -16,6 +16,7 @@ import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 
@@ -58,11 +59,17 @@ public class ExpressService implements IExpressService {
 	}
 
 	/**
-	 * @see IExpressService.validateAndRegisterUser
+	 * @see IExpressService.validateName
 	 */
 	@Override
-	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException {
-
+	public void validateName(ExpressEntity expressEntity)
+			throws PreconditionFailedException, ValidationFailedException {
+		// validating phonenumber
+		expressEntity.validate();
+		// check full name
+		if (BaseEntity.isNullOrEmpty(expressEntity.getFullName())) {
+			throw new ValidationFailedException("ExpressEntity", "Full name is null or empty", null);
+		}
 		// get list name from express entity from db for given phone number
 		ExpressEntity expressEntityFromDB = expressDataAccess.getUserExpressDetails(expressEntity.getMobileNumber());
 		if (expressEntityFromDB != null) {
@@ -79,10 +86,8 @@ public class ExpressService implements IExpressService {
 	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
 			throws ValidationFailedException, IOException {
 
-		// check the expressEntity having mobile number or not
-		if (expressEntity.validate() != true) {
-			throw new ValidationFailedException("ExpressEntity", "mobile number can not be null or empty", null);
-		}
+		// validate express entity
+		expressEntity.validate();
 		String requestData = createRequestBodyForGettingName(expressEntity);
 
 		// prepare request headers and request body for our experian request
