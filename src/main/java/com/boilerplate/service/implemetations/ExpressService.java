@@ -207,14 +207,14 @@ public class ExpressService implements IExpressService {
 		List<String> names = new ArrayList();
 		names.add("Shiva Gupta");
 		names.add("Ankita Trivedi");
-		names.add("Amit");
-		names.add("Ashima");
+		names.add("Amit Verma");
+		names.add("Ashima khan");
 		names.add("Urvij kumar Singh");
 		names.add("Love Singhal");
-		names.add("Pawan");
+		names.add("Pawan goel");
 		names.add("Ankur Singh");
 		names.add("Aman Bindal");
-		names.add("Madu");
+		names.add("Madhurima singh");
 		// generate a list of required size random names
 		while (namesReturned.size() < count) {
 			String randomName = names.get((int) (Math.random() * ((10 - 1))) + 1);

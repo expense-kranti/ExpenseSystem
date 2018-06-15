@@ -1296,6 +1296,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllETest.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
 
+		vAllETest.put("GET_NAMES_BY_MOBILE_NUMBER",
+				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname \n");
+
 		return vAllETest;
 	}
 
