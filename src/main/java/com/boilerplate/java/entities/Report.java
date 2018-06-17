@@ -50,7 +50,9 @@ public class Report extends BaseEntity implements Serializable {
 	 */
 	private int questionCount;
 
-	// This is the file entity
+	/**
+	 *  This is the file entity
+	 */
 	FileEntity fileEntity;
 
 	/**

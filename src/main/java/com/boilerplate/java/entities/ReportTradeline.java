@@ -14,53 +14,91 @@ import com.boilerplate.java.collections.BoilerplateList;
 
 public class ReportTradeline extends BaseEntity implements Serializable {
 
-	// This is the offerEmail
+	/**
+	 * This is the offerEmail
+	 */
 	private String offerEmail;
 
-	// This is the dpd
+	/**
+	 * This is the dpd
+	 */
 	private int DPD;
 
-	// This is the organization name
+	/**
+	 * This is the organization name
+	 */
 	private String organizationName;
-	// This is the product name
+	/**
+	 * This is the product name
+	 */
 	private String productName;
 
-	// This is the reportId
+	/**
+	 * This is the reportId
+	 */
 	private String reportId;
-	// This is the account number
+	/**
+	 * This is the account number
+	 */
 	private String accountNumber;
 
-	// This is the openning date
+	/**
+	 * This is the openning date
+	 */
 	java.util.Date dateOpened;
-	// This is the close date
+	/**
+	 * This is the close date
+	 */
 	java.util.Date dateClosed;
-	// This is the last payment date
+	/**
+	 * This is the last payment date
+	 */
 	java.util.Date dateOfLastPayment;
-	// This is the acount holderType
+	/**
+	 * This is the acount holderType
+	 */
 	String accountHolderType;
 
-	// This is the current balance
+	/**
+	 * This is the current balance
+	 */
 	double currentBalance;
-	// This is the reported date
+	/**
+	 * This is the reported date
+	 */
 	java.util.Date dateReported;
-	// This is the due amount
+	/**
+	 * This is the due amount
+	 */
 	double amountDue;
 
-	// This is the user id
+	/**
+	 * This is the user id
+	 */
 	private String userId;
-	// This is the occupation
+	/**
+	 * This is the occupation
+	 */
 	private String occupation;
 
-	// This is the status of tradeLine report
+	/**
+	 * This is the status of tradeLine report
+	 */
 	ReportTradelineStatus reportTradelineStatus;
 
-	// This is the experian Trade Line status Enun
+	/**
+	 * This is the experian Trade Line status Enun
+	 */
 	ExperianTradelineStatus experianTradelineStatusEnum;
 
-	// This is electronic Contacts
+	/**
+	 * This is electronic Contacts
+	 */
 	BoilerplateList<ElectronicContact> electronicContacts = new BoilerplateList<>();
 
-	// This is the the address
+	/**
+	 * This is the the address
+	 */
 	BoilerplateList<Address> addresses = new BoilerplateList<>();
 
 	/**

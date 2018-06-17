@@ -18,49 +18,72 @@ import com.wordnik.swagger.annotations.ApiModel;
 @ApiModel(value = "This is the report input entity", description = "This is the report input entity", parent = BaseEntity.class)
 public class ReportInputEntity extends ExperianDataPublishEntity implements Serializable {
 
-	// This is the map for question and answer
+	/**
+	 * This is the map for question and answer
+	 */
 	private BoilerplateMap<String, ExperianQuestionAnswer> question = new BoilerplateMap<>();
 
-	// This holds the current question
+	/**
+	 * This holds the current question
+	 */
 	private ExperianQuestionAnswer currentQuestion;
 
-	// This is the proofFiles
+	/**
+	 * This is the proofFiles
+	 */
 	private BoilerplateList<String> proofFiles = new BoilerplateList<>();
 
-	// This the user id
+	/**
+	 * This the user id
+	 */
 	@JsonIgnore
 	private String userId;
 
-	// This is experian session one id.
+	/**
+	 * This is experian session one id.
+	 */
 	private String sessionId1;
 
-	// This is experian session two id.
+	/**
+	 * This is experian session two id.
+	 */
 	private String sessionId2;
 
-	// This is the API URL
+	/**
+	 * This is the API URL
+	 */
 	@JsonIgnore
 	private String url;
 
-	// This is the jsession id 1
+	/**
+	 * This is the jsession id 1
+	 */
 	@JsonIgnore
 	private String jSessionId1;
 
-	// This is jsession id 2
+	/**
+	 * This is jsession id 2
+	 */
 
 	@JsonIgnore
 	private String jSessionId2;
 
-	// This is the voucher code given to the customer for the given session.
+	/**
+	 * This is the voucher code given to the customer for the given session.
+	 */
 	@JsonIgnore
 	private String voucherCode;
 
-	// This is the voucher expiry for voucher given to the customer for the
-	// given
-	// session.
+	/**
+	 * This is the voucher expiry for voucher given to the customer for the given
+	 * session.
+	 */
 	@JsonIgnore
 	private java.util.Date voucherExpiry;
 
-	// This is the QuestionCount
+	/**
+	 * This is the QuestionCount
+	 */
 	private int questionCount;
 
 	/**
