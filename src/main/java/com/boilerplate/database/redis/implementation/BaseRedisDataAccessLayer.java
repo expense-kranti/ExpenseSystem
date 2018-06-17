@@ -1088,8 +1088,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//method permission for validateName
+
+		// method permission for validateName
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ExpressController.validateName(com.boilerplate.java.entities.ExpressEntity)");
@@ -1102,8 +1102,20 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		
+
+		// method permission for experian start
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.start(com.boilerplate.java.entities.ReportInputEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.start(com.boilerplate.java.entities.ReportInputEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// save the method permission map in configuration
 		// in database

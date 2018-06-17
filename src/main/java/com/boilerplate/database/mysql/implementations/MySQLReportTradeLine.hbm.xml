@@ -4,7 +4,7 @@
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
 	<class name="com.boilerplate.java.entities.ReportTradeline"
-		table="CSR_ReportTradeline">
+		table="AKS_ReportTradeline">
 		<id name="id" column="TradelineId"></id>
 		<property name="DPD" column="DPD" />
 		<property name="reportId" column="ReportId" />

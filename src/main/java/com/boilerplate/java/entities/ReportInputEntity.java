@@ -315,23 +315,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 		this.reportFileNameOnDisk = reportFileNameOnDisk;
 	}
 
-	@Override
-	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	public boolean isDontSendKycSms() {
 		// TODO Auto-generated method stub

@@ -18,6 +18,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 
 /**
@@ -179,6 +180,15 @@ public class ExpressService implements IExpressService {
 
 		// return the list of random names generated
 		return namesReturned;
+	}
+
+	/**
+	 * @see IExpressService.getUserDetails
+	 */
+	@Override
+	public ReportInputEntity getUserDetails() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

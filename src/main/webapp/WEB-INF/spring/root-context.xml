@@ -713,7 +713,12 @@
 		<property name="reportService" ref="reportService"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
 		<property name="expressDataAccess" ref="expressDataAccess"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
 
+	</bean>
+	
+	<bean id="mysqlReport"
+		class="com.boilerplate.database.mysql.implementations.MySQLReport">
 	</bean>
 	<bean id="experianDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisVoucher"

@@ -13,6 +13,7 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -74,6 +75,14 @@ public class ExpressController extends BaseController {
 	public @ResponseBody void validateName(@RequestBody ExpressEntity expressEntity)
 			throws PreconditionFailedException, ValidationFailedException {
 		expressService.validateName(expressEntity);
+	}
+
+	@ApiOperation(value = "Gets the logged in user's details available using mobileNumber and valid name")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 401, message = "user not logged in") })
+	@RequestMapping(value = "/express/userDetails", method = RequestMethod.GET)
+	public @ResponseBody ReportInputEntity getUserDetails() throws UnauthorizedException {
+		return expressService.getUserDetails();
 	}
 
 }

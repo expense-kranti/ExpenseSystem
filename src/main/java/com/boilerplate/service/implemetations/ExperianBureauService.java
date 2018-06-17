@@ -26,6 +26,8 @@ import org.xml.sax.SAXException;
 import com.boilerplate.asyncWork.ParseExperianReportObserver;
 import com.boilerplate.database.interfaces.IExperian;
 import com.boilerplate.database.interfaces.IExpress;
+import com.boilerplate.database.interfaces.IMySQLReport;
+import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -192,6 +194,19 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 */
 	public void setExperianDataAccess(IExperian experianDataAccess) {
 		this.experianDataAccess = experianDataAccess;
+	}
+
+	/**
+	 * This is an instance of mysqlReport
+	 */
+	IMySQLReport mysqlReport;
+
+	/**
+	 * @param mysqlReport
+	 *            the mysqlReport to set
+	 */
+	public void setMysqlReport(IMySQLReport mysqlReport) {
+		this.mysqlReport = mysqlReport;
 	}
 
 	/**
@@ -533,7 +548,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			report.setReportStatusEnum(ReportStatus.InProgress);
 			report.setQuestionCount(reportInputEntity.getQuestionCount());
 			// save report data
-			reportService.save(report);
+			// reportService.save(report);
+			mysqlReport.saveReport(report);
 			user.setUserState(MethodState.Report);
 			userService.update(user);
 			// create a report entity
@@ -979,11 +995,12 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 * @see IBureauIntegrationService.start
 	 */
 	@Override
-	public ReportInputEntity start(ReportInputEntity reportInputEntiity)
-			throws ValidationFailedException, ConflictException, NotFoundException, IOException,
-			PreconditionFailedException, BadRequestException, UnauthorizedException {
+	public ReportInputEntity start(ReportInputEntity reportInputEntiity) throws Exception {
 		reportInputEntiity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
 		try {
+
+			System.out.println(configurationManager.get("Enviornment"));
+
 			this.panNumberValidation(reportInputEntiity);
 			// check if the input data is clean
 			if ((RequestThreadLocal.getSession() == null)) {
@@ -996,10 +1013,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// reference
 			ExternalFacingReturnedUser user = userService
 					.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-			user.getUserMetaData().put("ExperianData", reportInputEntiity.toJSON());
-			user.setExperianRequestUniqueKey(reportInputEntiity.getMobileNumber());
-			user.setReportInputId(reportInputEntiity.getId());
-			userService.update(user);
+			// set userId
+			reportInputEntiity.setUserId(user.getUserId());
+			// save reportinputentity
+			mysqlReport.saveReportInputEntity(reportInputEntiity);
 
 			// now get the voucher code for this user
 			if (reportInputEntiity.getVoucherCode() == null || reportInputEntiity.getVoucherCode().equals("")) {
@@ -1029,12 +1046,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				throw new PreconditionFailedException("Experian Server",
 						"Issue in accessing server -Landing_Page_Submit", null);
 			}
-
-			user = userService.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-			user.getUserMetaData().put("ExperianData", reportInputEntiity.toJSON());
-			// user.setReportInputEntitty(reportInputEntiity);
-			user.setReportInputId(reportInputEntiity.getId());
-			userService.update(user);
+			// save report input entity with experian responses
+			mysqlReport.saveReportInputEntity(reportInputEntiity);
 
 		} catch (Exception ex) {
 			logger.logWarning("ExperianBureauService", "Start", "error", "");
@@ -1193,7 +1206,6 @@ public class ExperianBureauService implements IBureauIntegrationService {
 						reportInputEntiity.setVoucherCode(voucher.getVoucherCode());
 						reportInputEntiity.setVoucherExpiry(voucher.getExpiryDate());
 						voucherInvalid = true;
-
 					}
 
 				}
@@ -1210,8 +1222,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				String report = (String) responseBodyMap.get("showHtmlReportForCreditReport");
 				MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html",
 						"text/html", report.getBytes());
-				// TODO CHECK IF FILE BEING SAVED IN MYSQL ONLY OR IN REDIS AND
-				// MYSQL BOTH
+				// save file
 				FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
 				// NOT SAVING REPORT FILE ENTITY IN REPORTINPUTENTITY
 				// reportInputEntiity.setReportFileEntity(fileEntity);
@@ -1256,9 +1267,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 								+ getErrorStringAndResponseJsonFields(responseBodyMap),
 						false);
 
-				user.getUserMetaData().put("ExperianData", reportInputEntiity.toJSON());
+				// user.getUserMetaData().put("ExperianData",
+				// reportInputEntiity.toJSON());
 				// user.setReportInputEntitty(reportInputEntiity);
-				user.setReportInputId(reportInputEntiity.getId());
+				// user.setReportInputId(reportInputEntiity.getId());
 				userService.update(user);
 				RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
 				return reportInputEntiity;

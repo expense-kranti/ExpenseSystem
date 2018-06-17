@@ -25,11 +25,35 @@ import com.boilerplate.java.entities.ReportInputEntity;
  */
 public interface IBureauIntegrationService {
 
-	
-
+	/**
+	 * This method is used to start experian integration
+	 * 
+	 * @param reportInputEntiity
+	 *            it contains the data required to send request to server for
+	 *            experian integration
+	 * @return the report input entity
+	 * @throws ValidationFailedException
+	 *             thrown when any required value is not present
+	 * @throws ConflictException
+	 *             thrown when user already exists
+	 * @throws NotFoundException
+	 *             thrown when user not found with given userId(logged in
+	 *             userId)
+	 * @throws IOException
+	 *             thrown if IOException occurs in while making http requests to
+	 *             experian server
+	 * @throws PreconditionFailedException
+	 *             thrown when successful response of http request to experian
+	 *             server is not received
+	 * @throws BadRequestException
+	 *             when userId is not found
+	 * @throws UnauthorizedException
+	 * @throws Exception
+	 *             thrown when any exception occurs
+	 */
 	public ReportInputEntity start(ReportInputEntity reportInputEntiity)
 			throws ValidationFailedException, ConflictException, NotFoundException, IOException,
-			PreconditionFailedException, BadRequestException, UnauthorizedException;
+			PreconditionFailedException, BadRequestException, UnauthorizedException, Exception;
 
 	/**
 	 * This method is used to start question answer session with the user for

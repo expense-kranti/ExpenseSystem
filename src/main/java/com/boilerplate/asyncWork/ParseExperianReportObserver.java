@@ -21,6 +21,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.boilerplate.database.interfaces.IMySQLReport;
+import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
@@ -106,6 +108,19 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	}
 
 	/**
+	 * This is an instance of mysqlReport
+	 */
+	IMySQLReport mysqlReport;
+
+	/**
+	 * @param mysqlReport
+	 *            the mysqlReport to set
+	 */
+	public void setMysqlReport(IMySQLReport mysqlReport) {
+		this.mysqlReport = mysqlReport;
+	}
+
+	/**
 	 * @see IAsyncWorkObserver.observe
 	 */
 	@Override
@@ -145,7 +160,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * Converts an expeirna string sent back as date month and year to a date string
+	 * Converts an expeirna string sent back as date month and year to a date
+	 * string
 	 * 
 	 * @param year
 	 *            The year of date
@@ -195,11 +211,11 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	}
 
 	/**
-	 * This method converts an experian status code and DPD into a tradeline status
-	 * to group a tradeline as good bad or ugly. A good tradeline is anything with
-	 * DPD <90, while anything >90 is a case for concern in CMD even if it is not
-	 * for the bureau. Other than that standard bureau codes are used. Which are
-	 * magic numbers
+	 * This method converts an experian status code and DPD into a tradeline
+	 * status to group a tradeline as good bad or ugly. A good tradeline is
+	 * anything with DPD <90, while anything >90 is a case for concern in CMD
+	 * even if it is not for the bureau. Other than that standard bureau codes
+	 * are used. Which are magic numbers
 	 * 
 	 * @param experinStatusCode
 	 *            The code from experian
@@ -345,176 +361,166 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 * 
 	 * @param reportInputEntity
 	 *            which contains the report to be parsed
-	 * @throws IOException
-	 *             thrown when exception occurs in reading report file
-	 * @throws SAXException
-	 *             thrown when exception occurs in parsing the xml document
-	 * @throws ParserConfigurationException
-	 *             thrown if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested.
+	 * @throws Exception
 	 */
-	public void parse(ReportInputEntity reportInputEntity)
-			throws IOException, SAXException, ParserConfigurationException {
-		// load the html file as a string
-		String htmlFile = FileUtils.readFileToString(new File(
-				configurationManager.get("RootFileDownloadLocation") + reportInputEntity.getReportFileNameOnDisk()));
+	public void parse(ReportInputEntity reportInputEntity) throws Exception {
+		try {
+			// load the html file as a string
+			String htmlFile = FileUtils.readFileToString(new File(configurationManager.get("RootFileDownloadLocation")
+					+ reportInputEntity.getReportFileNameOnDisk()));
 
-		// cut out the xml part from it, again due to issues this can only be
-		// done as a magic number
-		// ideally we would have liked to be able to parse html and extract it
-		// based on a query
-		int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
-		// the resulting file as the trailing tags which need to be removed
-		String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
-		xmlFile = xmlFile.replace("\"/>", "");
-		xmlFile = xmlFile.replace("</body>", "");
-		xmlFile = xmlFile.replace("</html>", "");
-		// the xml we get is html encoded for example < is represented as &lt;
-		// hence to make it usable
-		// we parse
-		xmlFile = StringEscapeUtils.unescapeHtml(xmlFile);
-		// for each tradeline save in the DB
+			// cut out the xml part from it, again due to issues this can only
+			// be
+			// done as a magic number
+			// ideally we would have liked to be able to parse html and extract
+			// it
+			// based on a query
+			int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
+			// the resulting file as the trailing tags which need to be removed
+			String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
+			xmlFile = xmlFile.replace("\"/>", "");
+			xmlFile = xmlFile.replace("</body>", "");
+			xmlFile = xmlFile.replace("</html>", "");
+			// the xml we get is html encoded for example < is represented as
+			// &lt;
+			// hence to make it usable
+			// we parse
+			xmlFile = StringEscapeUtils.unescapeHtml(xmlFile);
+			// for each tradeline save in the DB
 
-		BoilerplateList<ReportTradeline> tradelines = new BoilerplateList<>();
-		ReportTradeline tradeline = null;
+			BoilerplateList<ReportTradeline> tradelines = new BoilerplateList<>();
+			ReportTradeline tradeline = null;
 
-		// parse xml file from report
+			// parse xml file from report
 
-		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		InputSource inputSource = new InputSource();
-		inputSource.setCharacterStream(new StringReader(xmlFile));
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			InputSource inputSource = new InputSource();
+			inputSource.setCharacterStream(new StringReader(xmlFile));
 
-		Document doc = documentBuilder.parse(inputSource);
+			Document doc = documentBuilder.parse(inputSource);
 
-		// Normalize the XML Structure; It's just too important !!
-		NodeList root = doc.getChildNodes();
-		Node rootNode = getNode("InProfileResponse", root);
-		Node creditProfileHeader = getNode("CreditProfileHeader", rootNode.getChildNodes());
-		Node score = getNode("SCORE", rootNode.getChildNodes());
-		NodeList accountDetails = doc.getElementsByTagName("CAIS_Account_DETAILS");
-		// get creditprofileheader nodes
-		NodeList creditProfileHeaderNodes = creditProfileHeader.getChildNodes();
+			// Normalize the XML Structure; It's just too important !!
+			NodeList root = doc.getChildNodes();
+			Node rootNode = getNode("InProfileResponse", root);
+			Node creditProfileHeader = getNode("CreditProfileHeader", rootNode.getChildNodes());
+			Node score = getNode("SCORE", rootNode.getChildNodes());
+			NodeList accountDetails = doc.getElementsByTagName("CAIS_Account_DETAILS");
+			// get creditprofileheader nodes
+			NodeList creditProfileHeaderNodes = creditProfileHeader.getChildNodes();
 
-		// get bureau score nodes
-		NodeList scoreNodes = score.getChildNodes();
+			// get bureau score nodes
+			NodeList scoreNodes = score.getChildNodes();
 
-		BoilerplateMap<String, String> accountNumberBankNameMap = new BoilerplateMap<>();
-		BoilerplateMap<String, String> accountNumberBankNameProductMap = new BoilerplateMap<>();
-		// for the report extract the tradelines
-		for (int i = 0; i < accountDetails.getLength(); i++) {
-			try {
-				NodeList cAISAccountDETAILS = accountDetails.item(i).getChildNodes();
-				tradeline = new ReportTradeline();
-				String accountNumber = getNodeValue("Account_Number", cAISAccountDETAILS);
-				tradeline.setAccountNumber(accountNumber);
+			BoilerplateMap<String, String> accountNumberBankNameMap = new BoilerplateMap<>();
+			BoilerplateMap<String, String> accountNumberBankNameProductMap = new BoilerplateMap<>();
 
-				tradeline.setAccountHolderType(getNodeValue("AccountHoldertypeCode", cAISAccountDETAILS));
+			// for the report extract the tradelines
+			for (int i = 0; i < accountDetails.getLength(); i++) {
+				try {
+					NodeList cAISAccountDETAILS = accountDetails.item(i).getChildNodes();
+					tradeline = new ReportTradeline();
+					String accountNumber = getNodeValue("Account_Number", cAISAccountDETAILS);
+					tradeline.setAccountNumber(accountNumber);
 
-				String year = "1900";
-				String month = "1";
-				Element accountHistoryElement = (Element) cAISAccountDETAILS;
-				NodeList cAISAccountHistoryList = accountHistoryElement.getElementsByTagName("CAIS_Account_History");
-				NodeList cAISAccountHistory = cAISAccountHistoryList.item(0).getChildNodes();
-				String daysPastDue = getNodeValue("Days_Past_Due", cAISAccountHistory);
+					tradeline.setAccountHolderType(getNodeValue("AccountHoldertypeCode", cAISAccountDETAILS));
 
-				if (cAISAccountHistory.getLength() > 0) {
-					year = getNodeValue("Year", cAISAccountHistory);
-					month = getNodeValue("Month", cAISAccountHistory);
+					String year = "1900";
+					String month = "1";
+					Element accountHistoryElement = (Element) cAISAccountDETAILS;
+					NodeList cAISAccountHistoryList = accountHistoryElement
+							.getElementsByTagName("CAIS_Account_History");
+					NodeList cAISAccountHistory = cAISAccountHistoryList.item(0).getChildNodes();
+					String daysPastDue = getNodeValue("Days_Past_Due", cAISAccountHistory);
 
+					if (cAISAccountHistory.getLength() > 0) {
+						year = getNodeValue("Year", cAISAccountHistory);
+						month = getNodeValue("Month", cAISAccountHistory);
+
+					}
+					if (year == "" || month == "") {
+						year = "1900";
+						month = "1";
+					}
+
+					tradeline.setCurrentBalance(
+							checkDoubleorAssign(getNodeValue("Current_Balance", cAISAccountDETAILS), -1.0));
+					if (getNodeValue("Date_Reported", cAISAccountDETAILS) != "") {
+						tradeline.setDateReported(this
+								.experianStringToDate(getNodeValue("Date_Reported", cAISAccountDETAILS).toString()));
+					}
+					tradeline.setAmountDue(
+							checkDoubleorAssign(getNodeValue("Amount_Past_Due", cAISAccountDETAILS), -1.0));
+					// get all address nodes
+					Element addressElement = (Element) cAISAccountDETAILS;
+					NodeList addressNodeList = addressElement.getElementsByTagName("CAIS_Holder_Address_Details");
+					Address address = null;
+					for (int j = 0; j < addressNodeList.getLength(); j++) {
+						NodeList cAISHolderAddressDetais = addressNodeList.item(j).getChildNodes();
+						address = new Address();
+						address.setId(Integer.toString(j));
+						address.setCity(getNodeValue("City_non_normalized", cAISHolderAddressDetais));
+						address.setFirstLineOfAddress(
+								getNodeValue("First_Line_Of_Address_non_normalized", cAISHolderAddressDetais)
+										.replace("\"", ""));
+						address.setFifthLineOfAddress(
+								getNodeValue("Fifth_Line_Of_Address_non_normalized", cAISHolderAddressDetais)
+										.replace("\"", ""));
+						address.setSecondLineOfAddress(
+								getNodeValue("Second_Line_Of_Address_non_normalized", cAISHolderAddressDetais)
+										.replace("\"", ""));
+						address.setState(getNodeValue("State_non_normalized", cAISHolderAddressDetais));
+						address.setThirdLineOfAddress(
+								getNodeValue("Third_Line_Of_Address_non_normalized", cAISHolderAddressDetais)
+										.replace("\"", ""));
+						address.setCountryCode(getNodeValue("CountryCode_non_normalized", cAISHolderAddressDetais));
+						address.setZipCode(getNodeValue("ZIP_Postal_Code_non_normalized", cAISHolderAddressDetais));
+						tradeline.getAddresses().add(address);
+
+					}
+					// get all phone numbers and emails
+					Element holderPhoneElement = (Element) cAISAccountDETAILS;
+					NodeList phoneList = holderPhoneElement.getElementsByTagName("CAIS_Holder_Phone_Details");
+					ElectronicContact electronicContact = null;
+					for (int k = 0; k < phoneList.getLength(); k++) {
+						NodeList cAISHolderPhoneDetails = phoneList.item(k).getChildNodes();
+						electronicContact = new ElectronicContact();
+						electronicContact.setId(Integer.toString(k));
+						electronicContact.setEmail(getNodeValue("EMailId", cAISHolderPhoneDetails));
+						electronicContact.setTelephoneNumber(getNodeValue("Telephone_Number", cAISHolderPhoneDetails));
+						electronicContact
+								.setMobileNumber(getNodeValue("Mobile_Telephone_Number", cAISHolderPhoneDetails));
+						tradeline.getElectronicContacts().add(electronicContact);
+					}
+					String organizationName = getNodeValue("Subscriber_Name", cAISAccountDETAILS);
+
+					int accountType = Integer.parseInt((getNodeValue("Account_Type", cAISAccountDETAILS)) == "" ? "0"
+							: getNodeValue("Account_Type", cAISAccountDETAILS));
+
+					tradeline.setOrganizationName(organizationName.toUpperCase());
+
+					tradeline.setProductName("xx");
+
+					tradeline.setUserId(reportInputEntity.getUserId());
+					tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
+					// TODO SAVE REPORT TRADELINES
+					mysqlReport.saveReportTradeline(tradeline);
+				} catch (Exception ex) {
+					logger.logInfo("ParseExperianReportObserver", "parse", "tradeline parse exception", ex.toString());
 				}
-				if (year == "" || month == "") {
-					year = "1900";
-					month = "1";
-				}
-
-				tradeline.setCurrentBalance(
-						checkDoubleorAssign(getNodeValue("Current_Balance", cAISAccountDETAILS), -1.0));
-				if (getNodeValue("Date_Reported", cAISAccountDETAILS) != "") {
-					tradeline.setDateReported(
-							this.experianStringToDate(getNodeValue("Date_Reported", cAISAccountDETAILS).toString()));
-				}
-				tradeline.setAmountDue(checkDoubleorAssign(getNodeValue("Amount_Past_Due", cAISAccountDETAILS), -1.0));
-				// get all address nodes
-				Element addressElement = (Element) cAISAccountDETAILS;
-				NodeList addressNodeList = addressElement.getElementsByTagName("CAIS_Holder_Address_Details");
-				Address address = null;
-				for (int j = 0; j < addressNodeList.getLength(); j++) {
-					NodeList cAISHolderAddressDetais = addressNodeList.item(j).getChildNodes();
-					address = new Address();
-					address.setId(Integer.toString(j));
-					address.setCity(getNodeValue("City_non_normalized", cAISHolderAddressDetais));
-					address.setFirstLineOfAddress(
-							getNodeValue("First_Line_Of_Address_non_normalized", cAISHolderAddressDetais).replace("\"",
-									""));
-					address.setFifthLineOfAddress(
-							getNodeValue("Fifth_Line_Of_Address_non_normalized", cAISHolderAddressDetais).replace("\"",
-									""));
-					address.setSecondLineOfAddress(
-							getNodeValue("Second_Line_Of_Address_non_normalized", cAISHolderAddressDetais).replace("\"",
-									""));
-					address.setState(getNodeValue("State_non_normalized", cAISHolderAddressDetais));
-					address.setThirdLineOfAddress(
-							getNodeValue("Third_Line_Of_Address_non_normalized", cAISHolderAddressDetais).replace("\"",
-									""));
-					address.setCountryCode(getNodeValue("CountryCode_non_normalized", cAISHolderAddressDetais));
-					address.setZipCode(getNodeValue("ZIP_Postal_Code_non_normalized", cAISHolderAddressDetais));
-					tradeline.getAddresses().add(address);
-
-				}
-				// get all phone numbers and emails
-				Element holderPhoneElement = (Element) cAISAccountDETAILS;
-				NodeList phoneList = holderPhoneElement.getElementsByTagName("CAIS_Holder_Phone_Details");
-				ElectronicContact electronicContact = null;
-				for (int k = 0; k < phoneList.getLength(); k++) {
-					NodeList cAISHolderPhoneDetails = phoneList.item(k).getChildNodes();
-					electronicContact = new ElectronicContact();
-					electronicContact.setId(Integer.toString(k));
-					electronicContact.setEmail(getNodeValue("EMailId", cAISHolderPhoneDetails));
-					electronicContact.setTelephoneNumber(getNodeValue("Telephone_Number", cAISHolderPhoneDetails));
-					electronicContact.setMobileNumber(getNodeValue("Mobile_Telephone_Number", cAISHolderPhoneDetails));
-					tradeline.getElectronicContacts().add(electronicContact);
-				}
-				String organizationName = getNodeValue("Subscriber_Name", cAISAccountDETAILS);
-				// get the organization for the given tradeline, if one doesnt
-				// exist then create the organization
-				// ExternalFacingOrganization organization = organizationService
-				// .getOrCreateAndGetBank(organizationName);
-				// String organizationId =
-				// organization.getOrganization().getId();
-				// The reason we are making the acc type to int and then back to
-				// string is because we can get a value like 07 instead of 7
-				// similarly get the product type if one doesnt exist create it
-				int accountType = Integer.parseInt((getNodeValue("Account_Type", cAISAccountDETAILS)) == "" ? "0"
-						: getNodeValue("Account_Type", cAISAccountDETAILS));
-				// BoilerplateMap<String, Product> productMap = productService
-				// .getProductExperianTagMap();
-				// Product product = productMap.get(accountType + "");
-				// String productId = product.getId();
-				// tradeline.setOrganizationId(organizationId);
-				tradeline.setOrganizationName(organizationName.toUpperCase());
-				// organizationService.checkOrAssignProductToOrganization(
-				// organizationId, productId);
-				// tradeline.setProductId(productId);
-				tradeline.setProductName("xx");
-				
-				tradeline.setUserId(reportInputEntity.getUserId());
-				tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
-
-			} catch (Exception ex) {
-				logger.logInfo("ParseExperianReportObserver", "parse", "tradeline parse exception", ex.toString());
 			}
+			report.setBureauScore(Integer.parseInt(
+					getNodeValue("BureauScore", scoreNodes) == "" ? "0" : getNodeValue("BureauScore", scoreNodes)));
+			report.setReportNumber(getNodeValue("ReportNumber", creditProfileHeaderNodes));
+			report.setReportStatusEnum(ReportStatus.Complete);
+			report.setReportTradelines(tradelines);
+			report.setReportDateTime(getNodeValue("ReportDate", creditProfileHeaderNodes));
+			// save report's remaining items.
+			mysqlReport.saveReport(report);
+			// sets the pan number in pan number hash
+			setPanNumberInHash(reportInputEntity);
+		} catch (Exception ex) {
+			logger.logException("ParseExperianReportObserver", "parse", "ExceptionParse", ex.toString(), ex);
 		}
-		
-		report.setBureauScore(Integer.parseInt(
-				getNodeValue("BureauScore", scoreNodes) == "" ? "0" : getNodeValue("BureauScore", scoreNodes)));
-		report.setReportNumber(getNodeValue("ReportNumber", creditProfileHeaderNodes));
-		report.setReportStatusEnum(ReportStatus.Complete);
-		report.setReportTradelines(tradelines);
-		report.setReportDateTime(getNodeValue("ReportDate", creditProfileHeaderNodes));
-		// save report's remaining items.
-		reportService.save(report);
-		// sets the pan number in pan number hash
-		setPanNumberInHash(reportInputEntity);
 
 	}
 

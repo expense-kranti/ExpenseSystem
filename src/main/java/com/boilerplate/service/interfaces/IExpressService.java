@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.ReportInputEntity;
 
 public interface IExpressService {
 	/**
@@ -18,7 +19,8 @@ public interface IExpressService {
 	 * @throws PreconditionFailedException
 	 *             thrown when no express attempt found for mobilenumber for
 	 *             validating name
-	 * @throws ValidationFailedException  thrown when required input not provided
+	 * @throws ValidationFailedException
+	 *             thrown when required input not provided
 	 */
 	public void validateName(ExpressEntity expressEntity) throws PreconditionFailedException, ValidationFailedException;
 
@@ -35,5 +37,13 @@ public interface IExpressService {
 
 	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
 			throws ValidationFailedException, IOException;
+
+	/**
+	 * This method is used to get the logged in user details making a call to an
+	 * api
+	 * 
+	 * @return the user details are returned in report input entity
+	 */
+	public ReportInputEntity getUserDetails();
 
 }

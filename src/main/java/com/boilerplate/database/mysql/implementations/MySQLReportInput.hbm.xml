@@ -3,8 +3,8 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.boilerplate.java.entities.ReportInputEntiity"
-		table="CSR_ReportInputDetail">
+	<class name="com.boilerplate.java.entities.ReportInputEntity"
+		table="AKS_ReportInputDetail">
 		<id name="userId" column="UserId"></id>
 		<property name="sessionId2" column="SessionId2" />
 		<property name="url" column="URL" />
@@ -12,7 +12,13 @@
 		<property name="voucherCode" column="VoucherCode" />
 		<property name="voucherExpiry" column="VoucherExpiry" />
 		<property name="questionCount" column="QuestionCount" />
-
+		<property name="dateOfBirth" column="DOB" />
+		<property name="gender" column="Gender" />
+		<property name="addressLine1" column="AddressLine1" />
+		<property name="addressLine2" column="AddressLine2" />
+		<property name="city" column="City" />
+		<property name="pinCode" column="Pincode" />
+		<property name="panNumber" column="PanNumber" />
 
 	</class>
 </hibernate-mapping>
