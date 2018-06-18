@@ -1,5 +1,6 @@
 package com.boilerplate.database.interfaces;
 
+import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportTradeline;
@@ -44,5 +45,16 @@ public interface IMySQLReport {
 	 *             thrown when exception occurs in saving tradeline entity
 	 * 
 	 */
-	void saveReportTradeline(ReportTradeline reportTradeLine) throws Exception;
+	public void saveReportTradeline(ReportTradeline reportTradeLine) throws Exception;
+
+	/**
+	 * This method is used to save address contacts
+	 * 
+	 * @param electronicContact
+	 *            contains details of electronicContacts of reportTradeline of
+	 *            user report
+	 * @throws Exception
+	 *             thrown when any exception occurs
+	 */
+	public void saveAddress(ElectronicContact electronicContact) throws Exception;
 }
