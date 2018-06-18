@@ -1,10 +1,15 @@
 package com.boilerplate.database.mysql.implementations;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.boilerplate.database.interfaces.IMySQLReport;
 import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.Address;
 import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
@@ -70,16 +75,39 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 
 	}
 
+	/**
+	 * @see IMySQLReport.saveElectronicContact
+	 */
 	@Override
-	public void saveAddress(ElectronicContact electronicContact) throws Exception {
+	public void saveElectronicContact(ElectronicContact electronicContact) throws Exception {
 		try {
 			super.create(electronicContact);
 		} catch (Exception ex) {
 			// Log the exception
-			logger.logException("MySQLReport", "saveAddress", "Try-Catch",
-					" Exception in saving report tradeline in my sql", ex);
+			logger.logException("MySQLReport", "saveElectronicContact", "Try-Catch",
+					" Exception in saving Electronic Contact in my sql", ex);
 			throw ex;
 		}
+	}
+
+	@Override
+	public void saveAddress(Address address) throws Exception {
+		try {
+			super.create(address);
+		} catch (Exception ex) {
+			// Log the exception
+			logger.logException("MySQLReport", "saveAddress", "Try-Catch", " Exception in saving Address in my sql",
+					ex);
+			throw ex;
+		}
+	}
+
+	@Override
+	public List<ReportInputEntity> getReportInputEntity(String userId) {
+		String hSQLQuery = "from ReportInputEntity where userId = :userId";
+		Map<String, Object> queryParameters = new HashMap<>();
+		queryParameters.put("userId", userId);
+		return super.executeSelect(hSQLQuery, queryParameters);
 	}
 
 }

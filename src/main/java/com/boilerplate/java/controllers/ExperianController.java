@@ -2,19 +2,26 @@ package com.boilerplate.java.controllers;
 
 import java.io.IOException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.xml.sax.SAXException;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IBureauIntegrationService;
 import com.wordnik.swagger.annotations.Api;
@@ -58,6 +65,18 @@ public class ExperianController extends BaseController {
 			throws Exception, ValidationFailedException, ConflictException, NotFoundException, IOException,
 			PreconditionFailedException, BadRequestException, UnauthorizedException {
 		return this.experianBureauService.start(reportInputEntiity);
+	}
+	
+	@ApiOperation(	value="Fetches next question"
+			 )
+		@ApiResponses(value={
+						@ApiResponse(code=200, message="Ok")
+					,	@ApiResponse(code=400, message="Data not completly filled")
+					})
+		@RequestMapping(value = "/experian/question", method = RequestMethod.POST)
+	public @ResponseBody ReportInputEntity answerQuestionAndMoveToNext(@RequestBody ExperianQuestionAnswer experianQuestionAnswer) throws Exception,ConflictException, NotFoundException, PreconditionFailedException, IOException, UpdateFailedException, BadRequestException,JAXBException, ParserConfigurationException, FactoryConfigurationError, SAXException{
+		return this.experianBureauService.fetchNextItem(experianQuestionAnswer.getQuestionId()
+				,experianQuestionAnswer.getOptionSet1Answer(),experianQuestionAnswer.getOptionSet2Answer());
 	}
 
 }

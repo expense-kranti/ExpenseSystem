@@ -1144,6 +1144,21 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for answerQuestionAndMoveToNext in experian
+		// controller
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.answerQuestionAndMoveToNext(com.boilerplate.java.entities.ExperianQuestionAnswer)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.answerQuestionAndMoveToNext(com.boilerplate.java.entities.ExperianQuestionAnswer)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1352,7 +1367,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Voucher_Count_Email_Subject", "Available Voucher Count");
 		vAllETest.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllETest.put("Admin_Contact_Number", "9310390056");
-
+		vAllETest.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllETest.put("Experian_Question_Body",
+				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 
 		return vAllETest;
 	}
@@ -1476,7 +1493,6 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllEDev.put("Admin_Contact_Number", "9310390056");
 
-
 		return vAllEDev;
 
 	}
@@ -1573,6 +1589,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllEProduction.put("Admin_Contact_Number", "9004929159");
 
+		vAllEProduction.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllEProduction.put("Experian_Question_Body",
+				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 
 		return vAllEProduction;
 	}

@@ -1,7 +1,6 @@
 package com.boilerplate.asyncWork;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +8,6 @@ import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -19,19 +17,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.boilerplate.database.interfaces.IMySQLReport;
-import com.boilerplate.database.interfaces.IReport;
-import com.boilerplate.exceptions.rest.BadRequestException;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.Address;
 import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.ExperianTradelineStatus;
-
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportStatus;
@@ -420,7 +413,18 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 					NodeList cAISAccountDETAILS = accountDetails.item(i).getChildNodes();
 					tradeline = new ReportTradeline();
 					String accountNumber = getNodeValue("Account_Number", cAISAccountDETAILS);
+					tradeline.setReportId(getNodeValue("ReportNumber", creditProfileHeaderNodes));
+					String organizationName = getNodeValue("Subscriber_Name", cAISAccountDETAILS);
+					tradeline.setOrganizationName(organizationName);
+					tradeline.setProductName(
+							getProductName(Integer.parseInt((getNodeValue("Account_Type", cAISAccountDETAILS)) == ""
+									? "0" : getNodeValue("Account_Type", cAISAccountDETAILS))));
+
 					tradeline.setAccountNumber(accountNumber);
+					tradeline.setUserId(reportInputEntity.getUserId());
+					String tradelineId = tradeline.getUserId() + ":" + tradeline.getReportId() + ":"
+							+ tradeline.getOrganizationName() + ":" + tradeline.getProductName() + ":"
+							+ tradeline.getAccountNumber();
 
 					tradeline.setAccountHolderType(getNodeValue("AccountHoldertypeCode", cAISAccountDETAILS));
 
@@ -431,6 +435,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 							.getElementsByTagName("CAIS_Account_History");
 					NodeList cAISAccountHistory = cAISAccountHistoryList.item(0).getChildNodes();
 					String daysPastDue = getNodeValue("Days_Past_Due", cAISAccountHistory);
+					
 
 					if (cAISAccountHistory.getLength() > 0) {
 						year = getNodeValue("Year", cAISAccountHistory);
@@ -474,7 +479,10 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 										.replace("\"", ""));
 						address.setCountryCode(getNodeValue("CountryCode_non_normalized", cAISHolderAddressDetais));
 						address.setZipCode(getNodeValue("ZIP_Postal_Code_non_normalized", cAISHolderAddressDetais));
-						tradeline.getAddresses().add(address);
+						address.setTradelineId(tradelineId);
+						// tradeline.getAddresses().add(address);
+						// save address of tradeline of user report
+						mysqlReport.saveAddress(address);
 
 					}
 					// get all phone numbers and emails
@@ -489,21 +497,14 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 						electronicContact.setTelephoneNumber(getNodeValue("Telephone_Number", cAISHolderPhoneDetails));
 						electronicContact
 								.setMobileNumber(getNodeValue("Mobile_Telephone_Number", cAISHolderPhoneDetails));
-						//save electronic contacts
-						mysqlReport.saveAddress(electronicContact);
+						electronicContact.setTradelineId(tradelineId);
+						// save electronic contacts
+						mysqlReport.saveElectronicContact(electronicContact);
 					}
-					String organizationName = getNodeValue("Subscriber_Name", cAISAccountDETAILS);
-
-					int accountType = Integer.parseInt((getNodeValue("Account_Type", cAISAccountDETAILS)) == "" ? "0"
-							: getNodeValue("Account_Type", cAISAccountDETAILS));
-
-					tradeline.setOrganizationName(organizationName.toUpperCase());
-
-					tradeline.setProductName("xx");
 
 					tradeline.setUserId(reportInputEntity.getUserId());
 					tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
-					tradeline.setReportId(getNodeValue("ReportNumber", creditProfileHeaderNodes));
+
 					// TODO SAVE REPORT TRADELINES
 					mysqlReport.saveReportTradeline(tradeline);
 				} catch (Exception ex) {
@@ -605,6 +606,100 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 			return Double.parseDouble(str);
 		}
 
+	}
+
+	/**
+	 * This method is used to get the productname on the basis of account type
+	 * number
+	 * 
+	 * @param accountType
+	 *            the value for which mapped value to get
+	 * @return the product name
+	 */
+	private String getProductName(int accountType) {
+		String productName = "";
+		switch (accountType) {
+		
+		case 0:
+			productName = "Other";
+		case 1:
+			productName = "AUTO LOAN";
+		case 2:
+			productName = "HOUSING LOAN";
+		case 3:
+			productName = "PROPERTY LOAN";
+		case 4:
+			productName = "LOAN AGAINST SHARES SECURITIES";
+		case 5:
+			productName = "PERSONAL LOAN";
+		case 6:
+			productName = "CONSUMER LOAN";
+		case 7:
+			productName = "GOLD LOAN";
+		case 8:
+			productName = "EDUCATIONAL LOAN";
+		case 9:
+			productName = "LOAN TO PROFESSIONAL";
+		case 10:
+			productName = "CREDIT CARD";
+		case 11:
+			productName = "LEASING";
+		case 12:
+			productName = "OVERDRAFT LOAN";
+		case 13:
+			productName = "TWO WHEELER LOAN";
+		case 14:
+			productName = "NON FUNDED CREDIT FACILITY";
+		case 15:
+			productName = "LOAN AGAINST BANK DEPOSITS";
+		case 16:
+			productName = "FLEET CARD";
+		case 17:
+			productName = "Commercial Vehicle LOAN";
+		case 18:
+			productName = "Telco Wireless";
+		case 19:
+			productName = "Telco Broadband";
+		case 20:
+			productName = "Telco Landline";
+		case 31:
+			productName = "Secured Credit Card";
+		case 32:
+			productName = "Used Car Loan";
+		case 33:
+			productName = "Construction Equipment Loan";
+		case 34:
+			productName = "Tractor Loan";
+		case 35:
+			productName = "CORPORATE CREDIT CARD";
+		case 43:
+			productName = "Microfinance Others";
+		case 51:
+			productName = "BUSINESS LOAN GENERAL";
+		case 52:
+			productName = "BUSINESS LOAN PRIORITY SECTOR SMALL BUSINESS";
+		case 53:
+			productName = "BUSINESS LOAN PRIORITY SECTOR AGRICULTURE";
+		case 54:
+			productName = "BUSINESS LOAN PRIORITY SECTOR OTHERS";
+		case 55:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY GENERAL";
+		case 56:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR SMALL BUSINESS";
+		case 57:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR AGRICULTURE";
+		case 58:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR OTHERS";
+		case 59:
+			productName = "BUSINESS LOANS AGAINST BANK DEPOSITS";
+		case 60:
+			productName = "Staff Loan";
+
+		default:
+			productName = "Other";
+		}
+
+		return productName;
 	}
 
 }
