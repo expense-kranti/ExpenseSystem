@@ -119,6 +119,7 @@ public class ExpressService implements IExpressService {
 			// Throw exception
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
+
 		// Converting the response into the map
 		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 		// Get the list of names from the response
@@ -164,7 +165,7 @@ public class ExpressService implements IExpressService {
 		logger.logInfo("ExpressService", "getRequestHeaders",
 				"the input data is as:" + headerName + " header value" + headerValue, null);
 
-		// creating the map for containing the value of required header
+		// creating the map for containing the required header
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
 		// This contains the value for header
 		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();

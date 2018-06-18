@@ -16,7 +16,7 @@ public interface IExpressService {
 	 * @return expressEntity contains the details of user express attempt like
 	 *         mobile number
 	 * @throws PreconditionFailedException
-	 *             thrown when no express attempt found for mobilenumber for
+	 *             thrown when no express attempt found for mobile number for
 	 *             validating name
 	 * @throws ValidationFailedException  thrown when required input not provided
 	 */
