@@ -60,6 +60,8 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLIncomeTax.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLHandBook.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLReportInput.hbm.xml" />
 
 
 	</session-factory>

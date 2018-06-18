@@ -1,7 +1,9 @@
 package com.boilerplate.service.interfaces;
 
 import java.io.IOException;
+import java.text.ParseException;
 
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpressEntity;
@@ -53,9 +55,17 @@ public interface IExpressService {
 	 *             thrown when IOException occurs (while making request to the
 	 *             api for getting name)
 	 * @throws PreconditionFailedException
-	 *             thrown when no details found for logged in user's mobile number and full name
-	 * @throws ValidationFailedException thrown when user full name is not found in db for logged in user 
+	 *             thrown when no details found for logged in user's mobile
+	 *             number and full name
+	 * @throws ValidationFailedException
+	 *             thrown when user full name is not found in db for logged in
+	 *             user
+	 * @throws NotFoundException
+	 *             thrown when no express attempt found for logged in user
+	 * @throws ParseException
+	 *             thrown when exception occurs in parsing the string to date
 	 */
-	public ReportInputEntity getUserDetails() throws IOException, PreconditionFailedException, ValidationFailedException ;
+	public ReportInputEntity getUserDetails() throws IOException, PreconditionFailedException,
+			ValidationFailedException, NotFoundException, ParseException;
 
 }

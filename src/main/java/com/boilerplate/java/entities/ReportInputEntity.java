@@ -90,6 +90,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 * This is the reportFileNameOnDisk
 	 */
 	private String reportFileNameOnDisk;
+	@JsonIgnore
 	/**
 	 * This is the reportVersion
 	 */
@@ -99,7 +100,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 */
 	private String reportNumber;
 	/**
-	 * This is the reportVersion
+	 * This is the reportFileId
 	 */
 	private String reportFileId;
 
@@ -363,7 +364,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	public void setReportVersionEnum(ReportVersion reportVersionEnum) {
 		this.reportVersionEnum = reportVersionEnum;
 	}
-
+	@JsonIgnore
 	/**
 	 * Gets the report version
 	 * 
@@ -372,7 +373,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	public int getReportVersion() {
 		return this.reportVersionEnum.ordinal();
 	}
-
+	@JsonIgnore
 	/**
 	 * Sets the report version number
 	 * 

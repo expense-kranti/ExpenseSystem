@@ -1,6 +1,8 @@
 package com.boilerplate.service.implemetations;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IExpress;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
@@ -59,6 +62,8 @@ public class ExpressService implements IExpressService {
 	public void setConfigurationManager(com.boilerplate.configurations.ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
+
+	public static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 	/**
 	 * @see IExpressService.validateName
@@ -208,18 +213,24 @@ public class ExpressService implements IExpressService {
 	 * @throws IOException
 	 * @throws PreconditionFailedException
 	 * @throws ValidationFailedException
+	 * @throws NotFoundException
+	 * @throws ParseException 
 	 * @see IExpressService.getUserDetails
 	 */
 	@Override
 	public ReportInputEntity getUserDetails()
-			throws IOException, PreconditionFailedException, ValidationFailedException {
+			throws IOException, PreconditionFailedException, ValidationFailedException, NotFoundException, ParseException {
 
 		// get list name from express entity from db for given phone number
 		ExpressEntity expressEntityFromDB = expressDataAccess
-				.getUserExpressDetails(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
-
+				.getUserExpressDetails(RequestThreadLocal.getSession().getExternalFacingUser().getPhoneNumber());
+		// ckeck if there is any express attempt
+		if (expressEntityFromDB == null) {
+			throw new NotFoundException("ExpressEntity", "No express attempt found for this user", null);
+		}
+		// check if user has valid full name
 		if (BaseEntity.isNullOrEmpty(expressEntityFromDB.getFullName())) {
-			throw new ValidationFailedException("ExpressEntity", "User full Name not present for user", null);
+			throw new ValidationFailedException("ExpressEntity", "User full Name not present for this user", null);
 		}
 		// get request body
 		String requestBody = createRequestBodyForUserDetails(expressEntityFromDB);
@@ -241,10 +252,20 @@ public class ExpressService implements IExpressService {
 		// Converting the response into the map
 		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
 
+		ReportInputEntity reportInputEntity = null;
+
 		if (responseBodyMap != null && !responseBodyMap.isEmpty()) {
 			// set report input entity with the response details
+			reportInputEntity = new ReportInputEntity();
+			// set address line 1
+			reportInputEntity.setAddressLine1((String) responseBodyMap.get("address1"));
+			// set address line 2
+			reportInputEntity.setAddressLine2((String) responseBodyMap.get("address2"));
+			// set setDateOfBirth
+			reportInputEntity.setDateOfBirthAsDate(sdf.parse((String) responseBodyMap.get("dob")));
+			
 		}
-		return null;
+		return reportInputEntity;
 	}
 
 	/**

@@ -1,10 +1,7 @@
 package com.boilerplate.database.interfaces;
 
-import java.util.List;
-
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.java.entities.Voucher;
 
 /**

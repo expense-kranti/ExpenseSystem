@@ -7,7 +7,7 @@
 		table="Aks_ReportInputDetail">
 		<id name="userId" column="UserId"></id>
 		<property name="sessionId2" column="SessionId2" />
-		<property name="url" column="URL" />
+		<!-- <property name="url" column="URL" /> -->
 		<property name="jSessionId1" column="JSessionId1" />
 		<property name="voucherCode" column="VoucherCode" />
 		<property name="voucherExpiry" column="VoucherExpiry" />

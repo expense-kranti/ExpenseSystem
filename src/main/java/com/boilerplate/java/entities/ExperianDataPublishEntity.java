@@ -561,6 +561,7 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 		this.stateEnum = stateEnum;
 	}
 
+	@JsonIgnore
 	/**
 	 * This is the state of application
 	 */

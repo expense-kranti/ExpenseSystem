@@ -437,15 +437,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 * @param reportInputEntity
 	 *            the reportInputEntity whose experian attempt status will be
 	 *            set or updated
-	 * @throws ConflictException
-	 *             when there is an error in updating a user
-	 * @throws BadRequestException
-	 *             when userId is not populated
-	 * @throws NotFoundException
-	 *             user with given userId not found
+	 * @throws Exception 
 	 */
 	private void experianStatusUpdate(ReportInputEntity reportInputEntity, String experianStatus,
-			boolean isVoucherUnUsed) throws ConflictException, NotFoundException, BadRequestException {
+			boolean isVoucherUnUsed) throws Exception {
 		if (isVoucherUnUsed) {
 			reInsertUnusedVouchers(reportInputEntity);
 		}
@@ -454,8 +449,11 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		// reference
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-		user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
-		user.setReportInputEntity(reportInputEntity);
+		// save reportinputentity
+					mysqlReport.saveReportInputEntity(reportInputEntity);
+		// user.getUserMetaData().put("ExperianData",
+		// reportInputEntity.toJSON());
+		// user.setReportInputEntity(reportInputEntity);
 		userService.update(user);
 		if (reportInputEntity.getStage1Id() != null && reportInputEntity.getStage1Id() != "") {
 			// publishUserStateToCRM(user);
@@ -769,19 +767,11 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 *            The response map
 	 * @param httpResponse
 	 *            The httpresponse of experian request
-	 * @throws BadRequestException
-	 *             if userId not provided
-	 * @throws NotFoundException
-	 *             if user with given userId not found
-	 * @throws ConflictException
-	 *             when there is an error in updating a user
-	 * @throws PreconditionFailedException
-	 *             thrown when successful response of http request to experian
-	 *             server is not received
+	 * @throws Exception 
 	 */
 	private void handleError(ExternalFacingReturnedUser user, ReportInputEntity reportInputEntity,
 			Map<String, Object> responseBodyMap, HttpResponse httpResponse)
-			throws NotFoundException, BadRequestException, PreconditionFailedException, ConflictException {
+			throws Exception {
 		if (responseBodyMap.get("responseJson").equals("systemError") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
@@ -996,10 +986,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 */
 	@Override
 	public ReportInputEntity start(ReportInputEntity reportInputEntiity) throws Exception {
-		reportInputEntiity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
+		
 		try {
-
-			System.out.println(configurationManager.get("Enviornment"));
 
 			this.panNumberValidation(reportInputEntiity);
 			// check if the input data is clean
@@ -1071,19 +1059,11 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 *            integration been started
 	 * @return the reportInputEntity containing the returned sessionIds,
 	 *         stageOneId, stageTwoId, report etc. in response to requests
-	 * @throws PreconditionFailedException
-	 *             thrown when successful response of http request to experian
-	 *             server is not received
-	 * @throws NotFoundException
-	 *             thrown when user not found in database
-	 * @throws ConflictException
-	 *             when there is an error in updating the user
-	 * @throws BadRequestException
-	 *             when userId is not found
+	 * @throws Exception 
 	 */
 	private ReportInputEntity doStartSingleURLIntegration(ReportInputEntity reportInputEntiity,
 			ExternalFacingReturnedUser user)
-			throws PreconditionFailedException, NotFoundException, ConflictException, BadRequestException {
+			throws Exception {
 		reportInputEntiity.setStateEnum(ReportInputEntity.State.SessionSetup);
 		Map<String, Object> responseBodyMap = null;
 		HttpResponse httpResponse = null;

@@ -1117,6 +1117,34 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for getUserDetails in express controller
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExpressController.getUserDetails()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExpressController.getUserDetails()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for voucherUploadFromFile in voucher controller
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.VoucherController.voucherUploadFromFile(java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.VoucherController.voucherUploadFromFile(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1315,6 +1343,17 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatauserinfo");
 
+		vAllETest.put("Experian_Single_Request_URL",
+				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/singleAction.action");
+		vAllETest.put("Experian_Single_Url_Request_Template",
+				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
+		// Configuration Voucher count Email to Admin
+		vAllETest.put("Voucher_Count_Alert_Frequency", "250");
+		vAllETest.put("Voucher_Count_Email_To", "love.kranti@clearmydues.com");
+		vAllETest.put("Voucher_Count_Email_Subject", "Available Voucher Count");
+		vAllETest.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
+		vAllETest.put("Admin_Contact_Number", "9310390056");
+
 		return vAllETest;
 	}
 
@@ -1374,8 +1413,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Voucher_Count_Alert_Frequency", "250");
 		vAllEDev.put("Experian_Single_Url_Request_Template",
 				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
+		// same as production
 		vAllEDev.put("Experian_Single_Request_URL",
-				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/singleAction.action");
+				"https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
 		vAllEDev.put("Experian_User_Agent",
 				"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
 		vAllEDev.put("Experian_INITIATE_URL_JAVA",
@@ -1422,10 +1462,17 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEDev.put("GET_NAMES_BY_MOBILE_NUMBER",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname");
-		
+
 		vAllEDev.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatauserinfo");
-		
+		vAllEDev.put("Experian_Single_Url_Request_Template",
+				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
+		// Configuration Voucher count Email and message to admin
+		vAllEDev.put("Voucher_Count_Alert_Frequency", "250");
+		vAllEDev.put("Voucher_Count_Email_To", "love.kranti@clearmydues.com");
+		vAllEDev.put("Voucher_Count_Email_Subject", "Available Voucher Count");
+		vAllEDev.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
+		vAllEDev.put("Admin_Contact_Number", "9310390056");
 
 		return vAllEDev;
 
@@ -1511,7 +1558,16 @@ public class BaseRedisDataAccessLayer {
 				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatadistinctname");
 		vAllEProduction.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
 				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatauserinfo");
-		
+		vAllEProduction.put("Experian_Single_Request_URL",
+				"https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
+		vAllEProduction.put("Experian_Single_Url_Request_Template",
+				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
+		// Configuration Voucher count Email to Admin
+		vAllEProduction.put("Voucher_Count_Alert_Frequency", "250");
+		vAllEProduction.put("Voucher_Count_Email_To", "aman.bindal@clearmydues.com");
+		vAllEProduction.put("Voucher_Count_Email_Subject", "Available Voucher Count");
+		vAllEProduction.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
+		vAllEProduction.put("Admin_Contact_Number", "9004929159");
 
 		return vAllEProduction;
 	}
@@ -1653,6 +1709,7 @@ public class BaseRedisDataAccessLayer {
 				"Select t2.Name quizName, Date(t1.CreationDate) as datePlayed from Aks_UserAssessment t1 join Aks_Assessment t2 on t1.AssessmentId = t2.Id where t2.IsSurvey = 0 ORDER BY t1.CreationDate DESC limit 2");
 
 		vAllEAll.put("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\"}");
+		vAllEAll.put("GET_USER_DETAILS_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\",\"name\":\"@fullName\"}");
 		return vAllEAll;
 
 	}

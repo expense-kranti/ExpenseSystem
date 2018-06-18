@@ -26,12 +26,12 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 	/**
 	 * This is the key used to store voucher queue name
 	 */
-	private static final String VOUCHER_QUEUE_NAME = "VOUCHER";
+	private static final String AKS_VOUCHER_QUEUE_NAME = "AKS_VOUCHER";
 
 	/**
 	 * This is the key used to store used voucher queue name
 	 */
-	private static final String USED_VOUCHER_QUEUE_NAME = "USED_VOUCHER";
+	private static final String AKS_USED_VOUCHER_QUEUE_NAME = "AKS_USED_VOUCHER";
 	
 	/**
 	 * This is the instance of the Logger
@@ -86,7 +86,7 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 	public void create(BoilerplateList<Voucher> vouchers) {
 		List<Voucher> vouchersList = vouchers;
 		for (Voucher voucher : vouchersList) {
-			super.insert(VOUCHER_QUEUE_NAME, voucher);
+			super.insert(AKS_VOUCHER_QUEUE_NAME, voucher);
 		}
 	}
 
@@ -95,19 +95,19 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 	 */
 	@Override
 	public Voucher getVoucherCode(String userId, String sessionId) throws NotFoundException {
-		if (super.getQueueSize(VOUCHER_QUEUE_NAME)
+		if (super.getQueueSize(AKS_VOUCHER_QUEUE_NAME)
 				% Integer.parseInt(configurationManager.get("Voucher_Count_Alert_Frequency")) == 0) {
 			// This method will send voucher alert sms and email to the admin
 			// this.sendVoucherAlertToAdmin();
 		}
-		Voucher voucher = super.remove(VOUCHER_QUEUE_NAME, Voucher.class);
+		Voucher voucher = super.remove(AKS_VOUCHER_QUEUE_NAME, Voucher.class);
 		if (voucher == null) {
 			logger.logWarning("RedisVoucher", "getVoucherCode", "Fetching Voucher from DB", "Voucher Not available");
 			throw new NotFoundException("Voucher", "Voucher Not available", null);
 		}
 		voucher.setAssignedTo(userId);
 		voucher.setSessionId(sessionId);
-		super.insert(USED_VOUCHER_QUEUE_NAME, voucher);
+		super.insert(AKS_USED_VOUCHER_QUEUE_NAME, voucher);
 		return voucher;
 	}
 

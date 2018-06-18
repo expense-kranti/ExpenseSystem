@@ -502,6 +502,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 
 					tradeline.setUserId(reportInputEntity.getUserId());
 					tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
+					tradeline.setReportId(getNodeValue("ReportNumber", creditProfileHeaderNodes));
 					// TODO SAVE REPORT TRADELINES
 					mysqlReport.saveReportTradeline(tradeline);
 				} catch (Exception ex) {

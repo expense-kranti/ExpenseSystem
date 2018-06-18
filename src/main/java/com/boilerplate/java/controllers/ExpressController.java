@@ -1,6 +1,7 @@
 package com.boilerplate.java.controllers;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -101,13 +102,16 @@ public class ExpressController extends BaseController {
 	 * @throws IOException
 	 *             thrown when IOException occurs (while making request to the
 	 *             api for getting details)
+	 * @throws NotFoundException
+	 *             thrown when no express attempt found for logged in user
+	 * @throws ParseException thrown when exception occurs in parsing the string to date 
 	 */
 	@ApiOperation(value = "Gets the logged in user's details available using mobileNumber and valid name")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "user not logged in") })
 	@RequestMapping(value = "/express/userDetails", method = RequestMethod.GET)
-	public @ResponseBody ReportInputEntity getUserDetails()
-			throws UnauthorizedException, PreconditionFailedException, ValidationFailedException, IOException {
+	public @ResponseBody ReportInputEntity getUserDetails() throws UnauthorizedException, PreconditionFailedException,
+			ValidationFailedException, IOException, NotFoundException, ParseException {
 		// TODO ADD METHOD PERMISSIONS
 		return expressService.getUserDetails();
 	}
