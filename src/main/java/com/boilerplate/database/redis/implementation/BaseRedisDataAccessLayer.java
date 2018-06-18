@@ -9,7 +9,6 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.entities.ArticleEntity;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.GenericListEncapsulationEntity;
 import com.boilerplate.java.entities.MethodPermissions;
@@ -760,7 +759,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permissions for blogactivitycontroller starts here
+		// method permissions for blog activity controller starts here
 
 		// method permission for saveActivity method
 		methodPermission = new MethodPermissions();
@@ -1354,6 +1353,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllETest.put("Admin_Contact_Number", "9310390056");
 
+
 		return vAllETest;
 	}
 
@@ -1461,10 +1461,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
 
 		vAllEDev.put("GET_NAMES_BY_MOBILE_NUMBER",
+
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname");
 
 		vAllEDev.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatauserinfo");
+
 		vAllEDev.put("Experian_Single_Url_Request_Template",
 				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
 		// Configuration Voucher count Email and message to admin
@@ -1473,6 +1475,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Voucher_Count_Email_Subject", "Available Voucher Count");
 		vAllEDev.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllEDev.put("Admin_Contact_Number", "9310390056");
+
 
 		return vAllEDev;
 
@@ -1558,6 +1561,7 @@ public class BaseRedisDataAccessLayer {
 				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatadistinctname");
 		vAllEProduction.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
 				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatauserinfo");
+
 		vAllEProduction.put("Experian_Single_Request_URL",
 				"https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
 		vAllEProduction.put("Experian_Single_Url_Request_Template",
@@ -1568,6 +1572,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Voucher_Count_Email_Subject", "Available Voucher Count");
 		vAllEProduction.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllEProduction.put("Admin_Contact_Number", "9004929159");
+
 
 		return vAllEProduction;
 	}

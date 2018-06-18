@@ -27,6 +27,8 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 	private String mobileNumber;
 
 	/**
+	 * This method is used to get the full name
+	 * 
 	 * @return the fullName
 	 */
 	public String getFullName() {
@@ -34,6 +36,8 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method is used to set the full name
+	 * 
 	 * @param fullName
 	 *            the fullName to set
 	 */
@@ -42,6 +46,8 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method is use to get the list of full name
+	 * 
 	 * @return the fullNameList
 	 */
 	public List<String> getFullNameList() {
@@ -49,6 +55,8 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method is used to set the list of full name
+	 * 
 	 * @param fullNameList
 	 *            the fullNameList to set
 	 */
@@ -57,6 +65,8 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method is used to get the mobile number
+	 * 
 	 * @return the mobileNumber
 	 */
 	public String getMobileNumber() {
@@ -64,6 +74,8 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method is used to set the mobile number
+	 * 
 	 * @param mobileNumber
 	 *            the mobileNumber to set
 	 */
@@ -73,7 +85,7 @@ public class ExpressEntity extends BaseEntity implements Serializable {
 
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		if (this.getMobileNumber() == null || this.getMobileNumber().isEmpty())
+		if (BaseEntity.isNullOrEmpty(this.getMobileNumber()))
 			throw new ValidationFailedException("ExpressEntity", "mobile number can not be null or empty", null);
 		return true;
 

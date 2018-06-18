@@ -25,7 +25,6 @@
 		<property name="reportDateTime" column="ReportDateTime" />
 		<property name="questionCount" column="QuestionCount" />
 
-		<property name="fileEntity" column="FileEntity" />
 
 	</class>
 </hibernate-mapping>
