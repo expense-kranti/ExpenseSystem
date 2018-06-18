@@ -3,15 +3,33 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.boilerplate.java.entities.ReportInputEntiity"
-		table="CSR_ReportInputDetail">
+	<class name="com.boilerplate.java.entities.ReportInputEntity"
+		table="Aks_ReportInputDetail">
 		<id name="userId" column="UserId"></id>
-		<property name="sessionId2" column="SessionId2" />
-		<property name="url" column="URL" />
 		<property name="jSessionId1" column="JSessionId1" />
 		<property name="voucherCode" column="VoucherCode" />
+		<property name="stateId" column="State" />
+		<property name="sessionId2" column="SessionId2" />
+		<property name="dateOfBirth" column="DOB" />
+		<property name="addressLine1" column="AddressLine1" />
+		<property name="addressLine2" column="AddressLine2" />
+		<property name="city" column="City" />
+		<property name="pinCode" column="Pincode" />
+		<property name="panNumber" column="PanNumber" />
+		<property name="stage1Id" column="Stage1Id" />
+		<property name="stage2Id" column="Stage2Id" />
+		<property name="experianStatus" column="ExperianStatus" />
 		<property name="voucherExpiry" column="VoucherExpiry" />
 		<property name="questionCount" column="QuestionCount" />
+		<property name="gender" column="Gender" />
+		<property name="experianAttemptDate" column="ExperianAttemptDate" />
+		<property name="stateEnum" column="StateEnum">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.boilerplate.java.entities.ExperianDataPublishEntity$State</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
+
 
 
 	</class>

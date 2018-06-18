@@ -18,8 +18,9 @@ public interface IReportService {
 	 * 
 	 * @param report
 	 *            the report to save
+	 * @throws Exception 
 	 */
-	public void save(Report report);
+	public void save(Report report) throws Exception;
 
 	/**
 	 * This method is used to get the reports against a user with given userId

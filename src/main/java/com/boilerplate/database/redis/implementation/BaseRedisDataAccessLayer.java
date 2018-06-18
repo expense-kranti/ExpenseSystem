@@ -759,7 +759,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permissions for blogactivitycontroller starts here
+		// method permissions for blog activity controller starts here
 
 		// method permission for saveActivity method
 		methodPermission = new MethodPermissions();
@@ -1102,6 +1102,20 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for experian start
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.start(com.boilerplate.java.entities.ReportInputEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.start(com.boilerplate.java.entities.ReportInputEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1295,6 +1309,8 @@ public class BaseRedisDataAccessLayer {
 		// config for SaveInMySQL
 		vAllETest.put("MYSQL_PUBLISH_QUEUE", "MYSQL_PUBLISH_QUEUE");
 		vAllETest.put("MYSQL_PUBLISH_QUEUE_HISTORY", "MYSQL_PUBLISH_QUEUE_HISTORY");
+		vAllETest.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
+				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatauserinfo");
 
 		vAllETest.put("GET_NAMES_BY_MOBILE_NUMBER",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname \n");
@@ -1407,6 +1423,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("GET_NAMES_BY_MOBILE_NUMBER",
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatadistinctname \n");
 
+		vAllEDev.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
+				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatauserinfo");
+
 		return vAllEDev;
 
 	}
@@ -1489,6 +1508,8 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEProduction.put("GET_NAMES_BY_MOBILE_NUMBER",
 				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatadistinctname");
+		vAllEProduction.put("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL",
+				"https://otlcqa4ql8.execute-api.ap-south-1.amazonaws.com/prod/bankdatauserinfo");
 
 		return vAllEProduction;
 	}

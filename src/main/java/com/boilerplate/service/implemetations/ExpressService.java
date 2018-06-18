@@ -15,10 +15,12 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 
 /**
@@ -93,7 +95,7 @@ public class ExpressService implements IExpressService {
 	 */
 	@Override
 	public ExpressEntity getNamesByMobileNumber(ExpressEntity expressEntity)
-			throws ValidationFailedException, IOException {
+			throws ValidationFailedException, IOException, PreconditionFailedException {
 
 		logger.logInfo("ExpressService", "getNamesByMobileNumber", "This is the express entity:" + expressEntity, null);
 
@@ -101,7 +103,7 @@ public class ExpressService implements IExpressService {
 		expressEntity.validate();
 		String requestData = createRequestBodyForGettingName(expressEntity);
 
-		// prepare request headers and request body for our experian request
+		// prepare request headers and request body for our request
 		// Mediator(named Java)
 		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = getRequestHeaders("Content-Type",
 				"application/json;charset=UTF-8");
@@ -117,6 +119,7 @@ public class ExpressService implements IExpressService {
 		// Throw exception if status is not 200
 		if (httpResponse.getHttpStatus() != 200) {
 			// Throw exception
+			throw new PreconditionFailedException("ExpressEntity", "No name found for this mobile number", null);
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -127,8 +130,9 @@ public class ExpressService implements IExpressService {
 
 		logger.logInfo("ExpressService", "getNamesByMobileNumber",
 				"after getting the names for the response is as:" + names, null);
-		// Creating the list for holding the random name which will be added to the
-		// response names list
+
+		// Creating the list for holding the random name which will be added to
+		// the response names list
 		List<String> randomNames = new ArrayList<>();
 		// Check if random names are required, if list of names fetched is less
 		// than 4
@@ -211,6 +215,7 @@ public class ExpressService implements IExpressService {
 		names.add("Amit Verma");
 		names.add("Ashima khan");
 		names.add("Urvij kumar Singh");
+
 		names.add("Love Singhal");
 		names.add("Pawan goel");
 		names.add("Ankur Singh");
@@ -226,6 +231,67 @@ public class ExpressService implements IExpressService {
 		}
 		// return the list of random names generated
 		return namesReturned;
+	}
+
+	/**
+	 * @throws IOException
+	 * @throws PreconditionFailedException
+	 * @throws ValidationFailedException
+	 * @see IExpressService.getUserDetails
+	 */
+	@Override
+	public ReportInputEntity getUserDetails()
+			throws IOException, PreconditionFailedException, ValidationFailedException {
+
+		// get list name from express entity from db for given phone number
+		ExpressEntity expressEntityFromDB = expressDataAccess
+				.getUserExpressDetails(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+
+		if (BaseEntity.isNullOrEmpty(expressEntityFromDB.getFullName())) {
+			throw new ValidationFailedException("ExpressEntity", "User full Name not present for user", null);
+		}
+		// get request body
+		String requestBody = createRequestBodyForUserDetails(expressEntityFromDB);
+		// prepare request headers and request body for our request
+		// Mediator(named Java)
+		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = getRequestHeaders("Content-Type",
+				"application/json;charset=UTF-8");
+		// Making the http call for generating the response
+		HttpResponse httpResponse = HttpUtility.makeHttpRequest(
+				configurationManager.get("GET_USER_DETAILS_FOR_MOBILE_NUMBER_AND_NAME_REQUEST_URL"), requestHeadersJava,
+				null, requestBody, "POST");
+		// Throw exception if status is not 200
+		if (httpResponse.getHttpStatus() != 200) {
+			// Throw exception
+			throw new PreconditionFailedException("ExpressEntity", "No details found for logged in user mobile number",
+					null);
+		}
+		ObjectMapper objectMapper = new ObjectMapper();
+		// Converting the response into the map
+		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
+
+		if (responseBodyMap != null && !responseBodyMap.isEmpty()) {
+			// set report input entity with the response details
+		}
+		return null;
+	}
+
+	/**
+	 * This method is used to create request body for getting user details of logged
+	 * in user using mobile number and full name
+	 * 
+	 * @param expressEntityFromDB
+	 *            contains the mobile number and full name required to prepare
+	 *            request body
+	 * @return the prepared request body
+	 */
+	private String createRequestBodyForUserDetails(ExpressEntity expressEntityFromDB) {
+		// prepare request body from the configuration
+		String requestBody = configurationManager.get("GET_USER_DETAILS_REQUEST_BODY");
+		// replace request body parts with values
+		requestBody = requestBody.replace("@mobileNumber", expressEntityFromDB.getMobileNumber());
+		requestBody = requestBody.replace("@fullName", expressEntityFromDB.getFullName());
+		return requestBody;
 	}
 
 }

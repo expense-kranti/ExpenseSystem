@@ -15,9 +15,8 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.ExpressEntity;
 import com.boilerplate.java.entities.ReportInputEntity;
-import com.boilerplate.service.interfaces.IExperianService;
+import com.boilerplate.service.interfaces.IBureauIntegrationService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -33,29 +32,32 @@ import com.wordnik.swagger.annotations.ApiResponses;
 @Controller
 public class ExperianController extends BaseController {
 
+	/**
+	 * This is an instance of experianBureauService
+	 */
 	@Autowired
-	IExperianService experianBureauService;
+	IBureauIntegrationService experianBureauService;
 
 	/**
 	 * This stars the experian integration process
 	 * 
 	 * @param reportInputEntity
-	 *            It contains initial inputs for fetching the report
+	 *            it contains the data required to send request to server for
+	 *            making experian integration
 	 * @throws NotFoundException
+	 *             If the user is not found
 	 * @throws BadRequestException
-	 *             thrown when input is not provided properly
+	 *             If the userId is not provided (or not found in current
+	 *             session)
 	 */
 	@ApiOperation(value = "Starts the experian session")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 400, message = "Data not completly filled") })
-	@RequestMapping(value = "/experian/startSingle", method = RequestMethod.POST)
-	public @ResponseBody ReportInputEntity startSingle(@RequestBody ReportInputEntity reportInputEntity)
+	@RequestMapping(value = "/experian/start", method = RequestMethod.POST)
+	public @ResponseBody ReportInputEntity start(@RequestBody ReportInputEntity reportInputEntiity)
 			throws Exception, ValidationFailedException, ConflictException, NotFoundException, IOException,
 			PreconditionFailedException, BadRequestException, UnauthorizedException {
-
-		return experianBureauService.startSingle(reportInputEntity);
+		return this.experianBureauService.start(reportInputEntiity);
 	}
-
-	
 
 }

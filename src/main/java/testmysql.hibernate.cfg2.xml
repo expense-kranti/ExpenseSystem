@@ -4,15 +4,17 @@
 <hibernate-configuration>
 	<session-factory>
 
-		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.url">jdbc:mysql://bankexpress1.cehf5u2edwls.ap-southeast-1.rds.amazonaws.com:3306/MySqlCSRDB?autoReconnect=true</property>
-		<property name="hibernate.connection.username">mysqlcsrdb</property>
-		<property name="hibernate.connection.password">mysql_csr</property>
-		<property name="hibernate.default_schema">MySqlCSRDB</property>
+<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+
+		<property name="hibernate.connection.url">jdbc:mysql://bankexpress1.cehf5u2edwls.ap-southeast-1.rds.amazonaws.com:3306/bank_express?autoReconnect=true</property>
+		<property name="hibernate.connection.username">mybankuser</property>
+		<property name="hibernate.connection.password">Torres123!</property>
+		<property name="hibernate.default_schema">bank_express</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
 		<property name="hibernate.show_sql">false</property>
 		<property name="hibernate.format_sql">true</property>
+
 
 		<!--TODO - See if we should remove this as it could cause connection leaks -->
 		<property name="hibernate.c3p0.min_size">5</property>

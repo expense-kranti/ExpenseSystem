@@ -744,10 +744,30 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
-	 * @param increaseScore the increaseScore to set
+	 * @param increaseScore
+	 *            the increaseScore to set
 	 */
 	public void setIncreaseScore(boolean increaseScore) {
 		this.increaseScore = increaseScore;
+	}
+
+	/**
+	 * Gets the report input id
+	 * 
+	 * @return the reportInputId
+	 */
+	public String getReportInputId() {
+		return reportInputId;
+	}
+
+	/**
+	 * Sets the report input id
+	 * 
+	 * @param reportInputId
+	 *            the reportInputId to set
+	 */
+	public void setReportInputId(String reportInputId) {
+		this.reportInputId = reportInputId;
 	}
 
 	/**
@@ -771,8 +791,11 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * interested in inputing his/her emailid
 	 */
 	private boolean hasSkippedEmailInput;
-	
-	
+
 	private boolean increaseScore;
+	/**
+	 * This is the reportinput id
+	 */
+	private String reportInputId;
 
 }
