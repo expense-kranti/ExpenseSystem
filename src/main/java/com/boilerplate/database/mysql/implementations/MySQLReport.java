@@ -5,6 +5,7 @@ import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportTradeline;
@@ -67,6 +68,18 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 			throw ex;
 		}
 
+	}
+
+	@Override
+	public void saveAddress(ElectronicContact electronicContact) throws Exception {
+		try {
+			super.create(electronicContact);
+		} catch (Exception ex) {
+			// Log the exception
+			logger.logException("MySQLReport", "saveAddress", "Try-Catch",
+					" Exception in saving report tradeline in my sql", ex);
+			throw ex;
+		}
 	}
 
 }

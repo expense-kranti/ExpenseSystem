@@ -489,7 +489,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 						electronicContact.setTelephoneNumber(getNodeValue("Telephone_Number", cAISHolderPhoneDetails));
 						electronicContact
 								.setMobileNumber(getNodeValue("Mobile_Telephone_Number", cAISHolderPhoneDetails));
-						tradeline.getElectronicContacts().add(electronicContact);
+						//save electronic contacts
+						mysqlReport.saveAddress(electronicContact);
 					}
 					String organizationName = getNodeValue("Subscriber_Name", cAISAccountDETAILS);
 
