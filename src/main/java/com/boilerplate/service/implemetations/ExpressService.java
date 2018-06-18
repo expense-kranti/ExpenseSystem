@@ -136,6 +136,13 @@ public class ExpressService implements IExpressService {
 		logger.logInfo("ExpressService", "getNamesByMobileNumber",
 				"after getting the names for the response is as:" + names, null);
 
+		// Setting the list of required list of names
+		expressEntity.setFullNameList(names);
+		logger.logInfo("ExpressService", "getNamesByMobileNumber",
+				"before saving the names into the redis entity is as:" + expressEntity, null);
+		// Save this list of name into the redis database
+		expressDataAccess.saveUserExpressDetails(expressEntity);
+
 		// Creating the list for holding the random name which will be added to
 		// the response names list
 		List<String> randomNames = new ArrayList<>();
@@ -149,13 +156,7 @@ public class ExpressService implements IExpressService {
 		names.addAll(randomNames);
 		// Shuffle the list of names
 		Collections.shuffle(names);
-
-		// Setting the list of required list of names
 		expressEntity.setFullNameList(names);
-		logger.logInfo("ExpressService", "getNamesByMobileNumber",
-				"before saving the names into the redis entity is as:" + expressEntity, null);
-		// Save this list of name into the redis database
-		expressDataAccess.saveUserExpressDetails(expressEntity);
 		return expressEntity;
 	}
 
@@ -243,12 +244,12 @@ public class ExpressService implements IExpressService {
 	 * @throws PreconditionFailedException
 	 * @throws ValidationFailedException
 	 * @throws NotFoundException
-	 * @throws ParseException 
+	 * @throws ParseException
 	 * @see IExpressService.getUserDetails
 	 */
 	@Override
-	public ReportInputEntity getUserDetails()
-			throws IOException, PreconditionFailedException, ValidationFailedException, NotFoundException, ParseException {
+	public ReportInputEntity getUserDetails() throws IOException, PreconditionFailedException,
+			ValidationFailedException, NotFoundException, ParseException {
 
 		// get list name from express entity from db for given phone number
 		ExpressEntity expressEntityFromDB = expressDataAccess
@@ -292,7 +293,7 @@ public class ExpressService implements IExpressService {
 			reportInputEntity.setAddressLine2((String) responseBodyMap.get("address2"));
 			// set setDateOfBirth
 			reportInputEntity.setDateOfBirthAsDate(sdf.parse((String) responseBodyMap.get("dob")));
-			
+
 		}
 		return reportInputEntity;
 	}
