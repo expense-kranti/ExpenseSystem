@@ -3,17 +3,13 @@ package com.boilerplate.database.redis.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IExperian;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.entities.ExpressEntity;
-import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.Voucher;
-import com.boilerplate.queue.RedisQueue;
 
 /**
  * This is the class used to implements Redis Voucher

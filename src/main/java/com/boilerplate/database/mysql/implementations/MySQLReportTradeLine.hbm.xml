@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated 18 June, 2018 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
 	<class name="com.boilerplate.java.entities.ReportTradeline"
 		table="Aks_ReportTradeline">
@@ -13,7 +13,7 @@
 		<property name="dateClosed" column="DateClosed" />
 		<property name="dateOfLastPayment" column="DateOfLastPayment" />
 		<property name="accountHolderType" column="AccountHolderType" />
-		<property name="oraganizationName" column="OraganizationName" />
+		<property name="organizationName" column="OraganizationName" />
 		<property name="productName" column="ProductName" />
 		<property name="currentBalance" column="CurrentBalance" />
 		<property name="dateReported" column="DateReported" />

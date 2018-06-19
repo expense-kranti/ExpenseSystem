@@ -15,7 +15,10 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.ReferalEntity;
+import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 import com.wordnik.swagger.annotations.Api;
@@ -40,8 +43,8 @@ public class ExpressController extends BaseController {
 	IExpressService expressService;
 
 	/**
-	 * This API is used to get the list of names with the help of mobile number
-	 * and this API hits the another API which provide us the list of names
+	 * This API is used to get the list of names with the help of mobile number and
+	 * this API hits the another API which provide us the list of names
 	 * 
 	 * @param expressEntity
 	 *            This is the express entity which contains the mobile number
@@ -88,8 +91,8 @@ public class ExpressController extends BaseController {
 	}
 
 	/**
-	 * This api provides the logged in user's details available when mobile
-	 * number and full name is given
+	 * This api provides the logged in user's details available when mobile number
+	 * and full name is given
 	 * 
 	 * @return the reportinputentity with found user details
 	 * @throws UnauthorizedException
@@ -97,14 +100,15 @@ public class ExpressController extends BaseController {
 	 * @throws PreconditionFailedException
 	 *             thrown when user details not found
 	 * @throws ValidationFailedException
-	 *             thrown when user full name is not present for logged in user
-	 *             in db
+	 *             thrown when user full name is not present for logged in user in
+	 *             db
 	 * @throws IOException
-	 *             thrown when IOException occurs (while making request to the
-	 *             api for getting details)
+	 *             thrown when IOException occurs (while making request to the api
+	 *             for getting details)
 	 * @throws NotFoundException
 	 *             thrown when no express attempt found for logged in user
-	 * @throws ParseException thrown when exception occurs in parsing the string to date 
+	 * @throws ParseException
+	 *             thrown when exception occurs in parsing the string to date
 	 */
 	@ApiOperation(value = "Gets the logged in user's details available using mobileNumber and valid name")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
@@ -114,6 +118,27 @@ public class ExpressController extends BaseController {
 			ValidationFailedException, IOException, NotFoundException, ParseException {
 		// TODO ADD METHOD PERMISSIONS
 		return expressService.getUserDetails();
+	}
+
+	/**
+	 * This API is used to get the report for the current logged in user of the
+	 * basis of it's id
+	 * 
+	 * @return reports map of the current logged_in user
+	 * @throws UnauthorizedException
+	 *             This exception occurred if user is not logged in
+	 * @throws NotFoundException
+	 *             This exception occurred if the required report is not present in
+	 *             database
+	 */
+	@ApiOperation(value = "Gets the report for the current logged in user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 401, message = "user not logged in") })
+	@RequestMapping(value = "/express/report", method = RequestMethod.GET)
+	public @ResponseBody BoilerplateMap<String, Report> getReport() throws UnauthorizedException, NotFoundException {
+		// TODO ADD METHOD PERMISSIONS
+		return expressService.getReport();
+
 	}
 
 }

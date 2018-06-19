@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IExpress;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
@@ -23,6 +24,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IExpressService;
 
@@ -314,6 +316,19 @@ public class ExpressService implements IExpressService {
 		requestBody = requestBody.replace("@mobileNumber", expressEntityFromDB.getMobileNumber());
 		requestBody = requestBody.replace("@fullName", expressEntityFromDB.getFullName());
 		return requestBody;
+	}
+
+	/**
+	 * @see IExpressService.getReport()
+	 */
+	@Override
+	public BoilerplateMap<String, Report> getReport() throws NotFoundException, UnauthorizedException {
+		// get the current logged in user
+		String userId = RequestThreadLocal.getSession().getUserId();
+		// getting the report on the bases of user id of current logged in user
+		expressDataAccess.getReport(userId);
+
+		return null;
 	}
 
 }

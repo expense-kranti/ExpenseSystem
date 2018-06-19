@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class FileUtility {
 	
 	/**
-	 * The propeorties for the email
+	 * The properties for the email
 	 */
 	private static Properties properties  = null;
 	/**

@@ -2,7 +2,9 @@ package com.boilerplate.database.redis.implementation;
 
 import com.boilerplate.database.interfaces.IExpress;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.Report;
 
 public class RedisExpress extends BaseRedisDataAccessLayer implements IExpress {
 
@@ -41,5 +43,14 @@ public class RedisExpress extends BaseRedisDataAccessLayer implements IExpress {
 		super.set(User + Express + PHONE_NUMBER + expressEntity.getMobileNumber(), expressEntity);
 		return expressEntity;
 
+	}
+
+	/**
+	 * @see IExpress.getReport
+	 */
+	@Override
+	public BoilerplateMap<String, Report> getReport(String userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
