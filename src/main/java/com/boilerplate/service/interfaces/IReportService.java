@@ -1,5 +1,6 @@
 package com.boilerplate.service.interfaces;
 
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.Report;
@@ -18,7 +19,7 @@ public interface IReportService {
 	 * 
 	 * @param report
 	 *            the report to save
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void save(Report report) throws Exception;
 
@@ -32,5 +33,16 @@ public interface IReportService {
 	 *             if the user trying to get the reports is not authorized
 	 */
 	public BoilerplateMap<String, Report> getReports(String userId) throws UnauthorizedException;
+
+	/**
+	 * This method is used to get the report of the current logged_in user
+	 * 
+	 * @return the report of the user
+	 * @throws NotFoundException
+	 *             thrown when no express attempt found for logged in user
+	 * @throws UnauthorizedException
+	 *             This exception occurred if user is not logged in
+	 */
+	public Report getReport() throws NotFoundException, UnauthorizedException;
 
 }

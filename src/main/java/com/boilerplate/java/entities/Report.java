@@ -31,29 +31,6 @@ public class Report extends BaseEntity implements Serializable {
 	private ReportStatus reportStatusEnum;
 
 	/**
-	 * This is the reportSourceEnum
-	 */
-	private ReportSource reportSourceEnum;
-
-	/**
-	 * This method is used to get the reportSourceEnum
-	 * 
-	 * @return reportSourceEnum
-	 */
-	public ReportSource getReportSourceEnum() {
-		return reportSourceEnum;
-	}
-
-	/**
-	 * This method is used to set the reportSourceEnum
-	 * 
-	 * @param reportSourceEnum
-	 */
-	public void setReportSourceEnum(ReportSource reportSourceEnum) {
-		this.reportSourceEnum = reportSourceEnum;
-	}
-
-	/**
 	 * This is the bureauScore
 	 */
 	private int bureauScore;
@@ -77,6 +54,29 @@ public class Report extends BaseEntity implements Serializable {
 	 * This is the file entity
 	 */
 	FileEntity fileEntity;
+	/**
+	 * This is the report source
+	 */
+	private ReportSource reportSourceEnum;
+
+	/**
+	 * Gets the report source
+	 * 
+	 * @return the reportSourceEnum
+	 */
+	public ReportSource getReportSourceEnum() {
+		return reportSourceEnum;
+	}
+
+	/**
+	 * Sets the report source enum
+	 * 
+	 * @param reportSourceEnum
+	 *            the reportSourceEnum to set
+	 */
+	public void setReportSourceEnum(ReportSource reportSourceEnum) {
+		this.reportSourceEnum = reportSourceEnum;
+	}
 
 	/**
 	 * This is the report trade line

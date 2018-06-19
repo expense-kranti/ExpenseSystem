@@ -11,6 +11,6 @@ public interface IReport {
 
 	public Object saveReport(Report report) throws Exception;
 
-	
+
 
 }

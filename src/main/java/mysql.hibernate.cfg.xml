@@ -62,6 +62,14 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLHandBook.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLReportInput.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLElectronicContact.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLAddresses.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLReportTradeLine.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLReport.hbm.xml" />
 
 
 	</session-factory>

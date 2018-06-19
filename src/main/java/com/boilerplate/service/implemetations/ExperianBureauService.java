@@ -208,6 +208,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	public void setMysqlReport(IMySQLReport mysqlReport) {
 		this.mysqlReport = mysqlReport;
 	}
+	
+	
 
 	/**
 	 * The subject list for experian report
@@ -437,7 +439,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 * @param reportInputEntity
 	 *            the reportInputEntity whose experian attempt status will be
 	 *            set or updated
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void experianStatusUpdate(ReportInputEntity reportInputEntity, String experianStatus,
 			boolean isVoucherUnUsed) throws Exception {
@@ -450,7 +452,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		// save reportinputentity
-					mysqlReport.saveReportInputEntity(reportInputEntity);
+		mysqlReport.saveReportInputEntity(reportInputEntity);
 		// user.getUserMetaData().put("ExperianData",
 		// reportInputEntity.toJSON());
 		// user.setReportInputEntity(reportInputEntity);
@@ -551,6 +553,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			user.setUserState(MethodState.Report);
 			userService.update(user);
 			// create a report entity
+			// set user id for preparing tradeline id
+			reportInputEntity.setUserId(user.getUserId());
 
 			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity, subjectsForParseExperianReportObserver,
 					"ExperianBureauService", "observeReport");
@@ -594,165 +598,169 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2) throws Exception {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-		ReportInputEntity reportInputEntity = user.getReportInputEntitty();
-		if (reportInputEntity == null) {
-			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Generic Error Message: No Experian Session found ", false);
-			throw new NotFoundException("ReportInputEntity", "No Experian Session found", null);
-		}
-		reportInputEntity.setStateEnum(State.Question);
-		ExperianQuestionAnswer experianQuestionAnswer = null;
-		// you can only call with empty question id for the first time.
-		// so check the map
-		if (questionId == null || (questionId.trim().equals(""))) {
-			if (reportInputEntity.getQuestion().size() > 0) {
-				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
+		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+		ReportInputEntity reportInputEntity = null;
+		if (reportInputEntityList.size() > 0) {
+			reportInputEntity = reportInputEntityList.get(0);
+			if (reportInputEntity == null) {
 				// updates the experianStatus:(15-11-2016)
 				experianStatusUpdate(reportInputEntity,
-						"--- Method Name: fetchNextItem  --- Generic Error Message: Question id is empty ", false);
-				throw new ConflictException("Question", "Question id is empty", null);
+						"--- Method Name: fetchNextItem --- Generic Error Message: No Experian Session found ", false);
+				throw new NotFoundException("ReportInputEntity", "No Experian Session found", null);
 			}
-		} else {
-			// You can only call with a question and set of answers which exist
-			// in
-			// the map.
-			experianQuestionAnswer = reportInputEntity.getQuestion().get(questionId);
-			if (experianQuestionAnswer == null) {
-				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
-				// updates the experianStatus:(15-11-2016)
-				experianStatusUpdate(reportInputEntity,
-						"--- Method Name: fetchNextItem --- Generic Error Message: Question with id " + questionId
-								+ " not found",
-						false);
-				throw new NotFoundException("Question", "Question with id " + questionId + " not found", null);
+			reportInputEntity.setStateEnum(State.Question);
+			ExperianQuestionAnswer experianQuestionAnswer = null;
+			// you can only call with empty question id for the first time.
+			// so check the map
+			if (questionId == null || (questionId.trim().equals(""))) {
+				if (reportInputEntity.getQuestion().size() > 0) {
+					pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
+					// updates the experianStatus:(15-11-2016)
+					experianStatusUpdate(reportInputEntity,
+							"--- Method Name: fetchNextItem  --- Generic Error Message: Question id is empty ", false);
+					throw new ConflictException("Question", "Question id is empty", null);
+				}
+			} else {
+				// You can only call with a question and set of answers which
+				// exist in the map.
+				experianQuestionAnswer = reportInputEntity.getQuestion().get(questionId);
+				if (experianQuestionAnswer == null) {
+					pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
+					// updates the experianStatus:(15-11-2016)
+					experianStatusUpdate(reportInputEntity,
+							"--- Method Name: fetchNextItem --- Generic Error Message: Question with id " + questionId
+									+ " not found",
+							false);
+					throw new NotFoundException("Question", "Question with id " + questionId + " not found", null);
+				}
+
 			}
 
-		}
-
-		// fill the answer to the question
-		String questionTemplate = null;
-		if (questionId == null || questionId.equals("")) {
-			questionTemplate = configurationManager.get("Experian_Question_First_Time_Body");
-		} else {
-			questionTemplate = configurationManager.get("Experian_Question_Body");
-			experianQuestionAnswer.setOptionSet1Answer(answerPart1);
-			experianQuestionAnswer.setOptionSet2Answer(answerPart2);
-		}
-		user.setReportInputEntity(reportInputEntity);
-		userService.update(user);
-
-		String answerTemplate = (answerPart1 == null ? "" : answerPart1.replace(" ", "+")) + "%3A"
-				+ (answerPart2 == null ? "" : answerPart2.replace(" ", "+"));
-		questionTemplate = questionTemplate.replace("{answer}", answerTemplate);
-		questionTemplate = questionTemplate.replace("{questionId}", questionId == null ? "" : questionId);
-		questionTemplate = questionTemplate.replace("{stgOneHitId}", reportInputEntity.getStage1Id());
-		questionTemplate = questionTemplate.replace("{stgTwoHitId}", reportInputEntity.getStage2Id());
-
-		BoilerplateMap<String, BoilerplateList<String>> requestHeaders = createExperianQuestionRequestHeaders();
-
-		HttpCookie jSessionIdCookie = new HttpCookie("JSESSIONID", reportInputEntity.getSessionId2());
-		BoilerplateList<HttpCookie> requestCookies = new BoilerplateList();
-		requestCookies.add(jSessionIdCookie);
-		logger.logInfo("ExperianBureauService", "Experian_Question",
-				"Request" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(), questionTemplate);
-
-		String requestBodyJava = createExperianQuestionRequest(
-				configurationManager.get("Experian_Question_URL") + questionTemplate, requestHeaders, requestCookies,
-				questionTemplate);
-
-		BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
-		BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
-		BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
-		contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
-		requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
-
-		HttpResponse httpResponseJava = HttpUtility.makeHttpRequest(
-				configurationManager.get("Experian_INITIATE_URL_JAVA"), requestHeadersJava, null, requestBodyJava,
-				"POST");
-
-		HttpResponse httpResponse = Base.fromJSON(httpResponseJava.getResponseBody(), HttpResponse.class);
-
-		logger.logInfo("ExperianBureauService", "Experian_Question",
-				"Response Status Code" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(),
-				Integer.toString(httpResponse.getHttpStatus()));
-
-		if (httpResponse.getHttpStatus() != 200) {
-			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
-			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request ",
-					false);
-			throw new PreconditionFailedException("Experian Server", "Issue in accessing server - Experian_CRQ_Request",
-					null);
-		}
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
-		// throws exception in case responseJson is not returned
-		if (responseBodyMap.get("responseJson") == null) {
-			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
-			// updates the experianStatus:(23-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Generic Error Message: responseJson is not returned --- Error String and Response Json: "
-							+ getErrorStringAndResponseJsonFields(responseBodyMap),
-					true);
-			throw new PreconditionFailedException("Experian Server",
-					"responseJson is not returned " + getErrorStringAndResponseJsonFields(responseBodyMap), null);
-		}
-		if (responseBodyMap.get("responseJson").equals("next") == true) {
-			ExperianQuestionAnswer newExperianQuestionAnswer = new ExperianQuestionAnswer();
-			Map<String, Object> questionToCustomerMap = (Map<String, Object>) responseBodyMap.get("questionToCustomer");
-			List<String> optionSet1 = (List<String>) questionToCustomerMap.get("optionsSet1");
-			for (String question : optionSet1) {
-				newExperianQuestionAnswer.getOptionSet1().add(question);
+			// fill the answer to the question
+			String questionTemplate = null;
+			if (questionId == null || questionId.equals("")) {
+				questionTemplate = configurationManager.get("Experian_Question_First_Time_Body");
+			} else {
+				questionTemplate = configurationManager.get("Experian_Question_Body");
+				experianQuestionAnswer.setOptionSet1Answer(answerPart1);
+				experianQuestionAnswer.setOptionSet2Answer(answerPart2);
 			}
-			List<String> optionSet2 = (List<String>) questionToCustomerMap.get("optionsSet2");
-			for (String question : optionSet2) {
-				newExperianQuestionAnswer.getOptionSet2().add(question);
-			}
-			String question = (String) questionToCustomerMap.get("question");
-			newExperianQuestionAnswer.setQuestionText(question);
-			String nextQuestionId = questionToCustomerMap.get("qid").toString();
-			newExperianQuestionAnswer.setQuestionId(nextQuestionId);
-			reportInputEntity.getQuestion().put(nextQuestionId, newExperianQuestionAnswer);
-			reportInputEntity.setCurrentQuestion(newExperianQuestionAnswer);
-			reportInputEntity.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
 			user.setReportInputEntity(reportInputEntity);
-			user.setUserState(MethodState.AuthQuestions);
 			userService.update(user);
+
+			String answerTemplate = (answerPart1 == null ? "" : answerPart1.replace(" ", "+")) + "%3A"
+					+ (answerPart2 == null ? "" : answerPart2.replace(" ", "+"));
+			questionTemplate = questionTemplate.replace("{answer}", answerTemplate);
+			questionTemplate = questionTemplate.replace("{questionId}", questionId == null ? "" : questionId);
+			questionTemplate = questionTemplate.replace("{stgOneHitId}", reportInputEntity.getStage1Id());
+			questionTemplate = questionTemplate.replace("{stgTwoHitId}", reportInputEntity.getStage2Id());
+
+			BoilerplateMap<String, BoilerplateList<String>> requestHeaders = createExperianQuestionRequestHeaders();
+
+			HttpCookie jSessionIdCookie = new HttpCookie("JSESSIONID", reportInputEntity.getSessionId2());
+			BoilerplateList<HttpCookie> requestCookies = new BoilerplateList();
+			requestCookies.add(jSessionIdCookie);
+			logger.logInfo("ExperianBureauService", "Experian_Question",
+					"Request" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(), questionTemplate);
+
+			String requestBodyJava = createExperianQuestionRequest(
+					configurationManager.get("Experian_Question_URL") + questionTemplate, requestHeaders,
+					requestCookies, questionTemplate);
+
+			BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
+			BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
+			BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
+			contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
+			requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
+
+			HttpResponse httpResponseJava = HttpUtility.makeHttpRequest(
+					configurationManager.get("Experian_INITIATE_URL_JAVA"), requestHeadersJava, null, requestBodyJava,
+					"POST");
+
+			HttpResponse httpResponse = Base.fromJSON(httpResponseJava.getResponseBody(), HttpResponse.class);
+
+			logger.logInfo("ExperianBureauService", "Experian_Question",
+					"Response Status Code" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(),
+					Integer.toString(httpResponse.getHttpStatus()));
+
+			if (httpResponse.getHttpStatus() != 200) {
+				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
+				// updates the experianStatus:(15-11-2016)
+				experianStatusUpdate(reportInputEntity,
+						"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+								+ "--- Generic Error Message: Issue in accessing server - Experian_CRQ_Request ",
+						false);
+				throw new PreconditionFailedException("Experian Server",
+						"Issue in accessing server - Experian_CRQ_Request", null);
+			}
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
+			// throws exception in case responseJson is not returned
+			if (responseBodyMap.get("responseJson") == null) {
+				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
+				// updates the experianStatus:(23-11-2016)
+				experianStatusUpdate(reportInputEntity,
+						"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+								+ "--- Generic Error Message: responseJson is not returned --- Error String and Response Json: "
+								+ getErrorStringAndResponseJsonFields(responseBodyMap),
+						true);
+				throw new PreconditionFailedException("Experian Server",
+						"responseJson is not returned " + getErrorStringAndResponseJsonFields(responseBodyMap), null);
+			}
+			if (responseBodyMap.get("responseJson").equals("next") == true) {
+				ExperianQuestionAnswer newExperianQuestionAnswer = new ExperianQuestionAnswer();
+				Map<String, Object> questionToCustomerMap = (Map<String, Object>) responseBodyMap
+						.get("questionToCustomer");
+				List<String> optionSet1 = (List<String>) questionToCustomerMap.get("optionsSet1");
+				for (String question : optionSet1) {
+					newExperianQuestionAnswer.getOptionSet1().add(question);
+				}
+				List<String> optionSet2 = (List<String>) questionToCustomerMap.get("optionsSet2");
+				for (String question : optionSet2) {
+					newExperianQuestionAnswer.getOptionSet2().add(question);
+				}
+				String question = (String) questionToCustomerMap.get("question");
+				newExperianQuestionAnswer.setQuestionText(question);
+				String nextQuestionId = questionToCustomerMap.get("qid").toString();
+				newExperianQuestionAnswer.setQuestionId(nextQuestionId);
+				reportInputEntity.getQuestion().put(nextQuestionId, newExperianQuestionAnswer);
+				reportInputEntity.setCurrentQuestion(newExperianQuestionAnswer);
+				reportInputEntity.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
+				user.setReportInputEntity(reportInputEntity);
+				user.setUserState(MethodState.AuthQuestions);
+				userService.update(user);
+				RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
+				// updates the experianStatus:(15-11-2016)
+				experianStatusUpdate(reportInputEntity,
+						"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+								+ "--- Error String and Response Json: "
+								+ getErrorStringAndResponseJsonFields(responseBodyMap),
+						false);
+			}
+
+			if (responseBodyMap.get("responseJson").equals("passedReport")) {
+				// parse report and get report contents which are required
+				reportInputEntity = parseReportAndGetReportNumber(reportInputEntity, responseBodyMap);
+				user = observeReport(reportInputEntity, user);
+				// user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
+				user.setUserState(MethodState.ReportGenerated);
+				// updates the experianStatus:(15-11-2016)
+				experianStatusUpdate(reportInputEntity,
+						"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
+								+ "--- Error String and Response Json: "
+								+ getErrorStringAndResponseJsonFields(responseBodyMap),
+						false);
+			}
+
+			handleError(user, reportInputEntity, responseBodyMap, httpResponse);
+
+			user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
+			user.setReportInputEntity(reportInputEntity);
+			userService.update(user);
+			// publishUserStateToCRM(user);
 			RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
-			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Error String and Response Json: "
-							+ getErrorStringAndResponseJsonFields(responseBodyMap),
-					false);
 		}
-
-		if (responseBodyMap.get("responseJson").equals("passedReport")) {
-			// parse report and get report contents which are required
-			reportInputEntity = parseReportAndGetReportNumber(reportInputEntity, responseBodyMap);
-			user = observeReport(reportInputEntity, user);
-			// user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
-			user.setUserState(MethodState.ReportGenerated);
-			// updates the experianStatus:(15-11-2016)
-			experianStatusUpdate(reportInputEntity,
-					"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
-							+ "--- Error String and Response Json: "
-							+ getErrorStringAndResponseJsonFields(responseBodyMap),
-					false);
-		}
-
-		handleError(user, reportInputEntity, responseBodyMap, httpResponse);
-
-		user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
-		user.setReportInputEntity(reportInputEntity);
-		userService.update(user);
-		// publishUserStateToCRM(user);
-		RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
 		return reportInputEntity;
 	}
 
@@ -767,11 +775,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 *            The response map
 	 * @param httpResponse
 	 *            The httpresponse of experian request
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void handleError(ExternalFacingReturnedUser user, ReportInputEntity reportInputEntity,
-			Map<String, Object> responseBodyMap, HttpResponse httpResponse)
-			throws Exception {
+			Map<String, Object> responseBodyMap, HttpResponse httpResponse) throws Exception {
 		if (responseBodyMap.get("responseJson").equals("systemError") == true) {
 			pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 			// updates the experianStatus:(15-11-2016)
@@ -986,7 +993,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 */
 	@Override
 	public ReportInputEntity start(ReportInputEntity reportInputEntiity) throws Exception {
-		
+
 		try {
 
 			this.panNumberValidation(reportInputEntiity);
@@ -1001,6 +1008,12 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// reference
 			ExternalFacingReturnedUser user = userService
 					.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
+			/////////////////////////////////
+			reportInputEntiity.setReportFileNameOnDisk("68d5c1c9-a7d0-4249-8377-cffb90c92980_experianreporthtml");
+			reportInputEntiity.setReportFileFullNameOnDisk(user.getExperianReportUrl());
+			reportInputEntiity.setUserId(user.getUserId());
+			parseExperianReportObserver.parse(reportInputEntiity);
+			/////////////////////////////////////
 			// set userId
 			reportInputEntiity.setUserId(user.getUserId());
 			// save reportinputentity
@@ -1059,11 +1072,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 *            integration been started
 	 * @return the reportInputEntity containing the returned sessionIds,
 	 *         stageOneId, stageTwoId, report etc. in response to requests
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private ReportInputEntity doStartSingleURLIntegration(ReportInputEntity reportInputEntiity,
-			ExternalFacingReturnedUser user)
-			throws Exception {
+			ExternalFacingReturnedUser user) throws Exception {
 		reportInputEntiity.setStateEnum(ReportInputEntity.State.SessionSetup);
 		Map<String, Object> responseBodyMap = null;
 		HttpResponse httpResponse = null;
@@ -1203,7 +1215,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html",
 						"text/html", report.getBytes());
 				// save file
-				FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
+				FileEntity fileEntity = fileService.saveFile("AKS_ExperianReport", file);
 				// NOT SAVING REPORT FILE ENTITY IN REPORTINPUTENTITY
 				// reportInputEntiity.setReportFileEntity(fileEntity);
 				// set report file id to report input entity
@@ -1236,6 +1248,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				// get report number
 				String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
 				reportInputEntiity.setReportNumber(reportNumber);
+				reportInputEntiity.setReportFileNameOnDisk(fileEntity.getFullFileNameOnDisk());
 
 				user = observeReport(reportInputEntiity, user);
 				user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
@@ -1263,6 +1276,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				reportInputEntiity.setStage2Id(responseBodyMap.get("stageTwoId_").toString());
 				reportInputEntiity.setjSessionId2(ecvSessionValue);
 				reportInputEntiity.setStateEnum(State.Question);
+				// save report input entity
+				mysqlReport.saveReportInputEntity(reportInputEntiity);
 
 				user.setUserState(MethodState.AuthQuestions);
 				userService.update(user);

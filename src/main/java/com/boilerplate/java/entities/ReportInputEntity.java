@@ -75,8 +75,8 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	private String voucherCode;
 
 	/**
-	 * This is the voucher expiry for voucher given to the customer for the given
-	 * session.
+	 * This is the voucher expiry for voucher given to the customer for the
+	 * given session.
 	 */
 	@JsonIgnore
 	private java.util.Date voucherExpiry;
@@ -90,6 +90,10 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 * This is the reportFileNameOnDisk
 	 */
 	private String reportFileNameOnDisk;
+	/**
+	 * This is the reportFileFullNameOnDisk
+	 */
+	private String reportFileFullNameOnDisk;
 	@JsonIgnore
 	/**
 	 * This is the reportVersion
@@ -339,8 +343,6 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 		this.reportFileNameOnDisk = reportFileNameOnDisk;
 	}
 
-	
-
 	public boolean isDontSendKycSms() {
 		// TODO Auto-generated method stub
 		return false;
@@ -364,6 +366,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	public void setReportVersionEnum(ReportVersion reportVersionEnum) {
 		this.reportVersionEnum = reportVersionEnum;
 	}
+
 	@JsonIgnore
 	/**
 	 * Gets the report version
@@ -373,6 +376,7 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	public int getReportVersion() {
 		return this.reportVersionEnum.ordinal();
 	}
+
 	@JsonIgnore
 	/**
 	 * Sets the report version number
@@ -420,6 +424,25 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 */
 	public void setReportFileId(String reportFileId) {
 		this.reportFileId = reportFileId;
+	}
+
+	/**
+	 * Gets the reportFileFullNameOnDisk
+	 * 
+	 * @return the reportFileFullNameOnDisk
+	 */
+	public String getReportFileFullNameOnDisk() {
+		return reportFileFullNameOnDisk;
+	}
+
+	/**
+	 * Sets the reportFileFullNameOnDisk
+	 * 
+	 * @param reportFileFullNameOnDisk
+	 *            the reportFileFullNameOnDisk to set
+	 */
+	public void setReportFileFullNameOnDisk(String reportFileFullNameOnDisk) {
+		this.reportFileFullNameOnDisk = reportFileFullNameOnDisk;
 	}
 
 }

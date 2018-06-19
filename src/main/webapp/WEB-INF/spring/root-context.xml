@@ -720,6 +720,7 @@
 
 	<bean id="mysqlReport"
 		class="com.boilerplate.database.mysql.implementations.MySQLReport">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<bean id="experianDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisVoucher"
@@ -731,11 +732,16 @@
 		<property name="reportService" ref="reportService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="file" ref="file"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
 	</bean>
 
 	<bean id="reportService" class="com.boilerplate.service.implemetations.ReportService">
 		<property name="fileService" ref="fileService"></property>
 		<property name="reportDataAccess" ref="reportDataAccess"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
+
 	</bean>
 	<bean id="reportDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisReport">
@@ -1033,7 +1039,7 @@
 		<property name="expressDataAccess" ref="expressDataAccess"></property>
 	</bean>
 
-<!-- Dependency related to vouchers uploading in system -->
+	<!-- Dependency related to vouchers uploading in system -->
 
 	<bean id="voucherService" class="com.boilerplate.service.implemetations.VoucherService">
 		<property name="configurationManager" ref="configurationManager"></property>
@@ -1041,7 +1047,7 @@
 		<property name="experianDataAccess" ref="experianDataAccess"></property>
 		<property name="file" ref="file"></property>
 	</bean>
-	
+
 	<bean id="voucherAlertObserverList"
 		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
 		<property name="asyncJobList">
