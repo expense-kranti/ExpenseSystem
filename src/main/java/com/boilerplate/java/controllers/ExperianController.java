@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,6 +27,7 @@ import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IBureauIntegrationService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
@@ -66,17 +68,42 @@ public class ExperianController extends BaseController {
 			PreconditionFailedException, BadRequestException, UnauthorizedException {
 		return this.experianBureauService.start(reportInputEntiity);
 	}
-	
-	@ApiOperation(	value="Fetches next question"
-			 )
-		@ApiResponses(value={
-						@ApiResponse(code=200, message="Ok")
-					,	@ApiResponse(code=400, message="Data not completly filled")
-					})
-		@RequestMapping(value = "/experian/question", method = RequestMethod.POST)
-	public @ResponseBody ReportInputEntity answerQuestionAndMoveToNext(@RequestBody ExperianQuestionAnswer experianQuestionAnswer) throws Exception,ConflictException, NotFoundException, PreconditionFailedException, IOException, UpdateFailedException, BadRequestException,JAXBException, ParserConfigurationException, FactoryConfigurationError, SAXException{
-		return this.experianBureauService.fetchNextItem(experianQuestionAnswer.getQuestionId()
-				,experianQuestionAnswer.getOptionSet1Answer(),experianQuestionAnswer.getOptionSet2Answer());
+
+	/**
+	 * This api is used to fetch next item from experian report generation
+	 * activity session
+	 * 
+	 * @param experianQuestionAnswer
+	 *            contains the question and answer details
+	 * @return
+	 * @throws Exception
+	 * @throws ConflictException
+	 *             thrown when user aready present
+	 * @throws NotFoundException
+	 *             thrown when user not found
+	 * @throws PreconditionFailedException
+	 *             thrown when any expected response is not got from experian
+	 *             system
+	 * @throws IOException
+	 *             thrown when any IOException occurs in making call to experian
+	 *             system
+	 * @throws UpdateFailedException
+	 * @throws BadRequestException
+	 * @throws JAXBException
+	 * @throws ParserConfigurationException
+	 * @throws FactoryConfigurationError
+	 * @throws SAXException
+	 */
+	@ApiOperation(value = "Fetches next question")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 400, message = "Data not completly filled") })
+	@RequestMapping(value = "/experian/question", method = RequestMethod.POST)
+	public @ResponseBody ReportInputEntity answerQuestionAndMoveToNext(
+			@RequestBody ExperianQuestionAnswer experianQuestionAnswer) throws Exception, ConflictException,
+			NotFoundException, PreconditionFailedException, IOException, UpdateFailedException, BadRequestException,
+			JAXBException, ParserConfigurationException, FactoryConfigurationError, SAXException {
+		return this.experianBureauService.fetchNextItem(experianQuestionAnswer.getQuestionId(),
+				experianQuestionAnswer.getOptionSet1Answer(), experianQuestionAnswer.getOptionSet2Answer());
 	}
 
 }

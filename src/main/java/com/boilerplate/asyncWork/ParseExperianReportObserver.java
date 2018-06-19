@@ -392,9 +392,9 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 
 			// Get file from local if not found then downloads
 			String fileNameInURL = null;
-			FileEntity fileEntity = fileService.getFile(reportInputEntity.getReportFileNameOnDisk());
+			FileEntity fileEntity = fileService.getFile(reportInputEntity.getReportFileId());
 			if (!new File(configurationManager.get("RootFileDownloadLocation"),
-					reportInputEntity.getReportFileNameOnDisk()).exists()) {
+					reportInputEntity.getReportFileId()).exists()) {
 				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
 			} else {
 				fileNameInURL = fileEntity.getFileName();

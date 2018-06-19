@@ -1370,6 +1370,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllETest.put("Experian_Question_Body",
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllETest.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
+		vAllETest.put("Experian_Question_URL",
+				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
 
 		return vAllETest;
 	}
@@ -1450,7 +1453,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Experian_Question_Content_Type", "application/json");
 		vAllEDev.put("Experian_Question_Accept", "*/*");
 		vAllEDev.put("Experian_Question_URL",
-				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
+				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
 		// added for publishUserAKSOrReferReport
 		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
@@ -1592,6 +1595,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllEProduction.put("Experian_Question_Body",
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllEProduction.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
+		vAllEProduction.put("Experian_Question_URL",
+				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
 
 		return vAllEProduction;
 	}
@@ -1779,6 +1785,8 @@ public class BaseRedisDataAccessLayer {
 
 		// email content related to income tax data email to be sent
 		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Akshar: Your Income Tax Details");
+		contentMap.put("REPORT_FAIL_AFTER_PAYMENT_SMS_BODY",
+				"Dear @FirstName, Sorry! We could not authenticate you. Kindly Upload your Address proof and Id proof Or Send us at support@projectakshar.com . projectakshar.com");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

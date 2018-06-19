@@ -1,11 +1,14 @@
 package com.boilerplate.service.implemetations;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.Role;
@@ -66,4 +69,28 @@ public class ReportService implements IReportService {
 		return reportMap;
 	}
 
+	/**
+	 * @see IReportService.getQuestionAnswers
+	 */
+	@Override
+	public ExperianQuestionAnswer getQuestionAnswers(String userId, String questionId) {
+		return reportDataAccess.getExperianQuestionAnswer(userId, questionId);
+	}
+
+	/**
+	 * @see IReport.checkQuestionAnswerExists
+	 */
+	@Override
+	public boolean checkQuestionAnswerExists(String userId) {
+		return reportDataAccess.checkQuestionAnswerExists(userId);
+	}
+
+	/**
+	 * @see IReport.saveExperianQuestionAnswer
+	 */
+	@Override
+	public void saveExperianQuestionAnswer(String userId, String questionId,
+			ExperianQuestionAnswer experianQuestionAnswer) {
+		reportDataAccess.saveExperianQuestionAnswer(userId, questionId, experianQuestionAnswer);
+	}
 }

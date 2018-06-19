@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.Report;
 
 /**
@@ -18,7 +19,7 @@ public interface IReportService {
 	 * 
 	 * @param report
 	 *            the report to save
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void save(Report report) throws Exception;
 
@@ -33,4 +34,38 @@ public interface IReportService {
 	 */
 	public BoilerplateMap<String, Report> getReports(String userId) throws UnauthorizedException;
 
+	/**
+	 * This method is used to get the experian question answer entity for the
+	 * given question id for userid
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @param questionId
+	 *            the question id
+	 * @return the experian question answer entity
+	 */
+	public ExperianQuestionAnswer getQuestionAnswers(String userId, String questionId);
+
+	/**
+	 * This method is used to check if question answers key exists for user id
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @return true if key exists, false if not
+	 */
+	public boolean checkQuestionAnswerExists(String userId);
+
+	/**
+	 * This method is used to save the experian question answer entity against
+	 * the given userid
+	 * 
+	 * @param userId
+	 *            the user id
+	 * @param questionId
+	 *            the question id
+	 * @param experianQuestionAnswer
+	 *            the entity to save
+	 */
+	public void saveExperianQuestionAnswer(String userId, String questionId,
+			ExperianQuestionAnswer experianQuestionAnswer);
 }

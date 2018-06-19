@@ -27,13 +27,11 @@ import com.boilerplate.asyncWork.ParseExperianReportObserver;
 import com.boilerplate.database.interfaces.IExperian;
 import com.boilerplate.database.interfaces.IExpress;
 import com.boilerplate.database.interfaces.IMySQLReport;
-import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
-import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
@@ -49,6 +47,7 @@ import com.boilerplate.java.entities.MethodState;
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportStatus;
+import com.boilerplate.java.entities.ReportVersion;
 import com.boilerplate.java.entities.Voucher;
 import com.boilerplate.service.interfaces.IBureauIntegrationService;
 import com.boilerplate.service.interfaces.IFileService;
@@ -208,8 +207,6 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	public void setMysqlReport(IMySQLReport mysqlReport) {
 		this.mysqlReport = mysqlReport;
 	}
-	
-	
 
 	/**
 	 * The subject list for experian report
@@ -447,16 +444,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			reInsertUnusedVouchers(reportInputEntity);
 		}
 		reportInputEntity.setExperianStatus(experianStatus);
-		// Save this information into the current users metadata for future
-		// reference
-		ExternalFacingReturnedUser user = userService
-				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		// save reportinputentity
 		mysqlReport.saveReportInputEntity(reportInputEntity);
-		// user.getUserMetaData().put("ExperianData",
-		// reportInputEntity.toJSON());
-		// user.setReportInputEntity(reportInputEntity);
-		userService.update(user);
 		if (reportInputEntity.getStage1Id() != null && reportInputEntity.getStage1Id() != "") {
 			// publishUserStateToCRM(user);
 		}
@@ -587,6 +576,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			throws UnauthorizedException {
 		BoilerplateMap<String, Report> reportMap = this.reportService.getReports(reportInputEntiity.getUserId());
 		int size = reportMap.size();
+		reportInputEntiity.setReportVersionEnum(ReportVersion.ExperianV1);
+
 		return report;
 	}
 
@@ -598,6 +589,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2) throws Exception {
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
+		// get report input entity
 		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
 		ReportInputEntity reportInputEntity = null;
 		if (reportInputEntityList.size() > 0) {
@@ -613,7 +605,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// you can only call with empty question id for the first time.
 			// so check the map
 			if (questionId == null || (questionId.trim().equals(""))) {
-				if (reportInputEntity.getQuestion().size() > 0) {
+				// check if user already have questions
+				if (reportService.checkQuestionAnswerExists(user.getUserId())) {
 					pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 					// updates the experianStatus:(15-11-2016)
 					experianStatusUpdate(reportInputEntity,
@@ -623,7 +616,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			} else {
 				// You can only call with a question and set of answers which
 				// exist in the map.
-				experianQuestionAnswer = reportInputEntity.getQuestion().get(questionId);
+				// save question answer entity in mysql
+				// TODO GET QUESTION WITH QUESTION ID
+				experianQuestionAnswer = reportService.getQuestionAnswers(user.getUserId(), questionId);
 				if (experianQuestionAnswer == null) {
 					pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
 					// updates the experianStatus:(15-11-2016)
@@ -633,9 +628,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 							false);
 					throw new NotFoundException("Question", "Question with id " + questionId + " not found", null);
 				}
-
 			}
-
 			// fill the answer to the question
 			String questionTemplate = null;
 			if (questionId == null || questionId.equals("")) {
@@ -645,9 +638,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				experianQuestionAnswer.setOptionSet1Answer(answerPart1);
 				experianQuestionAnswer.setOptionSet2Answer(answerPart2);
 			}
-			user.setReportInputEntity(reportInputEntity);
-			userService.update(user);
-
+			// save report input entity
+			mysqlReport.saveReportInputEntity(reportInputEntity);
+			RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
 			String answerTemplate = (answerPart1 == null ? "" : answerPart1.replace(" ", "+")) + "%3A"
 					+ (answerPart2 == null ? "" : answerPart2.replace(" ", "+"));
 			questionTemplate = questionTemplate.replace("{answer}", answerTemplate);
@@ -662,22 +655,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			requestCookies.add(jSessionIdCookie);
 			logger.logInfo("ExperianBureauService", "Experian_Question",
 					"Request" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(), questionTemplate);
-
-			String requestBodyJava = createExperianQuestionRequest(
+			HttpResponse httpResponse = HttpUtility.makeHttpRequest(
 					configurationManager.get("Experian_Question_URL") + questionTemplate, requestHeaders,
-					requestCookies, questionTemplate);
-
-			BoilerplateMap<String, BoilerplateList<String>> requestHeadersJava = new BoilerplateMap();
-			BoilerplateList<String> headerValueJava = new BoilerplateList<String>();
-			BoilerplateList<String> contentTypeHeaderValueJava = new BoilerplateList<String>();
-			contentTypeHeaderValueJava.add("application/json;charset=UTF-8");
-			requestHeadersJava.put("Content-Type", contentTypeHeaderValueJava);
-
-			HttpResponse httpResponseJava = HttpUtility.makeHttpRequest(
-					configurationManager.get("Experian_INITIATE_URL_JAVA"), requestHeadersJava, null, requestBodyJava,
-					"POST");
-
-			HttpResponse httpResponse = Base.fromJSON(httpResponseJava.getResponseBody(), HttpResponse.class);
+					requestCookies, questionTemplate, "POST");
 
 			logger.logInfo("ExperianBureauService", "Experian_Question",
 					"Response Status Code" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(),
@@ -724,10 +704,15 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				newExperianQuestionAnswer.setQuestionText(question);
 				String nextQuestionId = questionToCustomerMap.get("qid").toString();
 				newExperianQuestionAnswer.setQuestionId(nextQuestionId);
-				reportInputEntity.getQuestion().put(nextQuestionId, newExperianQuestionAnswer);
+
+				// reportInputEntity.getQuestion().put(nextQuestionId,
+				// newExperianQuestionAnswer);
+				reportService.saveExperianQuestionAnswer(user.getUserId(), nextQuestionId, newExperianQuestionAnswer);
 				reportInputEntity.setCurrentQuestion(newExperianQuestionAnswer);
 				reportInputEntity.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
-				user.setReportInputEntity(reportInputEntity);
+				// save report input entity
+				mysqlReport.saveReportInputEntity(reportInputEntity);
+				// user.setReportInputEntity(reportInputEntity);
 				user.setUserState(MethodState.AuthQuestions);
 				userService.update(user);
 				RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
@@ -740,9 +725,43 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			}
 
 			if (responseBodyMap.get("responseJson").equals("passedReport")) {
-				// parse report and get report contents which are required
-				reportInputEntity = parseReportAndGetReportNumber(reportInputEntity, responseBodyMap);
+				reportInputEntity.setStateEnum(State.Report);
+				String report = (String) responseBodyMap.get("showHtmlReportForCreditReport");
+				MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html",
+						"text/html", report.getBytes());
+				FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
+
+				// saves the experian report url in the corresponding user
+
+				// Open the file
+				String htmlFile = FileUtils.readFileToString(
+						new File(configurationManager.get("RootFileDownloadLocation") + fileEntity.getFileName()));
+
+				// cut out the xml part from it
+				int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
+				String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
+				xmlFile = xmlFile.replace("\"/>", "");
+				xmlFile = xmlFile.replace("</body>", "");
+				xmlFile = xmlFile.replace("</html>", "");
+				xmlFile = StringEscapeUtils.unescapeHtml(xmlFile);
+
+				DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				InputSource inputSource = new InputSource();
+				inputSource.setCharacterStream(new StringReader(xmlFile));
+
+				Document doc = documentBuilder.parse(inputSource);
+
+				// Normalize the XML Structure; It's just too important !!
+				NodeList root = doc.getChildNodes();
+				Node rootNode = getNode("InProfileResponse", root);
+				Node creditProfileHeader = getNode("CreditProfileHeader", rootNode.getChildNodes());
+				NodeList creditProfileHeaderNodes = creditProfileHeader.getChildNodes();
+				// get report number
+				String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
+				reportInputEntity.setReportNumber(reportNumber);
+
 				user = observeReport(reportInputEntity, user);
+				user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
 				// user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
 				user.setUserState(MethodState.ReportGenerated);
 				// updates the experianStatus:(15-11-2016)
@@ -754,11 +773,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			}
 
 			handleError(user, reportInputEntity, responseBodyMap, httpResponse);
-
-			user.getUserMetaData().put("ExperianData", reportInputEntity.toJSON());
-			user.setReportInputEntity(reportInputEntity);
+			// save or update report input entity
+			mysqlReport.saveReportInputEntity(reportInputEntity);
+			// update user
 			userService.update(user);
-			// publishUserStateToCRM(user);
 			RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntity);
 		}
 		return reportInputEntity;
@@ -954,48 +972,12 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	}
 
 	/**
-	 * This method parses report data and gets required information like
-	 * reportNumber
-	 * 
-	 * @param reportInputEntity
-	 *            the reportInputEntity that contains the report to parse
-	 * @param responseBodyMap
-	 * @return the reportInputEntity that contains experian integration state,
-	 *         report number
-	 * @throws Exception
-	 */
-	private ReportInputEntity parseReportAndGetReportNumber(ReportInputEntity reportInputEntity,
-			Map<String, Object> responseBodyMap) throws Exception {
-		// we have a report
-		// save this to the users context
-		// and change state to next question
-		reportInputEntity.setStateEnum(State.Report);
-		String report = (String) responseBodyMap.get("showHtmlReportForCreditReport");
-		MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html", "text/html",
-				report.getBytes());
-		FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
-		// saves the experian report url in the corresponding user
-
-		// Open the file
-		String htmlFile = FileUtils.readFileToString(
-				new File(configurationManager.get("RootFileDownloadLocation") + fileEntity.getFileName()));
-
-		// cut out the xml part from it
-		int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
-		String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
-		String reportNumber = getReportNumber(xmlFile);
-		return reportInputEntity;
-
-	}
-
-	/**
 	 * @see IBureauIntegrationService.start
 	 */
 	@Override
 	public ReportInputEntity start(ReportInputEntity reportInputEntiity) throws Exception {
 
 		try {
-
 			this.panNumberValidation(reportInputEntiity);
 			// check if the input data is clean
 			if ((RequestThreadLocal.getSession() == null)) {
@@ -1008,16 +990,14 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// reference
 			ExternalFacingReturnedUser user = userService
 					.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
-			/////////////////////////////////
-			reportInputEntiity.setReportFileNameOnDisk("68d5c1c9-a7d0-4249-8377-cffb90c92980_experianreporthtml");
-			reportInputEntiity.setReportFileFullNameOnDisk(user.getExperianReportUrl());
-			reportInputEntiity.setUserId(user.getUserId());
-			parseExperianReportObserver.parse(reportInputEntiity);
-			/////////////////////////////////////
+
 			// set userId
 			reportInputEntiity.setUserId(user.getUserId());
 			// save reportinputentity
 			mysqlReport.saveReportInputEntity(reportInputEntiity);
+			user.setUserState(MethodState.ExperianAttempt);
+			// save user state
+			userService.update(user);
 
 			// now get the voucher code for this user
 			if (reportInputEntiity.getVoucherCode() == null || reportInputEntiity.getVoucherCode().equals("")) {
@@ -1049,6 +1029,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			}
 			// save report input entity with experian responses
 			mysqlReport.saveReportInputEntity(reportInputEntiity);
+			// TODO save user?
 
 		} catch (Exception ex) {
 			logger.logWarning("ExperianBureauService", "Start", "error", "");
@@ -1215,11 +1196,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html",
 						"text/html", report.getBytes());
 				// save file
-				FileEntity fileEntity = fileService.saveFile("AKS_ExperianReport", file);
+				FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
 				// NOT SAVING REPORT FILE ENTITY IN REPORTINPUTENTITY
 				// reportInputEntiity.setReportFileEntity(fileEntity);
-				// set report file id to report input entity
-				reportInputEntiity.setReportFileId(fileEntity.getFileName());
+
 				// saves the experian report url in the corresponding user
 
 				// Open the file
@@ -1248,8 +1228,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				// get report number
 				String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
 				reportInputEntiity.setReportNumber(reportNumber);
-				reportInputEntiity.setReportFileNameOnDisk(fileEntity.getFullFileNameOnDisk());
 
+				// set report file id to report input entity, required for
+				// getting file to parse the report file
+				reportInputEntiity.setReportFileId(fileEntity.getFileName());
 				user = observeReport(reportInputEntiity, user);
 				user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
 				user.setUserState(MethodState.ReportGenerated);
@@ -1259,11 +1241,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 								+ "--- Error String and Response Json: "
 								+ getErrorStringAndResponseJsonFields(responseBodyMap),
 						false);
-
-				// user.getUserMetaData().put("ExperianData",
-				// reportInputEntiity.toJSON());
-				// user.setReportInputEntitty(reportInputEntiity);
-				// user.setReportInputId(reportInputEntiity.getId());
+				mysqlReport.saveReportInputEntity(reportInputEntiity);
 				userService.update(user);
 				RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
 				return reportInputEntiity;
@@ -1275,6 +1253,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				reportInputEntiity.setStage1Id(responseBodyMap.get("stageOneId_").toString());
 				reportInputEntiity.setStage2Id(responseBodyMap.get("stageTwoId_").toString());
 				reportInputEntiity.setjSessionId2(ecvSessionValue);
+				reportInputEntiity.setSessionId2(ecvSessionValue);
 				reportInputEntiity.setStateEnum(State.Question);
 				// save report input entity
 				mysqlReport.saveReportInputEntity(reportInputEntiity);

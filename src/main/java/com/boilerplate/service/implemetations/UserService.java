@@ -4,6 +4,7 @@ import java.nio.charset.CharacterCodingException;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendRegistrationEmailObserver;
 import com.boilerplate.asyncWork.SendSMSOnPasswordChange;
+import com.boilerplate.database.interfaces.IMySQLReport;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.ISFUpdateHash;
@@ -29,9 +31,12 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.BaseEntity;
+import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ManageUserEntity;
+import com.boilerplate.java.entities.MethodState;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.UpdateUserEntity;
@@ -347,6 +352,19 @@ public class UserService implements IUserService {
 	}
 
 	/**
+	 * This is an instance of mysqlReport
+	 */
+	IMySQLReport mysqlReport;
+
+	/**
+	 * @param mysqlReport
+	 *            the mysqlReport to set
+	 */
+	public void setMysqlReport(IMySQLReport mysqlReport) {
+		this.mysqlReport = mysqlReport;
+	}
+
+	/**
 	 * Initializes the bean
 	 */
 	public void initilize() {
@@ -573,6 +591,17 @@ public class UserService implements IUserService {
 				}
 			}
 			user.setPassword("Password Encrypted");
+			// check state of user if user state is experian attempt or
+			// authquestion then give its report input entity
+			if (user.getUserState() != null && (user.getUserState() == MethodState.ExperianAttempt
+					|| user.getUserState() == MethodState.AuthQuestions)) {
+				List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+				// check if report input entity is present for user
+				if (reportInputEntityList.size() > 0) {
+					user.setReportInputEntity((ReportInputEntity) reportInputEntityList.get(0));
+				}
+			}
+
 			// get the roles, ACL and there details of this user
 			// if the user is valid create a new session, in the session add
 			// details
@@ -1117,7 +1146,8 @@ public class UserService implements IUserService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// no need to check for null or empty
 		returnedUser.setTotalScoreInDouble(Double.parseDouble(returnedUser.getTotalScore()));
-		// set rank of user downcasting to float from double cause score not gonna increase to that precision
+		// set rank of user downcasting to float from double cause score not
+		// gonna increase to that precision
 		returnedUser.setRank(calculateRank((float) returnedUser.getTotalScoreInDouble()));
 
 	}
@@ -1152,5 +1182,8 @@ public class UserService implements IUserService {
 		}
 		return rank;
 	}
+	
+	
+	
 
 }

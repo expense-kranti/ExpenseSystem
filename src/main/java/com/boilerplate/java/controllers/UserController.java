@@ -315,6 +315,8 @@ public class UserController extends BaseController {
 		scriptService.increasePoint(session.getExternalFacingUser().getUserId());
 		return session;
 	}
+	
+	
 
 	
 

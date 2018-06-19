@@ -1,6 +1,9 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+
+import org.hamcrest.core.Is;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -58,6 +61,10 @@ public class Report extends BaseEntity implements Serializable {
 	 * This is the report source
 	 */
 	private ReportSource reportSourceEnum;
+	/**
+	 * This is report version enum
+	 */
+	private ReportVersion reportVersionEnum;
 
 	/**
 	 * Gets the report source
@@ -244,6 +251,20 @@ public class Report extends BaseEntity implements Serializable {
 	 */
 	public void setFileEntity(FileEntity fileEntity) {
 		this.fileEntity = fileEntity;
+	}
+
+	/**
+	 * @return the reportVersionEnum
+	 */
+	public ReportVersion getReportVersionEnum() {
+		return reportVersionEnum;
+	}
+
+	/**
+	 * @param reportVersionEnum the reportVersionEnum to set
+	 */
+	public void setReportVersionEnum(ReportVersion reportVersionEnum) {
+		this.reportVersionEnum = reportVersionEnum;
 	}
 
 	@Override

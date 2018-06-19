@@ -291,9 +291,7 @@ public class ExpressService implements IExpressService {
 			reportInputEntity.setAddressLine1((String) responseBodyMap.get("address1"));
 			// set address line 2
 			reportInputEntity.setAddressLine2((String) responseBodyMap.get("address2"));
-			// set setDateOfBirth
-			reportInputEntity.setDateOfBirthAsDate(sdf.parse((String) responseBodyMap.get("dob")));
-
+			
 		}
 		return reportInputEntity;
 	}
