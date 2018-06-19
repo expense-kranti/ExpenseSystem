@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,11 +27,14 @@ import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.Address;
 import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.ExperianTradelineStatus;
+import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.Report;
 import com.boilerplate.java.entities.ReportInputEntity;
+import com.boilerplate.java.entities.ReportSource;
 import com.boilerplate.java.entities.ReportStatus;
 import com.boilerplate.java.entities.ReportTradeline;
 import com.boilerplate.java.entities.ReportTradelineStatus;
+import com.boilerplate.service.interfaces.IFileService;
 import com.boilerplate.service.interfaces.IReportService;
 
 /**
@@ -88,8 +93,6 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	@Autowired
 	IReportService reportService;
 
-	private Report report;
-
 	/**
 	 * Sets the report service
 	 * 
@@ -111,6 +114,34 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 */
 	public void setMysqlReport(IMySQLReport mysqlReport) {
 		this.mysqlReport = mysqlReport;
+	}
+
+	/**
+	 * This is the instance of fileservice
+	 */
+	@Autowired
+	private IFileService fileService;
+
+	/**
+	 * This method set the file service
+	 * 
+	 * @param fileService
+	 */
+	public void setFileService(IFileService fileService) {
+		this.fileService = fileService;
+	}
+
+	@Autowired
+	com.boilerplate.databases.s3FileSystem.implementations.S3File file;
+
+	/**
+	 * This method sets the instance of S3File Entity
+	 * 
+	 * @param file
+	 *            The file
+	 */
+	public void setFile(com.boilerplate.databases.s3FileSystem.implementations.S3File file) {
+		this.file = file;
 	}
 
 	/**
@@ -358,9 +389,20 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 */
 	public void parse(ReportInputEntity reportInputEntity) throws Exception {
 		try {
+
+			// Get file from local if not found then downloads
+			String fileNameInURL = null;
+			FileEntity fileEntity = fileService.getFile(reportInputEntity.getReportFileNameOnDisk());
+			if (!new File(configurationManager.get("RootFileDownloadLocation"),
+					reportInputEntity.getReportFileNameOnDisk()).exists()) {
+				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+			} else {
+				fileNameInURL = fileEntity.getFileName();
+			}
+
 			// load the html file as a string
-			String htmlFile = FileUtils.readFileToString(new File(configurationManager.get("RootFileDownloadLocation")
-					+ reportInputEntity.getReportFileNameOnDisk()));
+			String htmlFile = FileUtils
+					.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
 
 			// cut out the xml part from it, again due to issues this can only
 			// be
@@ -392,6 +434,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 
 			Document doc = documentBuilder.parse(inputSource);
 
+			Report report = new Report();
 			// Normalize the XML Structure; It's just too important !!
 			NodeList root = doc.getChildNodes();
 			Node rootNode = getNode("InProfileResponse", root);
@@ -403,9 +446,6 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 
 			// get bureau score nodes
 			NodeList scoreNodes = score.getChildNodes();
-
-			BoilerplateMap<String, String> accountNumberBankNameMap = new BoilerplateMap<>();
-			BoilerplateMap<String, String> accountNumberBankNameProductMap = new BoilerplateMap<>();
 
 			// for the report extract the tradelines
 			for (int i = 0; i < accountDetails.getLength(); i++) {
@@ -422,9 +462,23 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 
 					tradeline.setAccountNumber(accountNumber);
 					tradeline.setUserId(reportInputEntity.getUserId());
-					String tradelineId = tradeline.getUserId() + ":" + tradeline.getReportId() + ":"
-							+ tradeline.getOrganizationName() + ":" + tradeline.getProductName() + ":"
-							+ tradeline.getAccountNumber();
+					String tradelineId = tradeline.getUserId().toUpperCase() + ":" + tradeline.getReportId().toUpperCase() + ":"
+							+ tradeline.getOrganizationName().toUpperCase() + ":" + tradeline.getProductName().toUpperCase() + ":"
+							+ tradeline.getAccountNumber().toUpperCase();
+
+					tradeline.setDateOpened(this.experianStringToDate(getNodeValue("Open_Date", cAISAccountDETAILS)));
+					if (getNodeValue("Date_Closed", cAISAccountDETAILS) != "") {
+						tradeline.setDateClosed(
+								this.experianStringToDate(getNodeValue("Date_Closed", cAISAccountDETAILS).toString()));
+					}
+					if (getNodeValue("Open_Date", cAISAccountDETAILS) != "") {
+						tradeline.setDateOpened(
+								this.experianStringToDate(getNodeValue("Open_Date", cAISAccountDETAILS).toString()));
+					}
+					if (getNodeValue("Date_of_Last_Payment", cAISAccountDETAILS) != "") {
+						tradeline.setDateOfLastPayment(this.experianStringToDate(
+								getNodeValue("Date_of_Last_Payment", cAISAccountDETAILS).toString()));
+					}
 
 					tradeline.setAccountHolderType(getNodeValue("AccountHoldertypeCode", cAISAccountDETAILS));
 
@@ -434,13 +488,14 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 					NodeList cAISAccountHistoryList = accountHistoryElement
 							.getElementsByTagName("CAIS_Account_History");
 					NodeList cAISAccountHistory = cAISAccountHistoryList.item(0).getChildNodes();
-					String daysPastDue = getNodeValue("Days_Past_Due", cAISAccountHistory);
-					
+					// String daysPastDue = getNodeValue("Days_Past_Due",
+					// cAISAccountHistory);
 
 					if (cAISAccountHistory.getLength() > 0) {
 						year = getNodeValue("Year", cAISAccountHistory);
 						month = getNodeValue("Month", cAISAccountHistory);
-
+						tradeline.setDPD(
+								parseExperinaStringToInteger(getNodeValue("Days_Past_Due", cAISAccountHistory)));
 					}
 					if (year == "" || month == "") {
 						year = "1900";
@@ -455,10 +510,23 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 					}
 					tradeline.setAmountDue(
 							checkDoubleorAssign(getNodeValue("Amount_Past_Due", cAISAccountDETAILS), -1.0));
+					tradeline.setOccupation(getNodeValue("Occupation_Code", cAISAccountDETAILS));
+					tradeline.setExperianTradelineStatusEnum(this.getStatus(
+							parseExperinaStringToInteger(getNodeValue("Account_Status", cAISAccountDETAILS)),
+							tradeline.getDPD()));
+
+					tradeline.setUserId(reportInputEntity.getUserId());
+					tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
+					tradeline.setId(tradelineId);
+
+					// SAVE REPORT TRADELINES
+					mysqlReport.saveReportTradeline(tradeline);
+
 					// get all address nodes
 					Element addressElement = (Element) cAISAccountDETAILS;
 					NodeList addressNodeList = addressElement.getElementsByTagName("CAIS_Holder_Address_Details");
 					Address address = null;
+
 					for (int j = 0; j < addressNodeList.getLength(); j++) {
 						NodeList cAISHolderAddressDetais = addressNodeList.item(j).getChildNodes();
 						address = new Address();
@@ -480,6 +548,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 						address.setCountryCode(getNodeValue("CountryCode_non_normalized", cAISHolderAddressDetais));
 						address.setZipCode(getNodeValue("ZIP_Postal_Code_non_normalized", cAISHolderAddressDetais));
 						address.setTradelineId(tradelineId);
+
 						// tradeline.getAddresses().add(address);
 						// save address of tradeline of user report
 						mysqlReport.saveAddress(address);
@@ -501,22 +570,19 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 						// save electronic contacts
 						mysqlReport.saveElectronicContact(electronicContact);
 					}
-
-					tradeline.setUserId(reportInputEntity.getUserId());
-					tradeline.setReportTradelineStatus(ReportTradelineStatus.WaitingBalance);
-
-					// TODO SAVE REPORT TRADELINES
-					mysqlReport.saveReportTradeline(tradeline);
 				} catch (Exception ex) {
 					logger.logInfo("ParseExperianReportObserver", "parse", "tradeline parse exception", ex.toString());
 				}
 			}
+			report.setUserId(reportInputEntity.getUserId());
+			report.setFileId(fileEntity.getFileName());
+			report.setId(getNodeValue("ReportNumber", creditProfileHeaderNodes));
 			report.setBureauScore(Integer.parseInt(
 					getNodeValue("BureauScore", scoreNodes) == "" ? "0" : getNodeValue("BureauScore", scoreNodes)));
 			report.setReportNumber(getNodeValue("ReportNumber", creditProfileHeaderNodes));
 			report.setReportStatusEnum(ReportStatus.Complete);
-			report.setReportTradelines(tradelines);
 			report.setReportDateTime(getNodeValue("ReportDate", creditProfileHeaderNodes));
+			report.setReportSourceEnum(ReportSource.Experian);
 			// save report's remaining items.
 			mysqlReport.saveReport(report);
 			// sets the pan number in pan number hash
@@ -619,84 +685,122 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	private String getProductName(int accountType) {
 		String productName = "";
 		switch (accountType) {
-		
+
 		case 0:
 			productName = "Other";
+			break;
 		case 1:
 			productName = "AUTO LOAN";
+			break;
 		case 2:
 			productName = "HOUSING LOAN";
+			break;
 		case 3:
 			productName = "PROPERTY LOAN";
+			break;
 		case 4:
 			productName = "LOAN AGAINST SHARES SECURITIES";
+			break;
 		case 5:
 			productName = "PERSONAL LOAN";
+			break;
 		case 6:
 			productName = "CONSUMER LOAN";
+			break;
 		case 7:
 			productName = "GOLD LOAN";
+			break;
 		case 8:
 			productName = "EDUCATIONAL LOAN";
+			break;
 		case 9:
 			productName = "LOAN TO PROFESSIONAL";
+			break;
 		case 10:
 			productName = "CREDIT CARD";
+			break;
 		case 11:
 			productName = "LEASING";
+			break;
 		case 12:
 			productName = "OVERDRAFT LOAN";
+			break;
 		case 13:
 			productName = "TWO WHEELER LOAN";
+			break;
 		case 14:
 			productName = "NON FUNDED CREDIT FACILITY";
+			break;
 		case 15:
 			productName = "LOAN AGAINST BANK DEPOSITS";
+			break;
 		case 16:
 			productName = "FLEET CARD";
+			break;
 		case 17:
 			productName = "Commercial Vehicle LOAN";
+			break;
 		case 18:
 			productName = "Telco Wireless";
+			break;
 		case 19:
 			productName = "Telco Broadband";
+			break;
 		case 20:
 			productName = "Telco Landline";
+			break;
 		case 31:
 			productName = "Secured Credit Card";
+			break;
 		case 32:
 			productName = "Used Car Loan";
+			break;
 		case 33:
 			productName = "Construction Equipment Loan";
+			break;
 		case 34:
 			productName = "Tractor Loan";
+			break;
 		case 35:
 			productName = "CORPORATE CREDIT CARD";
+			break;
 		case 43:
 			productName = "Microfinance Others";
+			break;
 		case 51:
 			productName = "BUSINESS LOAN GENERAL";
+			break;
 		case 52:
 			productName = "BUSINESS LOAN PRIORITY SECTOR SMALL BUSINESS";
+			break;
 		case 53:
 			productName = "BUSINESS LOAN PRIORITY SECTOR AGRICULTURE";
+			break;
 		case 54:
 			productName = "BUSINESS LOAN PRIORITY SECTOR OTHERS";
+			break;
 		case 55:
 			productName = "BUSINESS NON FUNDED CREDIT FACILITY GENERAL";
+			break;
 		case 56:
 			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR SMALL BUSINESS";
+			break;
 		case 57:
 			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR AGRICULTURE";
+			break;
 		case 58:
 			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR OTHERS";
+			break;
 		case 59:
 			productName = "BUSINESS LOANS AGAINST BANK DEPOSITS";
+			break;
 		case 60:
 			productName = "Staff Loan";
+			break;
 
 		default:
 			productName = "Other";
+			break;
 		}
 
 		return productName;

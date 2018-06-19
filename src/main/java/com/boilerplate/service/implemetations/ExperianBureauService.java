@@ -208,6 +208,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	public void setMysqlReport(IMySQLReport mysqlReport) {
 		this.mysqlReport = mysqlReport;
 	}
+	
+	
 
 	/**
 	 * The subject list for experian report
@@ -1006,6 +1008,12 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// reference
 			ExternalFacingReturnedUser user = userService
 					.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
+			/////////////////////////////////
+			reportInputEntiity.setReportFileNameOnDisk("68d5c1c9-a7d0-4249-8377-cffb90c92980_experianreporthtml");
+			reportInputEntiity.setReportFileFullNameOnDisk(user.getExperianReportUrl());
+			reportInputEntiity.setUserId(user.getUserId());
+			parseExperianReportObserver.parse(reportInputEntiity);
+			/////////////////////////////////////
 			// set userId
 			reportInputEntiity.setUserId(user.getUserId());
 			// save reportinputentity
@@ -1207,7 +1215,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				MockMultipartFile file = new MockMultipartFile("experianreport.html", "experianreport.html",
 						"text/html", report.getBytes());
 				// save file
-				FileEntity fileEntity = fileService.saveFile("ExperianReport", file);
+				FileEntity fileEntity = fileService.saveFile("AKS_ExperianReport", file);
 				// NOT SAVING REPORT FILE ENTITY IN REPORTINPUTENTITY
 				// reportInputEntiity.setReportFileEntity(fileEntity);
 				// set report file id to report input entity
@@ -1240,6 +1248,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				// get report number
 				String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
 				reportInputEntiity.setReportNumber(reportNumber);
+				reportInputEntiity.setReportFileNameOnDisk(fileEntity.getFullFileNameOnDisk());
 
 				user = observeReport(reportInputEntiity, user);
 				user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());

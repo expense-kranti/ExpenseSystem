@@ -1,7 +1,8 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 
