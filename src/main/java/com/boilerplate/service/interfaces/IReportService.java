@@ -1,5 +1,6 @@
 package com.boilerplate.service.interfaces;
 
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExperianQuestionAnswer;
@@ -68,4 +69,15 @@ public interface IReportService {
 	 */
 	public void saveExperianQuestionAnswer(String userId, String questionId,
 			ExperianQuestionAnswer experianQuestionAnswer);
+	/**
+	 * This method is used to get the report of the current logged_in user
+	 * 
+	 * @return the report of the user
+	 * @throws NotFoundException
+	 *             thrown when no express attempt found for logged in user
+	 * @throws UnauthorizedException
+	 *             This exception occurred if user is not logged in
+	 */
+	public Report getReport() throws NotFoundException, UnauthorizedException;
+
 }

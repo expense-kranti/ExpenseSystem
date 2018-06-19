@@ -722,6 +722,7 @@
 
 	<bean id="mysqlReport"
 		class="com.boilerplate.database.mysql.implementations.MySQLReport">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<bean id="experianDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisVoucher"
@@ -741,6 +742,8 @@
 	<bean id="reportService" class="com.boilerplate.service.implemetations.ReportService">
 		<property name="fileService" ref="fileService"></property>
 		<property name="reportDataAccess" ref="reportDataAccess"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
+
 	</bean>
 	<bean id="reportDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisReport">

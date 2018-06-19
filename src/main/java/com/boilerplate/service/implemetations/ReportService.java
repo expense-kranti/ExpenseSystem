@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.database.interfaces.IMySQLReport;
 import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.RequestThreadLocal;
@@ -22,6 +23,19 @@ public class ReportService implements IReportService {
 
 	@Autowired
 	IFileService fileService;
+
+	@Autowired
+	IMySQLReport mysqlReport;
+
+	/**
+	 * This is the setter for mysqlReport
+	 * 
+	 * @param mysqlReport
+	 */
+
+	public void setMysqlReport(IMySQLReport mysqlReport) {
+		this.mysqlReport = mysqlReport;
+	}
 
 	/**
 	 * This method set the file service
@@ -93,4 +107,16 @@ public class ReportService implements IReportService {
 			ExperianQuestionAnswer experianQuestionAnswer) {
 		reportDataAccess.saveExperianQuestionAnswer(userId, questionId, experianQuestionAnswer);
 	}
+	/**
+	 * @see IReportService.getReport
+	 */
+	@Override
+	public Report getReport() {
+
+		// Get the current logged in user
+		String userId = RequestThreadLocal.getSession().getUserId();
+		// Getting the report by calling database layer
+		return mysqlReport.getReport(userId);
+	}
+
 }

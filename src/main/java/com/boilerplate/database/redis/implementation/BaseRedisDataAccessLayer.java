@@ -1159,6 +1159,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReport()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReport()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1740,6 +1753,9 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEAll.put("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\"}");
 		vAllEAll.put("GET_USER_DETAILS_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\",\"name\":\"@fullName\"}");
+
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_THE_REPORT",
+				"SELECT ReportId as id,FileId as fileId,UserId as userId ,ReportStatus as reportStatusEnum,ReportSource as reportSourceEnum,BureauScore as bureauScore,ReportNumber as reportNumber,ReportDateTime as reportDateTime,QuestionCount as questionCount FROM Aks_ReportDetail where UserId= '@userId' And CreatedDate=( select MAX(CreatedDate) from Aks_ReportDetail);");
 		return vAllEAll;
 
 	}

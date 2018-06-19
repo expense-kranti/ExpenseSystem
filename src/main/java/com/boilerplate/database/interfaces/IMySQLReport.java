@@ -34,8 +34,7 @@ public interface IMySQLReport {
 	 * @param reportInputEntitty
 	 *            the report input entity
 	 * @throws Exception
-	 *             thrown when any exception occurs in saving report input
-	 *             entity
+	 *             thrown when any exception occurs in saving report input entity
 	 */
 	public void saveReportInputEntity(ReportInputEntity reportInputEntitty) throws Exception;
 
@@ -54,11 +53,10 @@ public interface IMySQLReport {
 	 * This method is used to save electronic contacts details found in report
 	 * 
 	 * @param electronicContact
-	 *            contains details of electronicContacts (phone details,
-	 *            email)of reportTradeline of user report
+	 *            contains details of electronicContacts (phone details, email)of
+	 *            reportTradeline of user report
 	 * @throws Exception
-	 *             thrown when any exception occurs in saving electronic
-	 *             contacts
+	 *             thrown when any exception occurs in saving electronic contacts
 	 */
 	public void saveElectronicContact(ElectronicContact electronicContact) throws Exception;
 
@@ -80,5 +78,14 @@ public interface IMySQLReport {
 	 * @return the report input entity
 	 */
 	public List<ReportInputEntity> getReportInputEntity(String userId);
+
+	/**
+	 * This method is used to get the report for the current logged in users
+	 * 
+	 * @param userId
+	 *            This is the current logged in user
+	 * @return the report
+	 */
+	Report getReport(String userId);
 
 }

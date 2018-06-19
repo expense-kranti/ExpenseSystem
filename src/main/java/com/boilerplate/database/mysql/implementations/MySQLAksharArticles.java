@@ -85,7 +85,7 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	public List<Map<String, Object>> getArticleCounts() {
 		// query for getting articles count
 		String sqlQuery = configurationManager.get("GET_TOTAL_ARTICLES_COUNT");
-		// set parametes map
+		// set parameters map
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 		// create session
 		List<Map<String, Object>> returndata = null;
@@ -110,7 +110,7 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	public List<Map<String, Object>> getTopSearchedArticles() throws BadRequestException {
 		// query for getting top searched articles
 		String sqlQuery = configurationManager.get("GET_TOP_SEARCHED_ARTICLES");
-		// set parametes map
+		// set parameters map
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 		// create session
 		List<Map<String, Object>> returndata = null;

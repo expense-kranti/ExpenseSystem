@@ -1,6 +1,8 @@
 package com.boilerplate.database.interfaces;
 
+import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExpressEntity;
+import com.boilerplate.java.entities.Report;
 
 /**
  * This interface has methods to make express user registration and report
