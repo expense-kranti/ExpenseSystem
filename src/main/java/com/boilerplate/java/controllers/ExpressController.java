@@ -120,25 +120,4 @@ public class ExpressController extends BaseController {
 		return expressService.getUserDetails();
 	}
 
-	/**
-	 * This API is used to get the report for the current logged in user of the
-	 * basis of it's id
-	 * 
-	 * @return reports map of the current logged_in user
-	 * @throws UnauthorizedException
-	 *             This exception occurred if user is not logged in
-	 * @throws NotFoundException
-	 *             This exception occurred if the required report is not present in
-	 *             database
-	 */
-	@ApiOperation(value = "Gets the report for the current logged in user")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
-			@ApiResponse(code = 401, message = "user not logged in") })
-	@RequestMapping(value = "/express/report", method = RequestMethod.GET)
-	public @ResponseBody BoilerplateMap<String, Report> getReport() throws UnauthorizedException, NotFoundException {
-		// TODO ADD METHOD PERMISSIONS
-		return expressService.getReport();
-
-	}
-
 }

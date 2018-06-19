@@ -30,15 +30,4 @@ public interface IExpress {
 	 */
 	public ExpressEntity saveUserExpressDetails(ExpressEntity expressEntity);
 
-	/**
-	 * This method is ude to get the report of the current logged in user on the
-	 * bases of user id
-	 * 
-	 * @param userId
-	 *            This is the user id of current logged in user
-	 * @return the map of reports for the current logged in user
-	 * 
-	 */
-	public BoilerplateMap<String, Report> getReport(String userId);
-
 }

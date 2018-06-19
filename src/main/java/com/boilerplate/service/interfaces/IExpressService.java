@@ -69,15 +69,4 @@ public interface IExpressService {
 	public ReportInputEntity getUserDetails() throws IOException, PreconditionFailedException,
 			ValidationFailedException, NotFoundException, ParseException;
 
-	/**
-	 * This method is used to get the report of the current logged_in user
-	 * 
-	 * @return the map of reports of the user
-	 * @throws NotFoundException
-	 *             thrown when no express attempt found for logged in user
-	 * @throws UnauthorizedException
-	 *             This exception occurred if user is not logged in
-	 */
-	public BoilerplateMap<String, Report> getReport() throws NotFoundException, UnauthorizedException;
-
 }

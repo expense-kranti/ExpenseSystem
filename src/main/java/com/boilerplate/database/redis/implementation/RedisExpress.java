@@ -45,12 +45,4 @@ public class RedisExpress extends BaseRedisDataAccessLayer implements IExpress {
 
 	}
 
-	/**
-	 * @see IExpress.getReport
-	 */
-	@Override
-	public BoilerplateMap<String, Report> getReport(String userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

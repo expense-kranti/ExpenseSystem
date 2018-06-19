@@ -318,17 +318,4 @@ public class ExpressService implements IExpressService {
 		return requestBody;
 	}
 
-	/**
-	 * @see IExpressService.getReport()
-	 */
-	@Override
-	public BoilerplateMap<String, Report> getReport() throws NotFoundException, UnauthorizedException {
-		// get the current logged in user
-		String userId = RequestThreadLocal.getSession().getUserId();
-		// getting the report on the bases of user id of current logged in user
-		expressDataAccess.getReport(userId);
-
-		return null;
-	}
-
 }
