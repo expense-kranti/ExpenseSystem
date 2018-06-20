@@ -11,6 +11,7 @@ import com.boilerplate.database.interfaces.IMySQLReport;
 import com.boilerplate.database.interfaces.IReport;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.Address;
 import com.boilerplate.java.entities.Configuration;
@@ -132,24 +133,50 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	 * @see IMySQLReport.getReport
 	 */
 	@Override
-	public Report getReport(String userId) {
+	public List<Map<String, Object>> getReport(String userId) {
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// Get the sql Query from the Configuration
 		String sqlQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_THE_REPORT");
 		sqlQuery = sqlQuery.replaceAll("@userId", userId);
 		// Get the list of report map
-		List<Map<String, Object>> reportList = super.executeSelectNative(sqlQuery, queryParameterMap);
+		List<Map<String, Object>> reportMapList = super.executeSelectNative(sqlQuery, queryParameterMap);
 
-		Report report = null;
-		// Check the list having report or not
-		if (reportList.size() > 0) {
-			Map<String, Object> reportMap = reportList.get(0);
-			// converting the report map into the ReportEntity
-			report = Base.fromMap(reportMap, Report.class);
-		}
-
-		return report;
+		return reportMapList;
 
 	}
 
+	/**
+	 * @see IMySQLReport.getReportByReportId
+	 */
+	@Override
+	public List<Report> getReportByReportId(String reportId) throws Exception {
+		try {
+			// Creating the query parameter map
+			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+			// putting the value of the report
+			queryParameterMap.put("reportId", reportId);
+			// shql Query for getting report
+			String query = "from Report where reportNumber = :reportId";
+			// getting the report from the database
+			List<Report> reportList = super.executeSelect(query, queryParameterMap);
+
+			// hql for getting reportTrade lines
+			String queryforTradeLine = "from ReportTradeline where reportId = :reportId";
+			List<ReportTradeline> reportTradeLineList = super.executeSelect(queryforTradeLine, queryParameterMap);
+
+			if (reportList.size() > 0) {
+				Report report = reportList.get(0);
+				for (int i = 0; i < reportTradeLineList.size(); i++) {
+					ReportTradeline reportTradeline = reportTradeLineList.get(i);
+					report.setReportTradelines(reportTradeLineList);
+				}
+			}
+			return reportList;
+		} catch (
+
+		Exception e) {
+			throw e;
+			// TODO: handle exception
+		}
+	}
 }

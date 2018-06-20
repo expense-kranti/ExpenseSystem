@@ -45,4 +45,17 @@ public interface IReportService {
 	 */
 	public Report getReport() throws NotFoundException, UnauthorizedException;
 
+	/**
+	 * This method is used to get the report for the given report Id
+	 * 
+	 * @param reportId
+	 *            This is the report id for which we have to find the report
+	 * @return the report for the given report id
+	 * @throws NotFoundException
+	 *             thrown when no express attempt found for logged in user
+	 * @throws Exception
+	 *             This exception occurred if any exception occurred
+	 */
+	public Report getReportByReportId(String reportId) throws NotFoundException, Exception;
+
 }
