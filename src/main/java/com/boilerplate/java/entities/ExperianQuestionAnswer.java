@@ -2,6 +2,7 @@ package com.boilerplate.java.entities;
 
 import java.io.Serializable;
 
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -13,7 +14,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  *
  */
 @ApiModel(value = "The question/answer asked for a user", description = "The question/answer asked for a user")
-public class ExperianQuestionAnswer implements Serializable {
+public class ExperianQuestionAnswer extends BaseEntity implements Serializable {
 
 	/**
 	 * This is the id of the question
@@ -163,6 +164,24 @@ public class ExperianQuestionAnswer implements Serializable {
 	 */
 	public void setOptionSet2Answer(String optionSet2Answer) {
 		this.optionSet2Answer = optionSet2Answer;
+	}
+
+	@Override
+	public boolean validate() throws ValidationFailedException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public BaseEntity transformToInternal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseEntity transformToExternal() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

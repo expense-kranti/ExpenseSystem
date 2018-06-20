@@ -125,7 +125,7 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	public List<ReportInputEntity> getReportInputEntity(String userId) {
 		String hSQLQuery = "from ReportInputEntity where userId = :userId";
 		Map<String, Object> queryParameters = new HashMap<>();
-		queryParameters.put("UserId", userId);
+		queryParameters.put("userId", userId);
 		return super.executeSelect(hSQLQuery, queryParameters);
 	}
 
@@ -133,7 +133,8 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	 * @see IMySQLReport.getReport
 	 */
 	@Override
-	public List<Map<String, Object>> getReport(String userId) {
+
+	public List<Map<String, Object>> getLatestReport(String userId) {
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// Get the sql Query from the Configuration
 		String sqlQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_THE_REPORT");
@@ -155,28 +156,33 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 			// putting the value of the report
 			queryParameterMap.put("reportId", reportId);
-			// shql Query for getting report
+			// hsql Query for getting report
 			String query = "from Report where reportNumber = :reportId";
 			// getting the report from the database
 			List<Report> reportList = super.executeSelect(query, queryParameterMap);
 
-			// hql for getting reportTrade lines
-			String queryforTradeLine = "from ReportTradeline where reportId = :reportId";
-			List<ReportTradeline> reportTradeLineList = super.executeSelect(queryforTradeLine, queryParameterMap);
-
-			if (reportList.size() > 0) {
-				Report report = reportList.get(0);
-				for (int i = 0; i < reportTradeLineList.size(); i++) {
-					ReportTradeline reportTradeline = reportTradeLineList.get(i);
-					report.setReportTradelines(reportTradeLineList);
-				}
-			}
 			return reportList;
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			throw e;
 			// TODO: handle exception
 		}
+	}
+
+	/**
+	 * @see IMySQLReport.getTradeLine
+	 */
+	@Override
+	public List<ReportTradeline> getTradeLine(String reportId) throws Exception {
+
+		// Creating the query parameter map
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// putting the value of the report
+		queryParameterMap.put("reportId", reportId);
+		// hql for getting reportTrade lines
+		String queryforTradeLine = "from ReportTradeline where reportId = :reportId";
+		// getting Report TradeLine
+		List<ReportTradeline> reportTradeLineList = super.executeSelect(queryforTradeLine, queryParameterMap);
+		return reportTradeLineList;
+
 	}
 }

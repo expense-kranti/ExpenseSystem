@@ -11,9 +11,12 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
+import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.Report;
+import com.boilerplate.java.entities.ReportTradeline;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.service.interfaces.IFileService;
 import com.boilerplate.service.interfaces.IReportService;
@@ -86,23 +89,62 @@ public class ReportService implements IReportService {
 	}
 
 	/**
-	 * @see IReportService.getReport
+	 * @see IReportService.getQuestionAnswers
 	 */
 	@Override
-	public Report getReport() throws NotFoundException {
+	public ExperianQuestionAnswer getQuestionAnswers(String userId, String questionId) {
+		return reportDataAccess.getExperianQuestionAnswer(userId, questionId);
+	}
+
+	/**
+	 * @see IReport.checkQuestionAnswerExists
+	 */
+	@Override
+	public boolean checkQuestionAnswerExists(String userId) {
+		return reportDataAccess.checkQuestionAnswerExists(userId);
+	}
+
+	/**
+	 * @see IReport.saveExperianQuestionAnswer
+	 */
+	@Override
+	public void saveExperianQuestionAnswer(String userId, String questionId,
+			ExperianQuestionAnswer experianQuestionAnswer) {
+		reportDataAccess.saveExperianQuestionAnswer(userId, questionId, experianQuestionAnswer);
+	}
+
+	/**
+	 * @see IReportService.getReport
+	 */
+
+	public Report getLatestReport() throws Exception {
 
 		// Get the current logged in user
 		String userId = RequestThreadLocal.getSession().getUserId();
-		// Getting the report by calling database layer
-		List<Map<String, Object>> reportMapList = mysqlReport.getReport(userId);
+		// Getting the report from the database
+		List<Map<String, Object>> reportMapList = mysqlReport.getLatestReport(userId);
+
+		// Initializing the report
 		Report report = null;
-		// Check the list having report or not
+		// Check the list having reports or not
 		if (reportMapList.size() > 0) {
 			Map<String, Object> reportMap = reportMapList.get(0);
-			// converting the report map into the ReportEntity
+			// Converting the report map into the ReportEntity
 			report = Base.fromMap(reportMap, Report.class);
+			// Getting the report trade lines
+			List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(report.getReportNumber());
+			// Creating the list of report TradeLine of type BoilerplateList report trade
+			// line
+			BoilerplateList<ReportTradeline> reportTradelines = new BoilerplateList<ReportTradeline>();
+			for (int i = 0; i < reportTradeLinesList.size(); i++) {
+				ReportTradeline reportTradeline = reportTradeLinesList.get(i);
+				reportTradelines.add(reportTradeline);
+			}
+			// Set the report trade lines to the report
+			report.setReportTradelines(reportTradelines);
+
 		} else
-			throw new NotFoundException("Report", "No such report found for the given report id", null);
+			throw new NotFoundException("Report", "No such report found for the current logged in user", null);
 		return report;
 	}
 
@@ -112,17 +154,163 @@ public class ReportService implements IReportService {
 	@Override
 	public Report getReportByReportId(String reportId) throws NotFoundException, Exception {
 
-		// getting the report from the database
+		// Getting the report from the database
 		List<Report> reportList = mysqlReport.getReportByReportId(reportId);
-		// Initializing the Report entity
+		// Getting the report trade lines
+		List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(reportId);
+		// Creating the list of report TradeLine of type BoilerplateList report trade
+		// line
+		BoilerplateList<ReportTradeline> reportTradelines = new BoilerplateList<ReportTradeline>();
+		// Initializing the Report
 		Report report = null;
-		// check list of report is not empty
+		// Check list of reports is not empty
 		if (reportList.size() > 0) {
 			report = reportList.get(0);
-		} else
+			for (int i = 0; i < reportTradeLinesList.size(); i++) {
+				ReportTradeline reportTradeline = reportTradeLinesList.get(i);
+				reportTradelines.add(reportTradeline);
+			}
+			// Set the report trade lines to the report
+			report.setReportTradelines(reportTradelines);
+		}
+
+		else
 			throw new NotFoundException("Report", "No such report found for the given report id", null);
 		return report;
 
+	}
+
+	/**
+	 * This method is used to get the productname on the basis of account type
+	 * number
+	 * 
+	 * @param accountType
+	 *            the value for which mapped value to get
+	 * @return the product name
+	 */
+	@Override
+	public String getProductName(int accountType) {
+		String productName = "";
+		switch (accountType) {
+
+		case 0:
+			productName = "Other";
+			break;
+		case 1:
+			productName = "AUTO LOAN";
+			break;
+		case 2:
+			productName = "HOUSING LOAN";
+			break;
+		case 3:
+			productName = "PROPERTY LOAN";
+			break;
+		case 4:
+			productName = "LOAN AGAINST SHARES SECURITIES";
+			break;
+		case 5:
+			productName = "PERSONAL LOAN";
+			break;
+		case 6:
+			productName = "CONSUMER LOAN";
+			break;
+		case 7:
+			productName = "GOLD LOAN";
+			break;
+		case 8:
+			productName = "EDUCATIONAL LOAN";
+			break;
+		case 9:
+			productName = "LOAN TO PROFESSIONAL";
+			break;
+		case 10:
+			productName = "CREDIT CARD";
+			break;
+		case 11:
+			productName = "LEASING";
+			break;
+		case 12:
+			productName = "OVERDRAFT LOAN";
+			break;
+		case 13:
+			productName = "TWO WHEELER LOAN";
+			break;
+		case 14:
+			productName = "NON FUNDED CREDIT FACILITY";
+			break;
+		case 15:
+			productName = "LOAN AGAINST BANK DEPOSITS";
+			break;
+		case 16:
+			productName = "FLEET CARD";
+			break;
+		case 17:
+			productName = "Commercial Vehicle LOAN";
+			break;
+		case 18:
+			productName = "Telco Wireless";
+			break;
+		case 19:
+			productName = "Telco Broadband";
+			break;
+		case 20:
+			productName = "Telco Landline";
+			break;
+		case 31:
+			productName = "Secured Credit Card";
+			break;
+		case 32:
+			productName = "Used Car Loan";
+			break;
+		case 33:
+			productName = "Construction Equipment Loan";
+			break;
+		case 34:
+			productName = "Tractor Loan";
+			break;
+		case 35:
+			productName = "CORPORATE CREDIT CARD";
+			break;
+		case 43:
+			productName = "Microfinance Others";
+			break;
+		case 51:
+			productName = "BUSINESS LOAN GENERAL";
+			break;
+		case 52:
+			productName = "BUSINESS LOAN PRIORITY SECTOR SMALL BUSINESS";
+			break;
+		case 53:
+			productName = "BUSINESS LOAN PRIORITY SECTOR AGRICULTURE";
+			break;
+		case 54:
+			productName = "BUSINESS LOAN PRIORITY SECTOR OTHERS";
+			break;
+		case 55:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY GENERAL";
+			break;
+		case 56:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR SMALL BUSINESS";
+			break;
+		case 57:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR AGRICULTURE";
+			break;
+		case 58:
+			productName = "BUSINESS NON FUNDED CREDIT FACILITY PRIORITY SECTOR OTHERS";
+			break;
+		case 59:
+			productName = "BUSINESS LOANS AGAINST BANK DEPOSITS";
+			break;
+		case 60:
+			productName = "Staff Loan";
+			break;
+
+		default:
+			productName = "Other";
+			break;
+		}
+
+		return productName;
 	}
 
 }

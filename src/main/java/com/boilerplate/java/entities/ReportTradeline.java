@@ -23,7 +23,7 @@ public class ReportTradeline extends BaseEntity implements Serializable {
 	/**
 	 * This is the dpd
 	 */
-	private int DPD;
+	private int daysPastDue;
 
 	/**
 	 * This is the organization name
@@ -86,6 +86,9 @@ public class ReportTradeline extends BaseEntity implements Serializable {
 	 * This is the status of tradeLine report
 	 */
 	ReportTradelineStatus reportTradelineStatus;
+	
+	
+//	java.util.Date lastHistoryDate;
 
 	/**
 	 * This is the experian Trade Line status Enun
@@ -120,22 +123,24 @@ public class ReportTradeline extends BaseEntity implements Serializable {
 		this.offerEmail = offerEmail;
 	}
 
+
 	/**
-	 * This method is used to get the dPD
+	 * This method is used to get the DaysPastDue
 	 * 
-	 * @return dPD
+	 * @return the daysPastDue
 	 */
-	public int getDPD() {
-		return DPD;
+	public int getDaysPastDue() {
+		return daysPastDue;
 	}
 
 	/**
-	 * This method is used to set the dPD
+	 * This method is used to set the DaysPastDue
 	 * 
-	 * @param dPD
+	 * @param daysPastDue
+	 *            the daysPastDue to set
 	 */
-	public void setDPD(int dPD) {
-		DPD = dPD;
+	public void setDaysPastDue(int daysPastDue) {
+		this.daysPastDue = daysPastDue;
 	}
 
 	/**

@@ -1161,9 +1161,9 @@ public class BaseRedisDataAccessLayer {
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReport()");
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getLatestReport()");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReport()");
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getLatestReport()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
@@ -1396,6 +1396,9 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllETest.put("Experian_Question_Body",
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllETest.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
+		vAllETest.put("Experian_Question_URL",
+				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
 
 		return vAllETest;
 	}
@@ -1476,7 +1479,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Experian_Question_Content_Type", "application/json");
 		vAllEDev.put("Experian_Question_Accept", "*/*");
 		vAllEDev.put("Experian_Question_URL",
-				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
+				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
 		// added for publishUserAKSOrReferReport
 		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
@@ -1618,6 +1621,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllEProduction.put("Experian_Question_Body",
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
+		vAllEProduction.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
+		vAllEProduction.put("Experian_Question_URL",
+				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
 
 		return vAllEProduction;
 	}
@@ -1762,7 +1768,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("GET_USER_DETAILS_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\",\"name\":\"@fullName\"}");
 
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_THE_REPORT",
-				"SELECT ReportId as id,FileId as fileId,UserId as userId ,ReportStatus as reportStatusEnum,ReportSource as reportSourceEnum,BureauScore as bureauScore,ReportNumber as reportNumber,ReportDateTime as reportDateTime,QuestionCount as questionCount FROM MySqlCSRDB.Aks_ReportDetail where UserId= '@userId' And CreatedDate=( select MAX(CreatedDate) from MySqlCSRDB.Aks_ReportDetail);");
+				"SELECT ReportId as id,FileId as fileId,UserId as userId ,ReportStatus as reportStatusEnum,ReportSource as reportSourceEnum,BureauScore as bureauScore,ReportNumber as reportNumber,ReportDateTime as reportDateTime,QuestionCount as questionCount FROM Aks_ReportDetail where UserId= '@userId' And CreatedDate=( select MAX(CreatedDate) from Aks_ReportDetail);");
 		return vAllEAll;
 
 	}
@@ -1808,6 +1814,8 @@ public class BaseRedisDataAccessLayer {
 
 		// email content related to income tax data email to be sent
 		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Akshar: Your Income Tax Details");
+		contentMap.put("REPORT_FAIL_AFTER_PAYMENT_SMS_BODY",
+				"Dear @FirstName, Sorry! We could not authenticate you. Kindly Upload your Address proof and Id proof Or Send us at support@projectakshar.com . projectakshar.com");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

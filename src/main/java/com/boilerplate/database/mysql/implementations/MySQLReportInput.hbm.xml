@@ -7,10 +7,11 @@
 		table="Aks_ReportInputDetail">
 		<id name="userId" column="UserId"></id>
 		<property name="sessionId2" column="SessionId2" />
-		<property name="jSessionId1" column="JSessionId1" />
+		<!-- <property name="jSessionId1" column="JSessionId1" /> -->
 		<property name="voucherCode" column="VoucherCode" />
 		<property name="stateId" column="State" />
 		<property name="dateOfBirth" column="DOB" />
+		<property name="dateOfBirthAsDate" column="DOBAsDate" />
 		<property name="addressLine1" column="AddressLine1" />
 		<property name="addressLine2" column="AddressLine2" />
 		<property name="city" column="City" />

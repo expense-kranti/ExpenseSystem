@@ -109,6 +109,11 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	private String reportFileId;
 
 	/**
+	 * This is the boolean check for kyc sms send to customer or not
+	 */
+	private boolean dontSendKycSms;
+
+	/**
 	 * This method is used to get the question
 	 * 
 	 * @return question
@@ -343,9 +348,23 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 		this.reportFileNameOnDisk = reportFileNameOnDisk;
 	}
 
+	/**
+	 * This method get the dont send kyc sms value
+	 * 
+	 * @return the dontSendKycSms
+	 */
 	public boolean isDontSendKycSms() {
-		// TODO Auto-generated method stub
-		return false;
+		return dontSendKycSms;
+	}
+
+	/**
+	 * This method set the dont send kyc sms value
+	 * 
+	 * @param dontSendKycSms
+	 *            the dontSendKycSms to set
+	 */
+	public void setDontSendKycSms(boolean dontSendKycSms) {
+		this.dontSendKycSms = dontSendKycSms;
 	}
 
 	/**

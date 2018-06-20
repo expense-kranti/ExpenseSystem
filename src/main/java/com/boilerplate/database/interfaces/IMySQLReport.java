@@ -92,7 +92,7 @@ public interface IMySQLReport {
 	 *             thrown when data not found in database
 	 * @return the reports map list
 	 */
-	public List<Map<String, Object>> getReport(String userId) throws NotFoundException;
+	public List<Map<String, Object>> getLatestReport(String userId) throws NotFoundException;
 
 	/**
 	 * This method is used to get the report for the given report id
@@ -104,5 +104,16 @@ public interface IMySQLReport {
 	 * @return The reports list
 	 */
 	public List<Report> getReportByReportId(String reportId) throws Exception;
+
+	/**
+	 * This method is used to get the report trade lines for the given report Id
+	 * 
+	 * @param reportId
+	 *            This is the report id for which trade lines has to be fetched
+	 * @return list of trade lines
+	 * @throws Exception
+	 *             This exception throw when any exception occurred
+	 */
+	public List<ReportTradeline> getTradeLine(String reportId) throws Exception;
 
 }

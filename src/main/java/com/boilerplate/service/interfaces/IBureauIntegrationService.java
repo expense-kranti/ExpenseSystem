@@ -2,6 +2,7 @@ package com.boilerplate.service.interfaces;
 
 import java.io.IOException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -95,4 +96,5 @@ public interface IBureauIntegrationService {
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
 
+	
 }

@@ -36,6 +36,7 @@
 		<property name="blogActivityService" ref="blogActivityService"></property>
 		<property name="mySqlUser" ref="mySqlUser"></property>
 		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -157,6 +158,7 @@
 				<entry key="AddUserAndRelatedDataKeysToRedisSet"
 					value-ref="addUserAndRelatedDataRedisKeysToRedisSetObserverList"></entry>
 				<entry key="VoucherAlert" value-ref="voucherAlertObserverList" />
+				<entry key="SendSMSOnReportFailAfterPayment" value-ref="sendSMSOnReportFailAfterPayment" />
 
 			</map>
 
@@ -1069,6 +1071,26 @@
 		class="com.boilerplate.asyncWork.SendVoucherAlertEmailToAdminObserver">
 		<property name="contentService" ref="contentService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+
+	<bean id="sendSMSOnReportFailAfterPayment"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendSMSOnReportFailAfterDoPayment"></ref>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sendSMSOnReportFailAfterDoPayment"
+		class="com.boilerplate.asyncWork.SendSMSOnReportFailAfterPayment">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="sendSmsService" ref="sendSmsService"></property>
 	</bean>
 
 </beans>
