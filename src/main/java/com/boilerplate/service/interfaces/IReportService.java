@@ -103,6 +103,6 @@ public interface IReportService {
 	 * @throws Exception
 	 *             This exception occurred if any exception occurred
 	 */
-	public Report getReportByReportId(String reportId) throws NotFoundException, Exception;
+	public Report getReportById(String reportId) throws NotFoundException, Exception;
 
 }

@@ -14,7 +14,6 @@
 		<property name="dateOfLastPayment" column="DateOfLastPayment" />
 		<property name="accountHolderType" column="AccountHolderType" />
 		<property name="organizationName" column="OrganizationName" />
-
 		<property name="productName" column="ProductName" />
 		<property name="currentBalance" column="CurrentBalance" />
 		<property name="dateReported" column="DateReported" />

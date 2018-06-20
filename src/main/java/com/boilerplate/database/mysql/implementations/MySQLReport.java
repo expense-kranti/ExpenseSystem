@@ -29,6 +29,11 @@ import com.boilerplate.java.entities.ReportTradeline;
 public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLReport {
 
 	/**
+	 * creating the instance of logger
+	 */
+	private Logger logger = Logger.getInstance(MySQLReport.class);
+
+	/**
 	 * This is the instance of configuration manager
 	 */
 	ConfigurationManager configurationManager;
@@ -41,11 +46,6 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	public void setConfigurationManager(ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-
-	/**
-	 * This is the logger
-	 */
-	private Logger logger = Logger.getInstance(MySQLReport.class);
 
 	/**
 	 * @see IMySQLReport.saveReport
@@ -134,37 +134,62 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	 */
 	@Override
 
-	public List<Map<String, Object>> getLatestReport(String userId) {
-		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		// Get the sql Query from the Configuration
-		String sqlQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_THE_REPORT");
-		sqlQuery = sqlQuery.replaceAll("@userId", userId);
-		// Get the list of report map
-		List<Map<String, Object>> reportMapList = super.executeSelectNative(sqlQuery, queryParameterMap);
+	public Report getLatestReport(String userId) {
+		logger.logInfo("MySQLReport", "getLatestReport", "StartgetLatestReport", "Method-Start");
+		// Initializing the report
+		Report report = null;
+		try {
+			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+			// Get the sql Query from the Configuration
+			String sqlQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_THE_REPORT");
+			sqlQuery = sqlQuery.replaceAll("@userId", userId);
+			// Get the list of report map
+			List<Map<String, Object>> reportMapList = super.executeSelectNative(sqlQuery, queryParameterMap);
 
-		return reportMapList;
+			// Check the list having reports or not
+			if (reportMapList.size() > 0) {
+				Map<String, Object> reportMap = reportMapList.get(0);
+				// Converting the report map into the ReportEntity
+				report = Base.fromMap(reportMap, Report.class);
+				logger.logInfo("MySQLReport", "getLatestReport", "EndgetLatestReport", "Method-End");
 
+			}
+
+		} catch (Exception ex) {
+			logger.logException("MySQLReport", "getLatestReport", "Try-Catch",
+					"exception in getting the report for logged in user from mysql", ex);
+			throw ex;
+		}
+		return report;
 	}
 
 	/**
 	 * @see IMySQLReport.getReportByReportId
 	 */
 	@Override
-	public List<Report> getReportByReportId(String reportId) throws Exception {
+	public Report getReportById(String reportId) throws Exception {
+		logger.logInfo("MySQLReport", "getReportById", "StartgetReportById", "Method-Start");
 		try {
 			// Creating the query parameter map
 			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 			// putting the value of the report
 			queryParameterMap.put("reportId", reportId);
 			// hsql Query for getting report
-			String query = "from Report where reportNumber = :reportId";
+			String query = "from Report where reportId = :reportId";
 			// getting the report from the database
 			List<Report> reportList = super.executeSelect(query, queryParameterMap);
-
-			return reportList;
-		} catch (Exception e) {
-			throw e;
-			// TODO: handle exception
+			// Initializing the Report
+			Report report = null;
+			// Check list of reports is not empty
+			if (reportList.size() > 0) {
+				report = reportList.get(0);
+			}
+			logger.logInfo("MySQLReport", "getReportById", "EndgetReportById", "Method-End");
+			return report;
+		} catch (Exception ex) {
+			logger.logException("MySQLReport", "getReportById", "Try-Catch",
+					"exception in getting the report by id in mysql", ex);
+			throw ex;
 		}
 	}
 
@@ -173,15 +198,23 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	 */
 	@Override
 	public List<ReportTradeline> getTradeLine(String reportId) throws Exception {
-
-		// Creating the query parameter map
-		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		// putting the value of the report
-		queryParameterMap.put("reportId", reportId);
-		// hql for getting reportTrade lines
-		String queryforTradeLine = "from ReportTradeline where reportId = :reportId";
-		// getting Report TradeLine
-		List<ReportTradeline> reportTradeLineList = super.executeSelect(queryforTradeLine, queryParameterMap);
+		logger.logInfo("MySQLReport", "getTradeLine", "StartgetTradeLine", "Method Start");
+		List<ReportTradeline> reportTradeLineList = null;
+		try {
+			// Creating the query parameter map
+			Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+			// putting the value of the report
+			queryParameterMap.put("reportId", reportId);
+			// hql for getting reportTrade lines
+			String queryforTradeLine = "from ReportTradeline where reportId = :reportId";
+			// getting Report TradeLine
+			reportTradeLineList = super.executeSelect(queryforTradeLine, queryParameterMap);
+			logger.logInfo("MySQLReport", "getTradeLine", "EndgetTradeLine", "Method End");
+		} catch (Exception ex) {
+			logger.logException("MySQLReport", "getTradeLine", "Try-Catch",
+					"exception in gtting the tradeLines from mysql", ex);
+			throw ex;
+		}
 		return reportTradeLineList;
 
 	}

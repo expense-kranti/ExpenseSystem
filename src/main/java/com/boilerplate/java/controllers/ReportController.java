@@ -61,9 +61,9 @@ public class ReportController extends BaseController {
 	@ApiOperation(value = "Gets the report for the given report Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/report/reportId/{reportId}", method = RequestMethod.GET)
-	public @ResponseBody Report getReportByReportId(
+	public @ResponseBody Report getReportById(
 			@ApiParam(value = "The reportId for getting report", required = true, name = "ReportId", allowMultiple = false) @PathVariable String reportId)
 			throws NotFoundException, Exception {
-		return reportService.getReportByReportId(reportId);
+		return reportService.getReportById(reportId);
 	}
 }
