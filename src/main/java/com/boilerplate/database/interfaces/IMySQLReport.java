@@ -1,7 +1,9 @@
 package com.boilerplate.database.interfaces;
 
 import java.util.List;
+import java.util.Map;
 
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.Address;
 import com.boilerplate.java.entities.ElectronicContact;
 import com.boilerplate.java.entities.Report;
@@ -75,6 +77,8 @@ public interface IMySQLReport {
 	 * 
 	 * @param userId
 	 *            the user id of the user
+	 * @throws NotFoundException
+	 *             thrown when any data not fount
 	 * @return the report input entity
 	 */
 	public List<ReportInputEntity> getReportInputEntity(String userId);
@@ -84,8 +88,32 @@ public interface IMySQLReport {
 	 * 
 	 * @param userId
 	 *            This is the current logged in user
-	 * @return the report
+	 * @throws NotFoundException
+	 *             thrown when data not found in database
+	 * @return the reports map list
 	 */
-	Report getLatestReport(String userId);
+	public Report getLatestReport(String userId) throws NotFoundException;
+
+	/**
+	 * This method is used to get the report for the given report id
+	 * 
+	 * @param reportId
+	 *            This is the report id for which the report need to be fetched
+	 * @throws Exception
+	 *             This exception occurred when any exception arise
+	 * @return The reports list
+	 */
+	public Report getReportById(String reportId) throws Exception;
+
+	/**
+	 * This method is used to get the report trade lines for the given report Id
+	 * 
+	 * @param reportId
+	 *            This is the report id for which trade lines has to be fetched
+	 * @return list of trade lines
+	 * @throws Exception
+	 *             This exception throw when any exception occurred
+	 */
+	public List<ReportTradeline> getTradeLine(String reportId) throws Exception;
 
 }

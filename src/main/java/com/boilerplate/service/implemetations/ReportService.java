@@ -1,22 +1,33 @@
 package com.boilerplate.service.implemetations;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IMySQLReport;
 import com.boilerplate.database.interfaces.IReport;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.Base;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.java.entities.Report;
+import com.boilerplate.java.entities.ReportTradeline;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.service.interfaces.IFileService;
 import com.boilerplate.service.interfaces.IReportService;
 
 public class ReportService implements IReportService {
+
+	/**
+	 * This is an instance of the logger
+	 */
+	Logger logger = Logger.getInstance(ReportService.class);
 
 	@Autowired
 	IReport reportDataAccess;
@@ -111,16 +122,75 @@ public class ReportService implements IReportService {
 	/**
 	 * @see IReportService.getReport
 	 */
-	@Override
-	public Report getLatestReport() {
+
+	public Report getLatestReport() throws Exception {
+
+		logger.logInfo("ReportService", "getLatestReport", "StartgetLatestReport", "Method Start");
 
 		// Get the current logged in user
 		String userId = RequestThreadLocal.getSession().getUserId();
-		// Getting the report by calling database layer
-		return mysqlReport.getLatestReport(userId);
+		// Getting the report from the database
+		Report report = mysqlReport.getLatestReport(userId);
+		if (report != null) {
+			// Getting the report trade lines
+			List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(report.getId());
+			// Creating the list of report TradeLine of type BoilerplateList report trade
+			// line
+			logger.logInfo("ReportService", "getLatestReport",
+					"The size of reportTradeLine List is:" + reportTradeLinesList.size(),
+					"after getting the report tradelines");
+			BoilerplateList<ReportTradeline> reportTradelines = new BoilerplateList<ReportTradeline>();
+
+			for (int i = 0; i < reportTradeLinesList.size(); i++) {
+				ReportTradeline reportTradeline = reportTradeLinesList.get(i);
+				reportTradelines.add(reportTradeline);
+			}
+			// Set the report trade lines to the report
+			report.setReportTradelines(reportTradelines);
+
+		} else
+			throw new NotFoundException("Report", "No such report found for the current logged in user", null);
+		logger.logInfo("ReportService", "getLatestReport", "EndgetLatestReport", "Method End");
+
+		return report;
+
 	}
-	
-	
+
+	/**
+	 * @see IReportService.getReportByReportId
+	 */
+	@Override
+	public Report getReportById(String reportId) throws NotFoundException, Exception {
+		logger.logInfo("ReportService", "getReportById", "StartgetReportById", "Method Start");
+
+		// Getting the report from the database
+		Report report = mysqlReport.getReportById(reportId);
+		// Getting the report trade lines
+		List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(reportId);
+		// Creating the list of report TradeLine of type BoilerplateList report trade
+		// line
+		logger.logInfo("ReportService", "getReportById",
+				"The size of reportTradeLine List is:" + reportTradeLinesList.size(),
+				"after getting the report tradelines");
+
+		BoilerplateList<ReportTradeline> reportTradelines = new BoilerplateList<ReportTradeline>();
+		if (report != null) {
+			for (int i = 0; i < reportTradeLinesList.size(); i++) {
+				ReportTradeline reportTradeline = reportTradeLinesList.get(i);
+				reportTradelines.add(reportTradeline);
+			}
+			// Set the report trade lines to the report
+			report.setReportTradelines(reportTradelines);
+		}
+
+		else
+			throw new NotFoundException("Report", "No such report found for the given report id", null);
+		logger.logInfo("ReportService", "getReportById", "EndGetReportById", "End Start");
+
+		return report;
+
+	}
+
 	/**
 	 * This method is used to get the productname on the basis of account type
 	 * number

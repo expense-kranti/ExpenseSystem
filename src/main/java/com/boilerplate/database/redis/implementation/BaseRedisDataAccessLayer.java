@@ -1172,6 +1172,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReportById(java.lang.String)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReportById(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));

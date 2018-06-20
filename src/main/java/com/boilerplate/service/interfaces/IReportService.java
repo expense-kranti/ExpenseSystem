@@ -36,8 +36,8 @@ public interface IReportService {
 	public BoilerplateMap<String, Report> getReports(String userId) throws UnauthorizedException;
 
 	/**
-	 * This method is used to get the experian question answer entity for the
-	 * given question id for userid
+	 * This method is used to get the experian question answer entity for the given
+	 * question id for userid
 	 * 
 	 * @param userId
 	 *            the user id
@@ -57,8 +57,8 @@ public interface IReportService {
 	public boolean checkQuestionAnswerExists(String userId);
 
 	/**
-	 * This method is used to save the experian question answer entity against
-	 * the given userid
+	 * This method is used to save the experian question answer entity against the
+	 * given userid
 	 * 
 	 * @param userId
 	 *            the user id
@@ -71,15 +71,17 @@ public interface IReportService {
 			ExperianQuestionAnswer experianQuestionAnswer);
 
 	/**
-	 * This method is used to get the report of the current logged_in user
+	 * This method is used to get the latest report of the current logged_in user
 	 * 
 	 * @return the report of the user
 	 * @throws NotFoundException
 	 *             thrown when no express attempt found for logged in user
 	 * @throws UnauthorizedException
 	 *             This exception occurred if user is not logged in
+	 * @throws Exception
+	 *             This exception throw if any exception occurred
 	 */
-	public Report getLatestReport() throws NotFoundException, UnauthorizedException;
+	public Report getLatestReport() throws NotFoundException, UnauthorizedException, Exception;
 
 	/**
 	 * This method is used to get the product name for the given product code
@@ -89,5 +91,18 @@ public interface IReportService {
 	 * @return the productname
 	 */
 	public String getProductName(int accountType);
+
+	/**
+	 * This method is used to get the report for the given report Id
+	 * 
+	 * @param reportId
+	 *            This is the report id for which we have to find the report
+	 * @return the report for the given report id
+	 * @throws NotFoundException
+	 *             thrown when no express attempt found for logged in user
+	 * @throws Exception
+	 *             This exception occurred if any exception occurred
+	 */
+	public Report getReportById(String reportId) throws NotFoundException, Exception;
 
 }
