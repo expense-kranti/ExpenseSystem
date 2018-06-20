@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -143,6 +144,33 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 */
 	public void setFile(com.boilerplate.databases.s3FileSystem.implementations.S3File file) {
 		this.file = file;
+	}
+
+	@Autowired
+	com.boilerplate.jobs.QueueReaderJob queueReaderJob;
+
+	/**
+	 * This sets the queue reader jon
+	 * 
+	 * @param queueReaderJob
+	 *            The queue reader jon
+	 */
+	public void setQueueReaderJob(com.boilerplate.jobs.QueueReaderJob queueReaderJob) {
+		this.queueReaderJob = queueReaderJob;
+	}
+
+	BoilerplateList<String> subjectsForParsingExperianReports = new BoilerplateList<>();
+
+	/**
+	 * This code is called during initialization of the application, the
+	 * unmarshler is an expensive object hence we want to keep only one instance
+	 * of it and share the same.
+	 * 
+	 * @throws Exception
+	 *             If there is an error while creating instance
+	 */
+	public void initialize() throws Exception {
+		subjectsForParsingExperianReports.add("ParseExperianReportsForExtraData");
 	}
 
 	/**
@@ -394,8 +422,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 			// Get file from local if not found then downloads
 			String fileNameInURL = null;
 			FileEntity fileEntity = fileService.getFile(reportInputEntity.getReportFileId());
-			if (!new File(configurationManager.get("RootFileDownloadLocation"),
-					reportInputEntity.getReportFileId()).exists()) {
+			if (!new File(configurationManager.get("RootFileDownloadLocation"), reportInputEntity.getReportFileId())
+					.exists()) {
 				fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
 			} else {
 				fileNameInURL = fileEntity.getFileName();
@@ -436,6 +464,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 			Document doc = documentBuilder.parse(inputSource);
 
 			Report report = new Report();
+			// this report id is the colon seperated userid and reportnumber
+			report.setId(reportInputEntity.getUserId() + ":" + reportInputEntity.getReportNumber());
 			// Normalize the XML Structure; It's just too important !!
 			NodeList root = doc.getChildNodes();
 			Node rootNode = getNode("InProfileResponse", root);
@@ -454,17 +484,19 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 					NodeList cAISAccountDETAILS = accountDetails.item(i).getChildNodes();
 					tradeline = new ReportTradeline();
 					String accountNumber = getNodeValue("Account_Number", cAISAccountDETAILS);
-					tradeline.setReportId(getNodeValue("ReportNumber", creditProfileHeaderNodes));
+					tradeline.setReportId(report.getId());
 					String organizationName = getNodeValue("Subscriber_Name", cAISAccountDETAILS);
 					tradeline.setOrganizationName(organizationName);
-					tradeline.setProductName(
-							reportService.getProductName(Integer.parseInt((getNodeValue("Account_Type", cAISAccountDETAILS)) == ""
-									? "0" : getNodeValue("Account_Type", cAISAccountDETAILS))));
+					tradeline.setProductName(reportService.getProductName(
+							Integer.parseInt((getNodeValue("Account_Type", cAISAccountDETAILS)) == "" ? "0"
+									: getNodeValue("Account_Type", cAISAccountDETAILS))));
 
 					tradeline.setAccountNumber(accountNumber);
 					tradeline.setUserId(reportInputEntity.getUserId());
-					String tradelineId = tradeline.getUserId().toUpperCase() + ":" + tradeline.getReportId().toUpperCase() + ":"
-							+ tradeline.getOrganizationName().toUpperCase() + ":" + tradeline.getProductName().toUpperCase() + ":"
+					String tradelineId = tradeline.getUserId().toUpperCase() + ":"
+							+ tradeline.getReportId().toUpperCase() + ":"
+							+ tradeline.getOrganizationName().toUpperCase() + ":"
+							+ tradeline.getProductName().toUpperCase() + ":"
 							+ tradeline.getAccountNumber().toUpperCase();
 
 					tradeline.setDateOpened(this.experianStringToDate(getNodeValue("Open_Date", cAISAccountDETAILS)));
@@ -550,7 +582,6 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 						address.setZipCode(getNodeValue("ZIP_Postal_Code_non_normalized", cAISHolderAddressDetais));
 						address.setTradelineId(tradelineId);
 
-						// tradeline.getAddresses().add(address);
 						// save address of tradeline of user report
 						mysqlReport.saveAddress(address);
 
@@ -577,21 +608,31 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 			}
 			report.setUserId(reportInputEntity.getUserId());
 			report.setFileId(fileEntity.getFileName());
-			report.setId(getNodeValue("ReportNumber", creditProfileHeaderNodes));
+			report.setReportNumber(getNodeValue("ReportNumber", creditProfileHeaderNodes));
+
 			report.setBureauScore(Integer.parseInt(
 					getNodeValue("BureauScore", scoreNodes) == "" ? "0" : getNodeValue("BureauScore", scoreNodes)));
-			report.setReportNumber(getNodeValue("ReportNumber", creditProfileHeaderNodes));
 			report.setReportStatusEnum(ReportStatus.Complete);
 			report.setReportDateTime(getNodeValue("ReportDate", creditProfileHeaderNodes));
-			report.setReportSourceEnum(ReportSource.Experian);
 			// save report's remaining items.
 			mysqlReport.saveReport(report);
 			// sets the pan number in pan number hash
-			setPanNumberInHash(reportInputEntity);
+			setPanNumberInHash(reportInputEntity, report);
+
+			try {
+				// here the queue will be containing file id(which in turn
+				// contains report ids to be parsed)
+				queueReaderJob.requestBackroundWorkItem(report.getId(), subjectsForParsingExperianReports,
+						"ParseExperianReportObserver", "parseExperianReportObserver",
+						"_AKS_PARSE_EXPERIAN_REPORTS_QUEUE");
+			} catch (Exception ex) {
+				logger.logError("ParseExperianReportObserver", "parse",
+						"Inside try-catch block pushing task for ParseExperianReportsForExtraDataObserver in _AKS_PARSE_EXPERIAN_REPORTS_QUEUE",
+						ex.toString());
+			}
 		} catch (Exception ex) {
 			logger.logException("ParseExperianReportObserver", "parse", "ExceptionParse", ex.toString(), ex);
 		}
-
 	}
 
 	/**
@@ -601,8 +642,8 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 	 *            The reportInputEntiity contains required input data here pan
 	 *            number is required
 	 */
-	private void setPanNumberInHash(ReportInputEntity reportInputEntiity) {
-		if (reportInputEntiity.getReportVersionEnum() == ReportVersion.ExperianV1) {
+	private void setPanNumberInHash(ReportInputEntity reportInputEntiity, Report report) {
+		if (report.getReportVersionEnum() == ReportVersion.ExperianV1) {
 			if (reportInputEntiity.getPanNumber() != null) {
 				this.redisSFUpdateHashAccess.hset(configurationManager.get("PanNumberHash_Base_Tag"),
 						reportInputEntiity.getPanNumber().toUpperCase(), reportInputEntiity.getUserId());
@@ -674,7 +715,5 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 		}
 
 	}
-
-	
 
 }

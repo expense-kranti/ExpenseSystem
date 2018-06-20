@@ -159,6 +159,7 @@
 					value-ref="addUserAndRelatedDataRedisKeysToRedisSetObserverList"></entry>
 				<entry key="VoucherAlert" value-ref="voucherAlertObserverList" />
 				<entry key="SendSMSOnReportFailAfterPayment" value-ref="sendSMSOnReportFailAfterPayment" />
+				<entry key="ParseExperianReportsForExtraData" value-ref="parseExperianReportsForExtraDataObserverList" />
 
 			</map>
 
@@ -737,6 +738,7 @@
 		<property name="fileService" ref="fileService"></property>
 		<property name="file" ref="file"></property>
 		<property name="mysqlReport" ref="mysqlReport"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
 	</bean>
 
 	<bean id="reportService" class="com.boilerplate.service.implemetations.ReportService">
@@ -1091,6 +1093,33 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="userService" ref="userService"></property>
 		<property name="sendSmsService" ref="sendSmsService"></property>
+	</bean>
+
+	<bean id="parseExperianReportsForExtraDataObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will send email to receiver on tradeline 
+					flow change of tradeline -->
+
+				<ref bean="parseExperianReportsForExtraDataObserver"></ref>
+			</list>
+		</property>
+	</bean>
+
+
+	<!--beans and dependency for parseExperian report for extra data -->
+	<bean id="parseExperianReportsForExtraDataObserver"
+		class="com.boilerplate.asyncWork.ParseExperianReportsForExtraDataObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="file" ref="file"></property>
+		<property name="reportService" ref="reportService"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="mySQLBankDataAccess" ref="mySQLBankDataAccess"></property>
+		<property name="snsUtility" ref="snsUtility"></property>
+	</bean>
+	<bean id="mySQLBankDataAccess"
+		class="com.boilerplate.database.mysql.implementations.MySQLBankData">
 	</bean>
 
 </beans>

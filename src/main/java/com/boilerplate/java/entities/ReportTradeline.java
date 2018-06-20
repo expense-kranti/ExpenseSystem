@@ -88,7 +88,110 @@ public class ReportTradeline extends BaseEntity implements Serializable {
 	ReportTradelineStatus reportTradelineStatus;
 	
 	
-//	java.util.Date lastHistoryDate;
+	java.util.Date lastHistoryDate;
+	
+	double highCreditLoanAmount;
+	
+	double repaymentTenure;
+	
+	private TradelineFlow tradelineFlow;
+	
+	
+	
+	
+	/**
+	 * @return the valueCollateral
+	 */
+	public String getValueCollateral() {
+		return valueCollateral;
+	}
+
+	/**
+	 * @param valueCollateral the valueCollateral to set
+	 */
+	public void setValueCollateral(String valueCollateral) {
+		this.valueCollateral = valueCollateral;
+	}
+
+	/**
+	 * @return the typeCollateral
+	 */
+	public String getTypeCollateral() {
+		return typeCollateral;
+	}
+
+	/**
+	 * @param typeCollateral the typeCollateral to set
+	 */
+	public void setTypeCollateral(String typeCollateral) {
+		this.typeCollateral = typeCollateral;
+	}
+
+	/**
+	 * @return the rateOfIntererst
+	 */
+	public double getRateOfIntererst() {
+		return rateOfIntererst;
+	}
+
+	/**
+	 * @param rateOfIntererst the rateOfIntererst to set
+	 */
+	public void setRateOfIntererst(double rateOfIntererst) {
+		this.rateOfIntererst = rateOfIntererst;
+	}
+
+	/**
+	 * @return the income
+	 */
+	public double getIncome() {
+		return income;
+	}
+
+	/**
+	 * @param income the income to set
+	 */
+	public void setIncome(double income) {
+		this.income = income;
+	}
+
+	double settlementAmount;
+	
+	String valueCollateral;
+
+	String typeCollateral;
+	
+	double rateOfIntererst;
+	
+	double income;
+
+	/**
+	 * @return the settlementAmount
+	 */
+	public double getSettlementAmount() {
+		return settlementAmount;
+	}
+
+	/**
+	 * @param settlementAmount the settlementAmount to set
+	 */
+	public void setSettlementAmount(double settlementAmount) {
+		this.settlementAmount = settlementAmount;
+	}
+
+	/**
+	 * @return the repaymentTenure
+	 */
+	public double getRepaymentTenure() {
+		return repaymentTenure;
+	}
+
+	/**
+	 * @param repaymentTenure the repaymentTenure to set
+	 */
+	public void setRepaymentTenure(double repaymentTenure) {
+		this.repaymentTenure = repaymentTenure;
+	}
 
 	/**
 	 * This is the experian Trade Line status Enun
@@ -427,6 +530,48 @@ public class ReportTradeline extends BaseEntity implements Serializable {
 	 */
 	public void setAddresses(BoilerplateList<Address> addresses) {
 		this.addresses = addresses;
+	}
+
+	/**
+	 * @return the lastHistoryDate
+	 */
+	public java.util.Date getLastHistoryDate() {
+		return lastHistoryDate;
+	}
+
+	/**
+	 * @param lastHistoryDate the lastHistoryDate to set
+	 */
+	public void setLastHistoryDate(java.util.Date lastHistoryDate) {
+		this.lastHistoryDate = lastHistoryDate;
+	}
+
+	/**
+	 * @return the highCreditLoanAmount
+	 */
+	public double getHighCreditLoanAmount() {
+		return highCreditLoanAmount;
+	}
+
+	/**
+	 * @param highCreditLoanAmount the highCreditLoanAmount to set
+	 */
+	public void setHighCreditLoanAmount(double highCreditLoanAmount) {
+		this.highCreditLoanAmount = highCreditLoanAmount;
+	}
+
+	/**
+	 * @return the tradelineFlow
+	 */
+	public TradelineFlow getTradelineFlow() {
+		return tradelineFlow;
+	}
+
+	/**
+	 * @param tradelineFlow the tradelineFlow to set
+	 */
+	public void setTradelineFlow(TradelineFlow tradelineFlow) {
+		this.tradelineFlow = tradelineFlow;
 	}
 
 	@Override

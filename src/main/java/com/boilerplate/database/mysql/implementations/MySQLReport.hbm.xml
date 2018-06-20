@@ -20,6 +20,12 @@
 				<param name="useNamed">true</param>
 			</type>
 		</property>
+		<property name="reportVersionEnum" column="ReportVersion">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.boilerplate.java.entities.ReportVersion</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
 		<property name="bureauScore" column="BureauScore" />
 		<property name="reportNumber" column="ReportNumber" />
 		<property name="reportDateTime" column="ReportDateTime" />

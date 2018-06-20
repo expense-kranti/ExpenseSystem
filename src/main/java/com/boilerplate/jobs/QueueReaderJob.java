@@ -189,6 +189,12 @@ public class QueueReaderJob {
 	}
 
 	/**
+	 * This variable holds the value for enabling and disabling experian report
+	 * parsing
+	 */
+	private boolean isExperianParsingQueueEnabled = false;
+
+	/**
 	 * This method is used to read next message from queue and then send the
 	 * response to observers.
 	 * 
@@ -566,6 +572,73 @@ public class QueueReaderJob {
 				RequestThreadLocal.remove();
 			}
 		}
+	}
+
+	/**
+	 * This method is used to pop tasks for parsing experian reports from queue
+	 * in context
+	 */
+	public void readParseExperianReportQueueAndDispatch() {
+
+		this.isExperianParsingQueueEnabled = Boolean
+				.parseBoolean(configurationManager.get("IsExperianParsingQueueEnabled"));
+
+		// if the queue is enabled then work
+		if (isExperianParsingQueueEnabled) {
+			// Create a unique request id for the job and set it on thread
+			RequestThreadLocal.setRequest(UUID.randomUUID().toString(), null, null,
+					this.sessionManager.getBackgroundJobSession());
+			AsyncWorkItem asyncWorkItem = null;
+			try {
+				if (QueueFactory.getInstance().isQueueEnabled()) {
+					while (true) {
+						try {
+							// read a job from queue
+							asyncWorkItem = QueueFactory.getInstance().remove(
+									"_AKS_PARSE_EXPERIAN_REPORTS_QUEUE" + configurationManager.get("Enviornment"));
+							if (asyncWorkItem != null) {
+								// execute the message on all observers
+								asyncWorkItem.setUniqueRequestIdOfJob(RequestThreadLocal.getRequestId());
+								asyncWorkDispatcher.dispatch(asyncWorkItem);
+							} else {
+								// when we get a null object the queue is empty,
+								// hence we get out
+								break;
+							}
+						} catch (Exception ex) {
+							// A single job has failed
+							logger.logException("QueueReaderJob", "QueueReaderJob", "Job Failed Exception",
+									asyncWorkItem == null ? "Null" : asyncWorkItem.toJSON(), ex);
+						} finally {
+							// push into history queue if needed
+							if (this.isMaintainQueueHistory) {
+								try {
+									if (asyncWorkItem != null) {
+										QueueFactory.getInstance().insert("_AKS_PARSE_EXPERIAN_REPORTS_QUEUE"
+												+ configurationManager.get("Enviornment"), asyncWorkItem);
+									}
+								} catch (Exception e) {
+									// if this queue is down we dont care and we
+									// cant do much
+									logger.logException("QueueReaderJOb", "readQueueAndDispatch",
+											"Maintain Queue History In Final", e.toString(), e);
+								}
+							}
+
+						}
+					} // end while
+				} // end if
+			} catch (Exception ex) {
+				// the job group has failed
+				logger.logException("QueueReaderJob", "QueueReaderJob", "Job Group Failed",
+						"queue name _AKS_PARSE_EXPERIAN_REPORTS_QUEUE", ex);
+			} finally {
+				// clean up the thread so that this id is not available next
+				// time.
+				RequestThreadLocal.remove();
+			}
+		}
+
 	}
 
 }
