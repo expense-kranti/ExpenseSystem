@@ -446,10 +446,6 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		reportInputEntity.setExperianStatus(experianStatus);
 		// save reportinputentity
 		mysqlReport.saveReportInputEntity(reportInputEntity);
-		if (reportInputEntity.getStage1Id() != null && reportInputEntity.getStage1Id() != "") {
-			// publishUserStateToCRM(user);
-		}
-
 	}
 
 	/**
@@ -617,7 +613,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				// You can only call with a question and set of answers which
 				// exist in the map.
 				// save question answer entity in mysql
-				// TODO GET QUESTION WITH QUESTION ID
+				// GET QUESTION WITH QUESTION ID
 				experianQuestionAnswer = reportService.getQuestionAnswers(user.getUserId(), questionId);
 				if (experianQuestionAnswer == null) {
 					pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
@@ -707,7 +703,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 
 				// reportInputEntity.getQuestion().put(nextQuestionId,
 				// newExperianQuestionAnswer);
+				// save question answer in redis future use
 				reportService.saveExperianQuestionAnswer(user.getUserId(), nextQuestionId, newExperianQuestionAnswer);
+				// this is to display questions to the user
 				reportInputEntity.setCurrentQuestion(newExperianQuestionAnswer);
 				reportInputEntity.setQuestionCount(reportInputEntity.getQuestionCount() + 1);
 				// save report input entity
@@ -759,7 +757,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				// get report number
 				String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
 				reportInputEntity.setReportNumber(reportNumber);
-
+				reportInputEntity.setReportFileId(fileEntity.getFileName());
 				user = observeReport(reportInputEntity, user);
 				user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
 				// user.setExperianReportUrl(reportInputEntity.getReportFileEntity().getFullFileNameOnDisk());
@@ -1008,9 +1006,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			}
 			// Save this into the session for easy access
 			RequestThreadLocal.getSession().addSessionAttribute("ExperianData", reportInputEntiity);
-			String jSessionId1 = "";
+
 			try {
-				// jSessionId1 = this.doLandingPageSubmit(reportInputEntiity);
 				reportInputEntiity = this.doStartSingleURLIntegration(reportInputEntiity, user);
 				// }
 			} catch (PreconditionFailedException e) {
@@ -1172,13 +1169,19 @@ public class ExperianBureauService implements IBureauIntegrationService {
 										+ httpResponse.getHttpStatus() + "--- Generic Error Message: "
 										+ "Invalid voucher code" + "--- Error String and Response Json: "
 										+ getErrorStringAndResponseJsonFields(responseBodyMap),
-								true);
+								false);
 						// now get the voucher code for this user
 						Voucher voucher = experianDataAccess.getVoucherCode(user.getId(),
 								RequestThreadLocal.getSession().getSessionId());
 						reportInputEntiity.setVoucherCode(voucher.getVoucherCode());
 						reportInputEntiity.setVoucherExpiry(voucher.getExpiryDate());
 						voucherInvalid = true;
+					} else {
+						// updates the experianStatus:(15-11-2016)
+						experianStatusUpdate(reportInputEntiity, "--- Method Name: " + " singleAction "
+								+ "--- Response status: " + httpResponse.getHttpStatus() + "--- Error Message: "
+								+ responseBodyMap.get("errorString").toString() + "--- Error String and Response Json: "
+								+ getErrorStringAndResponseJsonFields(responseBodyMap), false);
 					}
 
 				}

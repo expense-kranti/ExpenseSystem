@@ -30,12 +30,12 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 		
 		if(this.dateOfBirth == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Date of Birth is null", null);
-//		try {
-//			this.dateOfBirthAsDate = dateFormat.parse(this.dateOfBirth);
-//		} catch (ParseException ex) {
-//			throw new ValidationFailedException("ReportInputEntity"
-//				, ex.toString(), ex);
-//		}
+		try {
+			this.dateOfBirthAsDate = dateFormat.parse(this.dateOfBirth);
+		} catch (ParseException ex) {
+			throw new ValidationFailedException("ReportInputEntity"
+				, ex.toString(), ex);
+		}
 		
 		if(this.gender == null) throw new ValidationFailedException("ReportInputEntity"
 				, "Gender is null", null);
@@ -163,8 +163,7 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 	 */
 	@ApiModelProperty(value="This is the date of birth of the user in the dd-mmm-yyyy format for example 22-Jan-2012")
 	public String getDateOfBirth() {
-//		return dateFormat.format(dateOfBirthAsDate);
-		return dateOfBirth;
+		return dateFormat.format(dateOfBirthAsDate);
 	}
 
 	/**
@@ -176,24 +175,24 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 		
 	}
 	
-//	@JsonIgnore
-//	private java.util.Date dateOfBirthAsDate;
-//	
-//	/**
-//	 * Gets the date of birth in date formar
-//	 * @return The date of birth
-//	 */
-//	public java.util.Date getDateOfBirthAsDate(){
-//		return this.dateOfBirthAsDate;
-//	}
-//	
-//	/**
-//	 * Sets the date of birth in date format
-//	 * @param date The date of birth
-//	 */
-//	public void set(java.util.Date date){
-//		this.dateOfBirthAsDate = date;
-//	}
+	@JsonIgnore
+	private java.util.Date dateOfBirthAsDate;
+	
+	/**
+	 * Gets the date of birth in date formar
+	 * @return The date of birth
+	 */
+	public java.util.Date getDateOfBirthAsDate(){
+		return this.dateOfBirthAsDate;
+	}
+	
+	/**
+	 * Sets the date of birth in date format
+	 * @param date The date of birth
+	 */
+	public void set(java.util.Date date){
+		this.dateOfBirthAsDate = date;
+	}
 	
 
 	/**
@@ -530,13 +529,13 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 	
 
 
-//	/**
-//	 * Sets the date of birth as date
-//	 * @param dateOfBirthAsDate The date of birth
-//	 */
-//	public void setDateOfBirthAsDate(java.util.Date dateOfBirthAsDate) {
-//		this.dateOfBirthAsDate = dateOfBirthAsDate;
-//	}
+	/**
+	 * Sets the date of birth as date
+	 * @param dateOfBirthAsDate The date of birth
+	 */
+	public void setDateOfBirthAsDate(java.util.Date dateOfBirthAsDate) {
+		this.dateOfBirthAsDate = dateOfBirthAsDate;
+	}
 
 	/**
 	 * Gets the email

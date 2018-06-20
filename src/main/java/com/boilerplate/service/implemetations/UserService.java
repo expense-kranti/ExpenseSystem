@@ -591,16 +591,7 @@ public class UserService implements IUserService {
 				}
 			}
 			user.setPassword("Password Encrypted");
-			// check state of user if user state is experian attempt or
-			// authquestion then give its report input entity
-			if (user.getUserState() != null && (user.getUserState() == MethodState.ExperianAttempt
-					|| user.getUserState() == MethodState.AuthQuestions)) {
-				List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
-				// check if report input entity is present for user
-				if (reportInputEntityList.size() > 0) {
-					user.setReportInputEntity((ReportInputEntity) reportInputEntityList.get(0));
-				}
-			}
+			user = getReportInputEntity(user);
 
 			// get the roles, ACL and there details of this user
 			// if the user is valid create a new session, in the session add
@@ -632,6 +623,23 @@ public class UserService implements IUserService {
 			throw new UnauthorizedException("USER", "User name or password incorrect", null);
 		}
 
+	}
+
+	/**
+	 * @param user
+	 */
+	public ExternalFacingReturnedUser getReportInputEntity(ExternalFacingReturnedUser user) {
+		// check state of user if user state is experian attempt or
+		// authquestion then give its report input entity
+		if (user.getUserState() != null && (user.getUserState() == MethodState.ExperianAttempt
+				|| user.getUserState() == MethodState.AuthQuestions)) {
+			List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+			// check if report input entity is present for user
+			if (reportInputEntityList.size() > 0) {
+				user.setReportInputEntity((ReportInputEntity) reportInputEntityList.get(0));
+			}
+		}
+		return user;
 	}
 
 	/**
@@ -682,6 +690,8 @@ public class UserService implements IUserService {
 		if (encryptPasswordString) {
 			externalFacingUser.setPassword("Password Encrypted");
 		}
+		
+		externalFacingUser = getReportInputEntity(externalFacingUser);
 		// return the user
 		return externalFacingUser;
 

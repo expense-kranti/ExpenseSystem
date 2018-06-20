@@ -132,7 +132,7 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 	 * @see IMySQLReport.getReport
 	 */
 	@Override
-	public Report getReport(String userId) {
+	public Report getLatestReport(String userId) {
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// Get the sql Query from the Configuration
 		String sqlQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_THE_REPORT");

@@ -54,7 +54,7 @@ public class RedisReport extends BaseRedisDataAccessLayer implements IReport {
 	 */
 	@Override
 	public ExperianQuestionAnswer getExperianQuestionAnswer(String userId, String questionId) {
-		return super.get(AKS_ExperianQuestionAnswer + userId + questionId, ExperianQuestionAnswer.class);
+		return super.get(AKS_ExperianQuestionAnswer + userId + ":" + questionId, ExperianQuestionAnswer.class);
 	}
 
 	/**

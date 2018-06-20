@@ -86,6 +86,6 @@ public interface IMySQLReport {
 	 *            This is the current logged in user
 	 * @return the report
 	 */
-	Report getReport(String userId);
+	Report getLatestReport(String userId);
 
 }

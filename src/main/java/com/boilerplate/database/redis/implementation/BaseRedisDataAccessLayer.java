@@ -1161,9 +1161,9 @@ public class BaseRedisDataAccessLayer {
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReport()");
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getLatestReport()");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReport()");
+				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getLatestReport()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");

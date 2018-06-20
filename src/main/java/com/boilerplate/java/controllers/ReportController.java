@@ -29,8 +29,7 @@ public class ReportController extends BaseController {
 	IReportService reportService;
 
 	/**
-	 * This API is used to get the report for the current logged in user on the
-	 * basis of it's id
+	 * This API is used to get the latest report for the current logged in user 
 	 * 
 	 * @return reports for the current logged_in user
 	 * @throws UnauthorizedException
@@ -40,12 +39,12 @@ public class ReportController extends BaseController {
 	 *             database
 	 */
 
-	@ApiOperation(value = "Gets the report for the current logged in user")
+	@ApiOperation(value = "Gets the latest report for the current logged in user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "user not logged in") })
-	@RequestMapping(value = "/report", method = RequestMethod.GET)
-	public @ResponseBody Report getReport() throws UnauthorizedException, NotFoundException {
-		return reportService.getReport();
+	@RequestMapping(value = "/report/latestReport", method = RequestMethod.GET)
+	public @ResponseBody Report getLatestReport() throws UnauthorizedException, NotFoundException {
+		return reportService.getLatestReport();
 
 	}
 }

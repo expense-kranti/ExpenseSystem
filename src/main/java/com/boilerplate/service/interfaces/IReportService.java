@@ -69,6 +69,7 @@ public interface IReportService {
 	 */
 	public void saveExperianQuestionAnswer(String userId, String questionId,
 			ExperianQuestionAnswer experianQuestionAnswer);
+
 	/**
 	 * This method is used to get the report of the current logged_in user
 	 * 
@@ -78,6 +79,15 @@ public interface IReportService {
 	 * @throws UnauthorizedException
 	 *             This exception occurred if user is not logged in
 	 */
-	public Report getReport() throws NotFoundException, UnauthorizedException;
+	public Report getLatestReport() throws NotFoundException, UnauthorizedException;
+
+	/**
+	 * This method is used to get the product name for the given product code
+	 * 
+	 * @param accountType
+	 *            account type is the product code
+	 * @return the productname
+	 */
+	public String getProductName(int accountType);
 
 }
