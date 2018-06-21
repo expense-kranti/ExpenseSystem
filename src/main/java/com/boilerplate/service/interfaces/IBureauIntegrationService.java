@@ -14,6 +14,8 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.entities.GenericListEncapsulationEntity;
+import com.boilerplate.java.entities.KycDocumentsInformation;
 import com.boilerplate.java.entities.ReportInputEntity;
 
 /**
@@ -96,5 +98,23 @@ public interface IBureauIntegrationService {
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
 
-	
+	/**
+	 * This method is used to send email to experian for getting report
+	 * 
+	 * @param kycDocumentsInformation
+	 *            contains the information about kyc details like aadhar
+	 *            details, passport etc
+	 * @throws NotFoundException
+	 *             thrown If the user is not found
+	 * @throws PreconditionFailedException
+	 *             thrown when any expected condition doesnot occur like
+	 *             expected response from experian etc.
+	 * @throws BadRequestException
+	 *             thrown when user id not found
+	 * @throws ConflictException
+	 *             thrown when user already exits
+	 */
+	public void sendEmail(GenericListEncapsulationEntity<KycDocumentsInformation> kycDocumentsInformation)
+			throws NotFoundException, PreconditionFailedException, BadRequestException, ConflictException;
+
 }

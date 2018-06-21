@@ -1,7 +1,6 @@
 package com.boilerplate.asyncWork;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -46,7 +45,6 @@ import com.boilerplate.database.interfaces.IMySQLBankData;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.Address;
 import com.boilerplate.java.entities.BankData;
 import com.boilerplate.java.entities.CreditEnquiry;
@@ -59,7 +57,6 @@ import com.boilerplate.java.entities.ReportTradelineStatus;
 import com.boilerplate.java.entities.TradelineFlow;
 import com.boilerplate.service.interfaces.IFileService;
 import com.boilerplate.service.interfaces.IReportService;
-import com.opencsv.CSVReader;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
@@ -91,8 +88,12 @@ public class ParseExperianReportsForExtraDataObserver implements IAsyncWorkObser
 	private Set<String> pincodeSet = new HashSet<>();
 	private Set<String> mobileNumberSet = new HashSet<>();
 
+	/**
+	 * These variables hold values to be used in some input values
+	 */
 	private static final String writeOff = "Write Off";
-	
+	private static final String Experian = "Experian";
+
 	/**
 	 * This is the instance of the configuration manager.
 	 */
@@ -270,10 +271,6 @@ public class ParseExperianReportsForExtraDataObserver implements IAsyncWorkObser
 
 				// Normalize the XML Structure; It's just too important !!
 				NodeList root = doc.getChildNodes();
-				Node rootNode = getNode("InProfileResponse", root);
-				Node creditProfileHeader = getNode("CreditProfileHeader", rootNode.getChildNodes());
-				Node score = getNode("SCORE", rootNode.getChildNodes());
-
 				NodeList accountDetails = doc.getElementsByTagName("CAIS_Account_DETAILS");
 
 				List<CreditEnquiry> creditEnquiryList = new ArrayList<>();
@@ -291,7 +288,6 @@ public class ParseExperianReportsForExtraDataObserver implements IAsyncWorkObser
 							tradeline.setAccountNumber(accountNumber);
 							tradeline.setHighCreditLoanAmount(checkDoubleorAssign(
 									getNodeValue("Highest_Credit_or_Original_Loan_Amount", cAISAccountDETAILS), -1.0));
-							String rePaymentTenure = getNodeValue("Repayment_Tenure", cAISAccountDETAILS);
 							tradeline.setRepaymentTenure(
 									checkDoubleorAssign(getNodeValue("Repayment_Tenure", cAISAccountDETAILS), -1.0));
 							tradeline.setDateOpened(
@@ -317,7 +313,6 @@ public class ParseExperianReportsForExtraDataObserver implements IAsyncWorkObser
 							NodeList cAISAccountHistoryList = accountHistoryElement
 									.getElementsByTagName("CAIS_Account_History");
 							NodeList cAISAccountHistory = cAISAccountHistoryList.item(0).getChildNodes();
-							String daysPastDue = getNodeValue("Days_Past_Due", cAISAccountHistory);
 
 							if (cAISAccountHistory.getLength() > 0) {
 								year = getNodeValue("Year", cAISAccountHistory);
@@ -830,7 +825,6 @@ public class ParseExperianReportsForExtraDataObserver implements IAsyncWorkObser
 					mobileNumberSet.add(mobileNumber);
 				}
 			}
-
 		}
 	}
 
@@ -880,7 +874,7 @@ public class ParseExperianReportsForExtraDataObserver implements IAsyncWorkObser
 				// address.setAccountNumber(tradeline.getAccountNumber());
 				// address.setBankName(tradeline.getOrganizationId());
 				// data source manually set
-				address.setDataSource("Experian");
+				address.setDataSource(Experian);
 
 				addressSet.add(address);
 

@@ -112,6 +112,10 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 * This is the boolean check for kyc sms send to customer or not
 	 */
 	private boolean dontSendKycSms;
+	/**
+	 * This is the current question id
+	 */
+	private String currentQuestionId;
 
 	/**
 	 * This method is used to get the question
@@ -462,6 +466,25 @@ public class ReportInputEntity extends ExperianDataPublishEntity implements Seri
 	 */
 	public void setReportFileFullNameOnDisk(String reportFileFullNameOnDisk) {
 		this.reportFileFullNameOnDisk = reportFileFullNameOnDisk;
+	}
+
+	/**
+	 * Gets the current question id
+	 * 
+	 * @return the currentQuestionId
+	 */
+	public String getCurrentQuestionId() {
+		return currentQuestionId;
+	}
+
+	/**
+	 * Sets the current question id
+	 * 
+	 * @param currentQuestionId
+	 *            the currentQuestionId to set
+	 */
+	public void setCurrentQuestionId(String currentQuestionId) {
+		this.currentQuestionId = currentQuestionId;
 	}
 
 }

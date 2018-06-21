@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -771,6 +772,25 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
+	 * Gets the last login time
+	 * 
+	 * @return the lastLoginTime
+	 */
+	public Date getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+	/**
+	 * Sets the last login time
+	 * 
+	 * @param lastLoginTime
+	 *            the lastLoginTime to set
+	 */
+	public void setLastLoginTime(Date lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
+	}
+
+	/**
 	 * This is the income tax uuid used to refer to income tax data for the user
 	 */
 	private String incomeTaxUuid;
@@ -797,5 +817,9 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * This is the reportinput id
 	 */
 	private String reportInputId;
+	/**
+	 * This is the last login time
+	 */
+	private Date lastLoginTime;
 
 }

@@ -493,8 +493,9 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 
 					tradeline.setAccountNumber(accountNumber);
 					tradeline.setUserId(reportInputEntity.getUserId());
+					//create tradeline id
 					String tradelineId = tradeline.getUserId().toUpperCase() + ":"
-							+ tradeline.getReportId().toUpperCase() + ":"
+							+ reportInputEntity.getReportNumber().toUpperCase() + ":"
 							+ tradeline.getOrganizationName().toUpperCase() + ":"
 							+ tradeline.getProductName().toUpperCase() + ":"
 							+ tradeline.getAccountNumber().toUpperCase();
@@ -521,8 +522,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 					NodeList cAISAccountHistoryList = accountHistoryElement
 							.getElementsByTagName("CAIS_Account_History");
 					NodeList cAISAccountHistory = cAISAccountHistoryList.item(0).getChildNodes();
-					// String daysPastDue = getNodeValue("Days_Past_Due",
-					// cAISAccountHistory);
+					
 
 					if (cAISAccountHistory.getLength() > 0) {
 						year = getNodeValue("Year", cAISAccountHistory);

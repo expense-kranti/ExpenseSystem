@@ -134,7 +134,8 @@ public class ReportService implements IReportService {
 		if (report != null) {
 			// Getting the report trade lines
 			List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(report.getId());
-			// Creating the list of report TradeLine of type BoilerplateList report trade
+			// Creating the list of report TradeLine of type BoilerplateList
+			// report trade
 			// line
 			logger.logInfo("ReportService", "getLatestReport",
 					"The size of reportTradeLine List is:" + reportTradeLinesList.size(),
@@ -165,25 +166,25 @@ public class ReportService implements IReportService {
 
 		// Getting the report from the database
 		Report report = mysqlReport.getReportById(reportId);
-		// Getting the report trade lines
-		List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(reportId);
-		// Creating the list of report TradeLine of type BoilerplateList report trade
-		// line
-		logger.logInfo("ReportService", "getReportById",
-				"The size of reportTradeLine List is:" + reportTradeLinesList.size(),
-				"after getting the report tradelines");
-
-		BoilerplateList<ReportTradeline> reportTradelines = new BoilerplateList<ReportTradeline>();
 		if (report != null) {
+			// Getting the report trade lines
+			List<ReportTradeline> reportTradeLinesList = mysqlReport.getTradeLine(reportId);
+			// Creating the list of report TradeLine of type BoilerplateList
+			// report trade
+			// line
+			logger.logInfo("ReportService", "getReportById",
+					"The size of reportTradeLine List is:" + reportTradeLinesList.size(),
+					"after getting the report tradelines");
+
+			BoilerplateList<ReportTradeline> reportTradelines = new BoilerplateList<ReportTradeline>();
+
 			for (int i = 0; i < reportTradeLinesList.size(); i++) {
 				ReportTradeline reportTradeline = reportTradeLinesList.get(i);
 				reportTradelines.add(reportTradeline);
 			}
 			// Set the report trade lines to the report
 			report.setReportTradelines(reportTradelines);
-		}
-
-		else
+		} else
 			throw new NotFoundException("Report", "No such report found for the given report id", null);
 		logger.logInfo("ReportService", "getReportById", "EndGetReportById", "End Start");
 

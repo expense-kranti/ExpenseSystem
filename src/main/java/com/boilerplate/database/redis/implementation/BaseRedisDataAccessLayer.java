@@ -1185,6 +1185,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ExperianController.sendExperianEmail(com.boilerplate.java.entities.GenericListEncapsulationEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ExperianController.sendExperianEmail(com.boilerplate.java.entities.GenericListEncapsulationEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1384,7 +1397,7 @@ public class BaseRedisDataAccessLayer {
 				"https://rozerimic6.execute-api.ap-southeast-1.amazonaws.com/test/bankdatauserinfo");
 
 		vAllETest.put("Experian_Single_Request_URL",
-				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/singleAction.action");
+				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/singleAction.action");
 		vAllETest.put("Experian_Single_Url_Request_Template",
 				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
 		// Configuration Voucher count Email to Admin
@@ -1398,8 +1411,13 @@ public class BaseRedisDataAccessLayer {
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllETest.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
 		vAllETest.put("Experian_Question_URL",
-				"https://cbv2cpu.uat.experian.in:8445/ECV-P2/content/generateQuestionForConsumer.action?");
-
+				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/generateQuestionForConsumer.action?");
+		// configuration defined for File publishing
+		vAllETest.put("Is_Publish_File", "true"); // false for not publish
+		// Configuration defined for Experian Email
+		vAllETest.put("ExperianToFirstEmailId", "urvij.singh@krantitechservices.in");
+		vAllETest.put("ExperianToSecondEmailId", "love.kranti@clearmydues.com");
+		vAllETest.put("ExperianBCCEmailId", "urvij.singh@krantitechservices.in");
 		return vAllETest;
 	}
 
@@ -1521,6 +1539,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Voucher_Count_Email_Subject", "Available Voucher Count");
 		vAllEDev.put("Voucher_Count_Message_Template", "Voucher Count in Akshar is: @VoucherCount");
 		vAllEDev.put("Admin_Contact_Number", "9310390056");
+		// configuration defined for File publishing
+		vAllEDev.put("Is_Publish_File", "true"); // false for not publish
+		// Configuration defined for Experian Email
+		vAllEDev.put("ExperianToFirstEmailId", "urvij.singh@krantitechservices.in");
+		vAllEDev.put("ExperianToSecondEmailId", "love.kranti@clearmydues.com");
+		vAllEDev.put("ExperianBCCEmailId", "urvij.singh@krantitechservices.in");
 
 		return vAllEDev;
 
@@ -1624,7 +1648,13 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("PanNumberHash_Base_Tag", "AKS_PAN_NUMBER_LIST_HASH");
 		vAllEProduction.put("Experian_Question_URL",
 				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
-
+		// configuration defined for File publishing
+		vAllEProduction.put("Is_Publish_File", "true"); // false for not publish
+		// Configuration defined for Experian Email
+		vAllEProduction.put("ExperianToFirstEmailId", "ExperianConsumerSupportIndia@in.experian.com");
+		vAllEProduction.put("ExperianToSecondEmailId", "Hemal.Shingada@experian.com");
+		vAllEProduction.put("ExperianBCCEmailId", "info@clearmydues.com");
+		
 		return vAllEProduction;
 	}
 
@@ -1815,7 +1845,12 @@ public class BaseRedisDataAccessLayer {
 		// email content related to income tax data email to be sent
 		contentMap.put("INCOME_TAX_DETAILS_EMAIL_SUBJECT", "Akshar: Your Income Tax Details");
 		contentMap.put("REPORT_FAIL_AFTER_PAYMENT_SMS_BODY",
-				"Dear @FirstName, Sorry! We could not authenticate you. Kindly Upload your Address proof and Id proof Or Send us at support@projectakshar.com . projectakshar.com");
+				"Dear @FirstName, sorry! We could not authenticate you. Kindly upload your Address Proof and ID Proof or email to support@projectakshar.com. Akshar");
+		contentMap.put("EXPERIAN_KYC_EMAIL_NO_ATTEMPT_SUBJECT",
+				"KYC NO EXPERIAN ATTEMPT UserName: @FirstName@LastName UTI: @Stage1Id Date: @Date");
+		contentMap.put("EXPERIAN_KYC_EMAIL_SUBJECT", "KYC UserName: @FirstName@LastName UTI: @Stage1Id Date: @Date");
+		contentMap.put("EXPERIAN_KYC_EMAIL_Body",
+				"<b>UserName:</b> @FirstName@LastName<br><b>UTI:</b> @Stage1Id<br><b>Date:</b> @Date<br>");
 
 		this.set("CONTENT:CMD001:VERSION_ALL:LOCALE_ALL", Base.toXML(contentMap));
 	}

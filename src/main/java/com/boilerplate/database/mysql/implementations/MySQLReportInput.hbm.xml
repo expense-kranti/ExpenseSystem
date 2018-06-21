@@ -30,8 +30,10 @@
 				<param name="useNamed">true</param>
 			</type>
 		</property>
-
-
+		<property name="mobileNumber" column="MobileNumber" />
+		<property name="email" column="Email" />
+		<property name="firstName" column="FirstName" />
+		<property name="surname" column="Surname" />
 
 	</class>
 </hibernate-mapping>

@@ -216,6 +216,5 @@ public class MySQLReport extends MySQLBaseDataAccessLayer implements IMySQLRepor
 			throw ex;
 		}
 		return reportTradeLineList;
-
 	}
 }

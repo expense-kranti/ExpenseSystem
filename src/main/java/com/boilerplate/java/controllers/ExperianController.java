@@ -23,6 +23,8 @@ import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExperianQuestionAnswer;
+import com.boilerplate.java.entities.GenericListEncapsulationEntity;
+import com.boilerplate.java.entities.KycDocumentsInformation;
 import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.service.interfaces.IBureauIntegrationService;
 import com.wordnik.swagger.annotations.Api;
@@ -104,6 +106,32 @@ public class ExperianController extends BaseController {
 			JAXBException, ParserConfigurationException, FactoryConfigurationError, SAXException {
 		return this.experianBureauService.fetchNextItem(experianQuestionAnswer.getQuestionId(),
 				experianQuestionAnswer.getOptionSet1Answer(), experianQuestionAnswer.getOptionSet2Answer());
+	}
+
+	/**
+	 * This api is used to send email to experian for verifing the user kyc
+	 * details and get the report
+	 * 
+	 * @param kycDocumentsInformation
+	 *            contains the information about kyc details like aadhar
+	 *            details, passport etc
+	 * @throws Exception
+	 *             thrown when any exception occurs in process of sending email
+	 *             to experian
+	 * @throws NotFoundException
+	 *             thrown If the user is not found
+	 * @throws PreconditionFailedException
+	 *             thrown when any expected condition doesnot occur like
+	 *             expected response from experian etc.
+	 * @throws BadRequestException
+	 *             thrown when user id not found
+	 */
+	@ApiOperation(value = "Sends an email to experian")
+	@RequestMapping(value = "/experian/email", method = RequestMethod.POST)
+	public @ResponseBody void sendExperianEmail(
+			@RequestBody GenericListEncapsulationEntity<KycDocumentsInformation> kycDocumentsInformation)
+			throws Exception, NotFoundException, PreconditionFailedException, BadRequestException {
+		this.experianBureauService.sendEmail(kycDocumentsInformation);
 	}
 
 }

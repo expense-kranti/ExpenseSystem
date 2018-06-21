@@ -59,6 +59,8 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setTotalScoreInDouble(user.getTotalScoreInDouble());
 		super.setTotalReferScore(user.getTotalReferScore());
 		super.setIncreaseScore(user.isIncreaseScore());
+		super.setReportInputId(user.getReportInputId());
+		super.setLastLoginTime(user.getLastLoginTime());
 
 	}
 
