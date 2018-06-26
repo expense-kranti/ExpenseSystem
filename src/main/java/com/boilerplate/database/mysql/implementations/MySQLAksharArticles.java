@@ -11,11 +11,10 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.service.implemetations.StatisticsService;
 
 /**
  * This class implements IAksharArticles interface means it has methods
- * operating on articles published on akshar 
+ * operating on articles published on akshar
  * 
  * @author urvij
  *
@@ -31,9 +30,6 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	 * This is the wordpress hibernate configuration
 	 */
 	private String wordPressDatabaseConnection = "WordPressDatabaseConnection";
-
-	// session
-	Session session = null;
 
 	/**
 	 * The instance of configuration manager
@@ -52,7 +48,7 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	}
 
 	/**
-	 * @see IAksharArticles.getArticlesDetails
+	 * @see IAksharArticles.getTopNewArticles
 	 */
 	@Override
 	public List<Map<String, Object>> getTopNewArticles() throws BadRequestException {
@@ -63,18 +59,12 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 
 		List<Map<String, Object>> returndata = null;
 		try {
-			// load new configurations
-			session = HibernateUtility.getSessionFactory(configurationManager.get(wordPressDatabaseConnection))
-					.openSession();
 			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
+			returndata = super.executeSelectNative(sqlQuery, queryParameters);
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getTopNewArticles", "ExceptionGetTopNewArticles",
 					"Exception is : " + ex.toString(), ex);
-		} finally {
-			session.flush();
-			session.close();
 		}
 		return returndata;
 	}
@@ -91,18 +81,13 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		// create session
 		List<Map<String, Object>> returndata = null;
 		try {
-			// load new configurations
-			session = HibernateUtility.getSessionFactory(configurationManager.get(wordPressDatabaseConnection))
-					.openSession();
-			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
+	
+			returndata = super.executeSelectNative(sqlQuery, queryParameters);
+
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getArticleCounts", "ExceptionGetArticleCounts",
 					"Exception is : " + ex.toString(), ex);
-		} finally {
-			session.flush();
-			session.close();
 		}
 		return returndata;
 	}
@@ -119,18 +104,13 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		// create session
 		List<Map<String, Object>> returndata = null;
 		try {
-			// load new configurations
-			session = HibernateUtility.getSessionFactory(configurationManager.get(wordPressDatabaseConnection))
-					.openSession();
+			// reusing the created session in above method
 			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
+			returndata = super.executeSelectNative(sqlQuery, queryParameters);
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getTopSearchedArticles", "ExceptionGetTopSearchedArticles",
 					"Exception is : " + ex.toString(), ex);
-		} finally {
-			session.flush();
-			session.close();
 		}
 		return returndata;
 	}
