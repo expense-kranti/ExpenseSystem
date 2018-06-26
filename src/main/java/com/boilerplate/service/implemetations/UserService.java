@@ -4,6 +4,7 @@ import java.nio.charset.CharacterCodingException;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.SendRegistrationEmailObserver;
 import com.boilerplate.asyncWork.SendSMSOnPasswordChange;
+import com.boilerplate.database.interfaces.IMySQLReport;
 import com.boilerplate.database.interfaces.IRedisAssessment;
 import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.ISFUpdateHash;
@@ -29,16 +31,21 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.BaseEntity;
+import com.boilerplate.java.entities.ExperianQuestionAnswer;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ManageUserEntity;
+import com.boilerplate.java.entities.MethodState;
+import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
+import com.boilerplate.java.entities.ExperianDataPublishEntity.State;
 import com.boilerplate.service.interfaces.IAssessmentService;
 import com.boilerplate.service.interfaces.IBlogActivityService;
 import com.boilerplate.service.interfaces.IReferralService;
+import com.boilerplate.service.interfaces.IReportService;
 import com.boilerplate.service.interfaces.IRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
@@ -277,6 +284,21 @@ public class UserService implements IUserService {
 	}
 
 	/**
+	 * This is the instance of report service
+	 */
+	@Autowired
+	private IReportService reportService;
+
+	/**
+	 * This method set the report service
+	 * 
+	 * @param reportService
+	 */
+	public void setReportService(IReportService reportService) {
+		this.reportService = reportService;
+	}
+
+	/**
 	 * This variable is used to define the list of subjects ,subjects basically
 	 * define the background operations need to be perform this user
 	 */
@@ -344,6 +366,19 @@ public class UserService implements IUserService {
 	 */
 	public void setRedisAssessment(IRedisAssessment redisAssessment) {
 		this.redisAssessment = redisAssessment;
+	}
+
+	/**
+	 * This is an instance of mysqlReport
+	 */
+	IMySQLReport mysqlReport;
+
+	/**
+	 * @param mysqlReport
+	 *            the mysqlReport to set
+	 */
+	public void setMysqlReport(IMySQLReport mysqlReport) {
+		this.mysqlReport = mysqlReport;
 	}
 
 	/**
@@ -417,6 +452,8 @@ public class UserService implements IUserService {
 		if (externalFacingUser.getReferalSource().isEmpty()) {
 			externalFacingUser.setReferalSource("None");
 		}
+		// set user state
+		externalFacingUser.setUserState(MethodState.Registered);
 
 		// call the database to save the user
 		externalFacingUser = (ExternalFacingUser) userDataAccess.create(externalFacingUser).transformToExternal();
@@ -560,6 +597,9 @@ public class UserService implements IUserService {
 		// we store everything in upper case hence chanhing it to upper
 		try {
 			user = userDataAccess.getUser(authenitcationRequest.getUserId().toUpperCase(), roleService.getRoleIdMap());
+			user.setUserState(MethodState.Validated);
+			user.setLastLoginTime(new Date());
+			userDataAccess.update(user);
 			String hashedPassword = String.valueOf(Encryption.getHashCode(authenitcationRequest.getPassword()));
 			if (!user.getPassword().equals(hashedPassword)) {
 				throw new UnauthorizedException("USER", "User name or password incorrect", null);
@@ -573,6 +613,8 @@ public class UserService implements IUserService {
 				}
 			}
 			user.setPassword("Password Encrypted");
+			user = getReportInputEntity(user);
+
 			// get the roles, ACL and there details of this user
 			// if the user is valid create a new session, in the session add
 			// details
@@ -606,6 +648,34 @@ public class UserService implements IUserService {
 	}
 
 	/**
+	 * @param user
+	 */
+	public ExternalFacingReturnedUser getReportInputEntity(ExternalFacingReturnedUser user) {
+		// check state of user if user state is experian attempt or
+		// authquestion then give its report input entity
+		
+			List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+			ReportInputEntity reportInputEntity = null;
+			// check if report input entity is present for user
+			if (reportInputEntityList.size() > 0) {
+				reportInputEntity = reportInputEntityList.get(0);
+				user.setReportInputEntity(reportInputEntity);
+				// if reportinput state is question then fetch the current
+				// question and show it to the user
+				// if (reportInputEntity.getStateEnum() == State.Question) {
+				// if (reportInputEntity.getCurrentQuestionId() != null) {
+				// reportInputEntity.setCurrentQuestion((ExperianQuestionAnswer)
+				// reportService
+				// .getQuestionAnswers(user.getUserId(),
+				// reportInputEntity.getCurrentQuestionId()));
+				// }
+				// }
+			}
+		
+		return user;
+	}
+
+	/**
 	 * This method is used to create the UUID
 	 * 
 	 * @return the UUID
@@ -630,8 +700,10 @@ public class UserService implements IUserService {
 	@Override
 	public ExternalFacingReturnedUser get(String userId) throws NotFoundException, BadRequestException {
 		// retrun the user with password as a string
-		return get(userId, true);
-
+		ExternalFacingReturnedUser externalFacingUser = get(userId, true);
+		// no need to check user null as already check in above method
+		externalFacingUser = getReportInputEntity(externalFacingUser);
+		return externalFacingUser;
 	}
 
 	/**
@@ -653,6 +725,7 @@ public class UserService implements IUserService {
 		if (encryptPasswordString) {
 			externalFacingUser.setPassword("Password Encrypted");
 		}
+
 		// return the user
 		return externalFacingUser;
 
@@ -850,6 +923,7 @@ public class UserService implements IUserService {
 		if (returnedUser.getUserStatus() == 0) {
 			return null;
 		} else {
+			// also returning report input entity here in below method
 			return this.get(user.getUserId());
 		}
 	}
@@ -1117,7 +1191,8 @@ public class UserService implements IUserService {
 				Float.parseFloat(scoreEntity.getObtainedScore()) + Float.parseFloat(scoreEntity.getReferScore())));
 		// no need to check for null or empty
 		returnedUser.setTotalScoreInDouble(Double.parseDouble(returnedUser.getTotalScore()));
-		// set rank of user downcasting to float from double cause score not gonna increase to that precision
+		// set rank of user downcasting to float from double cause score not
+		// gonna increase to that precision
 		returnedUser.setRank(calculateRank((float) returnedUser.getTotalScoreInDouble()));
 
 	}

@@ -59,6 +59,8 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setTotalScoreInDouble(user.getTotalScoreInDouble());
 		super.setTotalReferScore(user.getTotalReferScore());
 		super.setIncreaseScore(user.isIncreaseScore());
+		super.setReportInputId(user.getReportInputId());
+		super.setLastLoginTime(user.getLastLoginTime());
 
 	}
 
@@ -142,8 +144,8 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 	 * 
 	 * @return the report entity
 	 */
-	public ReportInputEntiity getReportInputEntitty() {
-		return reportInputEntitty;
+	public ReportInputEntity getReportInputEntitty() {
+		return reportInputEntity;
 	}
 
 	/**
@@ -152,15 +154,15 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 	 * @param reportInputEntitty
 	 *            the report entity
 	 */
-	public void setReportInputEntitty(ReportInputEntiity reportInputEntitty) {
-		this.reportInputEntitty = reportInputEntitty;
+	public void setReportInputEntity(ReportInputEntity reportInputEntity) {
+		this.reportInputEntity = reportInputEntity;
 	}
 
 	/**
 	 * This is experian report input entity.
 	 */
 	@JsonIgnore
-	private ReportInputEntiity reportInputEntitty;
+	private ReportInputEntity reportInputEntity;
 
 	/**
 	 * This method creates the user data for publishing

@@ -19,19 +19,45 @@ public class ElectronicContact extends BaseEntity implements Serializable {
 	 */
 	private String telephoneNumber;
 	/**
-	 *  This is the report tradeline mobile number.
+	 * This is the report tradeline mobile number.
 	 */
 	private String mobileNumber;
+
+	/**
+	 * This method is used to get the trade line id
+	 * 
+	 * @return tradelineId
+	 */
+	public String getTradelineId() {
+		return tradelineId;
+	}
+
+	/**
+	 * This method is used to set the tradeLine ID
+	 * 
+	 * @param tradelineId
+	 */
+	public void setTradelineId(String tradelineId) {
+		this.tradelineId = tradelineId;
+	}
+
+	// This is the tradeline id
+	private String tradelineId;
+
 	/**
 	 * This gets the report tradeline email.
+	 * 
 	 * @return the email address
 	 */
 	public String getEmail() {
 		return email;
 	}
+
 	/**
 	 * This sets the report tradeline email.
-	 * @param email the report tradeline email
+	 * 
+	 * @param email
+	 *            the report tradeline email
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -39,28 +65,37 @@ public class ElectronicContact extends BaseEntity implements Serializable {
 
 	/**
 	 * This gets the report tradeline telephone number.
+	 * 
 	 * @return the telephone number.
 	 */
 	public String getTelephoneNumber() {
 		return telephoneNumber;
 	}
+
 	/**
 	 * This sets the report tradeline telephone number.
-	 * @param telephoneNumber the report tradeline telephone number
+	 * 
+	 * @param telephoneNumber
+	 *            the report tradeline telephone number
 	 */
 	public void setTelephoneNumber(String telephoneNumber) {
 		this.telephoneNumber = telephoneNumber;
 	}
+
 	/**
 	 * This gets the report tradeline mobile number.
+	 * 
 	 * @return the mobile number.
 	 */
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
+
 	/**
 	 * This sets the report tradeline mobile number.
-	 * @param mobileNumber the report tradeline mobile number
+	 * 
+	 * @param mobileNumber
+	 *            the report tradeline mobile number
 	 */
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;

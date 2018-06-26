@@ -12,7 +12,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 /**
  * This class holds the file related data of a file
  * 
- * @author
+ * @author amit
  *
  */
 @ApiModel(value = "A File", description = "This is a file entity", parent = BaseEntity.class)
@@ -23,6 +23,58 @@ public class FileEntity extends BaseEntity implements Serializable {
 	 */
 	@JsonIgnore
 	private String fileName;
+
+	/**
+	 * This is the file
+	 */
+	@JsonIgnore
+	private java.io.File file;
+
+	/**
+	 * This is the boiler plate map
+	 */
+	private BoilerplateMap<String, String> metaData = new BoilerplateMap();
+
+	/**
+	 * This is the orgnization id of the user creating the file
+	 */
+	@JsonIgnore
+	private String organizationId;
+
+	/**
+	 * This is the relative url for accessfrom sftp
+	 */
+	@ApiModelProperty(value = "This is the relative url for accessfrom sftp, to access this over sftp add the shared base sftp url")
+	private String relativeSFTPURL;
+
+	/**
+	 * This is the content type of file
+	 */
+	@ApiModelProperty(value = "This is the file content type")
+	private String contentType;
+
+	/**
+	 * This is the user id of the file
+	 */
+	@ApiModelProperty(value = "This is the id of the user who is saving the file")
+	private String userId;
+
+	/**
+	 * This is the file master tag
+	 */
+	@ApiModelProperty(value = "This is the file master tag")
+	private String fileMasterTag;
+
+	/**
+	 * This is the file name on disk
+	 */
+	@JsonIgnore
+	private String fileNameOnDisk;
+
+	/**
+	 * This is the full file name on disk
+	 */
+	private String fullFileNameOnDisk;
 
 	/**
 	 * This gets the file name
@@ -139,35 +191,6 @@ public class FileEntity extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * This is the content type of file
-	 */
-	@ApiModelProperty(value = "This is the file content type")
-	private String contentType;
-
-	/**
-	 * This is the user id of the file
-	 */
-	@ApiModelProperty(value = "This is the id of the user who is saving the file")
-	private String userId;
-
-	/**
-	 * This is the file master tag
-	 */
-	@ApiModelProperty(value = "This is the file master tag")
-	private String fileMasterTag;
-
-	/**
-	 * This is the file name on disk
-	 */
-	@JsonIgnore
-	private String fileNameOnDisk;
-
-	/**
-	 * This is the full file name on disk
-	 */
-	private String fullFileNameOnDisk;
-
-	/**
 	 * @see base.validate
 	 */
 	@Override
@@ -268,28 +291,5 @@ public class FileEntity extends BaseEntity implements Serializable {
 	public void setRelativeSFTPURL(String relativeSFTPURL) {
 		this.relativeSFTPURL = relativeSFTPURL;
 	}
-
-	/**
-	 * This is the file
-	 */
-	@JsonIgnore
-	private java.io.File file;
-
-	/**
-	 * This is the boiler plate map
-	 */
-	private BoilerplateMap<String, String> metaData = new BoilerplateMap();
-
-	/**
-	 * This is the orgnization id of the user creating the file
-	 */
-	@JsonIgnore
-	private String organizationId;
-
-	/**
-	 * This is the relative url for accessfrom sftp
-	 */
-	@ApiModelProperty(value = "This is the relative url for accessfrom sftp, to access this over sftp add the shared base sftp url")
-	private String relativeSFTPURL;
 
 }

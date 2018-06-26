@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -744,10 +745,49 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	}
 
 	/**
-	 * @param increaseScore the increaseScore to set
+	 * @param increaseScore
+	 *            the increaseScore to set
 	 */
 	public void setIncreaseScore(boolean increaseScore) {
 		this.increaseScore = increaseScore;
+	}
+
+	/**
+	 * Gets the report input id
+	 * 
+	 * @return the reportInputId
+	 */
+	public String getReportInputId() {
+		return reportInputId;
+	}
+
+	/**
+	 * Sets the report input id
+	 * 
+	 * @param reportInputId
+	 *            the reportInputId to set
+	 */
+	public void setReportInputId(String reportInputId) {
+		this.reportInputId = reportInputId;
+	}
+
+	/**
+	 * Gets the last login time
+	 * 
+	 * @return the lastLoginTime
+	 */
+	public Date getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+	/**
+	 * Sets the last login time
+	 * 
+	 * @param lastLoginTime
+	 *            the lastLoginTime to set
+	 */
+	public void setLastLoginTime(Date lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
 	}
 
 	/**
@@ -771,8 +811,15 @@ public class ExternalFacingUser extends UpdateUserEntity implements Serializable
 	 * interested in inputing his/her emailid
 	 */
 	private boolean hasSkippedEmailInput;
-	
-	
+
 	private boolean increaseScore;
+	/**
+	 * This is the reportinput id
+	 */
+	private String reportInputId;
+	/**
+	 * This is the last login time
+	 */
+	private Date lastLoginTime;
 
 }

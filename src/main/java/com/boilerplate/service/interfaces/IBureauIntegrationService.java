@@ -3,7 +3,6 @@ package com.boilerplate.service.interfaces;
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -15,7 +14,9 @@ import com.boilerplate.exceptions.rest.PreconditionFailedException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.ReportInputEntiity;
+import com.boilerplate.java.entities.GenericListEncapsulationEntity;
+import com.boilerplate.java.entities.KycDocumentsInformation;
+import com.boilerplate.java.entities.ReportInputEntity;
 
 /**
  * This interface has methods for starting experian integration like starting
@@ -25,40 +26,37 @@ import com.boilerplate.java.entities.ReportInputEntiity;
  * @author love
  *
  */
-public interface IExperianService {
+public interface IBureauIntegrationService {
 
 	/**
-	 * This method starts the experian integration requests
+	 * This method is used to start experian integration
 	 * 
 	 * @param reportInputEntiity
 	 *            it contains the data required to send request to server for
-	 *            making experian integration
-	 * @return the reportInputEntity containing the returned sessionIds,
-	 *         stageIds and report etc. got in response to experian integration
-	 *         requests
-	 * @throws ConflictException
-	 *             thrown when there is an error in updating the user
-	 * @throws UnauthorizedException
-	 *             thrown when logged in user is not authorized for getting
-	 *             report meta data like version etc.
+	 *            experian integration
+	 * @return the report input entity
 	 * @throws ValidationFailedException
-	 *             thrown when some of the required inputs of reportInputEntity
-	 *             are not provided(or are null/empty)
+	 *             thrown when any required value is not present
+	 * @throws ConflictException
+	 *             thrown when user already exists
 	 * @throws NotFoundException
-	 *             when the user is not found in database against whom experian
-	 *             report to be generated
-	 * @throws BadRequestException
-	 *             when userId is not found
+	 *             thrown when user not found with given userId(logged in
+	 *             userId)
 	 * @throws IOException
 	 *             thrown if IOException occurs in while making http requests to
 	 *             experian server
 	 * @throws PreconditionFailedException
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
+	 * @throws BadRequestException
+	 *             when userId is not found
+	 * @throws UnauthorizedException
+	 * @throws Exception
+	 *             thrown when any exception occurs
 	 */
-	public ReportInputEntiity startSingle(ReportInputEntiity reportInputEntiity)
-			throws ConflictException, UnauthorizedException, ValidationFailedException, NotFoundException,
-			BadRequestException, IOException, PreconditionFailedException;
+	public ReportInputEntity start(ReportInputEntity reportInputEntiity)
+			throws ValidationFailedException, ConflictException, NotFoundException, IOException,
+			PreconditionFailedException, BadRequestException, UnauthorizedException, Exception;
 
 	/**
 	 * This method is used to start question answer session with the user for
@@ -94,10 +92,29 @@ public interface IExperianService {
 	 * @throws PreconditionFailedException
 	 *             thrown when successful response of http request to experian
 	 *             server is not received
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public ReportInputEntiity fetchNextItem(String questionId, String answerPart1, String answerPart2)
+	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2)
 			throws ConflictException, NotFoundException, IOException, BadRequestException, SAXException,
 			UpdateFailedException, ParserConfigurationException, PreconditionFailedException, Exception;
+
+	/**
+	 * This method is used to send email to experian for getting report
+	 * 
+	 * @param kycDocumentsInformation
+	 *            contains the information about kyc details like aadhar
+	 *            details, passport etc
+	 * @throws NotFoundException
+	 *             thrown If the user is not found
+	 * @throws PreconditionFailedException
+	 *             thrown when any expected condition doesnot occur like
+	 *             expected response from experian etc.
+	 * @throws BadRequestException
+	 *             thrown when user id not found
+	 * @throws ConflictException
+	 *             thrown when user already exits
+	 */
+	public void sendEmail(GenericListEncapsulationEntity<KycDocumentsInformation> kycDocumentsInformation)
+			throws NotFoundException, PreconditionFailedException, BadRequestException, ConflictException;
 
 }

@@ -1,591 +1,147 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.util.Date;
 
-import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 
 /**
- * This class holds the report tradeline related data which will be obtained
- * from experian report
+ * This is the ReportTradeLine Entity
  * 
- * @author
+ * @author amit
  *
  */
-public class ReportTradeline extends BaseEntity implements Serializable, ICRMPublishDynamicURl, ICRMPublishEntity {
+
+public class ReportTradeline extends BaseEntity implements Serializable {
 
 	/**
-	 * @see BaseEntity.validate
+	 * This is the offerEmail
 	 */
-	@Override
-	public boolean validate() throws ValidationFailedException {
-		return true;
-	}
+	private String offerEmail;
 
 	/**
-	 * @see BaseEntity.transformToInternal
+	 * This is the dpd
 	 */
-	@Override
-	public BaseEntity transformToInternal() {
-		return this;
-	}
+	private int daysPastDue;
 
 	/**
-	 * @see BaseEntity.transformToExternal
+	 * This is the organization name
 	 */
-	@Override
-	public BaseEntity transformToExternal() {
-		return this;
-	}
+	private String organizationName;
+	/**
+	 * This is the product name
+	 */
+	private String productName;
 
 	/**
-	 * This is the report id
+	 * This is the reportId
 	 */
-	String reportId;
+	private String reportId;
 	/**
-	 * This is the accountNumber
+	 * This is the account number
 	 */
-	String accountNumber;
+	private String accountNumber;
+
 	/**
-	 * This is the highCreditLoanAmount
-	 */
-	double highCreditLoanAmount;
-	/**
-	 * This is the repaymentTenure
-	 */
-	double repaymentTenure;
-	/**
-	 * This is the dateOpened
+	 * This is the openning date
 	 */
 	java.util.Date dateOpened;
 	/**
-	 * This is the dateClosed
+	 * This is the close date
 	 */
 	java.util.Date dateClosed;
 	/**
-	 * This is the dateOfLastPayment
+	 * This is the last payment date
 	 */
 	java.util.Date dateOfLastPayment;
 	/**
-	 * This is the accountNumber
+	 * This is the acount holderType
 	 */
 	String accountHolderType;
 
 	/**
-	 * Gets electronic contacts
-	 * 
-	 * @return the electronic contacts
-	 */
-	public BoilerplateList<ElectronicContact> getElectronicContacts() {
-		return electronicContacts;
-	}
-
-	/**
-	 * Sets electronic contacts
-	 * 
-	 * @param electronicContacts
-	 *            to set
-	 */
-	public void setElectronicContacts(BoilerplateList<ElectronicContact> electronicContacts) {
-		this.electronicContacts = electronicContacts;
-	}
-
-	/**
-	 * This is the lastHistoryDate
-	 */
-	java.util.Date lastHistoryDate;
-	/**
-	 * This is the daysPastDue
-	 */
-	int daysPastDue;
-	/**
-	 * This is the address
-	 */
-	String address;
-	/**
-	 * This is the electronicContacts
-	 */
-	BoilerplateList<ElectronicContact> electronicContacts = new BoilerplateList<>();
-	/**
-	 * This is the addresses
-	 */
-	BoilerplateList<Address> addresses = new BoilerplateList<>();
-
-	/**
-	 * Gets the addresses
-	 * 
-	 * @return the addresses
-	 */
-	public BoilerplateList<Address> getAddresses() {
-		return addresses;
-	}
-
-	/**
-	 * Sets addresses
-	 * 
-	 * @param addresses
-	 *            to set
-	 */
-	public void setAddresses(BoilerplateList<Address> addresses) {
-		this.addresses = addresses;
-	}
-
-	/**
-	 * Gets the dayspastdue
-	 * 
-	 * @return the days past due
-	 */
-	public int getDaysPastDue() {
-		return daysPastDue;
-	}
-
-	/**
-	 * Sets the daysPastDue
-	 * 
-	 * @param daysPastDue
-	 *            to set
-	 */
-	public void setDaysPastDue(int daysPastDue) {
-		this.daysPastDue = daysPastDue;
-	}
-
-	/**
-	 * This is the phone
-	 */
-	String phone;
-	/**
-	 * This is the settlementAmount
-	 */
-	double settlementAmount;
-	/**
-	 * This is the currentBalance
+	 * This is the current balance
 	 */
 	double currentBalance;
 	/**
-	 * This is the dateReported
+	 * This is the reported date
 	 */
 	java.util.Date dateReported;
 	/**
-	 * This is the amountDue
+	 * This is the due amount
 	 */
 	double amountDue;
+
 	/**
-	 * This is the valueCollateral
+	 * This is the user id
 	 */
-	String valueCollateral;
-	/**
-	 * This is the typeCollateral
-	 */
-	String typeCollateral;
+	private String userId;
 	/**
 	 * This is the occupation
 	 */
-	String occupation;
-	/**
-	 * This is the rateOfIntererst
-	 */
-	double rateOfIntererst;
-	/**
-	 * This is the income
-	 */
-	double income;
-	/**
-	 * This is the tradeLineXML
-	 */
-	String tradeLineXML;
-	/**
-	 * This is the experianTradelineStatusEnum
-	 */
-	ExperianTradelineStatus experianTradelineStatusEnum;
-	/**
-	 * This is the getTos
-	 */
-	boolean getTos;
+	private String occupation;
 
 	/**
-	 * Gets the getTos
-	 * 
-	 * @return the getTos
+	 * This is the status of tradeLine report
 	 */
-	public boolean isGetTos() {
-		return getTos;
-	}
-
+	ReportTradelineStatus reportTradelineStatus;
+	
+	
+	java.util.Date lastHistoryDate;
+	
+	double highCreditLoanAmount;
+	
+	double repaymentTenure;
+	
+	private TradelineFlow tradelineFlow;
+	
+	
+	
+	
 	/**
-	 * Sets the getTos
-	 * 
-	 * @param getTos
-	 *            to set
-	 */
-	public void setGetTos(boolean getTos) {
-		this.getTos = getTos;
-	}
-
-	/**
-	 * This is the organizationId
-	 */
-	String organizationId;
-	/**
-	 * This is the productId
-	 */
-	String productId;
-
-	/**
-	 * Gets the report id
-	 * 
-	 * @return report id
-	 */
-	public String getReportId() {
-		return reportId;
-	}
-
-	/**
-	 * Sets the report id
-	 * 
-	 * @param reportId
-	 *            to set
-	 */
-	public void setReportId(String reportId) {
-		this.reportId = reportId;
-	}
-
-	/**
-	 * Gets the accountNumber
-	 * 
-	 * @return the accountNumber
-	 */
-	public String getAccountNumber() {
-		return accountNumber;
-	}
-
-	/**
-	 * Sets the accountNumber
-	 * 
-	 * @param accountNumber
-	 *            to set
-	 */
-	public void setAccountNumber(String accountNumber) {
-		this.accountNumber = accountNumber;
-	}
-
-	/**
-	 * Gets the highCreditLoanAmount
-	 * 
-	 * @return the highCreditLoanAmount
-	 */
-	public double getHighCreditLoanAmount() {
-		return highCreditLoanAmount;
-	}
-
-	/**
-	 * Sets the highCreditLoanAmount
-	 * 
-	 * @param highCreditLoanAmount
-	 *            to set
-	 */
-	public void setHighCreditLoanAmount(double highCreditLoanAmount) {
-		this.highCreditLoanAmount = highCreditLoanAmount;
-	}
-
-	/**
-	 * Gets the repaymentTenure
-	 * 
-	 * @return the repaymentTenure
-	 */
-	public double getRepaymentTenure() {
-		return repaymentTenure;
-	}
-
-	/**
-	 * Sets the repaymentTenure
-	 * 
-	 * @param repaymentTenure
-	 *            to set
-	 */
-	public void setRepaymentTenure(double repaymentTenure) {
-		this.repaymentTenure = repaymentTenure;
-	}
-
-	/**
-	 * Gets the dateOpened
-	 * 
-	 * @return the dateOpened
-	 */
-	public java.util.Date getDateOpened() {
-		return dateOpened;
-	}
-
-	/**
-	 * Sets the dateOpened
-	 * 
-	 * @param dateOpened
-	 *            to set
-	 */
-	public void setDateOpened(java.util.Date dateOpened) {
-		this.dateOpened = dateOpened;
-	}
-
-	/**
-	 * Gets date closed
-	 * 
-	 * @return the date closed
-	 */
-	public java.util.Date getDateClosed() {
-		return dateClosed;
-	}
-
-	/**
-	 * Sets the dateClosed
-	 * 
-	 * @param dateClosed
-	 *            to set
-	 */
-	public void setDateClosed(java.util.Date dateClosed) {
-		this.dateClosed = dateClosed;
-	}
-
-	/**
-	 * Gets the dateOfLastPayment
-	 * 
-	 * @return the dateOfLastPayment
-	 */
-	public java.util.Date getDateOfLastPayment() {
-		return dateOfLastPayment;
-	}
-
-	/**
-	 * Sets the dateOfLastPayment
-	 * 
-	 * @param dateOfLastPayment
-	 *            to set
-	 */
-	public void setDateOfLastPayment(java.util.Date dateOfLastPayment) {
-		this.dateOfLastPayment = dateOfLastPayment;
-	}
-
-	/**
-	 * Gets the accountHolderType
-	 * 
-	 * @return the accountHolderType
-	 */
-	public String getAccountHolderType() {
-		return accountHolderType;
-	}
-
-	/**
-	 * Sets the accountHolderType
-	 * 
-	 * @param accountHolderType
-	 *            to set
-	 */
-	public void setAccountHolderType(String accountHolderType) {
-		this.accountHolderType = accountHolderType;
-	}
-
-	/**
-	 * Gets the lastHistoryDate
-	 * 
-	 * @return the lastHistoryDate
-	 */
-	public java.util.Date getLastHistoryDate() {
-		return lastHistoryDate;
-	}
-
-	/**
-	 * Sets the lastHistoryDate
-	 * 
-	 * @param lastHistoryDate
-	 *            to set
-	 */
-	public void setLastHistoryDate(java.util.Date lastHistoryDate) {
-		this.lastHistoryDate = lastHistoryDate;
-	}
-
-	/**
-	 * Gets the address
-	 * 
-	 * @return the address
-	 */
-	public String getAddress() {
-		return address;
-	}
-
-	/**
-	 * Sets the address
-	 * 
-	 * @param address
-	 *            to set
-	 */
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	/**
-	 * Gets the phone
-	 * 
-	 * @return the phone
-	 */
-	public String getPhone() {
-		return phone;
-	}
-
-	/**
-	 * Sets the phone
-	 * 
-	 * @param phone
-	 *            to set
-	 */
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	/**
-	 * Gets the settlementAmount
-	 * 
-	 * @return the settlementAmount
-	 */
-	public double getSettlementAmount() {
-		return settlementAmount;
-	}
-
-	/**
-	 * Sets the settlementAmount
-	 * 
-	 * @param settlementAmount
-	 *            to set
-	 */
-	public void setSettlementAmount(double settlementAmount) {
-		this.settlementAmount = settlementAmount;
-	}
-
-	/**
-	 * Gets the currentBalance
-	 * 
-	 * @return the currentBalance
-	 */
-	public double getCurrentBalance() {
-		return currentBalance;
-	}
-
-	/**
-	 * Sets the currentBalance
-	 * 
-	 * @param currentBalance
-	 *            to set
-	 */
-	public void setCurrentBalance(double currentBalance) {
-		this.currentBalance = currentBalance;
-	}
-
-	/**
-	 * Gets the date reported
-	 * 
-	 * @return the date reported
-	 */
-	public java.util.Date getDateReported() {
-		return dateReported;
-	}
-
-	/**
-	 * Sets the dateReported
-	 * 
-	 * @param dateReported
-	 *            to set
-	 */
-	public void setDateReported(java.util.Date dateReported) {
-		this.dateReported = dateReported;
-	}
-
-	/**
-	 * Gets the amountDue
-	 * 
-	 * @return the amountDue
-	 */
-	public double getAmountDue() {
-		return amountDue;
-	}
-
-	/**
-	 * Sets the amountDue
-	 * 
-	 * @param amountDue
-	 *            to set
-	 */
-	public void setAmountDue(double amountDue) {
-		this.amountDue = amountDue;
-	}
-
-	/**
-	 * Gets the valueCollateral
-	 * 
 	 * @return the valueCollateral
 	 */
 	public String getValueCollateral() {
 		return valueCollateral;
 	}
 
+	/**
+	 * @param valueCollateral the valueCollateral to set
+	 */
 	public void setValueCollateral(String valueCollateral) {
 		this.valueCollateral = valueCollateral;
 	}
 
 	/**
-	 * Gets the valueCollateral
-	 * 
-	 * @return the valueCollateral
+	 * @return the typeCollateral
 	 */
 	public String getTypeCollateral() {
 		return typeCollateral;
 	}
 
+	/**
+	 * @param typeCollateral the typeCollateral to set
+	 */
 	public void setTypeCollateral(String typeCollateral) {
 		this.typeCollateral = typeCollateral;
 	}
 
 	/**
-	 * Gets the occupation
-	 * 
-	 * @return the occupation
-	 */
-	public String getOccupation() {
-		return occupation;
-	}
-
-	/**
-	 * Sets the occupation
-	 * 
-	 * @param occupation
-	 *            to set
-	 */
-	public void setOccupation(String occupation) {
-		this.occupation = occupation;
-	}
-
-	/**
-	 * Gets the rateOfIntererst
-	 * 
-	 * @return rateOfIntererst
+	 * @return the rateOfIntererst
 	 */
 	public double getRateOfIntererst() {
 		return rateOfIntererst;
 	}
 
 	/**
-	 * Sets the rateOfIntererst
-	 * 
-	 * @param rateOfIntererst
-	 *            to set
+	 * @param rateOfIntererst the rateOfIntererst to set
 	 */
 	public void setRateOfIntererst(double rateOfIntererst) {
 		this.rateOfIntererst = rateOfIntererst;
 	}
 
 	/**
-	 * Gets the income
-	 * 
 	 * @return the income
 	 */
 	public double getIncome() {
@@ -593,250 +149,446 @@ public class ReportTradeline extends BaseEntity implements Serializable, ICRMPub
 	}
 
 	/**
-	 * Sets the income
-	 * 
-	 * @param income
-	 *            to set
+	 * @param income the income to set
 	 */
 	public void setIncome(double income) {
 		this.income = income;
 	}
 
+	double settlementAmount;
+	
+	String valueCollateral;
+
+	String typeCollateral;
+	
+	double rateOfIntererst;
+	
+	double income;
+
 	/**
-	 * Gets the tradeLineXML
-	 * 
-	 * @return the tradeLineXML
+	 * @return the settlementAmount
 	 */
-	public String getTradeLineXML() {
-		return tradeLineXML;
+	public double getSettlementAmount() {
+		return settlementAmount;
 	}
 
 	/**
-	 * Sets the tradeLineXML
-	 * 
-	 * @param tradeLineXML
-	 *            to set
+	 * @param settlementAmount the settlementAmount to set
 	 */
-	public void setTradeLineXML(String tradeLineXML) {
-		this.tradeLineXML = tradeLineXML;
+	public void setSettlementAmount(double settlementAmount) {
+		this.settlementAmount = settlementAmount;
 	}
 
 	/**
-	 * Gets the experianTradelineStatusEnum
-	 * 
-	 * @return the experianTradelineStatusEnum
+	 * @return the repaymentTenure
 	 */
-	public ExperianTradelineStatus getExperianTradelineStatusEnum() {
-		return experianTradelineStatusEnum;
+	public double getRepaymentTenure() {
+		return repaymentTenure;
 	}
 
 	/**
-	 * Sets the experianTradelineStatusEnum
-	 * 
-	 * @param experianTradelineStatusEnum
-	 *            to set
+	 * @param repaymentTenure the repaymentTenure to set
 	 */
-	public void setExperianTradelineStatusEnum(ExperianTradelineStatus experianTradelineStatusEnum) {
-		this.experianTradelineStatusEnum = experianTradelineStatusEnum;
+	public void setRepaymentTenure(double repaymentTenure) {
+		this.repaymentTenure = repaymentTenure;
 	}
 
 	/**
-	 * Gets the experianTradelineStatusEnum
-	 * 
-	 * @return the experianTradelineStatusEnum
+	 * This is the experian Trade Line status Enun
 	 */
-	public int getExperianTradelineStatus() {
-		return experianTradelineStatusEnum.ordinal();
-	}
-
-	public void setExperianTradelineStatus(int experianTradelineStatus) {
-		this.experianTradelineStatusEnum = ExperianTradelineStatus.values()[experianTradelineStatus];
-	}
+	ExperianTradelineStatus experianTradelineStatusEnum;
 
 	/**
-	 * Gets the organizationId
-	 * 
-	 * @return the organizationId
+	 * This is electronic Contacts
 	 */
-	public String getOrganizationId() {
-		return organizationId;
-	}
+	BoilerplateList<ElectronicContact> electronicContacts = new BoilerplateList<>();
 
 	/**
-	 * Sets the organizationId
-	 * 
-	 * @param organizationId
-	 *            to set
+	 * This is the the address
 	 */
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
+	BoilerplateList<Address> addresses = new BoilerplateList<>();
+
+	/**
+	 * This method is used to get the offerEmail
+	 * 
+	 * @return offerEmail
+	 */
+	public String getOfferEmail() {
+		return offerEmail;
 	}
 
 	/**
-	 * Gets the productId
+	 * This method is used to set the offerEmail
 	 * 
-	 * @return the productId
+	 * @param offerEmail
 	 */
-	public String getProductId() {
-		return productId;
+	public void setOfferEmail(String offerEmail) {
+		this.offerEmail = offerEmail;
+	}
+
+
+	/**
+	 * This method is used to get the DaysPastDue
+	 * 
+	 * @return the daysPastDue
+	 */
+	public int getDaysPastDue() {
+		return daysPastDue;
 	}
 
 	/**
-	 * Sets the productId
+	 * This method is used to set the DaysPastDue
 	 * 
-	 * @param productId
-	 *            to set
+	 * @param daysPastDue
+	 *            the daysPastDue to set
 	 */
-	public void setProductId(String productId) {
-		this.productId = productId;
+	public void setDaysPastDue(int daysPastDue) {
+		this.daysPastDue = daysPastDue;
 	}
 
 	/**
-	 * This is the userId
+	 * This method is used to get the organization name
+	 * 
+	 * @return organizationName
 	 */
-	private String userId;
+	public String getOrganizationName() {
+		return organizationName;
+	}
 
 	/**
-	 * Gets the userId
+	 * This method is used to set the organization name
 	 * 
-	 * @return the userId
+	 * @param organizationName
+	 */
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+
+	/**
+	 * This method is used to get the product name
+	 * 
+	 * @return productName
+	 */
+	public String getProductName() {
+		return productName;
+	}
+
+	/**
+	 * This method is used to set the product name
+	 * 
+	 * @param productName
+	 */
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	/**
+	 * This method is used to get the reportId
+	 * 
+	 * @return reportId
+	 */
+	public String getReportId() {
+		return reportId;
+	}
+
+	/**
+	 * This method is used to set the reportId
+	 * 
+	 * @param reportId
+	 */
+	public void setReportId(String reportId) {
+		this.reportId = reportId;
+	}
+
+	/**
+	 * This method is used to get the accountNumber
+	 * 
+	 * @return accountNumber
+	 */
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	/**
+	 * This method is used to set the accountNumber
+	 * 
+	 * @param accountNumber
+	 */
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	/**
+	 * This method is used to get the dateOpened
+	 * 
+	 * @return dateOpened
+	 */
+	public java.util.Date getDateOpened() {
+		return dateOpened;
+	}
+
+	/**
+	 * This method is used to set the dateOpened
+	 * 
+	 * @param dateOpened
+	 */
+	public void setDateOpened(Date dateOpened) {
+		this.dateOpened = dateOpened;
+	}
+
+	/**
+	 * This method is used to get the dateClosed
+	 * 
+	 * @return dateClosed
+	 */
+	public java.util.Date getDateClosed() {
+		return dateClosed;
+	}
+
+	/**
+	 * This method is used to set the dateClosed
+	 * 
+	 * @param dateClosed
+	 */
+	public void setDateClosed(Date dateClosed) {
+		this.dateClosed = dateClosed;
+	}
+
+	/**
+	 * This method is used to get the dateOfLastPayment
+	 * 
+	 * @return dateOfLastPayment
+	 */
+	public java.util.Date getDateOfLastPayment() {
+		return dateOfLastPayment;
+	}
+
+	/**
+	 * This method is used to set the dateOfLastPayment
+	 * 
+	 * @param dateOfLastPayment
+	 */
+	public void setDateOfLastPayment(Date dateOfLastPayment) {
+		this.dateOfLastPayment = dateOfLastPayment;
+	}
+
+	/**
+	 * This method is used to get the accountHolderType
+	 * 
+	 * @return accountHolderType
+	 */
+	public String getAccountHolderType() {
+		return accountHolderType;
+	}
+
+	/**
+	 * This method is used to set the accountHolderType
+	 * 
+	 * @param accountHolderType
+	 */
+	public void setAccountHolderType(String accountHolderType) {
+		this.accountHolderType = accountHolderType;
+	}
+
+	/**
+	 * This method is used to get the currentBalance
+	 * 
+	 * @return currentBalance
+	 */
+	public double getCurrentBalance() {
+		return currentBalance;
+	}
+
+	/**
+	 * This method is used to set the currentBalance
+	 * 
+	 * @param currentBalance
+	 */
+	public void setCurrentBalance(double currentBalance) {
+		this.currentBalance = currentBalance;
+	}
+
+	/**
+	 * This method is used to get the dateReported
+	 * 
+	 * @return dateReported
+	 */
+	public java.util.Date getDateReported() {
+		return dateReported;
+	}
+
+	/**
+	 * This method is used to set the dateReported
+	 * 
+	 * @param date
+	 */
+	public void setDateReported(java.util.Date date) {
+		this.dateReported = date;
+	}
+
+	/**
+	 * This method is used to get the amountDue
+	 * 
+	 * @return amountDue
+	 */
+	public double getAmountDue() {
+		return amountDue;
+	}
+
+	/**
+	 * This method is used to set the amountDue
+	 * 
+	 * @param amountDue
+	 */
+	public void setAmountDue(double amountDue) {
+		this.amountDue = amountDue;
+	}
+
+	/**
+	 * This method is used to get the userId
+	 * 
+	 * @return userId
 	 */
 	public String getUserId() {
 		return userId;
 	}
 
 	/**
-	 * Sets the userId
+	 * This method is used to set the userId
 	 * 
 	 * @param userId
-	 *            to set
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
 	/**
-	 * This is the ReportTradelineStatus
+	 * This method is used to get the occupation
+	 * 
+	 * @return occupation
 	 */
-	ReportTradelineStatus reportTradelineStatus;
+	public String getOccupation() {
+		return occupation;
+	}
 
 	/**
-	 * This method gets the ReportTradelineStatus
+	 * This method is used to set the occupation
 	 * 
-	 * @return reportTradelineStatus The ReportTradelineStatus
+	 * @param occupation
+	 */
+	public void setOccupation(String occupation) {
+		this.occupation = occupation;
+	}
+
+	public ExperianTradelineStatus getExperianTradelineStatusEnum() {
+		return experianTradelineStatusEnum;
+	}
+
+	public void setExperianTradelineStatusEnum(ExperianTradelineStatus experianTradelineStatusEnum) {
+		this.experianTradelineStatusEnum = experianTradelineStatusEnum;
+	}
+
+	public BoilerplateList<ElectronicContact> getElectronicContacts() {
+		return electronicContacts;
+	}
+
+	public void setElectronicContacts(BoilerplateList<ElectronicContact> electronicContacts) {
+		this.electronicContacts = electronicContacts;
+	}
+
+	/**
+	 * This method is used to get the reportTradelineStatus
+	 * 
+	 * @return reportTradelineStatus
 	 */
 	public ReportTradelineStatus getReportTradelineStatus() {
 		return reportTradelineStatus;
 	}
 
 	/**
-	 * This method sets the ReportTradelineStatus
+	 * This method is used to set the reportTradelineStatus
 	 * 
 	 * @param reportTradelineStatus
-	 *            The ReportTradelineStatus
 	 */
 	public void setReportTradelineStatus(ReportTradelineStatus reportTradelineStatus) {
 		this.reportTradelineStatus = reportTradelineStatus;
 	}
 
+	/**
+	 * This method is used to get the addresses
+	 * 
+	 * @return addresses
+	 */
+	public BoilerplateList<Address> getAddresses() {
+		return addresses;
+	}
+
+	/**
+	 * This method is used to set the addresses
+	 * 
+	 * @param addresses
+	 */
+	public void setAddresses(BoilerplateList<Address> addresses) {
+		this.addresses = addresses;
+	}
+
+	/**
+	 * @return the lastHistoryDate
+	 */
+	public java.util.Date getLastHistoryDate() {
+		return lastHistoryDate;
+	}
+
+	/**
+	 * @param lastHistoryDate the lastHistoryDate to set
+	 */
+	public void setLastHistoryDate(java.util.Date lastHistoryDate) {
+		this.lastHistoryDate = lastHistoryDate;
+	}
+
+	/**
+	 * @return the highCreditLoanAmount
+	 */
+	public double getHighCreditLoanAmount() {
+		return highCreditLoanAmount;
+	}
+
+	/**
+	 * @param highCreditLoanAmount the highCreditLoanAmount to set
+	 */
+	public void setHighCreditLoanAmount(double highCreditLoanAmount) {
+		this.highCreditLoanAmount = highCreditLoanAmount;
+	}
+
+	/**
+	 * @return the tradelineFlow
+	 */
+	public TradelineFlow getTradelineFlow() {
+		return tradelineFlow;
+	}
+
+	/**
+	 * @param tradelineFlow the tradelineFlow to set
+	 */
+	public void setTradelineFlow(TradelineFlow tradelineFlow) {
+		this.tradelineFlow = tradelineFlow;
+	}
+
 	@Override
-	public String createPublishJSON(String template) throws UnauthorizedException {
-		String retrunValue = template;
-		retrunValue = retrunValue.replace("@tradelineStatus", this.getReportTradelineStatus().toString());
-		return retrunValue;
-	}
-
-	/**
-	 * This method get the tradeLineFull name
-	 * 
-	 * @return the tradelineFullName
-	 */
-	public String getTradelineFullName() {
-		return tradelineFullName;
-	}
-
-	/**
-	 * This method set the tradeLineFull name
-	 * 
-	 * @param tradelineFullName
-	 *            the tradelineFullName to set
-	 */
-	public void setTradelineFullName(String tradelineFullName) {
-		this.tradelineFullName = tradelineFullName;
+	public boolean validate() throws ValidationFailedException {
+		return true;
 	}
 
 	@Override
-	public String createPublishUrl(String url) throws UnsupportedEncodingException {
-		String returnUrl = url;
-		returnUrl = returnUrl.replace("@tradeLineID", URLEncoder.encode(this.getId(), "UTF-8"));
-		return returnUrl;
+	public BaseEntity transformToInternal() {
+		// TODO Auto-generated method stub
+		return this;
 	}
 
-	/**
-	 * This is the tradelinefullname
-	 */
-	String tradelineFullName;
-	/**
-	 * This is the crmReportId
-	 */
-	private String crmReportId;
-
-	/**
-	 * This method get the crm report id
-	 * 
-	 * @return the crmReportId
-	 */
-	public String getCrmReportId() {
-		return crmReportId;
+	@Override
+	public BaseEntity transformToExternal() {
+		// TODO Auto-generated method stub
+		return this;
 	}
-
-	/**
-	 * This method set the crm report id
-	 * 
-	 * @param crmReportId
-	 *            the crmReportId to set
-	 */
-	public void setCrmReportId(String crmReportId) {
-		this.crmReportId = crmReportId;
-	}
-
-	/**
-	 * @return the paymentSource
-	 */
-	public String getPaymentSource() {
-		return paymentSource;
-	}
-
-	/**
-	 * @param paymentSource
-	 *            the paymentSource to set
-	 */
-	public void setPaymentSource(String paymentSource) {
-		this.paymentSource = paymentSource;
-	}
-
-	/**
-	 * @return the leadEmail
-	 */
-	public String getLeadEmail() {
-		return leadEmail;
-	}
-
-	/**
-	 * @param leadEmail
-	 *            the leadEmail to set
-	 */
-	public void setLeadEmail(String leadEmail) {
-		this.leadEmail = leadEmail;
-	}
-
-	/**
-	 * This is the paymentSource
-	 */
-	private String paymentSource;
-	/**
-	 * This is the leadEmail
-	 */
-	private String leadEmail;
 
 }

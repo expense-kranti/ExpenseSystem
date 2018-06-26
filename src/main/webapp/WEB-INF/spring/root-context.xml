@@ -36,6 +36,7 @@
 		<property name="blogActivityService" ref="blogActivityService"></property>
 		<property name="mySqlUser" ref="mySqlUser"></property>
 		<property name="redisAssessment" ref="redisAssessment"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
 	</bean>
 	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
 		init-method="initialize">
@@ -156,7 +157,10 @@
 				<entry key="CreateUserReferralContact" value-ref="mySQLCreateReferalContactObserverList"></entry>
 				<entry key="AddUserAndRelatedDataKeysToRedisSet"
 					value-ref="addUserAndRelatedDataRedisKeysToRedisSetObserverList"></entry>
-
+				<entry key="VoucherAlert" value-ref="voucherAlertObserverList" />
+				<entry key="SendSMSOnReportFailAfterPayment" value-ref="sendSMSOnReportFailAfterPayment" />
+				<entry key="ParseExperianReportsForExtraData" value-ref="parseExperianReportsForExtraDataObserverList" />
+				<entry key="SendEmailToExperianForOfflineReport" value-ref="sendEmailToExperianForOfflineReportObserver" />
 			</map>
 
 
@@ -712,6 +716,15 @@
 		<property name="parseExperianReportObserver" ref="parseExperianReportObserver"></property>
 		<property name="reportService" ref="reportService"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="expressDataAccess" ref="expressDataAccess"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
+		<property name="sendEmailToExperianForFailedReport" ref="sendEmailToExperianForFailedReport"></property>
+
+	</bean>
+
+	<bean id="mysqlReport"
+		class="com.boilerplate.database.mysql.implementations.MySQLReport">
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 	<bean id="experianDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisVoucher"
@@ -719,15 +732,22 @@
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
-	<bean id="parseExperianReportObserver" class="com.boilerplate.asyncWork.ParseExperianReportObserver">
+	<bean id="parseExperianReportObserver" class="com.boilerplate.asyncWork.ParseExperianReportObserver"
+		init-method="initialize">
 		<property name="reportService" ref="reportService"></property>
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="file" ref="file"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
+		<property name="queueReaderJob" ref="queueReaderJob"></property>
 	</bean>
 
 	<bean id="reportService" class="com.boilerplate.service.implemetations.ReportService">
 		<property name="fileService" ref="fileService"></property>
 		<property name="reportDataAccess" ref="reportDataAccess"></property>
+		<property name="mysqlReport" ref="mysqlReport"></property>
+
 	</bean>
 	<bean id="reportDataAccess"
 		class="com.boilerplate.database.redis.implementation.RedisReport">
@@ -775,7 +795,8 @@
 		<property name="mySqlHandbook" ref="mySqlHandbook"></property>
 	</bean>
 
-	<bean id="mySqlHandbook" class="com.boilerplate.database.mysql.implementations.MySQLHandbook">	
+	<bean id="mySqlHandbook"
+		class="com.boilerplate.database.mysql.implementations.MySQLHandbook">
 	</bean>
 
 
@@ -1014,6 +1035,110 @@
 	<bean id="mySQLAksharArticles"
 		class="com.boilerplate.database.mysql.implementations.MySQLAksharArticles">
 		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+	<bean id="expressDataAccess"
+		class="com.boilerplate.database.redis.implementation.RedisExpress">
+	</bean>
+	<bean id="expressService" class="com.boilerplate.service.implemetations.ExpressService">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="expressDataAccess" ref="expressDataAccess"></property>
+	</bean>
+
+	<!-- Dependency related to vouchers uploading in system -->
+
+	<bean id="voucherService" class="com.boilerplate.service.implemetations.VoucherService">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="experianDataAccess" ref="experianDataAccess"></property>
+		<property name="file" ref="file"></property>
+	</bean>
+
+	<bean id="voucherAlertObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<ref bean="sendVoucherAlertSMSToAdminObserver"></ref>
+				<ref bean="sendVoucherAlertEmailToAdminObserver"></ref>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sendVoucherAlertSMSToAdminObserver"
+		class="com.boilerplate.asyncWork.SendVoucherAlertSMSToAdminObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="sendSmsService" ref="sendSmsService"></property>
+	</bean>
+
+	<bean id="sendVoucherAlertEmailToAdminObserver"
+		class="com.boilerplate.asyncWork.SendVoucherAlertEmailToAdminObserver">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+	</bean>
+
+
+	<bean id="sendSMSOnReportFailAfterPayment"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendSMSOnReportFailAfterDoPayment"></ref>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sendSMSOnReportFailAfterDoPayment"
+		class="com.boilerplate.asyncWork.SendSMSOnReportFailAfterPayment">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="sendSmsService" ref="sendSmsService"></property>
+	</bean>
+
+	<bean id="parseExperianReportsForExtraDataObserverList"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will send email to receiver on tradeline 
+					flow change of tradeline -->
+
+				<ref bean="parseExperianReportsForExtraDataObserver"></ref>
+			</list>
+		</property>
+	</bean>
+
+
+	<!--beans and dependency for parseExperian report for extra data -->
+	<bean id="parseExperianReportsForExtraDataObserver"
+		class="com.boilerplate.asyncWork.ParseExperianReportsForExtraDataObserver">
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="file" ref="file"></property>
+		<property name="reportService" ref="reportService"></property>
+		<property name="fileService" ref="fileService"></property>
+		<property name="mySQLBankDataAccess" ref="mySQLBankDataAccess"></property>
+	</bean>
+	<bean id="mySQLBankDataAccess"
+		class="com.boilerplate.database.mysql.implementations.MySQLBankData">
+	</bean>
+
+	<bean id="sendEmailToExperianForOfflineReportObserver"
+		class="com.boilerplate.asyncWork.AsyncWorkDispatcherObserverList">
+		<property name="asyncJobList">
+			<list>
+				<!-- This is the class that will save sessions to the database Also the 
+					data we put in will get logged as the log observer is enabled for everything -->
+				<ref bean="sendEmailToExperianForFailedReport"></ref>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sendEmailToExperianForFailedReport"
+		class="com.boilerplate.asyncWork.SendEmailToExperianForFailedReport">
+		<property name="contentService" ref="contentService"></property>
+		<property name="configurationManager" ref="configurationManager"></property>
+		<property name="userService" ref="userService"></property>
 	</bean>
 
 </beans>

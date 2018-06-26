@@ -32,9 +32,7 @@ public class RedisCheckList extends BaseRedisDataAccessLayer implements ICheckLi
 		} else {
 			for (Map.Entry<String, String> entry : checkListEntity.getCheckListMap().entrySet())
 				// do not set new value to existing key if present
-				if (checkListMapOfUser.containsKey(entry.getKey())) {
-
-				} else {
+				if (!checkListMapOfUser.containsKey(entry.getKey())) {
 					super.hset(CheckList + checkListEntity.getUserId(), entry.getKey(), entry.getValue());
 				}
 		}

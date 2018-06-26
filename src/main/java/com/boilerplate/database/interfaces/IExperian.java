@@ -40,4 +40,5 @@ public interface IExperian {
 	 *            The http content
 	 */
 	public void logToExperianDatabase(String userId, String purpose, String httpContent);
+
 }

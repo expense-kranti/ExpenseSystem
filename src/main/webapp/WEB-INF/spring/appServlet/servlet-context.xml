@@ -106,11 +106,15 @@
 	<task:scheduled-tasks scheduler="scheduler">
 		<task:scheduled ref="mySQLQueueWriterJob" method="addRedisSetElementsInQueue"
 			fixed-delay="7200" />
-	<!-- 1800000 are values used in test -->
+		<!-- 1800000 are values used in test -->
 
 	</task:scheduled-tasks>
 
 
+	<task:scheduled-tasks scheduler="scheduler">
+		<task:scheduled ref="queueReaderJob"
+			method="readParseExperianReportQueueAndDispatch" fixed-delay="1000" />
+	</task:scheduled-tasks>
 
 	<!-- This is a background job to clean up sessions and must be turned off 
 		for Cassandra where records have TTL The time interval is fixed delay -->
