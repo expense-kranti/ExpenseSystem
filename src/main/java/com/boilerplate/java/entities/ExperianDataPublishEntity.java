@@ -658,7 +658,8 @@ public class ExperianDataPublishEntity extends BaseEntity implements Serializabl
 		Report,
 		CreditReportEmpty,
 		IncorrectAnswerGiven,
-		InsufficientQuestions
+		InsufficientQuestions,
+		ConsumerNotFound
 	}
 	
 	/**

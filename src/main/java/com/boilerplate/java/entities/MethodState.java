@@ -39,6 +39,7 @@ public enum MethodState {
 	Broken,
 	ClearanceLetter,
 	CIBILUpdate,
-	End
+	End,
+	NoExperianRecord
 	
 }

@@ -96,31 +96,115 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	/**
 	 * This is the ctc in string
 	 */
-	private String ctcInString;
+	private String ctcInput;
 	/**
 	 * This is the ageInString
 	 */
-	private String ageInString;
+	private String ageInput;
 	/**
 	 * This is the home rent paid
 	 */
-	private String homeRentPaidMonthlyInString;
+	private String homeRentPaidMonthlyInput;
 	/**
 	 * This is the 80C investment done
 	 */
-	private String investmentIn80CInString;
+	private String investmentIn80CInput;
 	/**
 	 * This is the 80D investment done
 	 */
-	private String investmentIn80DInString;
+	private String investmentIn80DInput;
+	/**
+	 * @return the ageInput
+	 */
+	public String getAgeInput() {
+		return ageInput;
+	}
+
+	/**
+	 * @param ageInput the ageInput to set
+	 */
+	public void setAgeInput(String ageInput) {
+		this.ageInput = ageInput;
+	}
+
+	/**
+	 * @return the homeRentPaidMonthlyInput
+	 */
+	public String getHomeRentPaidMonthlyInput() {
+		return homeRentPaidMonthlyInput;
+	}
+
+	/**
+	 * @param homeRentPaidMonthlyInput the homeRentPaidMonthlyInput to set
+	 */
+	public void setHomeRentPaidMonthlyInput(String homeRentPaidMonthlyInput) {
+		this.homeRentPaidMonthlyInput = homeRentPaidMonthlyInput;
+	}
+
+	/**
+	 * @return the investmentIn80CInput
+	 */
+	public String getInvestmentIn80CInput() {
+		return investmentIn80CInput;
+	}
+
+	/**
+	 * @param investmentIn80CInput the investmentIn80CInput to set
+	 */
+	public void setInvestmentIn80CInput(String investmentIn80CInput) {
+		this.investmentIn80CInput = investmentIn80CInput;
+	}
+
+	/**
+	 * @return the investmentIn80DInput
+	 */
+	public String getInvestmentIn80DInput() {
+		return investmentIn80DInput;
+	}
+
+	/**
+	 * @param investmentIn80DInput the investmentIn80DInput to set
+	 */
+	public void setInvestmentIn80DInput(String investmentIn80DInput) {
+		this.investmentIn80DInput = investmentIn80DInput;
+	}
+
+	/**
+	 * @return the investmentIn80EInput
+	 */
+	public String getInvestmentIn80EInput() {
+		return investmentIn80EInput;
+	}
+
+	/**
+	 * @param investmentIn80EInput the investmentIn80EInput to set
+	 */
+	public void setInvestmentIn80EInput(String investmentIn80EInput) {
+		this.investmentIn80EInput = investmentIn80EInput;
+	}
+
+	/**
+	 * @return the investmentInSection24Input
+	 */
+	public String getInvestmentInSection24Input() {
+		return investmentInSection24Input;
+	}
+
+	/**
+	 * @param investmentInSection24Input the investmentInSection24Input to set
+	 */
+	public void setInvestmentInSection24Input(String investmentInSection24Input) {
+		this.investmentInSection24Input = investmentInSection24Input;
+	}
+
 	/**
 	 * This is the 80E investment done
 	 */
-	private String investmentIn80EInString;
+	private String investmentIn80EInput;
 	/**
 	 * This is the section24 investment done
 	 */
-	private String investmentInSection24InString;
+	private String investmentInSection24Input;
 	/**
 	 * This is the ctc for lac abbreviation
 	 */
@@ -495,134 +579,134 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		this.firstName = firstName;
 	}
 
-	/**
-	 * Gets the ctc in string
-	 * 
-	 * @return the ctcInString
-	 */
-	public String getCtcInString() {
-		return ctcInString;
-	}
-
-	/**
-	 * Sets the ctc in string
-	 * 
-	 * @param ctcInString
-	 *            the ctcInString to set
-	 */
-	public void setCtcInString(String ctcInString) {
-		this.ctcInString = ctcInString;
-	}
-
-	/**
-	 * gets age in string
-	 * 
-	 * @return the ageInString
-	 */
-	public String getAgeInString() {
-		return ageInString;
-	}
-
-	/**
-	 * Sets age in string
-	 * 
-	 * @param ageInString
-	 *            the ageInString to set
-	 */
-	public void setAgeInString(String ageInString) {
-		this.ageInString = ageInString;
-	}
-
-	/**
-	 * @return the homeRentPaidMonthlyInString
-	 */
-	public String getHomeRentPaidMonthlyInString() {
-		return homeRentPaidMonthlyInString;
-	}
-
-	/**
-	 * @param homeRentPaidMonthlyInString
-	 *            the homeRentPaidMonthlyInString to set
-	 */
-	public void setHomeRentPaidMonthlyInString(String homeRentPaidMonthlyInString) {
-		this.homeRentPaidMonthlyInString = homeRentPaidMonthlyInString;
-	}
-
-	/**
-	 * Gets the investmentIn80CInString
-	 * 
-	 * @return the investmentIn80CInString
-	 */
-	public String getInvestmentIn80CInString() {
-		return investmentIn80CInString;
-	}
-
-	/**
-	 * Sets the investmentIn80CInString
-	 * 
-	 * @param investmentIn80CInString
-	 *            the investmentIn80CInString to set
-	 */
-	public void setInvestmentIn80CInString(String investmentIn80CInString) {
-		this.investmentIn80CInString = investmentIn80CInString;
-	}
-
-	/**
-	 * Gets the investmentIn80DInString
-	 * 
-	 * @return the investmentIn80DInString
-	 */
-	public String getInvestmentIn80DInString() {
-		return investmentIn80DInString;
-	}
-
-	/**
-	 * Sets the investmentIn80DInString
-	 * 
-	 * @param investmentIn80DInString
-	 *            the investmentIn80DInString to set
-	 */
-	public void setInvestmentIn80DInString(String investmentIn80DInString) {
-		this.investmentIn80DInString = investmentIn80DInString;
-	}
-
-	/**
-	 * Gets the investmentIn80EInString
-	 * 
-	 * @return the investmentIn80EInString
-	 */
-	public String getInvestmentIn80EInString() {
-		return investmentIn80EInString;
-	}
-
-	/**
-	 * Sets the investmentIn80EInString
-	 * 
-	 * @param investmentIn80EInString
-	 *            the investmentIn80EInString to set
-	 */
-	public void setInvestmentIn80EInString(String investmentIn80EInString) {
-		this.investmentIn80EInString = investmentIn80EInString;
-	}
-
-	/**
-	 * Gets the investmentInSection24InString
-	 * 
-	 * @return the investmentInSection24InString
-	 */
-	public String getInvestmentInSection24InString() {
-		return investmentInSection24InString;
-	}
-
-	/**
-	 * Sets the investmentInSection24InString
-	 * 
-	 * @param investmentInSection24InString
-	 *            the investmentInSection24InString to set
-	 */
-	public void setInvestmentInSection24InString(String investmentInSection24InString) {
-		this.investmentInSection24InString = investmentInSection24InString;
-	}
+//	/**
+//	 * Gets the ctc in string
+//	 * 
+//	 * @return the ctcInString
+//	 */
+//	public String getCtcInString() {
+//		return ctcInString;
+//	}
+//
+//	/**
+//	 * Sets the ctc in string
+//	 * 
+//	 * @param ctcInString
+//	 *            the ctcInString to set
+//	 */
+//	public void setCtcInString(String ctcInString) {
+//		this.ctcInString = ctcInString;
+//	}
+//
+//	/**
+//	 * gets age in string
+//	 * 
+//	 * @return the ageInString
+//	 */
+//	public String getAgeInString() {
+//		return ageInString;
+//	}
+//
+//	/**
+//	 * Sets age in string
+//	 * 
+//	 * @param ageInString
+//	 *            the ageInString to set
+//	 */
+//	public void setAgeInString(String ageInString) {
+//		this.ageInString = ageInString;
+//	}
+//
+//	/**
+//	 * @return the homeRentPaidMonthlyInString
+//	 */
+//	public String getHomeRentPaidMonthlyInString() {
+//		return homeRentPaidMonthlyInString;
+//	}
+//
+//	/**
+//	 * @param homeRentPaidMonthlyInString
+//	 *            the homeRentPaidMonthlyInString to set
+//	 */
+//	public void setHomeRentPaidMonthlyInString(String homeRentPaidMonthlyInString) {
+//		this.homeRentPaidMonthlyInString = homeRentPaidMonthlyInString;
+//	}
+//
+//	/**
+//	 * Gets the investmentIn80CInString
+//	 * 
+//	 * @return the investmentIn80CInString
+//	 */
+//	public String getInvestmentIn80CInString() {
+//		return investmentIn80CInString;
+//	}
+//
+//	/**
+//	 * Sets the investmentIn80CInString
+//	 * 
+//	 * @param investmentIn80CInString
+//	 *            the investmentIn80CInString to set
+//	 */
+//	public void setInvestmentIn80CInString(String investmentIn80CInString) {
+//		this.investmentIn80CInString = investmentIn80CInString;
+//	}
+//
+//	/**
+//	 * Gets the investmentIn80DInString
+//	 * 
+//	 * @return the investmentIn80DInString
+//	 */
+//	public String getInvestmentIn80DInString() {
+//		return investmentIn80DInString;
+//	}
+//
+//	/**
+//	 * Sets the investmentIn80DInString
+//	 * 
+//	 * @param investmentIn80DInString
+//	 *            the investmentIn80DInString to set
+//	 */
+//	public void setInvestmentIn80DInString(String investmentIn80DInString) {
+//		this.investmentIn80DInString = investmentIn80DInString;
+//	}
+//
+//	/**
+//	 * Gets the investmentIn80EInString
+//	 * 
+//	 * @return the investmentIn80EInString
+//	 */
+//	public String getInvestmentIn80EInString() {
+//		return investmentIn80EInString;
+//	}
+//
+//	/**
+//	 * Sets the investmentIn80EInString
+//	 * 
+//	 * @param investmentIn80EInString
+//	 *            the investmentIn80EInString to set
+//	 */
+//	public void setInvestmentIn80EInString(String investmentIn80EInString) {
+//		this.investmentIn80EInString = investmentIn80EInString;
+//	}
+//
+//	/**
+//	 * Gets the investmentInSection24InString
+//	 * 
+//	 * @return the investmentInSection24InString
+//	 */
+//	public String getInvestmentInSection24InString() {
+//		return investmentInSection24InString;
+//	}
+//
+//	/**
+//	 * Sets the investmentInSection24InString
+//	 * 
+//	 * @param investmentInSection24InString
+//	 *            the investmentInSection24InString to set
+//	 */
+//	public void setInvestmentInSection24InString(String investmentInSection24InString) {
+//		this.investmentInSection24InString = investmentInSection24InString;
+//	}
 
 	/**
 	 * Gets the ctc for abreviation
@@ -708,39 +792,39 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	 */
 	public void convertEntityPropertiesStringValuesToPrimitiveTypes() {
 
-		if (this.isNullOrEmpty(this.getCtcInString())) {
-			this.setCtcInString("0");
+		if (this.isNullOrEmpty(this.getCtcInput())) {
+			this.setCtcInput("0");
 		}
-		if (this.isNullOrEmpty(this.getInvestmentIn80CInString())) {
+		if (this.isNullOrEmpty(this.getInvestmentIn80CInput())) {
 			this.setInvestmentIn80C(0);
 		} else {
-			this.setInvestmentIn80C(Double.valueOf(this.getInvestmentIn80CInString()).longValue());
+			this.setInvestmentIn80C(Double.valueOf(this.getInvestmentIn80CInput()).longValue());
 		}
-		if (this.isNullOrEmpty(this.getInvestmentIn80DInString())) {
+		if (this.isNullOrEmpty(this.getInvestmentIn80DInput())) {
 			this.setInvestmentIn80D(0);
 		} else {
-			this.setInvestmentIn80D(Double.valueOf(this.getInvestmentIn80DInString()).longValue());
+			this.setInvestmentIn80D(Double.valueOf(this.getInvestmentIn80DInput()).longValue());
 		}
-		if (this.isNullOrEmpty(this.getInvestmentInSection24InString())) {
+		if (this.isNullOrEmpty(this.getInvestmentInSection24Input())) {
 			this.setInvestmentInSection24(0);
 		} else {
-			this.setInvestmentInSection24(Double.valueOf(this.getInvestmentInSection24InString()).longValue());
+			this.setInvestmentInSection24(Double.valueOf(this.getInvestmentInSection24Input()).longValue());
 		}
-		if (this.isNullOrEmpty(this.getInvestmentIn80EInString())) {
+		if (this.isNullOrEmpty(this.getInvestmentIn80EInput())) {
 			this.setInvestmentIn80E(0);
 		} else {
-			this.setInvestmentIn80E(Double.valueOf(this.getInvestmentIn80EInString()).longValue());
+			this.setInvestmentIn80E(Double.valueOf(this.getInvestmentIn80EInput()).longValue());
 		}
 
-		if (this.isNullOrEmpty(this.getAgeInString())) {
+		if (this.isNullOrEmpty(this.getAgeInput())) {
 			this.setAge(18);
 		} else {
-			this.setAge((Double.valueOf(this.getAgeInString())).intValue());
+			this.setAge((Double.valueOf(this.getAgeInput())).intValue());
 		}
-		if (this.isNullOrEmpty(this.getHomeRentPaidMonthlyInString())) {
+		if (this.isNullOrEmpty(this.getHomeRentPaidMonthlyInput())) {
 			this.setHouseRentPaidMonthly(0);
 		} else {
-			this.setHouseRentPaidMonthly(Double.valueOf(this.getHomeRentPaidMonthlyInString()).intValue());
+			this.setHouseRentPaidMonthly(Double.valueOf(this.getHomeRentPaidMonthlyInput()).intValue());
 		}
 
 	}
@@ -757,7 +841,7 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		// if (this.getCtcInString().equals("")) {
 		// this.setCtcInString("0");
 		// }
-		this.setCtcForLacAbreviation((Double.valueOf(this.getCtcInString())) * 100000);
+		this.setCtcForLacAbreviation((Double.valueOf(this.getCtcInput())) * 100000);
 	}
 
 	// this method is used to convert negative inputs to zeros as we are not
@@ -787,6 +871,20 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		if (this.getHouseRentPaidMonthly() < 0) {
 			this.setHouseRentPaidMonthly(0);
 		}
+	}
+
+	/**
+	 * @return the ctcInput
+	 */
+	public String getCtcInput() {
+		return ctcInput;
+	}
+
+	/**
+	 * @param ctcInput the ctcInput to set
+	 */
+	public void setCtcInput(String ctcInput) {
+		this.ctcInput = ctcInput;
 	}
 
 	/**

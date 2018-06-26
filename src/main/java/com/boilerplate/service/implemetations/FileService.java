@@ -75,7 +75,7 @@ public class FileService implements IFileService {
 	}
 
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 * @see IFileService.saveFile
 	 */
 	@Override
@@ -103,10 +103,10 @@ public class FileService implements IFileService {
 			fileEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
 			fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
 			fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileNameOnDisk));
-			
+
 			// method to save file entity in redis database
 			fileEntity = filePointer.save(fileEntity);
-			
+
 			// if true the add redis key in set for database migration
 			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
 				filePointer.addInRedisSet(fileEntity.getFileName());
@@ -207,5 +207,17 @@ public class FileService implements IFileService {
 			map.put(((FileEntity) file).getId(), (FileEntity) file);
 		}
 		return map;
+	}
+
+	/**
+	 * @see IFileService.updateFileEntity
+	 */
+	@Override
+	public void updateFileEntity(FileEntity fileEntity) {
+		try {
+			filePointer.save(fileEntity);
+		} catch (Exception ex) {
+			logger.logException("FileService", "updateFileEntity", "", "ExceptionUpdateFileEntity", ex);
+		}
 	}
 }

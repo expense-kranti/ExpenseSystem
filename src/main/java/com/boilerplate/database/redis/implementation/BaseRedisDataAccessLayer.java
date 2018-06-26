@@ -1185,6 +1185,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		//method permission for sendExperianEmail
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ExperianController.sendExperianEmail(com.boilerplate.java.entities.GenericListEncapsulationEntity)");
@@ -1197,6 +1198,21 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
+		//method permission for processOfflineReport
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ExperianController.processOfflineReport(java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ExperianController.processOfflineReport(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
+		methodPermission.setPublishMethod("POST");
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+		
 
 		// save the method permission map in configuration
 		// in database
@@ -1416,7 +1432,7 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_Publish_File", "true"); // false for not publish
 		// Configuration defined for Experian Email
 		vAllETest.put("ExperianToFirstEmailId", "urvij.singh@krantitechservices.in");
-		vAllETest.put("ExperianToSecondEmailId", "love.kranti@clearmydues.com");
+		vAllETest.put("ExperianToSecondEmailId", "love.singhal@krantitechservices.in");
 		vAllETest.put("ExperianBCCEmailId", "urvij.singh@krantitechservices.in");
 		return vAllETest;
 	}
@@ -1478,8 +1494,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Experian_Single_Url_Request_Template",
 				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
 		// same as production
+//		vAllEDev.put("Experian_Single_Request_URL",
+//				"https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
+		//test url
 		vAllEDev.put("Experian_Single_Request_URL",
-				"https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
+				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/singleAction.action");
 		vAllEDev.put("Experian_User_Agent",
 				"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
 		vAllEDev.put("Experian_INITIATE_URL_JAVA",
@@ -1496,8 +1515,12 @@ public class BaseRedisDataAccessLayer {
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllEDev.put("Experian_Question_Content_Type", "application/json");
 		vAllEDev.put("Experian_Question_Accept", "*/*");
+		//test url
 		vAllEDev.put("Experian_Question_URL",
-				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
+				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/generateQuestionForConsumer.action?");
+		//prod url
+//		vAllEDev.put("Experian_Question_URL",
+//				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
 		// added for publishUserAKSOrReferReport
 		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
@@ -1543,7 +1566,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Is_Publish_File", "true"); // false for not publish
 		// Configuration defined for Experian Email
 		vAllEDev.put("ExperianToFirstEmailId", "urvij.singh@krantitechservices.in");
-		vAllEDev.put("ExperianToSecondEmailId", "love.kranti@clearmydues.com");
+		vAllEDev.put("ExperianToSecondEmailId", "love.singhal@krantitechservices.in");
 		vAllEDev.put("ExperianBCCEmailId", "urvij.singh@krantitechservices.in");
 
 		return vAllEDev;

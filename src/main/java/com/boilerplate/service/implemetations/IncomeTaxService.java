@@ -260,6 +260,7 @@ public class IncomeTaxService implements IIncomeTaxService {
 		// here ctc is used from lac abbreviation because of chatbots flow
 		// requirements
 		double ctc = incomeTaxEntity.getCtcForLacAbreviation();
+		//medical allowance and travelallowance being set to be saved in db
 		incomeTaxEntity
 				.setMedicalAllowance(Long.parseLong(configurationManager.get("Max_Medical_Allowance_Deduction")));
 		incomeTaxEntity.setTravelAllowance(Long.parseLong(configurationManager.get("Max_Travel_Allowance_Deduction")));

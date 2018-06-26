@@ -77,6 +77,7 @@ public class SendEmailToExperianForFailedReport implements IAsyncWorkObserver {
 	 */
 	@Override
 	public void observe(AsyncWorkItem asyncWorkItem) throws Exception {
+		logger.logInfo("SendEmailToExperianForFailedReport", "observe", "StartObserve", "");
 		ReportInputEntity reportInputEntity = (ReportInputEntity) asyncWorkItem.getPayload();
 		ExternalFacingReturnedUser user = this.userService.get(reportInputEntity.getUserId());
 		BoilerplateList<String> tosEmailList = new BoilerplateList<String>();
@@ -90,6 +91,7 @@ public class SendEmailToExperianForFailedReport implements IAsyncWorkObserver {
 		this.sendEmail(tosEmailList, ccsEmailList, bccsEmailList, reportInputEntity.getFirstName(),
 				reportInputEntity.getSurname(), reportInputEntity.getStage1Id(), reportInputEntity.getProofFiles(),
 				reportInputEntity.getUserId());
+		logger.logInfo("SendEmailToExperianForFailedReport", "observe", "EndObserve", "");
 
 	}
 
@@ -112,7 +114,7 @@ public class SendEmailToExperianForFailedReport implements IAsyncWorkObserver {
 	public void sendEmail(BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,
 			BoilerplateList<String> bccsEmailList, String firstName, String lastName, String stage1Id,
 			BoilerplateList<String> proofFiles, String userId) throws Exception {
-		
+
 		String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		String subject = null;
 		if (stage1Id != null && !stage1Id.equals("")) {
@@ -136,8 +138,8 @@ public class SendEmailToExperianForFailedReport implements IAsyncWorkObserver {
 					"SuccessFul Send Email To Experian For Failed Report",
 					"userId: " + userId + "UTI-ID: " + stage1Id + "AttachementList:" + proofFiles.toJSON());
 		} else {
-			logger.logError("SendEmailToExperianForFailedReport", "sendEmail", "ErrorSendEmailToExperianForFailedReport",
-					"StageOneId in null or empty");
+			logger.logError("SendEmailToExperianForFailedReport", "sendEmail",
+					"ErrorSendEmailToExperianForFailedReport", "StageOneId in null or empty");
 		}
 
 	}

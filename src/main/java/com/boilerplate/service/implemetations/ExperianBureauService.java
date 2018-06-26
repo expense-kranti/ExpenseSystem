@@ -53,6 +53,7 @@ import com.boilerplate.java.entities.ReportInputEntity;
 import com.boilerplate.java.entities.ReportSource;
 import com.boilerplate.java.entities.ReportStatus;
 import com.boilerplate.java.entities.ReportVersion;
+import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.Voucher;
 import com.boilerplate.service.interfaces.IBureauIntegrationService;
 import com.boilerplate.service.interfaces.IFileService;
@@ -219,6 +220,19 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	public void setSendEmailToExperianForFailedReport(
 			SendEmailToExperianForFailedReport sendEmailToExperianForFailedReport) {
 		this.sendEmailToExperianForFailedReport = sendEmailToExperianForFailedReport;
+	}
+
+	@Autowired
+	com.boilerplate.databases.s3FileSystem.implementations.S3File file;
+
+	/**
+	 * This method sets the instance of S3File Entity
+	 * 
+	 * @param file
+	 *            The file
+	 */
+	public void setFile(com.boilerplate.databases.s3FileSystem.implementations.S3File file) {
+		this.file = file;
 	}
 
 	/**
@@ -550,6 +564,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			report.setReportSourceEnum(ReportSource.Experian);
 			report.setQuestionCount(reportInputEntity.getQuestionCount());
 			report.setReportNumber(reportInputEntity.getReportNumber());
+			// currently we are setting the report version to first version only
+			report.setReportVersionEnum(ReportVersion.ExperianV1);
 			// save report data
 			mysqlReport.saveReport(report);
 			user.setUserState(MethodState.Report);
@@ -558,7 +574,6 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			reportInputEntity.setUserId(user.getUserId());
 			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity, subjectsForParseExperianReportObserver,
 					"ExperianBureauService", "observeReport");
-
 		} catch (Exception ex) {
 			// compensate if queue is down
 			try {
@@ -594,7 +609,6 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	}
 
 	/**
-	 * @throws Exception
 	 * @see IBureauIntegrationService.fetchNextItem
 	 */
 	@Override
@@ -690,7 +704,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 						"--- Method Name: fetchNextItem --- Response status: " + httpResponse.getHttpStatus()
 								+ "--- Generic Error Message: responseJson is not returned ---Error String and Response Json: "
 								+ getErrorStringAndResponseJsonFields(responseBodyMap),
-						true);
+						false);
 				throw new PreconditionFailedException("Experian Server",
 						"responseJson is not returned " + getErrorStringAndResponseJsonFields(responseBodyMap), null);
 			}
@@ -1008,7 +1022,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 
 			// save reportinputentity
 			mysqlReport.saveReportInputEntity(reportInputEntiity);
-			user.setUserState(MethodState.ExperianAttempt);
+			// set experian request unique key used in processing report offline
+			user.setExperianRequestUniqueKey(reportInputEntiity.getMobileNumber());
 			// save user state
 			userService.update(user);
 
@@ -1069,6 +1084,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	private ReportInputEntity doStartSingleURLIntegration(ReportInputEntity reportInputEntiity,
 			ExternalFacingReturnedUser user) throws Exception {
 		reportInputEntiity.setStateEnum(ReportInputEntity.State.SessionSetup);
+		user.setUserState(MethodState.ExperianAttempt);
 		Map<String, Object> responseBodyMap = null;
 		HttpResponse httpResponse = null;
 		String ecvSessionValue = null;
@@ -1134,7 +1150,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 
 				if (httpResponse.getResponseCookies() != null) {
 					for (HttpCookie cookie : httpResponse.getResponseCookies()) {
-						if (cookie.getName().equals("JSESSIONID")) {
+						if (cookie.getName().equals("JSESSIONID")
+								|| cookie.getName().equals("NSC_dcw2dqv.vbu.fyqfsjbo.jo-16443")) {
+							// if (cookie.getName().equals("JSESSIONID")) {
 							logger.logInfo("ExperianBureauService", "Single Response Cookie ecv",
 									"Response" + reportInputEntiity.getUserId(), cookie.getValue());
 							ecvSessionValue = cookie.getValue();
@@ -1161,6 +1179,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 					logger.logInfo("ExperianBureauService", "Single Response errorstring",
 							responseBodyMap.get("errorString").toString(), "");
 					if (responseBodyMap.get("errorString").toString().contains("consumer record not found") == true) {
+						// set it here as will be saved in experian status
+						// update
+						reportInputEntiity.setStateEnum(State.ConsumerNotFound);
 						// updates the experianStatus:(15-11-2016)
 						experianStatusUpdate(reportInputEntiity,
 								"--- Method Name: " + " singleAction " + "--- Response status: "
@@ -1171,6 +1192,10 @@ public class ExperianBureauService implements IBureauIntegrationService {
 								true);
 						// sets the pan number in pan number hash
 						setPanNumberInHash(reportInputEntiity);
+						// set user state
+						user.setUserState(MethodState.NoExperianRecord);
+						// save user
+						userService.update(user);
 						throw new NotFoundException("Experian Server",
 								"User not found in Bureau database - Customer_Details_Form_Action No record found. Please re-submit your request. ",
 								null);
@@ -1190,13 +1215,18 @@ public class ExperianBureauService implements IBureauIntegrationService {
 						reportInputEntiity.setVoucherCode(voucher.getVoucherCode());
 						reportInputEntiity.setVoucherExpiry(voucher.getExpiryDate());
 						voucherInvalid = true;
-					} else {
+					}
+					// handle all error cases
+					else if (responseBodyMap.get("stageOneId_") == null && responseBodyMap.get("stageTwoId_") == null) {
 						// updates the experianStatus:(15-11-2016)
-						experianStatusUpdate(reportInputEntiity, "--- Method Name: " + " singleAction "
-								+ "--- Response status: " + httpResponse.getHttpStatus() + "--- Error Message: "
-								+ responseBodyMap.get("errorString").toString() + "--- Error String and Response Json: "
-								+ getErrorStringAndResponseJsonFields(responseBodyMap), false);
-						throw new PreconditionFailedException("ReportInputEntity", "Some error occured.", null);
+						experianStatusUpdate(reportInputEntiity,
+								"--- Method Name: " + " singleAction " + "--- Response status: "
+										+ httpResponse.getHttpStatus() + "--- Generic Error Message: "
+										+ "Some Error Occured" + "--- Error String and Response Json: "
+										+ getErrorStringAndResponseJsonFields(responseBodyMap),
+								false);
+						throw new PreconditionFailedException("Experian Server", "Some Error has occured in response.",
+								null);
 					}
 				}
 			} while (voucherInvalid);
@@ -1298,6 +1328,9 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		return reportInputEntiity;
 	}
 
+	/**
+	 * @see ExperianBureauService.sendEmail
+	 */
 	@Override
 	public void sendEmail(GenericListEncapsulationEntity<KycDocumentsInformation> kycDocumentsInformation)
 			throws NotFoundException, PreconditionFailedException, BadRequestException, ConflictException {
@@ -1309,24 +1342,48 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		logger.logInfo("ExperianBureauService", "sendEmail", "Starts Send Email To Experian For Failed Report",
 				"userId: " + user.getId() + "DoucumentList:" + kycDocumentsInformation.getEntityList().toString());
 		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
-		ReportInputEntity reportInputEntity = reportInputEntityList.get(0);
+		if (reportInputEntityList.size() > 0) {
+			ReportInputEntity reportInputEntity = reportInputEntityList.get(0);
 
-		Boolean isPublishFile = Boolean.valueOf(configurationManager.get("Is_Publish_File"));
-		if (isPublishFile) {
-			// this will publish KYC to CRM and sends email to Experian
-			this.publishKYCToCRM(kycDocumentsInformation, reportInputEntity, user);
+			Boolean isPublishFile = Boolean.valueOf(configurationManager.get("Is_Publish_File"));
+			if (isPublishFile) {
+				// this will publish KYC to CRM and sends email to Experian
+				this.publishKYCToCRM(kycDocumentsInformation, reportInputEntity, user);
+			}
+		} else {
+			logger.logError("ExperianBureauService", "sendEmail", "ErrorExperianBureauService",
+					"No ReportInputEntity Found for userId : "
+							+ RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
 		}
-
 	}
 
+	/**
+	 * This method is used to check for and prepare data for sending email to
+	 * experian
+	 * 
+	 * @param kycDocumentsInformation
+	 *            contains the information about kyc details like aadhar
+	 *            details, passport etc
+	 * @param reportInputEntity
+	 *            will contain the proof files list for kyc
+	 * @param user
+	 *            contains the details of user
+	 * @throws NotFoundException
+	 *             thrown If the proof ids documents are not found
+	 * @throws PreconditionFailedException
+	 *             thrown when any expected condition doesnot occur
+	 */
 	private void publishKYCToCRM(GenericListEncapsulationEntity<KycDocumentsInformation> kycDocumentsInformation,
 			ReportInputEntity reportInputEntity, ExternalFacingReturnedUser user)
 			throws NotFoundException, PreconditionFailedException {
+		logger.logInfo("ExperianBureauService", "publishKYCToCRM", "StartPublishKYCToCRM", "");
 		FilePublishEntity filePublishEntity = new FilePublishEntity();
 		boolean isAddressProofFound = false;
 		boolean isIdProofFound = false;
 		boolean addressFrontExist = false;
 		int kycCounter = 1;
+		// loop through the kyc documents list for fetching each document
+		// details for sending email
 		for (KycDocumentsInformation kycDocumentInformation : kycDocumentsInformation.getEntityList()) {
 			String fileName = kycDocumentInformation.getKycDocumentName().toUpperCase();
 			String filePath = configurationManager.get("S3_Files_Path") + kycDocumentInformation.getKycDocumentId();
@@ -1396,21 +1453,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 					"Id proof or address proof not uploaded with keys ADDRESSPROOF and IDPROOF", null);
 		}
 		filePublishEntity.setUserId(reportInputEntity.getUserId());
-		// // publish to CRM
-		// try {
-		// if (user.getCrmid() != null) {
-		// filePublishEntity.setCrmRecordID(user.getCrmid());
-		//
-		// }
-		// } catch (Exception exception) {
-		// logger.logException("ExperianBureauService", "sendEmail", "try-catch
-		// block of CRM Publishing",
-		// exception.toString(), exception);
-		// }
-		// if so then send the email - by sending full path names of the files
-		// and the Stage 1 id
 		try {
-
 			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity,
 					subjectsForSendEmailToExperianForOfflineReport, "ExperianBureauService", "sendEmail");
 		} catch (Exception ex) {
@@ -1424,14 +1467,109 @@ public class ExperianBureauService implements IBureauIntegrationService {
 				BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
 
 				BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
+				bccsEmailList.add(configurationManager.get("ExperianBCCEmailId"));
 				sendEmailToExperianForFailedReport.sendEmail(tosEmailList, ccsEmailList, bccsEmailList,
 						reportInputEntity.getFirstName(), reportInputEntity.getSurname(),
 						reportInputEntity.getStage1Id(), reportInputEntity.getProofFiles(),
 						reportInputEntity.getUserId());
+				logger.logInfo("ExperianBureauService", "publishKYCToCRM", "EndPublishKYCToCRM", "");
 			} catch (Exception ex1) {
 				throw new PreconditionFailedException("Email", "Unable to send email", ex1);
 			}
 		}
+	}
+
+	/**
+	 * @see IBureauIntegrationService.processOfflineReport
+	 */
+	@Override
+	public void processOfflineReport(String fileId)
+			throws ConflictException, IOException, SAXException, NotFoundException, BadRequestException,
+			UnauthorizedException, PreconditionFailedException, ParserConfigurationException {
+		logger.logInfo("ExperianBureauService", "processOfflineReport", "StartProcessOfflineReport", "");
+		boolean userCanAccess = false;
+		// if the user is not an admin or back office user throw exception
+		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
+			if (role.getRoleName().toUpperCase().equals("ADMIN")
+					|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+				userCanAccess = true;
+				break;
+			}
+		}
+		if (userCanAccess == false) {
+			throw new UnauthorizedException("Report", "User not authorized to upload report", null);
+		}
+		FileEntity fileEntity = fileService.getFile(fileId);
+
+		if (fileEntity.getFileMasterTag().equals("ExperianReport") == false) {
+			throw new PreconditionFailedException("Report", "Report master tag must be ExperianReport ", null);
+		}
+		String fileNameInURL = null;
+		// Get file from local if not found then downloads
+		if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
+			fileNameInURL = this.file.downloadFileFromS3ToLocal(fileEntity.getFullFileNameOnDisk());
+		} else {
+			fileNameInURL = fileEntity.getFileName();
+		}
+
+		// Open the file
+		String htmlFile = FileUtils
+				.readFileToString(new File(configurationManager.get("RootFileDownloadLocation") + fileNameInURL));
+
+		// cut out the xml part from it
+		int startingPOsition = htmlFile.indexOf("xmlResponse") + 21;
+		String xmlFile = htmlFile.substring(startingPOsition, htmlFile.length());
+		xmlFile = xmlFile.replace("\"/>", "");
+		xmlFile = xmlFile.replace("</body>", "");
+		xmlFile = xmlFile.replace("</html>", "");
+
+		xmlFile = StringEscapeUtils.unescapeHtml(xmlFile);
+		System.out.println(xmlFile);
+		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource inputSource = new InputSource();
+		inputSource.setCharacterStream(new StringReader(xmlFile));
+
+		Document doc = documentBuilder.parse(inputSource);
+
+		// Normalize the XML Structure; It's just too important !!
+		NodeList root = doc.getChildNodes();
+		Node rootNode = getNode("InProfileResponse", root);
+		Node creditProfileHeader = getNode("CreditProfileHeader", rootNode.getChildNodes());
+		NodeList creditProfileHeaderNodes = creditProfileHeader.getChildNodes();
+		String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
+		NodeList currentApplicantDetails = doc.getElementsByTagName("Current_Applicant_Details");
+		String userMobilePhoneNumberForReport = null;
+		for (int i = 0; i < currentApplicantDetails.getLength(); i++) {
+			NodeList current_app = currentApplicantDetails.item(i).getChildNodes();
+			userMobilePhoneNumberForReport = getNodeValue("MobilePhoneNumber", current_app);
+
+		}
+		// Find the user
+		ExternalFacingReturnedUser user = userService.getUserByExperianRequestUniqueKey(userMobilePhoneNumberForReport);
+		// In users MetaData find the Report Input Entity
+		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+		if (reportInputEntityList.size() > 0) {
+			ReportInputEntity reportInputEntity = reportInputEntityList.get(0);
+			// reportInputEntity.setReportFileEntity(fileEntity);
+			reportInputEntity.setReportNumber(reportNumber);
+			reportInputEntity.setStateEnum(State.Report);
+			reportInputEntity.setReportFileId(fileEntity.getFileName());
+			// Change file ownership to the user
+			fileEntity.setUserId(user.getId());
+			fileService.updateFileEntity(fileEntity);
+			// Observe the report
+			user = this.observeReport(reportInputEntity, user);
+			// saves the experian report url in correspondence to the user
+			user.setExperianReportUrl(fileEntity.getFullFileNameOnDisk());
+			// save report to the DB
+			user.setUserState(MethodState.ReportGenerated);
+			userService.update(user);
+			logger.logInfo("ExperianBureauService", "processOfflineReport", "EndProcessOfflineReport", "");
+		} else {
+			logger.logError("ExperianBureauService", "processOfflineReport", "ErrorProcessOfflineReport",
+					"No report input entity found for userId : " + user.getUserId());
+		}
+
 	}
 
 }

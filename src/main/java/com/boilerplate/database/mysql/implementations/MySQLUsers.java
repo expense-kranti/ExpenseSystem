@@ -107,4 +107,10 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 
 	}
 
+	@Override
+	public String getUserIdByExperianRequestUniqueKey(String experianRequestUniqueKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

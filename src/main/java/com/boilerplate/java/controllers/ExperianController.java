@@ -134,4 +134,37 @@ public class ExperianController extends BaseController {
 		this.experianBureauService.sendEmail(kycDocumentsInformation);
 	}
 
+	/**
+	 * This api is used to process/parse uploaded experian report file offline
+	 * when file id of file is given
+	 * 
+	 * @param fileId
+	 *            the id of the uploaded file
+	 * @throws JAXBException
+	 * @throws UnauthorizedException
+	 *             thrown when user is not authorized to use this api
+	 * @throws PreconditionFailedException
+	 *             thrown when any expected condition is not met
+	 * @throws IOException
+	 *             thrown when an IOException occurs while processing file like
+	 *             getting file from s3
+	 * @throws NotFoundException
+	 *             thrown when no file details found for given file id
+	 * @throws BadRequestException
+	 *             thrown when userId is not found
+	 * @throws ConflictException
+	 *             thrown when user already exists
+	 * @throws ParserConfigurationException
+	 *             thrown when any parsing exception occurs
+	 * @throws SAXException
+	 */
+	@ApiOperation(value = "processes an uploaded report")
+	@RequestMapping(value = "/experian/processreport/{fileId}", method = RequestMethod.POST)
+	public @ResponseBody void processOfflineReport(
+			@ApiParam(value = "This is the id of the file", required = true, name = "fileId", allowMultiple = false) @PathVariable String fileId)
+			throws JAXBException, UnauthorizedException, PreconditionFailedException, IOException, NotFoundException,
+			BadRequestException, ConflictException, ParserConfigurationException, SAXException {
+		this.experianBureauService.processOfflineReport(fileId);
+	}
+
 }

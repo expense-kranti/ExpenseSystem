@@ -117,4 +117,21 @@ public interface IBureauIntegrationService {
 	public void sendEmail(GenericListEncapsulationEntity<KycDocumentsInformation> kycDocumentsInformation)
 			throws NotFoundException, PreconditionFailedException, BadRequestException, ConflictException;
 
+	/**
+	 * This method is used to process/parse uploaded experian report file
+	 * offline when file id of file is given
+	 * 
+	 * @param fileId
+	 *            the id of the report file
+	 * @throws ConflictException 
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws BadRequestException 
+	 * @throws NotFoundException 
+	 * @throws UnauthorizedException 
+	 * @throws PreconditionFailedException 
+	 * @throws ParserConfigurationException 
+	 */
+	public void processOfflineReport(String fileId) throws ConflictException, IOException, SAXException, NotFoundException, BadRequestException, UnauthorizedException, PreconditionFailedException, ParserConfigurationException;
+
 }

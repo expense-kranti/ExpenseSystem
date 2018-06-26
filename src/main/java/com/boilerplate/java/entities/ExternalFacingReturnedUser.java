@@ -61,6 +61,7 @@ public class ExternalFacingReturnedUser extends ExternalFacingUser
 		super.setIncreaseScore(user.isIncreaseScore());
 		super.setReportInputId(user.getReportInputId());
 		super.setLastLoginTime(user.getLastLoginTime());
+		super.setUserState(user.getUserState());
 
 	}
 

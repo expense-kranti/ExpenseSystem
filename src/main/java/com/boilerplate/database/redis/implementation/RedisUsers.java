@@ -12,6 +12,7 @@ import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.IdEntity;
 import com.boilerplate.java.entities.Role;
 
 import redis.clients.jedis.Jedis;
@@ -54,6 +55,11 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	 * This is the Redis User Set key which will be used to migrate user
 	 */
 	private static final String UserKeyForSet = "AKS_USER_MYSQL";
+
+	/**
+	 * holds the key for experian request unique key users
+	 */
+	private static final String ExperianRequestUniqueKey = "EXPERIAN_REQUEST_UNIQUE_KEY:";
 
 	/**
 	 * @see create
@@ -134,6 +140,12 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 			user.setPassword(userFromDatabase.getPassword());
 		}
 		super.set(User + user.getUserId(), user);
+		// save mapping against experian request email key
+		if (user.getExperianRequestUniqueKey() != null) {
+			IdEntity idEntity = new IdEntity();
+			idEntity.setId(user.getUserId());
+			super.set(ExperianRequestUniqueKey + user.getExperianRequestUniqueKey().toUpperCase(), idEntity);
+		}
 
 		// update user in MySQLdatabase
 		if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
@@ -195,4 +207,17 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		return super.keys(User + "AKS:" + "*");
 	}
 
+	/**
+	 * @see IUser.getUserIdByExperianRequestUniqueKey
+	 */
+	@Override
+	public String getUserIdByExperianRequestUniqueKey(String experianRequestUniqueKey) {
+		IdEntity idEntity = super.get(ExperianRequestUniqueKey + experianRequestUniqueKey.toUpperCase(),
+				IdEntity.class);
+		if (idEntity == null) {
+			return null;
+		} else {
+			return idEntity.getId();
+		}
+	}
 }

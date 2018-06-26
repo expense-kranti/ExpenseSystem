@@ -95,4 +95,13 @@ public interface IUser {
 	 */
 	public void addInRedisSet(String userId);
 
+	/**
+	 * This method is used to get the user for given experian request unique key
+	 * 
+	 * @param experianRequestUniqueKey
+	 *            key for getting user
+	 * @return
+	 */
+	public String getUserIdByExperianRequestUniqueKey(String experianRequestUniqueKey);
+
 }

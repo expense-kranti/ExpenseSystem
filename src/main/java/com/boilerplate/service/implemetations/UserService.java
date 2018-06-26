@@ -597,7 +597,12 @@ public class UserService implements IUserService {
 		// we store everything in upper case hence chanhing it to upper
 		try {
 			user = userDataAccess.getUser(authenitcationRequest.getUserId().toUpperCase(), roleService.getRoleIdMap());
-			user.setUserState(MethodState.Validated);
+			// set user state, if older user means they do not have user state
+			// set or new user who have user state Registered
+			if (user.getUserState() == MethodState.Registered || user.getUserState() == null) {
+				user.setUserState(MethodState.Validated);
+			}
+			// set last logged in time
 			user.setLastLoginTime(new Date());
 			userDataAccess.update(user);
 			String hashedPassword = String.valueOf(Encryption.getHashCode(authenitcationRequest.getPassword()));
@@ -653,25 +658,25 @@ public class UserService implements IUserService {
 	public ExternalFacingReturnedUser getReportInputEntity(ExternalFacingReturnedUser user) {
 		// check state of user if user state is experian attempt or
 		// authquestion then give its report input entity
-		
-			List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
-			ReportInputEntity reportInputEntity = null;
-			// check if report input entity is present for user
-			if (reportInputEntityList.size() > 0) {
-				reportInputEntity = reportInputEntityList.get(0);
-				user.setReportInputEntity(reportInputEntity);
-				// if reportinput state is question then fetch the current
-				// question and show it to the user
-				// if (reportInputEntity.getStateEnum() == State.Question) {
-				// if (reportInputEntity.getCurrentQuestionId() != null) {
-				// reportInputEntity.setCurrentQuestion((ExperianQuestionAnswer)
-				// reportService
-				// .getQuestionAnswers(user.getUserId(),
-				// reportInputEntity.getCurrentQuestionId()));
-				// }
-				// }
-			}
-		
+
+		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+		ReportInputEntity reportInputEntity = null;
+		// check if report input entity is present for user
+		if (reportInputEntityList.size() > 0) {
+			reportInputEntity = reportInputEntityList.get(0);
+			user.setReportInputEntity(reportInputEntity);
+			// if reportinput state is question then fetch the current
+			// question and show it to the user
+			// if (reportInputEntity.getStateEnum() == State.Question) {
+			// if (reportInputEntity.getCurrentQuestionId() != null) {
+			// reportInputEntity.setCurrentQuestion((ExperianQuestionAnswer)
+			// reportService
+			// .getQuestionAnswers(user.getUserId(),
+			// reportInputEntity.getCurrentQuestionId()));
+			// }
+			// }
+		}
+
 		return user;
 	}
 
@@ -1226,6 +1231,19 @@ public class UserService implements IUserService {
 			rank = configurationManager.get("Rank9");
 		}
 		return rank;
+	}
+
+	/**
+	 * @see IUserService.getUserByExperianRequestUniqueKey
+	 */
+	@Override
+	public ExternalFacingReturnedUser getUserByExperianRequestUniqueKey(String experianRequestUniqueKey)
+			throws NotFoundException, BadRequestException {
+		String userId = this.userDataAccess.getUserIdByExperianRequestUniqueKey(experianRequestUniqueKey);
+		if (userId == null)
+			throw new NotFoundException("User", "User with this unique key " + experianRequestUniqueKey + " not found",
+					null);
+		return this.get(userId, false);
 	}
 
 }

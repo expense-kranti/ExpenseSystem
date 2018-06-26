@@ -206,4 +206,14 @@ public interface IUserService {
 	public ExternalFacingReturnedUser updateAUser(UpdateUserEntity updateUserEntity)
 			throws ConflictException, NotFoundException, BadRequestException, ValidationFailedException;
 
+	/**
+	 * This method is used to get the user for given experian Request UniqueKey
+	 * 
+	 * @param experianRequestUniqueKey
+	 * @return
+	 * @throws BadRequestException 
+	 * @throws NotFoundException 
+	 */
+	public ExternalFacingReturnedUser getUserByExperianRequestUniqueKey(String userMobilePhoneNumberForReport) throws NotFoundException, BadRequestException;
+
 }

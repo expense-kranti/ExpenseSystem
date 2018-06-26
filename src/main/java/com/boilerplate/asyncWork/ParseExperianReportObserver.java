@@ -613,6 +613,7 @@ public class ParseExperianReportObserver implements IAsyncWorkObserver {
 			report.setBureauScore(Integer.parseInt(
 					getNodeValue("BureauScore", scoreNodes) == "" ? "0" : getNodeValue("BureauScore", scoreNodes)));
 			report.setReportStatusEnum(ReportStatus.Complete);
+			report.setReportVersionEnum(ReportVersion.ExperianV1);
 			report.setReportDateTime(getNodeValue("ReportDate", creditProfileHeaderNodes));
 			// save report's remaining items.
 			mysqlReport.saveReport(report);

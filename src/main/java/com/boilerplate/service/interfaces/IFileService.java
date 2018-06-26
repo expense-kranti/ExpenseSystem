@@ -18,7 +18,7 @@ public interface IFileService {
 	 * @param file
 	 *            The file data
 	 * @return the file entity
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws UpdateFailedException, Exception;
 
@@ -61,5 +61,13 @@ public interface IFileService {
 	 *             thrown if the user getting the files is not authorized
 	 */
 	public BoilerplateMap<String, FileEntity> getAllFileList(String userId) throws UnauthorizedException;
+
+	/**
+	 * This method is used to update the file entity
+	 * 
+	 * @param fileEntity
+	 *            contains the data to be updated
+	 */
+	public void updateFileEntity(FileEntity fileEntity);
 
 }
