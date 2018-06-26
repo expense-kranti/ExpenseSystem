@@ -11,7 +11,6 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.service.implemetations.StatisticsService;
 
 /**
  * This class implements IAksharArticles interface means it has methods
@@ -31,9 +30,6 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	 * This is the wordpress hibernate configuration
 	 */
 	private String wordPressDatabaseConnection = "WordPressDatabaseConnection";
-
-	// session
-	Session session = null;
 
 	/**
 	 * The instance of configuration manager
@@ -63,13 +59,8 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 
 		List<Map<String, Object>> returndata = null;
 		try {
-			// creating the session and not closing session after query
-			// execution
-			// load new configurations
-			session = HibernateUtility.getSessionFactory(configurationManager.get(wordPressDatabaseConnection))
-					.openSession();
 			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
+			returndata = super.executeSelectNative(sqlQuery, queryParameters);
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getTopNewArticles", "ExceptionGetTopNewArticles",
@@ -89,11 +80,8 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 		// create session
 		List<Map<String, Object>> returndata = null;
-		try {
-			// reusing the already created session and not closing session after
-			// query execution
-			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
+		try {	
+			returndata = super.executeSelectNative(sqlQuery, queryParameters);
 
 		} catch (Exception ex) {
 			// log exception
@@ -117,15 +105,11 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		try {
 			// reusing the created session in above method
 			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
+			returndata = super.executeSelectNative(sqlQuery, queryParameters);
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getTopSearchedArticles", "ExceptionGetTopSearchedArticles",
 					"Exception is : " + ex.toString(), ex);
-		} finally {
-			// finally closing the session
-			session.flush();
-			session.close();
 		}
 		return returndata;
 	}

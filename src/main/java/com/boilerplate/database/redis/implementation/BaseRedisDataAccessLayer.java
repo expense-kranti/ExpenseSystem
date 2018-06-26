@@ -1801,11 +1801,11 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("GENERAL_UUID_LENGTH", "8");
 		// query related to getting articles statistics
 		vAllEAll.put("GET_NEW_ADDED_ARTICLES",
-				"SELECT  post_title  as postTitle ,post_name as postLink, DATE( post_date ) as date FROM  wp_posts WHERE post_status =  'publish' ORDER BY id DESC LIMIT 5");
+				"SELECT  post_title  as postTitle ,post_name as postLink, DATE( post_date ) as date FROM  wordpress.wp_posts WHERE post_status =  'publish' ORDER BY id DESC LIMIT 5");
 		vAllEAll.put("GET_TOTAL_ARTICLES_COUNT",
-				"SELECT COUNT( id ) as count FROM  wp_posts WHERE post_status = 'publish'");
+				"SELECT COUNT( id ) as count FROM  wordpress.wp_posts WHERE post_status = 'publish'");
 		vAllEAll.put("GET_TOP_SEARCHED_ARTICLES",
-				"SELECT distinct(t2.post_title) AS topTitle ,t2.post_name as postLink, t1.date as date FROM  wp_statistics_pages t1 LEFT JOIN wp_posts t2 ON t1.id = t2.ID where t2.post_title != 'Home page sample' ORDER BY t1.date DESC LIMIT 10");
+				"SELECT distinct(t2.post_title) AS topTitle ,t2.post_name as postLink, t1.date as date FROM  wordpress.wp_statistics_pages t1 LEFT JOIN wordpress.wp_posts t2 ON t1.id = t2.ID where t2.post_title != 'Home page sample' ORDER BY t1.date DESC LIMIT 10");
 		// query for signed up users per month
 		vAllEAll.put("GET_MONTHLY_REFERRED_USERS_COUNT",
 				"SELECT count(*) as count FROM Aks_ReferalContacts WHERE UserId = '@userId' and Date(CreationDate) between ('@startDate') and ('@endDate')");
@@ -1816,6 +1816,7 @@ public class BaseRedisDataAccessLayer {
 		// query for signed up users per month
 		vAllEAll.put("GET_TOPMOST_PLAYED_QUIZZES",
 				"Select t2.Name quizName, Date(t1.CreationDate) as datePlayed from Aks_UserAssessment t1 join Aks_Assessment t2 on t1.AssessmentId = t2.Id where t2.IsSurvey = 0 ORDER BY t1.CreationDate DESC limit 2");
+
 
 		vAllEAll.put("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\"}");
 		vAllEAll.put("GET_USER_DETAILS_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\",\"name\":\"@fullName\"}");
