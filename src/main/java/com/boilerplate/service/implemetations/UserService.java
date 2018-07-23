@@ -665,16 +665,6 @@ public class UserService implements IUserService {
 		if (reportInputEntityList.size() > 0) {
 			reportInputEntity = reportInputEntityList.get(0);
 			user.setReportInputEntity(reportInputEntity);
-			// if reportinput state is question then fetch the current
-			// question and show it to the user
-			// if (reportInputEntity.getStateEnum() == State.Question) {
-			// if (reportInputEntity.getCurrentQuestionId() != null) {
-			// reportInputEntity.setCurrentQuestion((ExperianQuestionAnswer)
-			// reportService
-			// .getQuestionAnswers(user.getUserId(),
-			// reportInputEntity.getCurrentQuestionId()));
-			// }
-			// }
 		}
 
 		return user;

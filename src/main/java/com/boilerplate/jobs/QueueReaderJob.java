@@ -614,7 +614,7 @@ public class QueueReaderJob {
 							if (this.isMaintainQueueHistory) {
 								try {
 									if (asyncWorkItem != null) {
-										QueueFactory.getInstance().insert("_AKS_PARSE_EXPERIAN_REPORTS_QUEUE"
+										QueueFactory.getInstance().insert("_AKS_PARSE_EXPERIAN_REPORTS_QUEUE_HISTORY"
 												+ configurationManager.get("Enviornment"), asyncWorkItem);
 									}
 								} catch (Exception e) {

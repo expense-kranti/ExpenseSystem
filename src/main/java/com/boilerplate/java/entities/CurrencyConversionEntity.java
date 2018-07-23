@@ -124,6 +124,10 @@ public class CurrencyConversionEntity extends BaseEntity implements Serializable
 			throw new ValidationFailedException("CurrencyConversionEntity",
 					"Currency code of currency to convert to is null/Empty", null);
 		}
+		if (this.getCurrencyToConvert() <= 0) {
+			throw new ValidationFailedException("CurrencyConversionEntity",
+					"Currency amount to be converted should be greater than 0", null);
+		}
 		return true;
 	}
 

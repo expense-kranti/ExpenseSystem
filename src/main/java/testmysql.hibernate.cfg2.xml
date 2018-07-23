@@ -4,7 +4,7 @@
 <hibernate-configuration>
 	<session-factory>
 
-<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
 		<property name="hibernate.connection.url">jdbc:mysql://bankexpress1.cehf5u2edwls.ap-southeast-1.rds.amazonaws.com:3306/bank_express?autoReconnect=true</property>
 		<property name="hibernate.connection.username">mybankuser</property>
@@ -62,7 +62,7 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLIncomeTax.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLHandBook.hbm.xml" />
-			<mapping
+		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLReportInput.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLElectronicContact.hbm.xml" />

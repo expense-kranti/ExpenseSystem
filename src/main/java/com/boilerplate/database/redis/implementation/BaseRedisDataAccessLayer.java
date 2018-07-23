@@ -1432,7 +1432,8 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_Publish_File", "true"); // false for not publish
 		// Configuration defined for Experian Email
 		vAllETest.put("ExperianToFirstEmailId", "urvij.singh@krantitechservices.in");
-		vAllETest.put("ExperianToSecondEmailId", "love.singhal@krantitechservices.in");
+//		vAllETest.put("ExperianToSecondEmailId", "love.singhal@krantitechservices.in");
+		vAllETest.put("ExperianToSecondEmailId", "urvij.pratap21@gmail.com");
 		vAllETest.put("ExperianBCCEmailId", "urvij.singh@krantitechservices.in");
 		return vAllETest;
 	}
@@ -1499,8 +1500,7 @@ public class BaseRedisDataAccessLayer {
 		//test url
 		vAllEDev.put("Experian_Single_Request_URL",
 				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/singleAction.action");
-		vAllEDev.put("Experian_User_Agent",
-				"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		
 		vAllEDev.put("Experian_INITIATE_URL_JAVA",
 				"http://javadev-370467541.ap-southeast-1.elb.amazonaws.com/java/experian/initiateExperian");
 
@@ -1513,8 +1513,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllEDev.put("Experian_Question_Body",
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
-		vAllEDev.put("Experian_Question_Content_Type", "application/json");
-		vAllEDev.put("Experian_Question_Accept", "*/*");
+		
 		//test url
 		vAllEDev.put("Experian_Question_URL",
 				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/generateQuestionForConsumer.action?");
@@ -1779,8 +1778,10 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEAll.put("Top_Scorer_Size", "10");
 		// to be used for currency converter widget
+//		vAllEAll.put("CurrencyConversionAPI_URL",
+//				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 		vAllEAll.put("CurrencyConversionAPI_URL",
-				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
+				"https://www.amdoren.com/api/currency.php?api_key=5LkSpg3gUPX9wHtHLasudX3jCAqGPf&from={currencyFromsCurrencyCode}&to={currencyTosCurrencyCode}&amount={amount}");
 
 		vAllEAll.put("SF_Update_Hash_Name", "SFUpdateHash");
 		vAllEAll.put("AKS_Script_Publish_Method", "POST");
@@ -1823,6 +1824,10 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_THE_REPORT",
 				"SELECT ReportId as id,FileId as fileId,UserId as userId ,ReportStatus as reportStatusEnum,ReportSource as reportSourceEnum,BureauScore as bureauScore,ReportNumber as reportNumber,ReportDateTime as reportDateTime,QuestionCount as questionCount FROM Aks_ReportDetail where UserId= '@userId' And CreatedDate=( select MAX(CreatedDate) from Aks_ReportDetail);");
+		vAllEAll.put("Experian_User_Agent",
+				"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+		vAllEAll.put("Experian_Question_Accept", "*/*");
+		vAllEAll.put("Experian_Question_Content_Type", "application/json");
 		return vAllEAll;
 
 	}

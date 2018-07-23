@@ -94,7 +94,7 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 	private String firstName;
 
 	/**
-	 * This is the ctc in string
+	 * This is the ctc input
 	 */
 	private String ctcInput;
 	/**
@@ -579,134 +579,6 @@ public class IncomeTaxEntity extends BaseEntity implements Serializable {
 		this.firstName = firstName;
 	}
 
-//	/**
-//	 * Gets the ctc in string
-//	 * 
-//	 * @return the ctcInString
-//	 */
-//	public String getCtcInString() {
-//		return ctcInString;
-//	}
-//
-//	/**
-//	 * Sets the ctc in string
-//	 * 
-//	 * @param ctcInString
-//	 *            the ctcInString to set
-//	 */
-//	public void setCtcInString(String ctcInString) {
-//		this.ctcInString = ctcInString;
-//	}
-//
-//	/**
-//	 * gets age in string
-//	 * 
-//	 * @return the ageInString
-//	 */
-//	public String getAgeInString() {
-//		return ageInString;
-//	}
-//
-//	/**
-//	 * Sets age in string
-//	 * 
-//	 * @param ageInString
-//	 *            the ageInString to set
-//	 */
-//	public void setAgeInString(String ageInString) {
-//		this.ageInString = ageInString;
-//	}
-//
-//	/**
-//	 * @return the homeRentPaidMonthlyInString
-//	 */
-//	public String getHomeRentPaidMonthlyInString() {
-//		return homeRentPaidMonthlyInString;
-//	}
-//
-//	/**
-//	 * @param homeRentPaidMonthlyInString
-//	 *            the homeRentPaidMonthlyInString to set
-//	 */
-//	public void setHomeRentPaidMonthlyInString(String homeRentPaidMonthlyInString) {
-//		this.homeRentPaidMonthlyInString = homeRentPaidMonthlyInString;
-//	}
-//
-//	/**
-//	 * Gets the investmentIn80CInString
-//	 * 
-//	 * @return the investmentIn80CInString
-//	 */
-//	public String getInvestmentIn80CInString() {
-//		return investmentIn80CInString;
-//	}
-//
-//	/**
-//	 * Sets the investmentIn80CInString
-//	 * 
-//	 * @param investmentIn80CInString
-//	 *            the investmentIn80CInString to set
-//	 */
-//	public void setInvestmentIn80CInString(String investmentIn80CInString) {
-//		this.investmentIn80CInString = investmentIn80CInString;
-//	}
-//
-//	/**
-//	 * Gets the investmentIn80DInString
-//	 * 
-//	 * @return the investmentIn80DInString
-//	 */
-//	public String getInvestmentIn80DInString() {
-//		return investmentIn80DInString;
-//	}
-//
-//	/**
-//	 * Sets the investmentIn80DInString
-//	 * 
-//	 * @param investmentIn80DInString
-//	 *            the investmentIn80DInString to set
-//	 */
-//	public void setInvestmentIn80DInString(String investmentIn80DInString) {
-//		this.investmentIn80DInString = investmentIn80DInString;
-//	}
-//
-//	/**
-//	 * Gets the investmentIn80EInString
-//	 * 
-//	 * @return the investmentIn80EInString
-//	 */
-//	public String getInvestmentIn80EInString() {
-//		return investmentIn80EInString;
-//	}
-//
-//	/**
-//	 * Sets the investmentIn80EInString
-//	 * 
-//	 * @param investmentIn80EInString
-//	 *            the investmentIn80EInString to set
-//	 */
-//	public void setInvestmentIn80EInString(String investmentIn80EInString) {
-//		this.investmentIn80EInString = investmentIn80EInString;
-//	}
-//
-//	/**
-//	 * Gets the investmentInSection24InString
-//	 * 
-//	 * @return the investmentInSection24InString
-//	 */
-//	public String getInvestmentInSection24InString() {
-//		return investmentInSection24InString;
-//	}
-//
-//	/**
-//	 * Sets the investmentInSection24InString
-//	 * 
-//	 * @param investmentInSection24InString
-//	 *            the investmentInSection24InString to set
-//	 */
-//	public void setInvestmentInSection24InString(String investmentInSection24InString) {
-//		this.investmentInSection24InString = investmentInSection24InString;
-//	}
 
 	/**
 	 * Gets the ctc for abreviation

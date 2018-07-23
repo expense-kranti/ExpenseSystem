@@ -103,7 +103,8 @@ public class RedisVoucher extends BaseRedisDataAccessLayer implements IExperian 
 		}
 		voucher.setAssignedTo(userId);
 		voucher.setSessionId(sessionId);
-		super.insert(AKS_USED_VOUCHER_QUEUE_NAME, voucher);
+//		super.insert(AKS_USED_VOUCHER_QUEUE_NAME, voucher);
+		super.insert(AKS_VOUCHER_QUEUE_NAME, voucher);
 		return voucher;
 	}
 

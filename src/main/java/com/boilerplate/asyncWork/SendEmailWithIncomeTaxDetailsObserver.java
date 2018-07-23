@@ -161,6 +161,8 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 	 */
 	public void sendEmail(BoilerplateList<String> tosEmailList, BoilerplateList<String> ccsEmailList,
 			BoilerplateList<String> bccsEmailList, IncomeTaxEntity incomeTaxEntity) throws Exception {
+		logger.logInfo("SendEmailWithIncomeTaxDetailsObserver", "sendEmail", "First statement",
+				"getting emailer template file");
 		// Get subject of invitation email
 		String subject = contentService.getContent("INCOME_TAX_DETAILS_EMAIL_SUBJECT");
 		// Get the invitation email body
@@ -171,6 +173,8 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 			// against INCOME_TAX_DETAILS_EMAIL_CONTENT
 			FileEntity fileEntity = this.fileService
 					.getFile(configurationManager.get("INCOME_TAX_DETAILS_EMAIL_CONTENT"));
+			logger.logInfo("SendEmailWithIncomeTaxDetailsObserver", "sendEmail", "First statement",
+					"file emailer : " + fileEntity);
 			String fileNameInURL = null;
 			// Get file from local if not found then downloads
 			if (!new File(configurationManager.get("RootFileDownloadLocation"), fileEntity.getFileName()).exists()) {
@@ -180,6 +184,8 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 			} else {
 				fileNameInURL = fileEntity.getFileName();
 			}
+			logger.logInfo("SendEmailWithIncomeTaxDetailsObserver", "sendEmail", "First statement",
+					"file emailer file name in url : " + fileNameInURL);
 
 			// Open the file
 			incomeTaxDetailsTemplate = FileUtils
@@ -205,6 +211,7 @@ public class SendEmailWithIncomeTaxDetailsObserver implements IAsyncWorkObserver
 		// Send the email after all preparations
 		EmailUtility.send(tosEmailList, ccsEmailList, bccsEmailList, subject, body, null);
 
+		logger.logInfo("SendEmailWithIncomeTaxDetailsObserver", "sendEmail", "End statement", "");
 	}
 
 }

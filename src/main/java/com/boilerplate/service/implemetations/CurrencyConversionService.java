@@ -54,35 +54,33 @@ public class CurrencyConversionService implements ICurrencyConversionService {
 			CurrencyConversionEntity currencyConversionEntity) throws ValidationFailedException, IOException {
 		currencyConversionEntity.validate();
 
-		// Get currency amount to convert, its currency code and currency code
-		// of currency to convert to
-		int amount = currencyConversionEntity.getCurrencyToConvert();
-		String currencyTosCurrencyCode = currencyConversionEntity.getConvertTosCurrencyCode().toUpperCase();
-		String currencyFromsCurrencyCode = currencyConversionEntity.getConvertFromsCurrencyCode().toUpperCase();
 		// prepare GET request URL
 		String requestUrl = configurationManager.get("CurrencyConversionAPI_URL");
 		// replace {currencyFromCurrencyCode} with input value
-		requestUrl = requestUrl.replace("{currencyFromsCurrencyCode}", currencyFromsCurrencyCode);
+		requestUrl = requestUrl.replace("{currencyFromsCurrencyCode}",
+				currencyConversionEntity.getConvertFromsCurrencyCode().toUpperCase());
 		// replace {currencyToCurrencyCode} with input value
-		requestUrl = requestUrl.replace("{currencyTosCurrencyCode}", currencyTosCurrencyCode);
+		requestUrl = requestUrl.replace("{currencyTosCurrencyCode}",
+				currencyConversionEntity.getConvertTosCurrencyCode().toUpperCase());
+		// replace {amount} with input value
+		requestUrl = requestUrl.replace("{amount}", String.valueOf(currencyConversionEntity.getCurrencyToConvert()));
 		// make GET request to third party api to get latest exchange rate
 		HttpResponse httpResponse = HttpUtility.makeHttpRequest(requestUrl, null, null, null, "GET");
 
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			// parse json response by mapping the response
-			Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
-			if (responseBodyMap.get("rates") != null) {
-				Map<String, Double> rates = (Map<String, Double>) responseBodyMap.get("rates");
-
-				// check if there is data in response in rates
-				if (rates.containsKey(currencyTosCurrencyCode) && rates.containsKey(currencyFromsCurrencyCode)) {
-					// logic of converting currency
-					currencyConversionEntity.setConvertedCurrency(new Double(df.format(
-							(rates.get(currencyTosCurrencyCode) / rates.get(currencyFromsCurrencyCode)) * amount)));
+			if (httpResponse.getHttpStatus() == 200) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				// parse json response by mapping the response
+				Map<String, Object> responseBodyMap = objectMapper.readValue(httpResponse.getResponseBody(), Map.class);
+				if (Integer.valueOf((Integer) responseBodyMap.get("error")) == 0) {
+					if (responseBodyMap.get("amount") != null) {
+						// logic of converting currency
+						currencyConversionEntity
+								.setConvertedCurrency(new Double(df.format((responseBodyMap.get("amount")))));
+					}
 				} else {
-					// TODO do whatever needed to do if no exchange rates got
-					// from response
+					// TODO do whatever needed to do if no exchange rates
+					// got from response
 					currencyConversionEntity.setCurrencyToConvert(0);
 					currencyConversionEntity.setConvertedCurrency(0);
 				}

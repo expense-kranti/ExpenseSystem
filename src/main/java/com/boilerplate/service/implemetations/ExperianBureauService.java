@@ -573,7 +573,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// set user id for preparing tradeline id
 			reportInputEntity.setUserId(user.getUserId());
 			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity, subjectsForParseExperianReportObserver,
-					"ExperianBureauService", "observeReport");
+					"ExperianBureauService", "observeReport","_AKS_PARSE_EXPERIAN_REPORTS_QUEUE");
 		} catch (Exception ex) {
 			// compensate if queue is down
 			try {
@@ -681,7 +681,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 
 			logger.logInfo("ExperianBureauService", "Experian_Question",
 					"Response Status Code" + reportInputEntity.getUserId() + reportInputEntity.getStage1Id(),
-					Integer.toString(httpResponse.getHttpStatus()));
+					Integer.toString(httpResponse.getHttpStatus()) + "Response : " + httpResponse.getResponseBody());
 
 			if (httpResponse.getHttpStatus() != 200) {
 				pushIntoQueueToSendKYCUploadSMS(reportInputEntity);
@@ -1144,9 +1144,11 @@ public class ExperianBureauService implements IBureauIntegrationService {
 						requestBody);
 				httpResponse = HttpUtility.makeHttpRequest(configurationManager.get("Experian_Single_Request_URL"),
 						requestHeaders, null, requestBody, "POST");
+
 				logger.logInfo("ExperianBureauService", "Single Response",
 						"Response Status code" + reportInputEntiity.getUserId(),
-						Integer.toString(httpResponse.getHttpStatus()));
+						Integer.toString(httpResponse.getHttpStatus()) + " and Response body is : "
+								+ httpResponse.getResponseBody());
 
 				if (httpResponse.getResponseCookies() != null) {
 					for (HttpCookie cookie : httpResponse.getResponseCookies()) {
@@ -1538,14 +1540,14 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		NodeList creditProfileHeaderNodes = creditProfileHeader.getChildNodes();
 		String reportNumber = getNodeValue("ReportNumber", creditProfileHeaderNodes);
 		NodeList currentApplicantDetails = doc.getElementsByTagName("Current_Applicant_Details");
-		String userMobilePhoneNumberForReport = null;
+		String userMobilePhoneNumberFromReport = null;
 		for (int i = 0; i < currentApplicantDetails.getLength(); i++) {
 			NodeList current_app = currentApplicantDetails.item(i).getChildNodes();
-			userMobilePhoneNumberForReport = getNodeValue("MobilePhoneNumber", current_app);
-
+			userMobilePhoneNumberFromReport = getNodeValue("MobilePhoneNumber", current_app);
 		}
 		// Find the user
-		ExternalFacingReturnedUser user = userService.getUserByExperianRequestUniqueKey(userMobilePhoneNumberForReport);
+		ExternalFacingReturnedUser user = userService
+				.getUserByExperianRequestUniqueKey(userMobilePhoneNumberFromReport);
 		// In users MetaData find the Report Input Entity
 		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
 		if (reportInputEntityList.size() > 0) {

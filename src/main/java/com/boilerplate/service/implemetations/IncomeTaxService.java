@@ -307,8 +307,10 @@ public class IncomeTaxService implements IIncomeTaxService {
 					"about to calculate tax from slab");
 			// calculate estimated tax by calculating estimated tax from tax
 			// slab and then adding education cess on it
+//			incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
+//					* Double.parseDouble(configurationManager.get("Education_Cess"))));
 			incomeTaxEntity.setEstimatedTax((long) (getEstimatedTaxFromSlab(age, taxableIncome)
-					* Double.parseDouble(configurationManager.get("Education_Cess"))));
+					* Double.parseDouble("1.03")));
 		}
 		// atlast if uuidOrUserID is not set then set it with calculating uuid
 		if (incomeTaxEntity.getUuidOrUserId() == null || incomeTaxEntity.getUuidOrUserId().equals(""))
@@ -358,6 +360,7 @@ public class IncomeTaxService implements IIncomeTaxService {
 				return (0);
 			} else if (taxableIncome <= 500000) {
 				return ((long) ((taxableIncome - 250000) * 0.05));
+//				return ((long) ((taxableIncome - 250000) * 0.0175));
 			} else if (taxableIncome <= 1000000) {
 				return (12500 + (long) ((taxableIncome - 500000) * 0.2));
 			} else if (taxableIncome <= 5000000) {
