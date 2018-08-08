@@ -11,11 +11,11 @@ public enum ModuleEndsWithType {
 	/**
 	 * This means the module ends with a quiz
 	 */
-	EndsWithQuiz,
+	Quiz,
 
 	/**
 	 * This means the module ends with a scenario
 	 */
-	EndsWithScenario
+	Scenario
 
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IModule;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ModuleEntity;
 import com.boilerplate.service.interfaces.IModuleService;
@@ -47,7 +48,29 @@ public class ModuleService implements IModuleService {
 		// save module in MySQL database
 		module = mySQLModule.saveModule(module);
 
-		return null;
+		return module;
+	}
+
+	/**
+	 * @see IModuleService.updateModule
+	 */
+	@Override
+	public ModuleEntity updateModule(ModuleEntity module)
+			throws ValidationFailedException, BadRequestException, NotFoundException {
+		// Check if module is not null
+		if (module == null)
+			throw new BadRequestException("ModuleEntity", "Given module entity is null", null);
+		// Check if module id is null or not
+		if (module.getId() == null)
+			throw new BadRequestException("ModuleEntity", "Module Id is null", null);
+		// check if module exists in system
+		if (mySQLModule.getModule(module.getId()) == null)
+			throw new NotFoundException("ModuleEntity", "Module not found", null);
+		// Validate module entity
+		module.validate();
+		// save module in MySQL database
+		module = mySQLModule.saveModule(module);
+		return module;
 	}
 
 }
