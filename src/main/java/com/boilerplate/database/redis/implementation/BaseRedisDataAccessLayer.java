@@ -1213,6 +1213,42 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for user get otp method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for authenticate by otp method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticateByOTP(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticateByOTP(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for create new module
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createUser(com.boilerplate.java.entities.ModuleEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createUser(com.boilerplate.java.entities.ModuleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));

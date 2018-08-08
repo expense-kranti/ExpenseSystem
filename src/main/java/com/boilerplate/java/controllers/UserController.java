@@ -2,6 +2,7 @@ package com.boilerplate.java.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -304,7 +305,7 @@ public class UserController extends BaseController {
 		else
 			super.addCookie(Constants.AuthTokenCookieKey, session.getSessionId(), sessionManager.getSessionTimeout());
 
-		// add the user id for logging, we have to explictly do it here only in
+		// add the user id for logging, we have to explicitly do it here only in
 		// this
 		// case all other cases
 		// are handeled by HttpRequestInterseptor
@@ -315,9 +316,67 @@ public class UserController extends BaseController {
 		scriptService.increasePoint(session.getExternalFacingUser().getUserId());
 		return session;
 	}
-	
-	
 
-	
+	// These are the new APIs for Akshar revamp Aug-03-2018
+
+	/**
+	 * This API generates OTP for user, sends it to the user and returns the
+	 * user with OTP list to login
+	 * 
+	 * @param userMobileNumber
+	 *            This is the user mobile number to login
+	 * @return ExternalFacingReturnedUser
+	 * @throws Exception
+	 */
+	@ApiOperation(value = "Get bot data for the given bot id")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 404, message = "Not Found, No bot data found for given bot name"),
+			@ApiResponse(code = 401, message = "User is unauthorized") })
+	@RequestMapping(value = "/user/getOTP/{userMobileNumber}", method = RequestMethod.GET)
+	public @ResponseBody ExternalFacingReturnedUser getBotData(@PathVariable String userMobileNumber) throws Exception {
+		return this.userService.getOTPs(userMobileNumber);
+	}
+
+	/**
+	 * This API is used to authenticate a user using OTP set to his registered
+	 * mobile number
+	 * 
+	 * @param authenticationRequest
+	 *            This is the authentication request containing user id and OTP
+	 *            given by user
+	 * @return Session with logged in user
+	 * @throws UnauthorizedException
+	 *             throw this exception is user is not authorized
+	 */
+	@ApiOperation(value = "Authenticates a user by passing user id, otp for default provider", notes = "The user is unique in the system for a given provider."
+			+ "The user may passed as a user id or as DEFAULT:userId")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/authenticateByOTP", method = RequestMethod.POST)
+	public @ResponseBody Session authenticateByOTP(@RequestBody AuthenticationRequest authenticationRequest)
+			throws UnauthorizedException {
+
+		// Call authentication service to check if user name and password are
+		// valid
+		Session session = this.userService.authenticateByOTP(authenticationRequest);
+
+		// now put sessionId in a cookie, header and also as response back
+		super.addHeader(Constants.AuthTokenHeaderKey, session.getSessionId());
+
+		boolean isDSA = (authenticationRequest.getUserId()).contains("DSA:");
+		if (isDSA)
+			super.addCookie(Constants.DsaAuthTokenCookieKey, session.getSessionId(),
+					sessionManager.getSessionTimeout());
+		else
+			super.addCookie(Constants.AuthTokenCookieKey, session.getSessionId(), sessionManager.getSessionTimeout());
+
+		// add the user id for logging, we have to explictly do it here only in
+		// this
+		// case all other cases
+		// are handeled by HttpRequestInterseptor
+		super.addHeader(Constants.X_User_Id, session.getExternalFacingUser().getUserId());
+		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
+				RequestThreadLocal.getHttpResponse(), session);
+		return session;
+	}
 
 }

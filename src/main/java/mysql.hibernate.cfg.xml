@@ -73,6 +73,8 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLReport.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLBankData.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLModules.hbm.xml" />
 
 
 	</session-factory>

@@ -211,9 +211,25 @@ public interface IUserService {
 	 * 
 	 * @param experianRequestUniqueKey
 	 * @return
-	 * @throws BadRequestException 
-	 * @throws NotFoundException 
+	 * @throws BadRequestException
+	 * @throws NotFoundException
 	 */
-	public ExternalFacingReturnedUser getUserByExperianRequestUniqueKey(String userMobilePhoneNumberForReport) throws NotFoundException, BadRequestException;
+	public ExternalFacingReturnedUser getUserByExperianRequestUniqueKey(String userMobilePhoneNumberForReport)
+			throws NotFoundException, BadRequestException;
+
+	// These are the new APIs for Akshar revamp Aug-03-2018
+
+	/**
+	 * This method is used to get OTP s for a user to log in
+	 * 
+	 * @param userMobileNumber
+	 *            This is the mobile number/user id of the user
+	 * @return User
+	 * @throws Exception
+	 *             Throw exception if occurred
+	 */
+	public ExternalFacingReturnedUser getOTPs(String userMobileNumber) throws Exception;
+
+	public Session authenticateByOTP(AuthenticationRequest authenitcationRequest) throws UnauthorizedException;
 
 }

@@ -90,9 +90,7 @@ public class LogAndTraceExceptionAspect {
 	@Around("execution(public* com.boilerplate.java.controllers.*.*(..))")
 	public Object logTraceAndHandleException(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		MethodPermissions methodPermissions = null;
-
 		try {
-
 			Session session = RequestThreadLocal.getSession();
 			String methodExecuted = proceedingJoinPoint.getSignature().toLongString();
 			methodPermissions = this.methodPermissionService.getMethodPermissions().get(methodExecuted);
