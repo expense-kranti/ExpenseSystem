@@ -1,7 +1,5 @@
 package com.boilerplate.java.entities;
 
-import javax.ws.rs.BadRequestException;
-
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
