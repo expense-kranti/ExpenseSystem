@@ -148,9 +148,10 @@ public class SendEmailOnFeedbackSubmitObserver implements IAsyncWorkObserver {
 		BoilerplateList<String> ccsEmailList = new BoilerplateList<String>();
 		// list of bccemialIds for this email
 		BoilerplateList<String> bccsEmailList = new BoilerplateList<String>();
+		//BELOWE EMAIL AXIS BANK 1 And 2 are commented, as to stop sending email to them
 		// email id of receiver
-		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED"));
-		tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED"));
+		// tosEmailList.add(configurationManager.get("AXISBANK_EMAILID1_FOR_FEEDBACK_SUBMITTED"));
+		// tosEmailList.add(configurationManager.get("AXISBANK_EMAILID2_FOR_FEEDBACK_SUBMITTED"));
 		tosEmailList.add(configurationManager.get("FEEDBACK_EMAIL"));
 //		if(configurationManager.get("Enviornment").equals("PRODUCTION")){
 //			tosEmailList.add(configurationManager.get("AXISBANK_EMAILID3_FOR_FEEDBACK_SUBMITTED"));

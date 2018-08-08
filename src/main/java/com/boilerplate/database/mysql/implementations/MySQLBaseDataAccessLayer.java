@@ -34,14 +34,19 @@ public class MySQLBaseDataAccessLayer {
 	private Logger logger = Logger.getInstance(MySQLBaseDataAccessLayer.class);
 
 	/**
+	 * This is the session
+	 */
+	private Session session = null;
+
+	/**
 	 * This method creates an object in the database
 	 * 
 	 * @param t
 	 *            The object to be created
 	 * @return The object as it stands after creation
 	 * @throws Exception
-	 *             throws exception in case of any error while creating object in
-	 *             the database
+	 *             throws exception in case of any error while creating object
+	 *             in the database
 	 */
 	public <T> T create(T t) throws Exception {
 		Session session = null;
@@ -73,8 +78,8 @@ public class MySQLBaseDataAccessLayer {
 	 *            The list of object's to be created
 	 * @return The object as it stands after creation
 	 * @throws Exception
-	 *             throws exception in case of any error while creating a list of
-	 *             objects in the database
+	 *             throws exception in case of any error while creating a list
+	 *             of objects in the database
 	 */
 	public <T> List<T> create(List<T> ts) throws Exception {
 		Session session = null;
@@ -169,8 +174,8 @@ public class MySQLBaseDataAccessLayer {
 	 * 
 	 * @param sqlQuery
 	 *            The query to get the data from the database.
-	 * @sqlQuery example: "Select MyBankStatusClick as publishData from PublishData
-	 *           where PrimaryKey = :PRIMARYKEY"
+	 * @sqlQuery example: "Select MyBankStatusClick as publishData from
+	 *           PublishData where PrimaryKey = :PRIMARYKEY"
 	 * @param parameters
 	 *            The parameter map parameter: {"PRIMARYKEY":"5425"}
 	 * @return The list of object
@@ -181,6 +186,9 @@ public class MySQLBaseDataAccessLayer {
 	 */
 	public List<Map<String, Object>> executeSelectNative(String sqlQuery, Map<String, Object> parameters) {
 		Session session = null;
+		if (this.session != null) {
+			session = this.session;
+		}
 		try {
 
 			// open a session
@@ -218,18 +226,20 @@ public class MySQLBaseDataAccessLayer {
 	 * affected.
 	 * 
 	 * @param sqlQuery
-	 *            The sql query string to update or create the data in the database.
-	 * @sqlQuery example Update PublishData set MyBankStatusClick = '[[{"result":
-	 *           "Hello world"}, {"result": "Hello india"}], [{"result": "Hello
-	 *           world"}, {"result": "Hello india"}],[{"result": "Hello world"},
-	 *           {"result": "Hello US"}]]' where PrimaryKey = :PRIMARYKEY
+	 *            The sql query string to update or create the data in the
+	 *            database.
+	 * @sqlQuery example Update PublishData set MyBankStatusClick =
+	 *           '[[{"result": "Hello world"}, {"result": "Hello india"}],
+	 *           [{"result": "Hello world"}, {"result": "Hello
+	 *           india"}],[{"result": "Hello world"}, {"result": "Hello US"}]]'
+	 *           where PrimaryKey = :PRIMARYKEY
 	 * @param parameters
 	 *            The parameters map .
 	 * @parameters map {"PRIMARYKEY":"5425"}
 	 * @return number of rows affected
 	 * @throws Exception
-	 *             This exception is thrown if the mechanism to query the database
-	 *             is invalid in the context of the mysql database.
+	 *             This exception is thrown if the mechanism to query the
+	 *             database is invalid in the context of the mysql database.
 	 */
 	public int executeScalorNative(String sqlQuery, Map<String, Object> parameters) throws Exception {
 		Session session = null;
@@ -338,14 +348,14 @@ public class MySQLBaseDataAccessLayer {
 	}
 
 	/**
-	 * This method execute the select native query and return the list of object.
-	 * This method doesn't open the session if we want to execute the query in loop
-	 * then this method will use.
+	 * This method execute the select native query and return the list of
+	 * object. This method doesn't open the session if we want to execute the
+	 * query in loop then this method will use.
 	 * 
 	 * @param sqlQuery
 	 *            The query to get the data from the database.
-	 * @sqlQuery example: "Select MyBankStatusClick as publishData from PublishData
-	 *           where PrimaryKey = :PRIMARYKEY"
+	 * @sqlQuery example: "Select MyBankStatusClick as publishData from
+	 *           PublishData where PrimaryKey = :PRIMARYKEY"
 	 * @param parameters
 	 *            The parameter map parameter: {"PRIMARYKEY":"5425"}
 	 * @param session
@@ -389,11 +399,13 @@ public class MySQLBaseDataAccessLayer {
 	 * query in loop then this method will use.
 	 * 
 	 * @param sqlQuery
-	 *            The sql query string to update or create the data in the database.
-	 * @sqlQuery example Update PublishData set MyBankStatusClick = '[[{"result":
-	 *           "Hello world"}, {"result": "Hello india"}], [{"result": "Hello
-	 *           world"}, {"result": "Hello india"}],[{"result": "Hello world"},
-	 *           {"result": "Hello US"}]]' where PrimaryKey = :PRIMARYKEY
+	 *            The sql query string to update or create the data in the
+	 *            database.
+	 * @sqlQuery example Update PublishData set MyBankStatusClick =
+	 *           '[[{"result": "Hello world"}, {"result": "Hello india"}],
+	 *           [{"result": "Hello world"}, {"result": "Hello
+	 *           india"}],[{"result": "Hello world"}, {"result": "Hello US"}]]'
+	 *           where PrimaryKey = :PRIMARYKEY
 	 * @param parameters
 	 *            The parameters map .
 	 * @param session
@@ -401,8 +413,8 @@ public class MySQLBaseDataAccessLayer {
 	 * @parameters map {"PRIMARYKEY":"5425"}
 	 * @return number of rows affected
 	 * @throws Exception
-	 *             This exception is thrown if the mechanism to query the database
-	 *             is invalid in the context of the mysql database.
+	 *             This exception is thrown if the mechanism to query the
+	 *             database is invalid in the context of the mysql database.
 	 */
 	public int executeScalorNative(String sqlQuery, Map<String, Object> parameters, Session session) throws Exception {
 		// begin a transaction
@@ -465,14 +477,23 @@ public class MySQLBaseDataAccessLayer {
 	}// end method
 
 	/**
-	 * This method reinitialize the session factory when the jdbc exception occurs
-	 * so that invoking between the java and mysql not affect.
+	 * This method reinitialize the session factory when the jdbc exception
+	 * occurs so that invoking between the java and mysql not affect.
 	 */
 	private void reinitializeSessionFactory() {
 		logger.logInfo("MySQLBaseDataAccessLayer", "reinitializeSessionFactory", "jdbc connection occurs", "");
 		// rebuild main session factory
 		HibernateUtility.reBuildSessionFactory();
 
+	}
+
+	/**
+	 * This method is used to get create the session
+	 * 
+	 * @return the created session
+	 */
+	public Session openSession() {
+		return HibernateUtility.getSessionFactory().openSession();
 	}
 
 }

@@ -26,7 +26,7 @@ public class FeedbackService implements IFeedbackService {
 	/**
 	 * This is an instance of the logger
 	 */
-	Logger logger = Logger.getInstance(ReferralService.class);
+	Logger logger = Logger.getInstance(FeedbackService.class);
 
 	/**
 	 * This is the instance of the configuration manager.
@@ -146,7 +146,6 @@ public class FeedbackService implements IFeedbackService {
 			// Trigger back ground job to send selected feature through email
 			queueReaderJob.requestBackroundWorkItem(feedbackEntity, subjectsForFeedbackSubmit, "FeedBackEntity",
 					"sendEmailOnFeedbackByBackGroundJob");
-			throw new Exception();
 		} catch (Exception ex) {
 			// send email on failing of queue
 			sendEmailOnFeedbackSubmitObserver.processUserFeedback(feedbackEntity);

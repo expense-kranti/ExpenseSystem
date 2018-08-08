@@ -597,13 +597,14 @@ public class UserService implements IUserService {
 		// we store everything in upper case hence chanhing it to upper
 		try {
 			user = userDataAccess.getUser(authenitcationRequest.getUserId().toUpperCase(), roleService.getRoleIdMap());
-			// set user state, if older user means they do not have user state
-			// set or new user who have user state Registered
+			// update user state, if older user means they do not have user
+			// state set or new user who have user state Registered
 			if (user.getUserState() == MethodState.Registered || user.getUserState() == null) {
 				user.setUserState(MethodState.Validated);
 			}
 			// set last logged in time
 			user.setLastLoginTime(new Date());
+			// save user with last login time
 			userDataAccess.update(user);
 			String hashedPassword = String.valueOf(Encryption.getHashCode(authenitcationRequest.getPassword()));
 			if (!user.getPassword().equals(hashedPassword)) {
@@ -618,7 +619,10 @@ public class UserService implements IUserService {
 				}
 			}
 			user.setPassword("Password Encrypted");
-			user = getReportInputEntity(user);
+			// COMMENTED AS EXPERIAN INTEGRATION NOT BEING MADE LIVE TO
+			// PRODUCTION
+			// // get reportInput entity to show to UI
+			// user = getReportInputEntity(user);
 
 			// get the roles, ACL and there details of this user
 			// if the user is valid create a new session, in the session add
@@ -651,24 +655,24 @@ public class UserService implements IUserService {
 		}
 
 	}
-
-	/**
-	 * @param user
-	 */
-	public ExternalFacingReturnedUser getReportInputEntity(ExternalFacingReturnedUser user) {
-		// check state of user if user state is experian attempt or
-		// authquestion then give its report input entity
-
-		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
-		ReportInputEntity reportInputEntity = null;
-		// check if report input entity is present for user
-		if (reportInputEntityList.size() > 0) {
-			reportInputEntity = reportInputEntityList.get(0);
-			user.setReportInputEntity(reportInputEntity);
-		}
-
-		return user;
-	}
+	//COMMENTED AS EXPERIAN INTEGRATION NOT BEING MADE LIVE TO PRODUCTION
+//	/**
+//	 * @param user
+//	 */
+//	public ExternalFacingReturnedUser getReportInputEntity(ExternalFacingReturnedUser user) {
+//		// check state of user if user state is experian attempt or
+//		// authquestion then give its report input entity
+//
+//		List<ReportInputEntity> reportInputEntityList = mysqlReport.getReportInputEntity(user.getUserId());
+//		ReportInputEntity reportInputEntity = null;
+//		// check if report input entity is present for user
+//		if (reportInputEntityList.size() > 0) {
+//			reportInputEntity = reportInputEntityList.get(0);
+//			user.setReportInputEntity(reportInputEntity);
+//		}
+//
+//		return user;
+//	}
 
 	/**
 	 * This method is used to create the UUID
@@ -696,8 +700,9 @@ public class UserService implements IUserService {
 	public ExternalFacingReturnedUser get(String userId) throws NotFoundException, BadRequestException {
 		// retrun the user with password as a string
 		ExternalFacingReturnedUser externalFacingUser = get(userId, true);
-		// no need to check user null as already check in above method
-		externalFacingUser = getReportInputEntity(externalFacingUser);
+		// COMMENTED AS EXPERIAN INTEGRATION NOT BEING MADE LIVE TO PRODUCTION
+		// // no need to check user null as already check in above method
+		// externalFacingUser = this.getReportInputEntity(externalFacingUser);
 		return externalFacingUser;
 	}
 

@@ -27,6 +27,11 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	Logger logger = Logger.getInstance(MySQLAksharArticles.class);
 
 	/**
+	 * This is the session variable
+	 */
+	Session session = null;
+
+	/**
 	 * This is the wordpress hibernate configuration
 	 */
 	private String wordPressDatabaseConnection = "WordPressDatabaseConnection";
@@ -52,6 +57,8 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 	 */
 	@Override
 	public List<Map<String, Object>> getTopNewArticles() throws BadRequestException {
+		// set session
+		session = this.openSession();
 		// query for getting articles in descending order with top 5
 		String sqlQuery = configurationManager.get("GET_NEW_ADDED_ARTICLES");
 		// set parametes map
@@ -60,7 +67,7 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		List<Map<String, Object>> returndata = null;
 		try {
 			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters);
+			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getTopNewArticles", "ExceptionGetTopNewArticles",
@@ -80,8 +87,8 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		BoilerplateMap<String, Object> queryParameters = new BoilerplateMap<>();
 		// create session
 		List<Map<String, Object>> returndata = null;
-		try {	
-			returndata = super.executeSelectNative(sqlQuery, queryParameters);
+		try {
+			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
 
 		} catch (Exception ex) {
 			// log exception
@@ -105,11 +112,17 @@ public class MySQLAksharArticles extends MySQLBaseDataAccessLayer implements IAk
 		try {
 			// reusing the created session in above method
 			// execute query
-			returndata = super.executeSelectNative(sqlQuery, queryParameters);
+			returndata = super.executeSelectNative(sqlQuery, queryParameters, session);
 		} catch (Exception ex) {
 			// log exception
 			logger.logException("MySQLAksharArticles", "getTopSearchedArticles", "ExceptionGetTopSearchedArticles",
 					"Exception is : " + ex.toString(), ex);
+		} finally {
+			// close session created in topNewArticle method, we are closing the
+			// session here because this method is called in the last
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
 		}
 		return returndata;
 	}

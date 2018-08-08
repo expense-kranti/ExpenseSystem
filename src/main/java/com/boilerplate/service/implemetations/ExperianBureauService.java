@@ -573,7 +573,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 			// set user id for preparing tradeline id
 			reportInputEntity.setUserId(user.getUserId());
 			this.queueReaderJob.requestBackroundWorkItem(reportInputEntity, subjectsForParseExperianReportObserver,
-					"ExperianBureauService", "observeReport","_AKS_PARSE_EXPERIAN_REPORTS_QUEUE");
+					"ExperianBureauService", "observeReport", "_AKS_PARSE_EXPERIAN_REPORTS_QUEUE");
 		} catch (Exception ex) {
 			// compensate if queue is down
 			try {
@@ -613,6 +613,7 @@ public class ExperianBureauService implements IBureauIntegrationService {
 	 */
 	@Override
 	public ReportInputEntity fetchNextItem(String questionId, String answerPart1, String answerPart2) throws Exception {
+		// user not found exception being thrown in user service layer itself
 		ExternalFacingReturnedUser user = userService
 				.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 		// get report input entity
@@ -620,7 +621,13 @@ public class ExperianBureauService implements IBureauIntegrationService {
 		ReportInputEntity reportInputEntity = null;
 		if (reportInputEntityList.size() > 0) {
 			reportInputEntity = reportInputEntityList.get(0);
-
+			// throw exception if reportinputentity not found for logged in user
+			if (reportInputEntity == null) {
+				// updates the experianStatus:(15-11-2016)
+				experianStatusUpdate(reportInputEntity, "--- Method Name: " + " fetchNextItem "
+						+ "--- Generic Error Message: " + " No Experian Session found ", false);
+				throw new NotFoundException("ReportInputEntity", "No Experian Session found", null);
+			}
 			reportInputEntity.setStateEnum(State.Question);
 			ExperianQuestionAnswer experianQuestionAnswer = null;
 			// you can only call with empty question id for the first time.
@@ -1014,6 +1021,8 @@ public class ExperianBureauService implements IBureauIntegrationService {
 
 			// Save this information into the current users metadata for future
 			// reference
+			// user not found exception is thrown in user service itself so no
+			// need to throw here
 			ExternalFacingReturnedUser user = userService
 					.get(RequestThreadLocal.getSession().getExternalFacingUser().getUserId(), false);
 
