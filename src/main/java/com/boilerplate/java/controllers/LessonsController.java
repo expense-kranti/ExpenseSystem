@@ -41,17 +41,39 @@ public class LessonsController extends BaseController {
 	 * @throws ValidationFailedException
 	 *             Throw this exception if entity fails any validation
 	 */
-	@ApiOperation(value = "Creates a new module entity in the system", notes = "A model contains sub modules, The creation date and updated "
-			+ "date are automatically filled.")
+	@ApiOperation(value = "Creates a new module entity in the system", notes = "A module"
+			+ " contains sub modules, The creation date and updated " + "date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, some attributes are missing") })
 	@RequestMapping(value = "/lesson", method = RequestMethod.POST)
-	public @ResponseBody ModuleEntity createUser(@RequestBody ModuleEntity module)
+	public @ResponseBody ModuleEntity createModule(@RequestBody ModuleEntity module)
 			throws BadRequestException, ValidationFailedException {
 		// call the business layer
 		return moduleService.createModule(module);
 	}
-	
 
+	/**
+	 * This API is used o update a module
+	 * 
+	 * @param module
+	 *            This is the module to be updated
+	 * @return Saved module entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation
+	 * @throws NotFoundException
+	 *             Throw this exception if module is not found or does not exist
+	 */
+	@ApiOperation(value = "Updates an existing module entity in the system", notes = "A module contains sub modules, The creation date and updated "
+			+ "date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, some attributes are missing") })
+	@RequestMapping(value = "/lesson", method = RequestMethod.PUT)
+	public @ResponseBody ModuleEntity updateModule(@RequestBody ModuleEntity module)
+			throws BadRequestException, ValidationFailedException, NotFoundException {
+		// call the business layer
+		return moduleService.updateModule(module);
+	}
 
 }

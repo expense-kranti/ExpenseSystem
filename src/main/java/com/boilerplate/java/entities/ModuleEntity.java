@@ -36,7 +36,7 @@ public class ModuleEntity extends BaseEntity {
 	/**
 	 * This is the id of the quiz/scenario that will follow after this module
 	 */
-	private String moduleEndsWithId;
+	private String endingItemId;
 
 	/**
 	 * This indicates whether module is deleted or not
@@ -54,8 +54,6 @@ public class ModuleEntity extends BaseEntity {
 
 	/**
 	 * This method is used to set the module name
-	 * 
-	 * @param name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -72,8 +70,6 @@ public class ModuleEntity extends BaseEntity {
 
 	/**
 	 * This method is used to set the category
-	 * 
-	 * @param category
 	 */
 	public void setCategory(CategoryTagType category) {
 		this.category = category;
@@ -90,8 +86,6 @@ public class ModuleEntity extends BaseEntity {
 
 	/**
 	 * This method is used to set the summary
-	 * 
-	 * @param summary
 	 */
 	public void setSummary(String summary) {
 		this.summary = summary;
@@ -108,29 +102,9 @@ public class ModuleEntity extends BaseEntity {
 
 	/**
 	 * This method is used to set ends with
-	 * 
-	 * @param endsWith
 	 */
 	public void setEndsWith(ModuleEndsWithType endsWith) {
 		this.endsWith = endsWith;
-	}
-
-	/**
-	 * this method is used to get id of the quiz/scenario following after module
-	 * 
-	 * @return
-	 */
-	public String getModuleEndsWithId() {
-		return moduleEndsWithId;
-	}
-
-	/**
-	 * this method is used to set id of the quiz/scenario following after module
-	 * 
-	 * @param moduleEndsWithId
-	 */
-	public void setModuleEndsWithId(String moduleEndsWithId) {
-		this.moduleEndsWithId = moduleEndsWithId;
 	}
 
 	/**
@@ -144,18 +118,37 @@ public class ModuleEntity extends BaseEntity {
 
 	/**
 	 * This method is used to set isActive
-	 * 
-	 * @return
 	 */
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
+	/**
+	 * this method is used to get the quiz/scenario id
+	 * 
+	 * @return
+	 */
+	public String getEndingItemId() {
+		return endingItemId;
+	}
+
+	/**
+	 * this method is used to set the quiz/scenario id
+	 */
+	public void setEndingItemId(String endingItemId) {
+		this.endingItemId = endingItemId;
+	}
+
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// Check if name and category are not null
-		if (this.name == null || this.name.isEmpty())
+		if (BaseEntity.isNullOrEmpty(this.getName()))
 			throw new ValidationFailedException("ModuleEntity", "Module name is null or empty", null);
+		// check if module has value for ends with then ends with id should not
+		// be null
+		if (this.endsWith != null && this.endingItemId == null)
+			throw new ValidationFailedException("ModuleEntity",
+					"Module should be followed by a scenario/question if ends with is checked", null);
 		return false;
 	}
 

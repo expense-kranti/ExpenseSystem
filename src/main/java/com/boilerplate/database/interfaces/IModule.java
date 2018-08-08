@@ -1,5 +1,6 @@
 package com.boilerplate.database.interfaces;
 
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.java.entities.ModuleEntity;
 
 /**
@@ -18,5 +19,7 @@ public interface IModule {
 	 * @return this is the saved module entity
 	 */
 	public ModuleEntity saveModule(ModuleEntity module);
+
+	public ModuleEntity getModule(String id) throws BadRequestException;
 
 }

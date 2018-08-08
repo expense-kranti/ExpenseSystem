@@ -1240,9 +1240,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for create new module
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createUser(com.boilerplate.java.entities.ModuleEntity)");
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createModule(com.boilerplate.java.entities.ModuleEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createUser(com.boilerplate.java.entities.ModuleEntity)");
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createModule(com.boilerplate.java.entities.ModuleEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishRequired(false);
@@ -1863,6 +1863,8 @@ public class BaseRedisDataAccessLayer {
 				"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
 		vAllEAll.put("Experian_Question_Accept", "*/*");
 		vAllEAll.put("Experian_Question_Content_Type", "application/json");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_MODULE_BY_ID", "FROM ModuleEntity module where module.id = :ModuleId");
+
 		return vAllEAll;
 
 	}
