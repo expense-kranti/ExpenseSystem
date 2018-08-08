@@ -1141,5 +1141,16 @@
 		<property name="userService" ref="userService"></property>
 	</bean>
 
+	<!-- beans and dependencies for lesson APIs -->
+
+	<bean id="moduleService" class="com.boilerplate.service.implemetations.ModuleService">
+		<property name="mySQLModule" ref="mySQLModule"></property>
+	</bean>
+
+	<bean id="mySQLModule"
+		class="com.boilerplate.database.mysql.implementations.MySQLModule">
+
+	</bean>
+
 </beans>
  

@@ -104,4 +104,17 @@ public interface IUser {
 	 */
 	public String getUserIdByExperianRequestUniqueKey(String experianRequestUniqueKey);
 
+	/**
+	 * This method is used to save user's OTP sent to his mobile number for 1
+	 * minute
+	 * 
+	 * @param user
+	 *            This is the user for which OTP has to be saved
+	 * @param otp
+	 *            This is the OTP generated and sent to the user
+	 */
+	public void saveUserOTP(ExternalFacingReturnedUser user, String otp);
+
+	public String getUserOTP(String mobileNumber);
+
 }

@@ -1,0 +1,57 @@
+package com.boilerplate.java.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.ConflictException;
+import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.service.interfaces.IModuleService;
+import com.boilerplate.service.interfaces.IScriptsService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+@Api(description = "This api has controllers for Lessons CRUD operations", value = "Lesson APIs", basePath = "/lesson")
+@Controller
+public class LessonsController extends BaseController {
+
+	/**
+	 * This is the instance of moduleService
+	 */
+	@Autowired
+	IModuleService moduleService;
+
+	/**
+	 * This API is used to create a new module
+	 * 
+	 * @param module
+	 *            This is the new module entity to be saved
+	 * @return The saved module entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation
+	 */
+	@ApiOperation(value = "Creates a new module entity in the system", notes = "A model contains sub modules, The creation date and updated "
+			+ "date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, some attributes are missing") })
+	@RequestMapping(value = "/lesson", method = RequestMethod.POST)
+	public @ResponseBody ModuleEntity createUser(@RequestBody ModuleEntity module)
+			throws BadRequestException, ValidationFailedException {
+		// call the business layer
+		return moduleService.createModule(module);
+	}
+	
+
+
+}

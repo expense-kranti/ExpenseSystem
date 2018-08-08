@@ -14,6 +14,7 @@ import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.IdEntity;
 import com.boilerplate.java.entities.Role;
+import com.boilerplate.service.interfaces.IUserService;
 
 import redis.clients.jedis.Jedis;
 
@@ -60,6 +61,11 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 	 * holds the key for experian request unique key users
 	 */
 	private static final String ExperianRequestUniqueKey = "EXPERIAN_REQUEST_UNIQUE_KEY:";
+
+	/**
+	 * holds the key for saving otp
+	 */
+	private static final String OTPKey = "AKS_OTP:";
 
 	/**
 	 * @see create
@@ -219,5 +225,21 @@ public class RedisUsers extends BaseRedisDataAccessLayer implements IUser {
 		} else {
 			return idEntity.getId();
 		}
+	}
+
+	/**
+	 * @see IUser.saveUserOTP
+	 */
+	@Override
+	public void saveUserOTP(ExternalFacingReturnedUser user, String otp) {
+		super.set(OTPKey + user.getUserId(), otp, 60);
+	}
+
+	/**
+	 * @see IUser.getUserOTP
+	 */
+	@Override
+	public String getUserOTP(String mobileNumber) {
+		return super.get(OTPKey + mobileNumber);
 	}
 }

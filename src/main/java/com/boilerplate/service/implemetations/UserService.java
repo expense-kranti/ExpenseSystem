@@ -1236,4 +1236,116 @@ public class UserService implements IUserService {
 		return this.get(userId, false);
 	}
 
+	// These are the new methods for Akshar revamp Aug-03-2018
+
+	/**
+	 * @see IUserService.getOTPs
+	 */
+	@Override
+	public ExternalFacingReturnedUser getOTPs(String userMobileNumber) throws NotFoundException {
+		ExternalFacingReturnedUser user = null;
+		// Call the database and check if the user is
+		// we store everything in upper case hence changing it to upper
+		// Check whether user exists
+		if (!this.userExists("AKS:" + userMobileNumber))
+			throw new NotFoundException("ExternalFacingReturnedUser", "User does not exist", null);
+		// fetch the user
+		user = userDataAccess.getUser("AKS:" + userMobileNumber, roleService.getRoleIdMap());
+		// Check if user is not null
+		if (user == null)
+			throw new NotFoundException("ExternalFacingReturnedUser", "User not found", null);
+		// Generate and send OTP for user
+		String otpPassword = String.valueOf(Math.abs(UUID.randomUUID().getMostSignificantBits())).substring(0, 6);
+		// Send OTP to user
+		try {
+			sendRegistrationSMSObserver.sendSMS(user.getFirstName(), otpPassword, user.getPhoneNumber());
+		} catch (Exception exSms) {
+			// if an exception takes place here we cant do much hence just
+			// log it and move
+			// forward
+			logger.logException("UserService", "getOTPs", "Send SMS for OTP", exSms.toString(), exSms);
+		}
+		// Save otp in redis for 1 minute
+		userDataAccess.saveUserOTP(user, otpPassword);
+		// generate random otp list
+		BoilerplateList<Integer> randomOtpList = new BoilerplateList<Integer>();
+		try {
+			randomOtpList = generateOtp(otpPassword);
+		} catch (Exception e) {
+			logger.logException("UserService", "getOTPs", "catch block of random otp list", e.toString(), e);
+		}
+		// set otp list in external facing user
+		user.setOtpList(randomOtpList);
+
+		return user;
+	}
+
+	/**
+	 * @see IUserService.authenticateByOTP
+	 */
+	@Override
+	public Session authenticateByOTP(AuthenticationRequest authenitcationRequest) throws UnauthorizedException {
+		authenitcationRequest.setUserId(this.normalizeUserId(authenitcationRequest.getUserId()));
+		ExternalFacingReturnedUser user = null;
+		// Call the database and check if the user is
+		// we store everything in upper case hence changing it to upper
+		try {
+			user = userDataAccess.getUser(authenitcationRequest.getUserId().toUpperCase(), roleService.getRoleIdMap());
+			// set user state, if older user means they do not have user state
+			// set or new user who have user state Registered
+			if (user.getUserState() == MethodState.Registered || user.getUserState() == null) {
+				user.setUserState(MethodState.Validated);
+			}
+			// set last logged in time
+			user.setLastLoginTime(new Date());
+			userDataAccess.update(user);
+			// get otp from redis for incomig user
+			String savedOTP = userDataAccess.getUserOTP(user.getUserId());
+			// Check if OTP given y user matches with the OTP fetched from Redis
+			if (!authenitcationRequest.getPassword().equals(savedOTP)) {
+				throw new UnauthorizedException("USER", "User name or password incorrect", null);
+			}
+			// check for dsa approval
+			if (user.getUserId()
+					.startsWith(this.configurationManager.get("DSAAuthenticationProvider").toUpperCase() + ":")) {
+				if (user.getApproved() != null && !(user.getApproved().equals("1"))) {
+					throw new UnauthorizedException("USER",
+							"Your account is waiting for CMD approval. Please contact us at 9599814087.", null);
+				}
+			}
+			user = getReportInputEntity(user);
+
+			// get the roles, ACL and there details of this user
+			// if the user is valid create a new session, in the session add
+			// details
+			Session session = sessionManager.createNewSession(user);
+			// push the refer unique id task in queue
+			/**
+			 * if (user.getUserReferId() == null) { try {
+			 * 
+			 * String userUUID = this
+			 * .createUUID(Integer.valueOf(configurationManager.get("REFERRAL_LINK_UUID_LENGTH")));
+			 * user.setUserReferId(userUUID);
+			 * queueReaderJob.requestBackroundWorkItem(user,
+			 * subjectForReferUUID, "UserService", "Authenticate"); } catch
+			 * (Exception efe) { // log in case of queue failure
+			 * logger.logException("UserService", "authenticate", "Queue Refer
+			 * id failure", "UserId" + user.getUserId(), null);
+			 * 
+			 * }
+			 * 
+			 * }
+			 **/
+
+			return session;
+		} catch (NotFoundException nfe) {
+			logger.logException("UserService", "authenticate",
+					"External Facing User: " + authenitcationRequest.getUserId().toUpperCase()
+							+ " With entered Password: " + authenitcationRequest.getPassword() + " not found",
+					"Converting this exception to Unauthorized for security", nfe);
+			throw new UnauthorizedException("USER", "User name or password incorrect", null);
+		}
+
+	}
+
 }

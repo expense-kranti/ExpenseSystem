@@ -113,4 +113,16 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 		return null;
 	}
 
+	@Override
+	public void saveUserOTP(ExternalFacingReturnedUser user, String otp) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getUserOTP(String mobileNumber) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

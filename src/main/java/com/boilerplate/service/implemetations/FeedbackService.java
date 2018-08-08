@@ -146,7 +146,6 @@ public class FeedbackService implements IFeedbackService {
 			// Trigger back ground job to send selected feature through email
 			queueReaderJob.requestBackroundWorkItem(feedbackEntity, subjectsForFeedbackSubmit, "FeedBackEntity",
 					"sendEmailOnFeedbackByBackGroundJob");
-			throw new Exception();
 		} catch (Exception ex) {
 			// send email on failing of queue
 			sendEmailOnFeedbackSubmitObserver.processUserFeedback(feedbackEntity);

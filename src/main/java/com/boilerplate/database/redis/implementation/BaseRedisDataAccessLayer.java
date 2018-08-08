@@ -1185,7 +1185,7 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		//method permission for sendExperianEmail
+		// method permission for sendExperianEmail
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ExperianController.sendExperianEmail(com.boilerplate.java.entities.GenericListEncapsulationEntity)");
@@ -1198,8 +1198,8 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
-		//method permission for processOfflineReport
+
+		// method permission for processOfflineReport
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public void com.boilerplate.java.controllers.ExperianController.processOfflineReport(java.lang.String)");
@@ -1212,7 +1212,42 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishRequired(false);
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		
+
+		// method permission for user get otp method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for authenticate by otp method
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticateByOTP(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticateByOTP(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for create new module
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createUser(com.boilerplate.java.entities.ModuleEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createUser(com.boilerplate.java.entities.ModuleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// save the method permission map in configuration
 		// in database
@@ -1432,7 +1467,8 @@ public class BaseRedisDataAccessLayer {
 		vAllETest.put("Is_Publish_File", "true"); // false for not publish
 		// Configuration defined for Experian Email
 		vAllETest.put("ExperianToFirstEmailId", "urvij.singh@krantitechservices.in");
-//		vAllETest.put("ExperianToSecondEmailId", "love.singhal@krantitechservices.in");
+		// vAllETest.put("ExperianToSecondEmailId",
+		// "love.singhal@krantitechservices.in");
 		vAllETest.put("ExperianToSecondEmailId", "urvij.pratap21@gmail.com");
 		vAllETest.put("ExperianBCCEmailId", "urvij.singh@krantitechservices.in");
 		return vAllETest;
@@ -1495,12 +1531,12 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Experian_Single_Url_Request_Template",
 				"clientName=CLEAR_MY_DUES&allowInput=1&allowEdit=1&allowCaptcha=1&allowConsent=1&allowConsent_additional=1&allowEmailVerify=1&allowVoucher=1&voucherCode={voucherCode}&noValidationByPass=0&emailConditionalByPass=1&firstName={firstName}&surName={surName}&dateOfBirth={dob}&gender={gender}&mobileNo={mobileNo}&email={email}&flatno={flatno}&roadAreaSociety={road}&city={city}&state={state}&pincode={pincode}&pan={panNo}&reason=FInd+out+my+credit+score&middleName={middleName}&telephoneNo={telePhoneNo}&telephoneType={telePhoneType}&passportNo={passportNo}&voterIdNo={voterIdNo}&universalIdNo={universalIdNo}&driverLicenseNo={driverLicenseNo}");
 		// same as production
-//		vAllEDev.put("Experian_Single_Request_URL",
-//				"https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
-		//test url
+		// vAllEDev.put("Experian_Single_Request_URL",
+		// "https://consumer.experian.in:8443/ECV-P2/content/singleAction.action");
+		// test url
 		vAllEDev.put("Experian_Single_Request_URL",
 				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/singleAction.action");
-		
+
 		vAllEDev.put("Experian_INITIATE_URL_JAVA",
 				"http://javadev-370467541.ap-southeast-1.elb.amazonaws.com/java/experian/initiateExperian");
 
@@ -1513,13 +1549,13 @@ public class BaseRedisDataAccessLayer {
 		vAllEDev.put("Experian_Question_First_Time_Body", "stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
 		vAllEDev.put("Experian_Question_Body",
 				"answer={answer}&questionId={questionId}&stgOneHitId={stgOneHitId}&stgTwoHitId={stgTwoHitId}");
-		
-		//test url
+
+		// test url
 		vAllEDev.put("Experian_Question_URL",
 				"https://cbv2cpu.uat.experian.in:16443/ECV-P2/content/generateQuestionForConsumer.action?");
-		//prod url
-//		vAllEDev.put("Experian_Question_URL",
-//				"https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
+		// prod url
+		// vAllEDev.put("Experian_Question_URL",
+		// "https://consumer.experian.in:8443/ECV-P2/content/generateQuestionForConsumer.action?");
 		// added for publishUserAKSOrReferReport
 		vAllEDev.put("Is_Script_Publish_User_AKSOrReferReport_To_CRM", "false"); // false
 		vAllEDev.put("REGISTERATION_FEEDBACK_EMAIL_CONTENT",
@@ -1676,7 +1712,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEProduction.put("ExperianToFirstEmailId", "ExperianConsumerSupportIndia@in.experian.com");
 		vAllEProduction.put("ExperianToSecondEmailId", "Hemal.Shingada@experian.com");
 		vAllEProduction.put("ExperianBCCEmailId", "info@clearmydues.com");
-		
+
 		return vAllEProduction;
 	}
 
@@ -1778,8 +1814,8 @@ public class BaseRedisDataAccessLayer {
 
 		vAllEAll.put("Top_Scorer_Size", "10");
 		// to be used for currency converter widget
-//		vAllEAll.put("CurrencyConversionAPI_URL",
-//				"http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
+		// vAllEAll.put("CurrencyConversionAPI_URL",
+		// "http://api.fixer.io/latest?symbols={currencyFromsCurrencyCode},{currencyTosCurrencyCode}");
 		vAllEAll.put("CurrencyConversionAPI_URL",
 				"https://www.amdoren.com/api/currency.php?api_key=5LkSpg3gUPX9wHtHLasudX3jCAqGPf&from={currencyFromsCurrencyCode}&to={currencyTosCurrencyCode}&amount={amount}");
 
@@ -1817,7 +1853,6 @@ public class BaseRedisDataAccessLayer {
 		// query for signed up users per month
 		vAllEAll.put("GET_TOPMOST_PLAYED_QUIZZES",
 				"Select t2.Name quizName, Date(t1.CreationDate) as datePlayed from Aks_UserAssessment t1 join Aks_Assessment t2 on t1.AssessmentId = t2.Id where t2.IsSurvey = 0 ORDER BY t1.CreationDate DESC limit 2");
-
 
 		vAllEAll.put("GET_NAME_FOR_MOBILE_NUMBER_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\"}");
 		vAllEAll.put("GET_USER_DETAILS_REQUEST_BODY", " {\"mobileNumber\":\"@mobileNumber\",\"name\":\"@fullName\"}");
