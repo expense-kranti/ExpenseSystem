@@ -7,6 +7,7 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.java.entities.SubModuleEntity;
 import com.boilerplate.service.interfaces.IModuleService;
 
 /**
@@ -36,7 +37,7 @@ public class ModuleService implements IModuleService {
 	 * @see IModuleService.createModule
 	 */
 	@Override
-	public ModuleEntity createModule(ModuleEntity module) throws BadRequestException, ValidationFailedException {
+	public ModuleEntity createModule(ModuleEntity module) throws Exception {
 		// Check if module is not null
 		if (module == null)
 			throw new BadRequestException("ModuleEntity", "Given module entity is null", null);
@@ -69,8 +70,28 @@ public class ModuleService implements IModuleService {
 		// Validate module entity
 		module.validate();
 		// save module in MySQL database
-		module = mySQLModule.saveModule(module);
+		module = mySQLModule.updateModule(module);
 		return module;
+	}
+
+	/**
+	 * @see IModule.createSubModule
+	 */
+	@Override
+	public SubModuleEntity createSubModule(SubModuleEntity subModule) throws Exception {
+		// Check if sub module is not null
+		if (subModule == null)
+			throw new BadRequestException("SubModuleEntity", "Given SubModuleEntity is null", null);
+		// Check if subModule id is null or not
+		if (subModule.getId() != null)
+			throw new BadRequestException("SubModuleEntity", "SubModuleEntity should not contain Id", null);
+		// validate sub module entity
+		subModule.validate();
+		// check if module id of this sub module entity exists or not
+		if (mySQLModule.getModule(subModule.getModuleId()) == null)
+			throw new NotFoundException("ModuleEntity", "Module not found", null);
+		// save sub module entity in database
+		return mySQLModule.saveSubModule(subModule);
 	}
 
 }

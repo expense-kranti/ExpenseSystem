@@ -1149,7 +1149,7 @@
 
 	<bean id="mySQLModule"
 		class="com.boilerplate.database.mysql.implementations.MySQLModule">
-
+		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 </beans>
