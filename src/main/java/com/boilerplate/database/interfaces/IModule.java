@@ -2,6 +2,7 @@ package com.boilerplate.database.interfaces;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.java.entities.ModuleQuizEntity;
 import com.boilerplate.java.entities.SubModuleEntity;
 
 /**
@@ -42,6 +43,17 @@ public interface IModule {
 	 *             Throw this exception if user sends a bad request
 	 */
 	public ModuleEntity getModule(String id) throws BadRequestException;
+
+	/**
+	 * This method is used to save module quiz entity
+	 * 
+	 * @param moduleQuiz
+	 *            the module quiz entity
+	 * @return the save module quiz entity
+	 * @throws Exception
+	 *             thrown when any exception occurs while saving module quiz
+	 */
+	public ModuleQuizEntity saveModuleQuiz(ModuleQuizEntity moduleQuiz) throws Exception;
 
 	/**
 	 * This is method is used to save sub module

@@ -12,6 +12,7 @@ import com.boilerplate.database.interfaces.IModule;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.java.entities.ModuleQuizEntity;
 import com.boilerplate.java.entities.SubModuleEntity;
 
 /**
@@ -108,6 +109,21 @@ public class MySQLModule extends MySQLBaseDataAccessLayer implements IModule {
 	}
 
 	/**
+	 * @see IModule.saveModuleQuiz
+	 */
+	@Override
+	public ModuleQuizEntity saveModuleQuiz(ModuleQuizEntity moduleQuiz) throws Exception {
+		try {
+			// Save module in MySQl database
+			return super.create(moduleQuiz);
+		} catch (Exception ex) {
+			logger.logException("MySQLModule", "saveModuleQuiz", "ExceptionModuleQuiz",
+					"This is the module name ~ " + moduleQuiz.getName(), ex);
+			throw ex;
+		}
+	}
+
+	/**
 	 * @see IModule.saveSubModule
 	 */
 	@Override
@@ -166,6 +182,7 @@ public class MySQLModule extends MySQLBaseDataAccessLayer implements IModule {
 					"While trying to update sub module data into data base" + "This is the sub module name ~ "
 							+ subModule.getName(),
 					ex);
+
 			throw ex;
 		}
 	}

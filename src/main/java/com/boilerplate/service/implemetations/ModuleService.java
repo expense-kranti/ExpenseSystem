@@ -7,6 +7,7 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.java.entities.ModuleQuizEntity;
 import com.boilerplate.java.entities.SubModuleEntity;
 import com.boilerplate.service.interfaces.IModuleService;
 
@@ -77,6 +78,25 @@ public class ModuleService implements IModuleService {
 	/**
 	 * @see IModuleService.createSubModule
 	 */
+	@Override
+	public ModuleQuizEntity createModuleQuiz(ModuleQuizEntity moduleQuiz) throws Exception {
+		// Check if no module quiz entity is provided
+		if (moduleQuiz == null)
+			throw new BadRequestException("ModuleQuizEntity", "Given module quiz entity is null", null);
+		// module id should not be input here
+		if (moduleQuiz.getId() != null)
+			throw new BadRequestException("ModuleQuizEntity",
+					"Module quiz entity should not contain Id while creation.", null);
+		// Validate module quiz entity
+		moduleQuiz.validate();
+		// save module quiz entity in MySQL database
+		return mySQLModule.saveModuleQuiz(moduleQuiz);
+	}
+
+	/**
+	 * @see IModule.createSubModule
+	 */
+
 	@Override
 	public SubModuleEntity createSubModule(SubModuleEntity subModule) throws Exception {
 		// Check if sub module is not null

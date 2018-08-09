@@ -4,6 +4,7 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.java.entities.ModuleQuizEntity;
 import com.boilerplate.java.entities.SubModuleEntity;
 
 /**
@@ -47,6 +48,21 @@ public interface IModuleService {
 			throws ValidationFailedException, BadRequestException, NotFoundException;
 
 	/**
+	 * This method is used to create a new module quiz
+	 * 
+	 * @param moduleQuiz
+	 *            This is the new module quiz entity to be saved
+	 * @return Saved module quiz entity
+	 * @throws BadRequestException
+	 *             thrown when required data is not input
+	 * @throws ValidationFailedException
+	 *             thrown when user required data is not input
+	 * @throws Exception
+	 *             thrown when any exception occurs in saving module quiz
+	 */
+	public ModuleQuizEntity createModuleQuiz(ModuleQuizEntity moduleQuiz) throws Exception;
+
+	/**
 	 * This method is used to create a new subModule entity
 	 * 
 	 * @param subModule
@@ -59,6 +75,7 @@ public interface IModuleService {
 	 * @throws Exception
 	 *             Throw if any exception ocurs
 	 */
+
 	public SubModuleEntity createSubModule(SubModuleEntity subModule)
 			throws BadRequestException, ValidationFailedException, Exception;
 
