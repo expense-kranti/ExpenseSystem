@@ -107,7 +107,13 @@ public class SubModuleEntity extends BaseEntity {
 
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
+		// Check if sub module name or module id is not null or empty
+		if (BaseEntity.isNullOrEmpty(this.getName()) || BaseEntity.isNullOrEmpty(this.getModuleId()))
+			throw new ValidationFailedException("SubModuleEntity", "Module id or name is null or empty", null);
+		// Check if list of info snippets is not null
+		if (this.getInfoSnippetsList().size() == 0)
+			throw new ValidationFailedException("SubModuleEntity", "Sub module does not contain any info snippets",
+					null);
 		return false;
 	}
 

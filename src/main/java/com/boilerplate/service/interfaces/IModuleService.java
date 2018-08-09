@@ -5,6 +5,7 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ModuleEntity;
 import com.boilerplate.java.entities.ModuleQuizEntity;
+import com.boilerplate.java.entities.SubModuleEntity;
 
 /**
  * This interface has methods for module CRUD operations
@@ -24,9 +25,25 @@ public interface IModuleService {
 	 *             Throw this exception if user sends a bad request
 	 * @throws ValidationFailedException
 	 *             Throw this exception if entity fails any validation
+	 * @throws Exception
+	 *             Throw if any exception ocurs
 	 */
-	public ModuleEntity createModule(ModuleEntity module) throws BadRequestException, ValidationFailedException;
+	public ModuleEntity createModule(ModuleEntity module)
+			throws BadRequestException, ValidationFailedException, Exception;
 
+	/**
+	 * This method is used to update an existing module
+	 * 
+	 * @param module
+	 *            This is the module entity to be updated
+	 * @return This is the updated module entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation
+	 * @throws NotFoundException
+	 *             Throw this exception if module is not found or does not exist
+	 */
 	public ModuleEntity updateModule(ModuleEntity module)
 			throws ValidationFailedException, BadRequestException, NotFoundException;
 
@@ -43,7 +60,23 @@ public interface IModuleService {
 	 * @throws Exception
 	 *             thrown when any exception occurs in saving module quiz
 	 */
-	public ModuleQuizEntity createModuleQuiz(ModuleQuizEntity moduleQuiz)
+	public ModuleQuizEntity createModuleQuiz(ModuleQuizEntity moduleQuiz) throws Exception;
+
+	/**
+	 * This method is used to create a new subModule entity
+	 * 
+	 * @param subModule
+	 *            This is the new sub module entity
+	 * @return Saved module enityt
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation
+	 * @throws Exception
+	 *             Throw if any exception ocurs
+	 */
+
+	public SubModuleEntity createSubModule(SubModuleEntity subModule)
 			throws BadRequestException, ValidationFailedException, Exception;
 
 }

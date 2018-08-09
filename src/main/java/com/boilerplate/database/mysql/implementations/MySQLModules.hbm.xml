@@ -21,7 +21,7 @@
 				<param name="useNamed">true</param>
 			</type>
 		</property>
-		<property name="moduleEndsWithId" column="ModuleEndsWithId" />
+		<property name="endingItemId" column="EndingItemId" />
 		<property name="isActive" column="IsActive" />
 	</class>
 </hibernate-mapping>

@@ -1249,6 +1249,30 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for update module
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.updateModule(com.boilerplate.java.entities.ModuleEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.updateModule(com.boilerplate.java.entities.ModuleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for create new sub module
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.createSubModule(com.boilerplate.java.entities.SubModuleEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.createSubModule(com.boilerplate.java.entities.SubModuleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1864,7 +1888,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("Experian_Question_Accept", "*/*");
 		vAllEAll.put("Experian_Question_Content_Type", "application/json");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_MODULE_BY_ID", "FROM ModuleEntity module where module.id = :ModuleId");
-
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_SUB_MODULE_BY_ID",
+				"FROM SubModuleEntity subModule where subModule.id = :SubModuleId");
 		return vAllEAll;
 
 	}
