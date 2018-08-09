@@ -12,6 +12,7 @@ import com.boilerplate.database.interfaces.IModule;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ModuleEntity;
+import com.boilerplate.java.entities.ModuleQuizEntity;
 
 /**
  * This class implements IModule interface
@@ -88,6 +89,21 @@ public class MySQLModule extends MySQLBaseDataAccessLayer implements IModule {
 		if (modules.size() == 0)
 			return null;
 		return modules.get(0);
+	}
+
+	/**
+	 * @see IModule.saveModuleQuiz
+	 */
+	@Override
+	public ModuleQuizEntity saveModuleQuiz(ModuleQuizEntity moduleQuiz) throws Exception {
+		try {
+			// Save module in MySQl database
+			return super.create(moduleQuiz);
+		} catch (Exception ex) {
+			logger.logException("MySQLModule", "saveModuleQuiz", "ExceptionModuleQuiz",
+					"This is the module name ~ " + moduleQuiz.getName(), ex);
+			throw ex;
+		}
 	}
 
 }

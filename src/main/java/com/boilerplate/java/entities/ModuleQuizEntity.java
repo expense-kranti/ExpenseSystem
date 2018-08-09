@@ -28,6 +28,11 @@ public class ModuleQuizEntity extends BaseEntity {
 	private boolean isActive;
 
 	/**
+	 * This is the name of quiz to be displayed
+	 */
+	private String name;
+
+	/**
 	 * This method is used get the module id
 	 * 
 	 * @return
@@ -75,16 +80,37 @@ public class ModuleQuizEntity extends BaseEntity {
 	/**
 	 * This method is used to set is active
 	 * 
-	 * @return
+	 * @return the name
 	 */
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
+	/**
+	 * Gets the name
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the name
+	 * 
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		if (BaseEntity.isNullOrEmpty(this.getName())) {
+			throw new ValidationFailedException("ModuleEntity", "Module quiz name is null or empty", null);
+		}
+		return true;
 	}
 
 	@Override
