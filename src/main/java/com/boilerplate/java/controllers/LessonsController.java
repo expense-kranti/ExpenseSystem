@@ -88,4 +88,29 @@ public class LessonsController extends BaseController {
 		return moduleService.createSubModule(subModule);
 	}
 
+	/**
+	 * This API is used to update an existing sub module entity in the system
+	 * 
+	 * @param subModule
+	 *            This is the sub module entity to be updated
+	 * @return Saved sub module entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation
+	 * @throws NotFoundException
+	 *             Throw this exception if sub module is not found or does not
+	 *             exist
+	 */
+	@ApiOperation(value = "Updates an existing sub module entity in the system", notes = "A sub module contains info snippets, The creation date and updated "
+			+ "date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, some attributes are missing") })
+	@RequestMapping(value = "/lessons/subModule", method = RequestMethod.PUT)
+	public @ResponseBody SubModuleEntity updateSubModule(@RequestBody SubModuleEntity subModule)
+			throws ValidationFailedException, BadRequestException, NotFoundException {
+		// call the business layer
+		return moduleService.updateSubModule(subModule);
+	}
+
 }

@@ -62,4 +62,20 @@ public interface IModuleService {
 	public SubModuleEntity createSubModule(SubModuleEntity subModule)
 			throws BadRequestException, ValidationFailedException, Exception;
 
+	/**
+	 * This method is used to update an existing sub module
+	 * 
+	 * @param subModule
+	 *            This is the sub module entity to be updated
+	 * @return Updated sub module entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation
+	 * @throws NotFoundException
+	 *             Throw this exception if module is not found or does not exist
+	 */
+	public SubModuleEntity updateSubModule(SubModuleEntity subModule)
+			throws ValidationFailedException, BadRequestException, NotFoundException;
+
 }

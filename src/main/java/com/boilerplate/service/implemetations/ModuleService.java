@@ -75,7 +75,7 @@ public class ModuleService implements IModuleService {
 	}
 
 	/**
-	 * @see IModule.createSubModule
+	 * @see IModuleService.createSubModule
 	 */
 	@Override
 	public SubModuleEntity createSubModule(SubModuleEntity subModule) throws Exception {
@@ -92,6 +92,27 @@ public class ModuleService implements IModuleService {
 			throw new NotFoundException("ModuleEntity", "Module not found", null);
 		// save sub module entity in database
 		return mySQLModule.saveSubModule(subModule);
+	}
+
+	/**
+	 * @see IModuleService.updateSubModule
+	 */
+	@Override
+	public SubModuleEntity updateSubModule(SubModuleEntity subModule)
+			throws ValidationFailedException, BadRequestException, NotFoundException {
+		// Check if sub module is not null
+		if (subModule == null)
+			throw new BadRequestException("SubModuleEntity", "Given module entity is null", null);
+		// Check if subModule id is null or not
+		if (subModule.getId() != null)
+			throw new BadRequestException("SubModuleEntity", "SubModuleEntity should not contain Id", null);
+		// check if sub module exists in system
+		if (mySQLModule.getSubModule(subModule.getId()) == null)
+			throw new NotFoundException("SubModuleEntity", "subModule not found", null);
+		// Validate subModule entity
+		subModule.validate();
+		// save subModule in MySQL database
+		return mySQLModule.updateSubModule(subModule);
 	}
 
 }
