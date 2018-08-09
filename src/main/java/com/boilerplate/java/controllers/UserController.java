@@ -333,7 +333,7 @@ public class UserController extends BaseController {
 			@ApiResponse(code = 404, message = "Not Found, No bot data found for given bot name"),
 			@ApiResponse(code = 401, message = "User is unauthorized") })
 	@RequestMapping(value = "/user/getOTP/{userMobileNumber}", method = RequestMethod.GET)
-	public @ResponseBody ExternalFacingReturnedUser getBotData(@PathVariable String userMobileNumber) throws Exception {
+	public @ResponseBody ExternalFacingReturnedUser getOtps(@PathVariable String userMobileNumber) throws Exception {
 		return this.userService.getOTPs(userMobileNumber);
 	}
 

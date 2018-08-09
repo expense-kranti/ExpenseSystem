@@ -1273,6 +1273,18 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for update sub module
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.updateSubModule(com.boilerplate.java.entities.SubModuleEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.updateSubModule(com.boilerplate.java.entities.SubModuleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));

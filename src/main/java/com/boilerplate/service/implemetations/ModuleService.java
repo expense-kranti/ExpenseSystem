@@ -6,6 +6,7 @@ import com.boilerplate.database.interfaces.IModule;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ModuleEntity;
 import com.boilerplate.java.entities.ModuleQuizEntity;
 import com.boilerplate.java.entities.SubModuleEntity;
@@ -33,6 +34,11 @@ public class ModuleService implements IModuleService {
 	public void setMySQLModule(IModule mySQLModule) {
 		this.mySQLModule = mySQLModule;
 	}
+
+	/**
+	 * This is the logger
+	 */
+	private Logger logger = Logger.getInstance(ModuleService.class);
 
 	/**
 	 * @see IModuleService.createModule
@@ -111,7 +117,9 @@ public class ModuleService implements IModuleService {
 		if (mySQLModule.getModule(subModule.getModuleId()) == null)
 			throw new NotFoundException("ModuleEntity", "Module not found", null);
 		// save sub module entity in database
-		return mySQLModule.saveSubModule(subModule);
+		subModule = mySQLModule.saveSubModule(subModule);
+
+		return subModule;
 	}
 
 	/**
@@ -124,13 +132,16 @@ public class ModuleService implements IModuleService {
 		if (subModule == null)
 			throw new BadRequestException("SubModuleEntity", "Given module entity is null", null);
 		// Check if subModule id is null or not
-		if (subModule.getId() != null)
-			throw new BadRequestException("SubModuleEntity", "SubModuleEntity should not contain Id", null);
+		if (subModule.getId() == null)
+			throw new BadRequestException("SubModuleEntity", "SubModule id is null", null);
 		// check if sub module exists in system
 		if (mySQLModule.getSubModule(subModule.getId()) == null)
 			throw new NotFoundException("SubModuleEntity", "subModule not found", null);
 		// Validate subModule entity
 		subModule.validate();
+		// check if module id of this sub module entity exists or not
+		if (mySQLModule.getModule(subModule.getModuleId()) == null)
+			throw new NotFoundException("ModuleEntity", "Module not found", null);
 		// save subModule in MySQL database
 		return mySQLModule.updateSubModule(subModule);
 	}
