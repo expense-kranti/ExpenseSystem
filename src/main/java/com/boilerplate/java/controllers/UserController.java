@@ -25,6 +25,7 @@ import com.boilerplate.service.interfaces.IScriptsService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
 import com.boilerplate.sessions.SessionManager;
+import com.boilerplate.java.entities.UserEntity;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -377,6 +378,29 @@ public class UserController extends BaseController {
 		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
 				RequestThreadLocal.getHttpResponse(), session);
 		return session;
+	}
+
+	// Expense api
+
+	/**
+	 * This API is used to create a new user
+	 * 
+	 * @param externalFacingUser
+	 *            This is the new user entity
+	 * @return Saved user entity
+	 * @throws ValidationFailedException
+	 * @throws BadRequestException
+	 */
+	@ApiOperation(value = "Creates a new User entity in the system", notes = "The user is unique in the system, The creation date and updated "
+			+ "date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
+			@ApiResponse(code = 409, message = "The user already exists in the system for the provider") })
+	@RequestMapping(value = "/user/create", method = RequestMethod.POST)
+	public @ResponseBody UserEntity createUser(@RequestBody UserEntity externalFacingUser)
+			throws ValidationFailedException, BadRequestException {
+		// call the business layer
+		return userService.createUser(externalFacingUser);
 	}
 
 }

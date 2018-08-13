@@ -3,32 +3,20 @@ package com.boilerplate.aspects;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.easymock.internal.matchers.Contains;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.InvalidStateException;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
-import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.Constants;
-import com.boilerplate.java.entities.ExternalFacingReturnedUser;
-import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.GenericMapEncapsulationEntity;
 import com.boilerplate.java.entities.MethodPermissions;
-import com.boilerplate.java.entities.Role;
-import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.service.interfaces.IMethodPermissionService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
-import com.boilerplate.sessions.SessionManager;
-import com.boilerplate.configurations.ConfigurationManager;
-import com.boilerplate.configurations.IConfiguratonManager;
 
 /**
  * This class is used to log and trace an exception. Any controller method when

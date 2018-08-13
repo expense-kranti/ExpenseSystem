@@ -1285,6 +1285,18 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for update sub module
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.UserEntity com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.UserEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.UserEntity com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.UserEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1902,6 +1914,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_MODULE_BY_ID", "FROM ModuleEntity module where module.id = :ModuleId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_SUB_MODULE_BY_ID",
 				"FROM SubModuleEntity subModule where subModule.id = :SubModuleId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_MOBILE_OR_EMAIL_ID",
+				"FROM UserEntity user where user.mobile = :Mobile or user.emailId = :Email");
 		return vAllEAll;
 
 	}

@@ -9,7 +9,7 @@
 		<property name="hibernate.connection.url">jdbc:mysql://127.0.0.1:3306/MySqlCSRDB?autoReconnect=true</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">root</property>
-		<property name="hibernate.default_schema">MySqlCSRDB</property>
+		<property name="hibernate.default_schema">ExpenseSystem</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 
 		<property name="hibernate.show_sql">true</property>

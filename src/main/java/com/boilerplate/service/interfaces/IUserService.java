@@ -12,6 +12,7 @@ import com.boilerplate.java.entities.ManageUserEntity;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
 import com.boilerplate.sessions.Session;
+import com.boilerplate.java.entities.UserEntity;
 
 /**
  * This class provide the services to authenticate ,create and get the user
@@ -231,5 +232,19 @@ public interface IUserService {
 	public ExternalFacingReturnedUser getOTPs(String userMobileNumber) throws Exception;
 
 	public Session authenticateByOTP(AuthenticationRequest authenitcationRequest) throws UnauthorizedException;
+
+	// expense system apis
+	/**
+	 * This method is used to create a new user
+	 * 
+	 * @param externalFacingUser
+	 *            This is the user to be saved
+	 * @return Saved user entity
+	 * @throws ValidationFailedException
+	 *             Throw this exception if user entity is invalid
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
+	public UserEntity createUser(UserEntity externalFacingUser) throws ValidationFailedException, BadRequestException;
 
 }

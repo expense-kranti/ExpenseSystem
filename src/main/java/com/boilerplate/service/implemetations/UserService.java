@@ -41,6 +41,7 @@ import com.boilerplate.java.entities.Role;
 import com.boilerplate.java.entities.ScoreEntity;
 import com.boilerplate.java.entities.UpdateUserEntity;
 import com.boilerplate.java.entities.UpdateUserPasswordEntity;
+import com.boilerplate.java.entities.UserEntity;
 import com.boilerplate.java.entities.ExperianDataPublishEntity.State;
 import com.boilerplate.service.interfaces.IAssessmentService;
 import com.boilerplate.service.interfaces.IBlogActivityService;
@@ -1354,6 +1355,28 @@ public class UserService implements IUserService {
 			throw new UnauthorizedException("USER", "User name or password incorrect", null);
 		}
 
+	}
+
+	/**
+	 * @see IUserService.createUser
+	 */
+	@Override
+	public UserEntity createUser(UserEntity externalFacingUser) throws ValidationFailedException, BadRequestException {
+		// validate the input user entity
+		externalFacingUser.validate();
+		// check if user entity does not contain id
+		if (externalFacingUser.getId() != null)
+			throw new BadRequestException("UserEntity", "Id should be null", null);
+		// check if user with same email id or mobile number does not exist
+		if (mySqlUser.getExistingUser(externalFacingUser.getMobile(), externalFacingUser.getEmailId()) != null)
+			throw new BadRequestException("UserEntity", "USer already exists with the given mobile number or email id",
+					null);
+		// set active status to true
+		externalFacingUser.setIsActive(true);
+		// save user in MySQL database
+		mySqlUser.createUser(externalFacingUser);
+		// return saved user
+		return externalFacingUser;
 	}
 
 }

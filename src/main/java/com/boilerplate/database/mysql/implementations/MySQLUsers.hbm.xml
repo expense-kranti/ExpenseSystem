@@ -1,58 +1,21 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-
-	<class name="com.boilerplate.java.entities.ExternalFacingReturnedUser"
-		table="Aks_Users">
-		<id name="userId" column="UserId">
-			<generator class="assigned" />
+	<class name="com.boilerplate.java.entities.UserEntity" table="User">
+		<id name="id" column="Id">
+			<generator class="identity" />
 		</id>
 		<property name="firstName" column="FirstName" />
 		<property name="lastName" column="LastName" />
-		<property name="email" column="Email" />
-		<property name="phoneNumber" column="PhoneNumber" />
-		<property name="id" column="Id" />
-		<property name="middleName" column="MiddleName" />
-		<property name="referalSource" column="ReferalSource" />
-		<property name="campaignType" column="CampaignType" />
-		<property name="campaignSource" column="CampaignSource" />
-		<property name="campaignUUID" column="CampaignUUID" />
-		<property name="userReferId" column="UserReferId" />
-		<property name="isFeedBackSubmitted" type="boolean">
-			<column name="IsFeedBackSubmitted " sql-type="tinyint" />
-		</property>
-		<property name="totalScoreInDouble" column="TotalScore" />
-		<property name="incomeTaxUuid" column="IncomeTaxUuid" />
-		<property name="authenticationProvider" column="AuthenticationProvider" />
+		<property name="mobile" column="MobileNumber" />
+		<property name="emailId" column="EmailId" />
 		<property name="password" column="Password" />
-		<property name="crmid" column="Crmid" />
-		<property name="userStatus" column="UserStatus" />
-		<property name="dateOfBirth" column="DateOfBirth" />
-		<property name="alternateNumber" column="AlternateNumber" />
-		<property name="employmentStatus" column="EmploymentStatus">
-			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">com.boilerplate.java.entities.EmploymentStatus</param>
-				<param name="useNamed">true</param>
-			</type>
-		</property>
-		<property name="location" column="Location"></property>
-		<property name="isPasswordChanged" type="boolean">
-			<column name="IsPasswordChanged" sql-type="tinyint" />
-		</property>
-		<property name="creationDate" column="CreatedDateTime" type="timestamp" />
-		<property name="updationDate" column="UpdateDateTime" type="timestamp" />
-		<property name="roleName" column="RoleName" />
-		<property name="rank" column="Rank" />
-		<property name="totalReferScore" column="TotalReferScore"></property>
-		<property name="hasSkippedEmailInput" type="boolean">
-			<column name="HasSkippedEmailInput" sql-type="tinyint" />
-		</property>
-		<property name="increaseScore" type="boolean">
-			<column name="IncreaseScoreWithLanding" sql-type="tinyint" />
-		</property>
-		<property name="lastLoginTime" column="LastLoginTime"></property>
-		
+		<property name="middleName" column="MiddleName" />
+		<property name="userId" column="UserId" />
+		<property name="role" column="Role" />
+		<property name="isActive" column="Active" />
 	</class>
-
 </hibernate-mapping>
+

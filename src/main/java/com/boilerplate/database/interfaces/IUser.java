@@ -2,13 +2,14 @@ package com.boilerplate.database.interfaces;
 
 import java.util.Set;
 
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.Role;
+import com.boilerplate.java.entities.UserEntity;
 
 /**
  * This has interfaces for user management
@@ -116,5 +117,29 @@ public interface IUser {
 	public void saveUserOTP(ExternalFacingReturnedUser user, String otp);
 
 	public String getUserOTP(String mobileNumber);
+
+	// Expense system
+	/**
+	 * This method is used to save a new user in the database
+	 * 
+	 * @param userEntity
+	 *            This is the user entity to be saved
+	 * @return Saved user entity
+	 */
+	public UserEntity createUser(UserEntity userEntity);
+
+	/**
+	 * This method is used to fetch user on the basis of mobile number or user
+	 * id
+	 * 
+	 * @param mobile
+	 *            This is the mobile number
+	 * @param emailId
+	 *            This is the email id
+	 * @return User entity if found
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 */
+	public UserEntity getExistingUser(String mobile, String emailId) throws BadRequestException;
 
 }

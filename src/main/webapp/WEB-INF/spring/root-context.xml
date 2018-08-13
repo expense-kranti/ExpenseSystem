@@ -844,6 +844,7 @@
 	<!--Dependencies for saving user in mysql database -->
 	<bean id="mySqlUser"
 		class="com.boilerplate.database.mysql.implementations.MySQLUsers">
+		<property name="configurationManager" ref="configurationManager" />
 	</bean>
 
 	<bean id="mySQLQueueWriterJob" class="com.boilerplate.jobs.MySQLQueueWriterJob"

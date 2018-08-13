@@ -1,20 +1,25 @@
 package com.boilerplate.database.mysql.implementations;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.transaction.Transaction;
-import javax.validation.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.ConflictException;
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.ExternalFacingReturnedUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.ModuleEntity;
 import com.boilerplate.java.entities.Role;
-import com.boilerplate.sessions.Session;
+import com.boilerplate.java.entities.UserEntity;
 
 /**
  * This class is used to create user in MySQLdatabase
@@ -27,6 +32,22 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	 * This is the logger
 	 */
 	private Logger logger = Logger.getInstance(MySQLUsers.class);
+
+	/**
+	 * This is the instance of configuration manager
+	 */
+	@Autowired
+	ConfigurationManager configurationManager;
+
+	/**
+	 * This method is used to set the configurationManager
+	 * 
+	 * @param configurationManager
+	 *            the configurationManager to set
+	 */
+	public void setConfigurationManager(ConfigurationManager configurationManager) {
+		this.configurationManager = configurationManager;
+	}
 
 	/**
 	 * @see IUser.create
@@ -123,6 +144,52 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	public String getUserOTP(String mobileNumber) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	// expense system
+
+	/**
+	 * @see IUser.createUser
+	 */
+	@Override
+	public UserEntity createUser(UserEntity userEntity) {
+		try {
+			// save user in MySQl database and return the entity
+			return super.update(userEntity);
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
+	/**
+	 * @see IUser.getExistingUser
+	 */
+	@Override
+	public UserEntity getExistingUser(String mobile, String emailId) throws BadRequestException {
+		// Get the SQL query from configurations to get users
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USERS_BY_MOBILE_OR_EMAIL_ID");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put id in query parameter
+		queryParameterMap.put("Mobile", mobile);
+		queryParameterMap.put("Email", emailId);
+		// This variable is used to hold the query response
+		List<UserEntity> users = new ArrayList<>();
+		try {
+			// Execute query
+			users = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLUsers", "getExistingUser", "exceptionGetExistingUser",
+					"While trying to get user data, This is the mobile~ " + mobile + "This is the query" + hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLUsers", "While trying to get user data ~ " + ex.toString(), ex);
+		}
+		if (users.size() == 0)
+			return null;
+		return users.get(0);
 	}
 
 }
