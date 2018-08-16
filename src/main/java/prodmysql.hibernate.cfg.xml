@@ -25,45 +25,11 @@
 		<property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
 		<property name="hibernate.connection.isolation">2</property>
 		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLAssessment.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLAssessmentQuestionSection.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLAssessmentSection.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLMultipleChoiceQuestion.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLMultipleChoiceQuestionOption.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLQuestion.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLQuestionType.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLArticle.hbm.xml" />
-
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLBlogActivity.hbm.xml" />
-		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLUsers.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLFile.hbm.xml" />
 		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLUserAssessment.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLUserAssessmentScore.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLUserMonthlyScore.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLReferralContacts.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLIncomeTax.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLHandBook.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLModules.hbm.xml" />
-		<mapping
-			resource="com/boilerplate/database/mysql/implementations/MySQLSubModules.hbm.xml" />
-
+			resource="com/boilerplate/database/mysql/implementations/MySQLExpense.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
 

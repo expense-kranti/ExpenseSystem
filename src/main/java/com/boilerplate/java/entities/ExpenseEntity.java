@@ -2,6 +2,12 @@ package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
+/**
+ * This entity defines the attributes for expense
+ * 
+ * @author ruchi
+ *
+ */
 public class ExpenseEntity extends BaseEntity {
 
 	/**
@@ -47,34 +53,74 @@ public class ExpenseEntity extends BaseEntity {
 		this.title = title;
 	}
 
+	/**
+	 * This method is used to get descripion of the expense
+	 * 
+	 * @return
+	 */
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * This method is used to set description
+	 * 
+	 * @param description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * This method is used to get status
+	 * 
+	 * @return
+	 */
 	public ExpenseStatusType getStatus() {
 		return status;
 	}
 
+	/**
+	 * This method is used to set status
+	 * 
+	 * @param status
+	 */
 	public void setStatus(ExpenseStatusType status) {
 		this.status = status;
 	}
 
+	/**
+	 * This method is used to get attcahment id of the bill/file
+	 * 
+	 * @return
+	 */
 	public String getAttachmentId() {
 		return attachmentId;
 	}
 
+	/**
+	 * This method is used to set attchment id of the file
+	 * 
+	 * @param attachmentId
+	 */
 	public void setAttachmentId(String attachmentId) {
 		this.attachmentId = attachmentId;
 	}
 
+	/**
+	 * This method is used to get user id
+	 * 
+	 * @return
+	 */
 	public String getUserId() {
 		return userId;
 	}
 
+	/**
+	 * this method is used to set user id
+	 * 
+	 * @param userId
+	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
@@ -84,7 +130,11 @@ public class ExpenseEntity extends BaseEntity {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
+		// check if expense entity has all the mandatory fields
+		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || isNullOrEmpty(this.attachmentId)
+				|| isNullOrEmpty(this.getUserId()))
+			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
+
 		return false;
 	}
 

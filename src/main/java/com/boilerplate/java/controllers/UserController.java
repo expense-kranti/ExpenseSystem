@@ -11,13 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
-import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.UserEntity;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
 import com.boilerplate.sessions.SessionManager;
@@ -27,7 +23,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 /**
- * This class has methods to operate on users. These inlcude Creation, update
+ * This class has methods to operate on users. These include Creation, update
  * and get user along with authenticate operation
  * 
  * @author gaurav
@@ -148,7 +144,8 @@ public class UserController extends BaseController {
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
 	@RequestMapping(value = "/user/disableUser/{userId}", method = RequestMethod.PUT)
-	public void disableUser(@RequestParam String userId) throws BadRequestException, NotFoundException, Exception {
+	public @ResponseBody void disableUser(@RequestParam String userId)
+			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
 		userService.disableUser(userId);
 	}
@@ -171,7 +168,8 @@ public class UserController extends BaseController {
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
 	@RequestMapping(value = "/user/enableUser/{userId}", method = RequestMethod.PUT)
-	public void enableUser(@RequestParam String userId) throws BadRequestException, NotFoundException, Exception {
+	public @ResponseBody void enableUser(@RequestParam String userId)
+			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
 		userService.enableUser(userId);
 	}
@@ -194,7 +192,7 @@ public class UserController extends BaseController {
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
 	@RequestMapping(value = "/user/assignApprovers", method = RequestMethod.POST)
-	public void assignApprovers(@RequestBody AssignApproverEntity assignApproverEntity)
+	public @ResponseBody void assignApprovers(@RequestBody AssignApproverEntity assignApproverEntity)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
 		userService.assignApprover(assignApproverEntity);

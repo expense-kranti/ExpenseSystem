@@ -273,17 +273,6 @@
 	</bean>
 
 
-	<!-- Dependencies related to IncomeTax related apis -->
-
-	<bean id="incomeTaxDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisIncomeTax">
-	</bean>
-
-
-	<bean id="mySQLIncomeTax"
-		class="com.boilerplate.database.mysql.implementations.MySQLIncomeTax">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
 
 	<!--Dependencies for saving user in mysql database -->
 	<bean id="mySqlUser"
@@ -301,46 +290,18 @@
 		<property name="filePointer" ref="filePointer" />
 	</bean>
 
+	<!-- Dependencies related to Expense apis -->
 
-	<!-- dependency for statistics related apis -->
-	<bean id="statisticsService"
-		class="com.boilerplate.service.implemetations.StatisticsService">
-		<property name="mySQLAksharArticles" ref="mySQLAksharArticles"></property>
-		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
-		<property name="assessment" ref="assessment"></property>
+	<bean id="mySqlExpense"
+		class="com.boilerplate.database.mysql.implementations.MySQLExpense">
+		<property name="configurationManager" ref="configurationManager" />
 	</bean>
-
-	<bean id="mySQLAksharArticles"
-		class="com.boilerplate.database.mysql.implementations.MySQLAksharArticles">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-
-	<bean id="expressDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisExpress">
-	</bean>
-	<bean id="expressService" class="com.boilerplate.service.implemetations.ExpressService">
-		<property name="configurationManager" ref="configurationManager"></property>
-		<property name="expressDataAccess" ref="expressDataAccess"></property>
+	<bean id="expenseService" class="com.boilerplate.service.implemetations.ExpenseService">
+		<property name="mySqlExpense" ref="mySqlExpense" />
+		<property name="mySqlUser" ref="mySqlUser" />
 	</bean>
 
 
-
-	<bean id="mySQLBankDataAccess"
-		class="com.boilerplate.database.mysql.implementations.MySQLBankData">
-	</bean>
-
-
-
-	<!-- beans and dependencies for lesson APIs -->
-
-	<bean id="moduleService" class="com.boilerplate.service.implemetations.ModuleService">
-		<property name="mySQLModule" ref="mySQLModule"></property>
-	</bean>
-
-	<bean id="mySQLModule"
-		class="com.boilerplate.database.mysql.implementations.MySQLModule">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
 
 </beans>
  

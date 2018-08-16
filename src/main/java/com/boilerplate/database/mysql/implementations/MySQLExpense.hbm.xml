@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.boilerplate.java.entities.ExpenseEntity" table="Expenses">
+		<id name="id" column="Id">
+			<generator class="identity" />
+		</id>
+		<property name="title" column="Title" />
+		<property name="description" column="Description" />
+		<property name="attachmentId" column="AttachmentId" />
+		<property name="userId" column="UserId" />
+		<property name="status" column="Status">
+			<type name="org.hibernate.type.EnumType">
+				<param name="enumClass">com.boilerplate.java.entities.ExpenseStatusType</param>
+				<param name="useNamed">true</param>
+			</type>
+		</property>
+	</class>
+</hibernate-mapping>

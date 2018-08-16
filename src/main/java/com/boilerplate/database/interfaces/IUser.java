@@ -155,6 +155,28 @@ public interface IUser {
 	 */
 	public ExternalFacingUser updateUser(ExternalFacingUser userEntity) throws Exception;
 
+	/**
+	 * This method is used to get user by user id
+	 * 
+	 * @param userId
+	 *            this is the user d of the user
+	 * @return User entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 * 
+	 */
 	public ExternalFacingUser getUserById(String userId) throws BadRequestException;
+
+	/**
+	 * This method is used to get user by id
+	 * 
+	 * @param id
+	 *            This is the id of the user
+	 * @return User entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 * 
+	 */
+	public ExternalFacingUser getUser(String id) throws BadRequestException;
 
 }

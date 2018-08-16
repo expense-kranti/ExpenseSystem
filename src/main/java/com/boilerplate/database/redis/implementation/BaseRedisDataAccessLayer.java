@@ -1345,6 +1345,30 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for creating expense
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createUser(com.boilerplate.java.entities.ExpenseEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createUser(com.boilerplate.java.entities.ExpenseEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for updating expense
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateUser(com.boilerplate.java.entities.ExpenseEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateUser(com.boilerplate.java.entities.ExpenseEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -1931,6 +1955,8 @@ public class BaseRedisDataAccessLayer {
 				"FROM ExternalFacingUser user where user.phoneNumber = :Mobile or user.email = :Email");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_USER_ID",
 				"FROM ExternalFacingUser user where user.userId = :UserId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_ID", "FROM ExpenseEntity expense where expense.id = :ExpenseId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_ID", "FROM ExternalFacingUser user where user.id = :Id");
 
 		return vAllEAll;
 

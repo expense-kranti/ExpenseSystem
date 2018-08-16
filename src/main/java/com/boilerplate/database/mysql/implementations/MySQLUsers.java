@@ -230,4 +230,31 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 		return users.get(0);
 	}
 
+	@Override
+	public ExternalFacingUser getUser(String id) throws BadRequestException {
+		// Get the SQL query from configurations to get users
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USERS_BY_ID");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put id in query parameter
+		queryParameterMap.put("Id", id);
+		// This variable is used to hold the query response
+		List<ExternalFacingUser> users = new ArrayList<>();
+		try {
+			// Execute query
+			users = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLUsers", "getUser", "exceptionGetUser",
+					"While trying to get user data, This is the id~ " + id + "This is the query" + hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLUsers", "While trying to get user data ~ " + ex.toString(), ex);
+		}
+		if (users.size() == 0)
+			return null;
+		return users.get(0);
+	}
+
 }
