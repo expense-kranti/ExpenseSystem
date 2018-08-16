@@ -211,7 +211,7 @@ public class MySQLQueueWriterJob {
 
 		case "User":
 			// fetch userIds Set from redis
-			elements = userDataAccess.fetchUserIdsFromRedisSet();
+			// elements = userDataAccess.fetchUserIdsFromRedisSet();
 			// set the subject
 			subject = subjectsForCreateUser;
 			break;

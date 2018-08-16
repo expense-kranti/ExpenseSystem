@@ -39,11 +39,6 @@ public enum ExpenseStatusType {
 	Ready_For_Payment,
 
 	/**
-	 * YET TO BE DISCUSSED
-	 */
-	Paid_For_A_Given_Date_Range,
-
-	/**
 	 * This means that the expense has been submitted again
 	 */
 	Re_Submitted

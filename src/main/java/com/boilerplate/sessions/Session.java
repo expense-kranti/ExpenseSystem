@@ -12,7 +12,7 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.BaseEntity;
-import com.boilerplate.java.entities.ExternalFacingReturnedUser;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mangofactory.swagger.annotations.ApiIgnore;
@@ -39,13 +39,13 @@ public class Session extends BaseEntity implements Serializable{
 	 * This is the user associated with the session.
 	 */
 	@ApiModelProperty(value="This is the user associated with the session")
-	private ExternalFacingReturnedUser user;
+	private ExternalFacingUser user;
 	
 	/**
 	 * This method returns the external facing user
 	 * @return The user for the session.
 	 */
-	public ExternalFacingReturnedUser getExternalFacingUser(){
+	public ExternalFacingUser getExternalFacingUser(){
 		return this.user;
 	}
 	
@@ -58,7 +58,7 @@ public class Session extends BaseEntity implements Serializable{
 	 * This returns a session object
 	 * @param user The user whose session is being created
 	 */
-	public Session(ExternalFacingReturnedUser user){
+	public Session(ExternalFacingUser user){
 		this.setSessionId(UUID.randomUUID().toString().toUpperCase());
 		this.setUserId(user.getId());
 		this.user = user;
@@ -77,7 +77,7 @@ public class Session extends BaseEntity implements Serializable{
 	 * This method sets the user for the session
 	 * @param user The user for the session
 	 */
-	public void setExternalFacingUser(ExternalFacingReturnedUser user){
+	public void setExternalFacingUser(ExternalFacingUser user){
 		this.user = user;
 	}
 	

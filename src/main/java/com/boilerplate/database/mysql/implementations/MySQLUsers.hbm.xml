@@ -3,19 +3,22 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.boilerplate.java.entities.UserEntity" table="User">
+	<class name="com.boilerplate.java.entities.ExternalFacingUser"
+		table="User">
 		<id name="id" column="Id">
 			<generator class="identity" />
 		</id>
 		<property name="firstName" column="FirstName" />
 		<property name="lastName" column="LastName" />
-		<property name="mobile" column="MobileNumber" />
-		<property name="emailId" column="EmailId" />
+		<property name="phoneNumber" column="MobileNumber" />
+		<property name="email" column="EmailId" />
 		<property name="password" column="Password" />
 		<property name="middleName" column="MiddleName" />
 		<property name="userId" column="UserId" />
-		<property name="role" column="Role" />
+		<property name="roleName" column="Role" />
 		<property name="isActive" column="Active" />
+		<property name="approverId" column="ApproverId" />
+		<property name="superApproverId" column="SuperApproverId" />
 	</class>
 </hibernate-mapping>
 

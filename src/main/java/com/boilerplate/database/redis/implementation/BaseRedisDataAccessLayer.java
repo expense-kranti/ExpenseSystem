@@ -9,7 +9,7 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.entities.ExternalFacingReturnedUser;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.GenericListEncapsulationEntity;
 import com.boilerplate.java.entities.MethodPermissions;
 import com.boilerplate.java.entities.Role;
@@ -420,9 +420,9 @@ public class BaseRedisDataAccessLayer {
 
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setUrlToPublish("http://localhost");
@@ -509,9 +509,9 @@ public class BaseRedisDataAccessLayer {
 		// for method automaticPasswordReset()
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
@@ -519,9 +519,9 @@ public class BaseRedisDataAccessLayer {
 		// for method change password
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
@@ -549,9 +549,9 @@ public class BaseRedisDataAccessLayer {
 		// for method updateAUser
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
@@ -601,9 +601,9 @@ public class BaseRedisDataAccessLayer {
 		// for method updateLoggedInUser(UpdateUserEntity)
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
@@ -784,9 +784,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for sendEmailOnFeedbackSubmit method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
 		methodPermission.setIsAuthenticationRequired(true);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setPublishMethod("POST");
@@ -1216,9 +1216,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for user get otp method
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingReturnedUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setPublishRequired(false);
@@ -1285,12 +1285,60 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setDynamicPublishURl(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for update sub module
+		// method permission for create user
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.UserEntity com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.UserEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.UserEntity com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.UserEntity)");
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for update user
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateUser(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateUser(com.boilerplate.java.entities.ExternalFacingUser)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for disable user
+		methodPermission = new MethodPermissions();
+		methodPermission
+				.setId("public void com.boilerplate.java.controllers.UserController.disableUser(java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.disableUser(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for enable user
+		methodPermission = new MethodPermissions();
+		methodPermission
+				.setId("public void com.boilerplate.java.controllers.UserController.enableUser(java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.enableUser(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setPublishRequired(false);
+		methodPermission.setDynamicPublishURl(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for assigning approvers
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.UserController.assignApprovers(com.boilerplate.java.entities.AssignApproverEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.assignApprovers(com.boilerplate.java.entities.AssignApproverEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setPublishRequired(false);
@@ -1313,75 +1361,40 @@ public class BaseRedisDataAccessLayer {
 		role = new Role("Admin", "Admin", "Admin of the system", true, false);
 		roles.getEntityList().add(role);
 		Role roleAdmin = role;
-		role = new Role("RoleAssigner", "RoleAssigner", "This role can assign roles to other users", true, false);
+		role = new Role("Approver", "Approver", "This role can approve/reject expenses", true, false);
 		roles.getEntityList().add(role);
-		Role roleAssigner = role;
-		role = new Role("SelfAssign1", "SelfAssign1", "UT role", false, true);
+		Role roleSuperApprover = role;
+		role = new Role("SuperApprover", "SuperApprover", "This role can approve/reject expenses", true, false);
 		roles.getEntityList().add(role);
-		role = new Role("SelfAssign2", "SelfAssign2", "UT role", false, true);
+		role = new Role("Finance", "Finance", "This role can approve/reject expenses for payment", true, false);
 		roles.getEntityList().add(role);
-		role = new Role("NonSelfAssign1", "NonSelfAssign1", "UT role", false, false);
-		roles.getEntityList().add(role);
-		role = new Role("NonSelfAssign2", "NonSelfAssign2", "UT role", false, false);
-		roles.getEntityList().add(role);
-		role = new Role("BackOfficeUser", "BackOfficeUser", "The back office user of the system", true, false);
-		roles.getEntityList().add(role);
-		role = new Role("BankAdmin", "BankAdmin", "The admin of the bank", true, false);
-		roles.getEntityList().add(role);
-		role = new Role("BankUser", "BankUser", "The user in the bank", true, false);
-		roles.getEntityList().add(role);
-		role = new Role("Impersinator", "Impersinator", "Is allowed impersination", true, false);
-		roles.getEntityList().add(role);
-
 		this.set("ROLES", Base.toXML(roles));
 
 		// create annonnymous user
-		ExternalFacingReturnedUser user = new ExternalFacingReturnedUser();
-		user.setId("AKS:ANNONYMOUS");
-		user.setUserId("AKS:ANNONYMOUS");
+		ExternalFacingUser user = new ExternalFacingUser();
+		user.setId("ANNONYMOUS");
+		user.setUserId("ANNONYMOUS");
 		user.setPassword("0");
-		user.setAuthenticationProvider("AKS");
-		user.setExternalSystemId("AKS:ANNONYMOUS");
-		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		this.set("USER:" + user.getUserId(), user);
 
 		// create admin
-		user = new ExternalFacingReturnedUser();
-		user.setId("AKS:ADMIN");
-		user.setUserId("AKS:ADMIN");
+		user = new ExternalFacingUser();
+		user.setId("ADMIN");
+		user.setUserId("ADMIN");
 		user.setPassword("password");
 		user.setFirstName("Admin");
-		user.hashPassword();
-		user.setAuthenticationProvider("AKS");
-		user.setExternalSystemId("AKS:ADMIN");
-		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		user.getRoles().add(roleAdmin);
 		this.set("USER:" + user.getUserId(), user);
 
 		// create background
-		user = new ExternalFacingReturnedUser();
-		user.setId("AKS:BACKGROUND");
-		user.setUserId("AKS:BACKGROUND");
+		user = new ExternalFacingUser();
+		user.setId("BACKGROUND");
+		user.setUserId("BACKGROUND");
 		user.setPassword("0");
-		user.setAuthenticationProvider("AKS");
-		user.setExternalSystemId("AKS:BACKGROUND");
-		user.setUserStatus(1);
 		user.setRoles(new BoilerplateList<Role>());
 		user.getRoles().add(roleAdmin);
-		this.set("USER:" + user.getUserId(), user);
-
-		// create role assigner
-		user = new ExternalFacingReturnedUser();
-		user.setId("AKS:ROLEASSIGNER");
-		user.setUserId("AKS:ROLEASSIGNER");
-		user.setPassword("0");
-		user.setAuthenticationProvider("AKS");
-		user.setExternalSystemId("AKS:ROLEASSIGNER");
-		user.setUserStatus(1);
-		user.setRoles(new BoilerplateList<Role>());
-		user.getRoles().add(roleAssigner);
 		this.set("USER:" + user.getUserId(), user);
 
 	}
@@ -1915,7 +1928,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_SUB_MODULE_BY_ID",
 				"FROM SubModuleEntity subModule where subModule.id = :SubModuleId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_MOBILE_OR_EMAIL_ID",
-				"FROM UserEntity user where user.mobile = :Mobile or user.emailId = :Email");
+				"FROM ExternalFacingUser user where user.phoneNumber = :Mobile or user.email = :Email");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_USER_ID",
+				"FROM ExternalFacingUser user where user.userId = :UserId");
+
 		return vAllEAll;
 
 	}

@@ -101,7 +101,7 @@ public class FileService implements IFileService {
 			fileEntity.setFileName(fileNameOnDisk);
 			fileEntity.setFileNameOnDisk(fileNameOnDisk);
 			fileEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
-			fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
+			//fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
 			fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileNameOnDisk));
 
 			// method to save file entity in redis database
@@ -161,19 +161,19 @@ public class FileService implements IFileService {
 				}
 
 				if (fileEntity.getOrganizationId() != null) {
-					if (RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId()
-							.equals(fileEntity.getOrganizationId())) {
-						userHasRightsOnFile = true;
-					}
+//					if (RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId()
+//							.equals(fileEntity.getOrganizationId())) {
+//						userHasRightsOnFile = true;
+//					}
 				}
 
-				for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
-					if (role.getRoleName().toUpperCase().equals("ADMIN")
-							|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
-						userHasRightsOnFile = true;
-						break;
-					}
-				}
+//				for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
+//					if (role.getRoleName().toUpperCase().equals("ADMIN")
+//							|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+//						userHasRightsOnFile = true;
+//						break;
+//					}
+//				}
 
 				if (!userHasRightsOnFile) {
 					throw new NotFoundException("File", "Not found or unauthorized", null);
@@ -187,12 +187,13 @@ public class FileService implements IFileService {
 	@Override
 	public BoilerplateMap<String, FileEntity> getAllFileList(String userId) throws UnauthorizedException {
 		boolean canExecute = false;
-		for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
-			if (role.getRoleName().toUpperCase().equals("ADMIN")
-					|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
-				canExecute = true;
-			}
-		}
+		// for (Role role :
+		// RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
+		// if (role.getRoleName().toUpperCase().equals("ADMIN")
+		// || role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+		// canExecute = true;
+		// }
+		// }
 		if (RequestThreadLocal.getSession().getExternalFacingUser().getId().equals(userId)) {
 			canExecute = true;
 		}
