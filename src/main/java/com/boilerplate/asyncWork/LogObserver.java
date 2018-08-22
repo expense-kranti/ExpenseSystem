@@ -1,7 +1,6 @@
 package com.boilerplate.asyncWork;
 
 import com.boilerplate.framework.Logger;
-import com.boilerplate.jobs.QueueReaderJob;
 
 /**
  * This class is used to log an item.

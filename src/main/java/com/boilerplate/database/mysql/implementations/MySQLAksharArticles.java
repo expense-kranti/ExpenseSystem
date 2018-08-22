@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IAksharArticles;
 import com.boilerplate.exceptions.rest.BadRequestException;
-import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateMap;
 

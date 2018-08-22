@@ -1,13 +1,22 @@
 package com.boilerplate.service.implemetations;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.boilerplate.database.interfaces.IExpense;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.Logger;
+import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.service.interfaces.IExpenseService;
 
 /**
@@ -48,6 +57,11 @@ public class ExpenseService implements IExpenseService {
 	}
 
 	/**
+	 * This is the logger
+	 */
+	private Logger logger = Logger.getInstance(ExpenseService.class);
+
+	/**
 	 * @see IExpenseService.createExpense
 	 */
 	@Override
@@ -56,7 +70,7 @@ public class ExpenseService implements IExpenseService {
 		expenseEntity.validate();
 		// entity should not have any id
 		if (expenseEntity.getId() != null)
-			throw new BadRequestException("ExpenseEntity", "Id should be null", null);
+			throw new ValidationFailedException("ExpenseEntity", "Id should be null", null);
 		// Check whether user id exists and is active
 		ExternalFacingUser externalFacingUser = mySqlUser.getUser(expenseEntity.getUserId());
 		if (externalFacingUser == null || !externalFacingUser.getIsActive())
@@ -65,6 +79,9 @@ public class ExpenseService implements IExpenseService {
 		expenseEntity.setUserId(externalFacingUser.getId());
 		// set status of expense as submitted
 		expenseEntity.setStatus(ExpenseStatusType.Submitted);
+		// set creation date and update date
+		expenseEntity.setCreationDate(new Date());
+		expenseEntity.setUpdationDate(new Date());
 		// save expense in database
 		return mySqlExpense.createExpense(expenseEntity);
 	}
@@ -73,13 +90,12 @@ public class ExpenseService implements IExpenseService {
 	 * @see IExpenseService.updateExpense
 	 */
 	@Override
-	public ExpenseEntity updateExpense(ExpenseEntity expenseEntity)
-			throws BadRequestException, ValidationFailedException, NotFoundException {
+	public ExpenseEntity updateExpense(ExpenseEntity expenseEntity) throws Exception {
 		// check if expense entity is valid or not
 		expenseEntity.validate();
 		// entity should not have any id
 		if (expenseEntity.getId() == null)
-			throw new BadRequestException("ExpenseEntity", "Id should not be null", null);
+			throw new ValidationFailedException("ExpenseEntity", "Id should not be null", null);
 		// check whether expense entity exists or not
 		ExpenseEntity previousExpense = mySqlExpense.getExpense(expenseEntity.getId());
 		if (previousExpense == null)
@@ -95,8 +111,38 @@ public class ExpenseService implements IExpenseService {
 				expenseEntity.setStatus(ExpenseStatusType.Re_Submitted);
 		} else
 			throw new BadRequestException("ExpenseEntity", "Status should be null", null);
+		// set creation date and update date
+		expenseEntity.setCreationDate(previousExpense.getCreationDate());
+		expenseEntity.setUpdationDate(new Date());
+
+		// create a new expense history entity using the data from expense
+		// entity
+		ExpenseHistoryEntity expenseHistoryEntity = new ExpenseHistoryEntity(previousExpense.getId(),
+				previousExpense.getCreationDate(), previousExpense.getUpdationDate(), previousExpense.getAttachmentId(),
+				previousExpense.getTitle(), previousExpense.getDescription(), previousExpense.getUserId(),
+				previousExpense.getStatus());
+		expenseHistoryEntity.setCreationDate(new Date());
+		// save this history in mysql
+		mySqlExpense.saveExpenseHistory(expenseHistoryEntity);
+
 		// update expense
 		return mySqlExpense.updateExpense(expenseEntity);
+	}
+
+	/**
+	 * @see IExpenseService.getExpenses
+	 * 
+	 */
+	@Override
+	public List<ExpenseEntity> getExpenses(FetchExpenseEntity fetchExpenseEntity)
+			throws ValidationFailedException, NotFoundException, BadRequestException {
+		// validate entity
+		fetchExpenseEntity.validate();
+		// check if user exists
+		if (mySqlUser.getUser(fetchExpenseEntity.getUserId()) == null)
+			throw new NotFoundException("ExternalFacingUser", "User not found", null);
+		// fetch list of expenses from database
+		return mySqlExpense.getExpenses(fetchExpenseEntity);
 	}
 
 }

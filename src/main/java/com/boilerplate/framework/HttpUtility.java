@@ -8,12 +8,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpCookie;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-import com.boilerplate.framework.Logger;
-
-import javax.servlet.http.Cookie;
 
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;

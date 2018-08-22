@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
 /**
  * This is used to create new files 
  * @author mohit

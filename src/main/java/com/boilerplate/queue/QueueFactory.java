@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.cache.CacheFactory;
 import com.boilerplate.java.collections.BoilerplateMap;
 
 

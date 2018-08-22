@@ -2,18 +2,15 @@ package com.boilerplate.queue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.SaslConfig;
-import com.rabbitmq.client.SaslMechanism;
 
 /**
  * This class is used to implement a rabbit mq based queue proxy.

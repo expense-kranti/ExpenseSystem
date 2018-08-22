@@ -1,11 +1,8 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.collections.BoilerplateMap;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class SFUpdateHashEntity extends BaseEntity implements Serializable{
 

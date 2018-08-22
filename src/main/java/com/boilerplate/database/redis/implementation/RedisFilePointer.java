@@ -1,20 +1,15 @@
 package com.boilerplate.database.redis.implementation;
 
-import com.boilerplate.framework.Logger;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import com.boilerplate.database.interfaces.IFilePointer;
-import com.boilerplate.database.interfaces.IReferral;
-import com.boilerplate.database.mysql.implementations.MySQLFile;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
-import com.boilerplate.java.entities.ReferalEntity;
 
 public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFilePointer {
 	Logger logger = Logger.getInstance(RedisFilePointer.class);
@@ -159,7 +154,6 @@ public class RedisFilePointer extends BaseRedisDataAccessLayer implements IFileP
 	public Set<String> getAllFileKeys() {
 		return super.keys(File + "*");
 	}
-
 
 	/**
 	 * @see IReferral.addInRedisSet

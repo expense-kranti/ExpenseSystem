@@ -24,18 +24,12 @@
 		<property name="sessionManager" ref="sessionManager"></property>
 		<property name="mySqlUser" ref="mySqlUser"></property>
 	</bean>
-	<bean id="roleService" class="com.boilerplate.service.implemetations.RoleService"
-		init-method="initialize">
-		<property name="role" ref="role" />
-	</bean>
+
 	<!-- Bean for the Redis Queue Data Access Layer -->
 	<bean id="redisQueueDataAccessLayer"
 		class="com.boilerplate.database.redis.implementation.RedisQueueDataAccessLayer">
 	</bean>
-	<bean id="userRoleService" class="com.boilerplate.service.implemetations.UserRoleService">
-		<property name="roleService" ref="roleService" />
-		<property name="userService" ref="userService" />
-	</bean>
+
 	<!-- Bean for Redis Queue -->
 	<bean id="redisQueue" class="com.boilerplate.queue.RedisQueue">
 		<property name="redisQueueDataAccessLayer" ref="redisQueueDataAccessLayer"></property>
@@ -62,11 +56,6 @@
 	<!-- Bean for content management -->
 	<bean id="content"
 		class="com.boilerplate.database.redis.implementation.RedisContent">
-	</bean>
-	<bean id="contentService" class="com.boilerplate.service.implemetations.ContentService"
-		init-method="initialize">
-		<property name="content" ref="content"></property>
-		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
 
 	<bean id="methodPermissions"
@@ -98,14 +87,12 @@
 			<map>
 				<!-- Each entry should have a subject and observer -->
 				<entry key="ALL" value-ref="allAsyncJobObservers" /> <!-- The value ref is the list of observers for the subject -->
-
 				<!-- This is for saving the work to the database async -->
 			</map>
 
 
 		</property>
 	</bean>
-
 
 
 	<bean id="diagnostic"
@@ -156,36 +143,10 @@
 		<property name="mysqlPing" ref="mysqlPing"></property>
 	</bean>
 
-	<bean id="role" class="com.boilerplate.database.redis.implementation.RedisRole" />
 
-	<bean id="assessment"
-		class="com.boilerplate.database.mysql.implementations.MySQLAssessment">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-
-
-	<bean id="article"
-		class="com.boilerplate.database.mysql.implementations.MySQLArticle">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-
-	<bean id="redisAssessment"
-		class="com.boilerplate.database.redis.implementation.RedisAssessment">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-	<bean id="redisScript"
-		class="com.boilerplate.database.redis.implementation.RedisScript">
-	</bean>
 	<bean id="mysqlPing"
 		class="com.boilerplate.database.mysql.implementations.MySQLPing">
 	</bean>
-
-	<bean id="sendSmsService" class="com.boilerplate.service.implemetations.SendSMSService">
-		<property name="configurationManager" ref="configurationManager"></property>
-		<property name="queueReaderJob" ref="queueReaderJob"></property>
-	</bean>
-
-
 
 	<bean id="fileService" class="com.boilerplate.service.implemetations.FileService">
 		<property name="configurationManager" ref="configurationManager"></property>
@@ -206,72 +167,11 @@
 		<property name="maxUploadSize" value="26843545" /> <!-- 25 megs -->
 	</bean>
 
-	<!-- Bean for contact us data access -->
-	<bean id="contactUsDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisContactUs">
-	</bean>
-	<bean id="referral"
-		class="com.boilerplate.database.redis.implementation.RedisReferral">
-		<property name="configurationManager" ref="configurationManager"></property>
 
-	</bean>
 
 	<bean id="redisSFUpdateHashAccess"
 		class="com.boilerplate.database.redis.implementation.RedisSFUpdateHash">
 	</bean>
-	<bean id="emiCalculatorService"
-		class="com.boilerplate.service.implemetations.EmiCalculatorService">
-	</bean>
-	<bean id="currencyConversionService"
-		class="com.boilerplate.service.implemetations.CurrencyConversionService">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-
-	<bean id="blogActivityService"
-		class="com.boilerplate.service.implemetations.BlogActivityService">
-		<property name="blogActivityDataAccess" ref="blogActivityDataAccess"></property>
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-	<!-- Bean for redis BlogActivity data access -->
-	<bean id="blogActivityDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisBlogActivity">
-	</bean>
-
-
-	<bean id="mysqlReport"
-		class="com.boilerplate.database.mysql.implementations.MySQLReport">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-	<bean id="experianDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisVoucher"
-		init-method="initialize">
-		<property name="queueReaderJob" ref="queueReaderJob"></property>
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-
-	<bean id="reportDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisReport">
-	</bean>
-
-	<!-- Dependencies for CheckList APIs Related classes -->
-	<bean id="checkListService" class="com.boilerplate.service.implemetations.CheckListService">
-		<property name="checkListDataAccess" ref="checkListDataAccess">
-		</property>
-	</bean>
-
-	<bean id="checkListDataAccess"
-		class="com.boilerplate.database.redis.implementation.RedisCheckList">
-	</bean>
-
-	<!-- Dependencies related to Handbook apis -->
-	<bean id="handbookService" class="com.boilerplate.service.implemetations.HandbookService">
-		<property name="mySqlHandbook" ref="mySqlHandbook"></property>
-	</bean>
-
-	<bean id="mySqlHandbook"
-		class="com.boilerplate.database.mysql.implementations.MySQLHandbook">
-	</bean>
-
 
 
 	<!--Dependencies for saving user in mysql database -->
@@ -284,9 +184,6 @@
 		init-method="initialize">
 		<property name="queueReaderJob" ref="queueReaderJob" />
 		<property name="configurationManager" ref="configurationManager"></property>
-		<property name="redisAssessment" ref="redisAssessment"></property>
-		<property name="referral" ref="referral" />
-		<property name="blogActivityDataAccess" ref="blogActivityDataAccess" />
 		<property name="filePointer" ref="filePointer" />
 	</bean>
 
@@ -299,6 +196,12 @@
 	<bean id="expenseService" class="com.boilerplate.service.implemetations.ExpenseService">
 		<property name="mySqlExpense" ref="mySqlExpense" />
 		<property name="mySqlUser" ref="mySqlUser" />
+
+	</bean>
+
+	<bean id="userRoleService" class="com.boilerplate.service.implemetations.UserRoleService">
+		<property name="mySqlUser" ref="mySqlUser" />
+
 	</bean>
 
 

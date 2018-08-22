@@ -1,20 +1,16 @@
 package com.boilerplate.framework;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.activation.MimetypesFileTypeMap;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -23,17 +19,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.search.AndTerm;
 import javax.mail.search.FlagTerm;
-import javax.mail.search.SearchTerm;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.boilerplate.cache.CacheFactory;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 
 /**
  * This class contains code for email

@@ -1,31 +1,37 @@
 package com.boilerplate.service.interfaces;
 
-import java.util.List;
+import com.boilerplate.java.entities.AssignApproverEntity;
+import com.boilerplate.java.entities.SaveRoleEntity;
 
-import com.boilerplate.exceptions.rest.BadRequestException;
-import com.boilerplate.exceptions.rest.ConflictException;
-import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.exceptions.rest.UnauthorizedException;
-import com.boilerplate.java.entities.ExternalFacingUser;
-
+/**
+ * This interface has methods for user roles handling
+ * 
+ * @author ruchi
+ *
+ */
 public interface IUserRoleService {
+
 	/**
-	 * This method grants the user roles
+	 * This method is used to save list of user roles in mySQL
 	 * 
-	 * @param userId
-	 *            The id of the user to be granted roles
-	 * @param roles
-	 *            The roles to be granted
-	 * @param granter
-	 *            This is the user who is performing the operation. Some roles
-	 *            can only be granted by priviglaed users
-	 * @throws NotFoundException
-	 *             This is thrown if the user or the role is not found
-	 * @throws UnauthorizedException
-	 *             This exception is thrown if the user cant grant a given role.
-	 * @throws BadRequestException
-	 *             If the user data is not proper.
+	 * @param userRoles
+	 *            This is the list of user roles
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while saving
+	 *             user roles
 	 */
-	public void grantUserRoles(String userId, List<String> roles, ExternalFacingUser granter)
-			throws NotFoundException, UnauthorizedException, BadRequestException, ConflictException;
+	public void assignRoles(SaveRoleEntity userRoles) throws Exception;
+
+	/**
+	 * this method is used to assign approver and super-approver to a list of
+	 * users
+	 * 
+	 * @param assignApproverEntity
+	 *            This is the assignApproverEntity
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while saving
+	 *             approvers
+	 */
+	public void assignApprover(AssignApproverEntity assignApproverEntity) throws Exception;
+
 }

@@ -4,12 +4,8 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.database.interfaces.IBlogActivity;
 import com.boilerplate.database.interfaces.IFilePointer;
-import com.boilerplate.database.interfaces.IRedisAssessment;
-import com.boilerplate.database.interfaces.IReferral;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.database.redis.implementation.BaseRedisDataAccessLayer;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -79,23 +75,6 @@ public class MySQLQueueWriterJob {
 
 	private IFilePointer filePointer;
 
-	private IBlogActivity blogActivityDataAccess;
-
-	private IReferral referral;
-
-	public void setReferral(IReferral referral) {
-		this.referral = referral;
-	}
-
-	/**
-	 * Sets the blogActivityDataAccess
-	 * 
-	 * @param blogActivityDataAccess
-	 */
-	public void setBlogActivityDataAccess(IBlogActivity blogActivityDataAccess) {
-		this.blogActivityDataAccess = blogActivityDataAccess;
-	}
-
 	/**
 	 * Sets the filePointer
 	 * 
@@ -113,22 +92,6 @@ public class MySQLQueueWriterJob {
 	 */
 	public void setUserDataAccess(IUser userDataAccess) {
 		this.userDataAccess = userDataAccess;
-	}
-
-	/**
-	 * This is the new instance of redis assessment
-	 */
-	@Autowired
-	IRedisAssessment redisAssessment;
-
-	/**
-	 * This method set the redisAssessment
-	 * 
-	 * @param redisAssessment
-	 *            the redisAssessment to set
-	 */
-	public void setRedisAssessment(IRedisAssessment redisAssessment) {
-		this.redisAssessment = redisAssessment;
 	}
 
 	/**
@@ -215,26 +178,6 @@ public class MySQLQueueWriterJob {
 			// set the subject
 			subject = subjectsForCreateUser;
 			break;
-		case "Assessment":
-			// fetch AssessmentIds Set from Redis
-			elements = redisAssessment.fetchAssessmentIdsFromRedisSet();
-			/// set the subject
-			subject = subjectsForSaveUserAssessment;
-			break;
-
-		case "AssessmentObtainedScore":
-			// fetch AssessmentIds Set from Redis
-			elements = redisAssessment.fetchIdsFromAssessmentScoreRedisSet();
-			/// set the subject
-			subject = subjectsForSaveUserAssessmentScore;
-			break;
-
-		case "UserMonthlyScore":
-			// fetch AssessmentIds Set from Redis
-			elements = redisAssessment.fetchIdsFromAssessmentMonthlyScoreRedisSet();
-			/// set the subject
-			subject = subjectsForSaveUserMonthlyScore;
-			break;
 
 		case "UserFiles":
 			// fetch userIds Set from redis
@@ -242,18 +185,7 @@ public class MySQLQueueWriterJob {
 			// set the subject
 			subject = subjectsForCreateUserFile;
 			break;
-		case "UserBlogActivity":
-			// fetch userIds Set from redis
-			elements = blogActivityDataAccess.fetchBlogActivityAndAddInQueue();
-			// set the subject
-			subject = subjectsForCreateBlogActivity;
-			break;
-		case "UserReferral":
-			// fetch userReferIds Set from redis
-			elements = referral.fetchUserReferIdsFromRedisSet();
-			// set the subject
-			subject = subjectsForCreateReferalContact;
-			break;
+
 		}
 		// if set is empty then do nothing
 		if (!elements.isEmpty() && !(elements == null)) {

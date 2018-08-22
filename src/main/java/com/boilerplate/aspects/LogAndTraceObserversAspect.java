@@ -3,19 +3,13 @@ package com.boilerplate.aspects;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.MethodPermissions;
 import com.boilerplate.service.interfaces.IMethodPermissionService;
-import com.boilerplate.sessions.Session;
-import com.boilerplate.sessions.SessionManager;
-import com.boilerplate.asyncWork.AsyncWorkItem;
-import com.boilerplate.configurations.ConfigurationManager;
-import com.boilerplate.configurations.IConfiguratonManager;
 
 /**
  * This class is used to log and trace an exception for all observers.

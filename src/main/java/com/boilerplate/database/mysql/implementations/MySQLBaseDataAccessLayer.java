@@ -4,21 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Cache;
-import org.hibernate.CacheMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.entities.ReportTradeline;
-import com.boilerplate.jobs.QueueReaderJob;
 
 /**
  * This method is a base of data access layer

@@ -1,7 +1,5 @@
 package com.boilerplate.queue;
 
-import com.boilerplate.asyncWork.AsyncWorkItem;
-
 /**
  * This interface is implemented by any queue in the system to fetch and
  * push data in queue.

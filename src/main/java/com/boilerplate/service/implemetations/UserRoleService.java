@@ -1,188 +1,91 @@
 package com.boilerplate.service.implemetations;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.Role;
-import com.boilerplate.service.interfaces.IRoleService;
-import com.boilerplate.service.interfaces.IUserRoleService;
-import com.boilerplate.service.interfaces.IUserService;
-import com.boilerplate.database.interfaces.IUserRole;
-import com.boilerplate.exceptions.rest.BadRequestException;
-import com.boilerplate.exceptions.rest.ConflictException;
+import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.framework.Logger;
+import com.boilerplate.java.entities.AssignApproverEntity;
+import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.SaveRoleEntity;
+import com.boilerplate.service.interfaces.IUserRoleService;
 
 /**
- * This class perfomrs user role related function
+ * This class implements IUserRoleService
  * 
- * @author gaurav.verma.icloud
+ * @author ruchi
  *
  */
 public class UserRoleService implements IUserRoleService {
 
 	/**
-	 * This is the user service
+	 * This is the instance of IUser
 	 */
-	@Autowired
-	IUserService userService;
+	IUser mySqlUser;
 
 	/**
-	 * Sets the user service
+	 * This method set the mysqluser
 	 * 
-	 * @param userService
-	 *            The user service
+	 * @param mySqlUser
+	 *            the mySqlUser to set
 	 */
-	public void setUserService(IUserService userService) {
-		this.userService = userService;
+	public void setMySqlUser(IUser mySqlUser) {
+		this.mySqlUser = mySqlUser;
 	}
 
 	/**
-	 * This is the role service
+	 * This is the logger
 	 */
-	@Autowired
-	IRoleService roleService;
+	private Logger logger = Logger.getInstance(UserRoleService.class);
 
 	/**
-	 * This sets the role service
-	 * 
-	 * @param roleService
-	 *            The role service
-	 */
-	public void setRoleService(IRoleService roleService) {
-		this.roleService = roleService;
-	}
-
-	/**
-	 * This is the user role database access layer
-	 */
-	@Autowired
-	private IUserRole userRole;
-
-	/**
-	 * This sets the user role
-	 * 
-	 * @param userRole
-	 *            This is user role
-	 */
-	public void setUserRole(IUserRole userRole) {
-		this.userRole = userRole;
-	}
-
-	/**
-	 * @throws NotFoundException
-	 *             If the user or role is not found
-	 * @throws BadRequestException
-	 * @throws ConflictException
-	 * @see IUserRoleService.grantUserRoles
+	 * @see IUserRoleService.assignRoles
 	 */
 	@Override
-	public void grantUserRoles(String userId, List<String> roles, ExternalFacingUser granter)
-			throws NotFoundException, UnauthorizedException, BadRequestException, ConflictException {
+	public void assignRoles(SaveRoleEntity saveRoleEntity) throws Exception {
+		// validate entity
+		saveRoleEntity.validate();
+		// check if user exists or not
+		if (mySqlUser.getUser(saveRoleEntity.getUserId()) == null)
+			throw new NotFoundException("SaveRoleEntity", "User not found with id:" + saveRoleEntity.getUserId(), null);
+		// save roles in mysql
+		mySqlUser.saveUserRoles(saveRoleEntity);
 
-		// check if the granterId is a person who is admin or role granter
-		boolean canGrantRoles = isGrantingUserAdminOrRoleGranter(granter, roles);
-
-		// check if the granterId is same as userId
-		if (!canGrantRoles) {
-			if (!granter.getUserId().equals(userId)) {
-				throw new UnauthorizedException("User",
-						"The user " + granter.getUserId() + "cant grant roles to " + userId, null);
-			}
-		}
-		// check if all roles are self service roles
-		BoilerplateList<Role> rolesToBeGranted = new BoilerplateList<Role>();
-		Role role;
-		for (String roleName : roles) {
-			role = roleService.getRoleNameMap().get(roleName.toUpperCase());
-			if (role == null)
-				throw new NotFoundException("Role", "Role " + roleName + " not found", null);
-			if (!canGrantRoles) {
-				// if this is the case of self granting and user is not a
-				// granter
-				if (!role.getIsSelfAssign()) {
-					throw new UnauthorizedException("User", "The user " + granter.getUserId() + "cant grant roles  "
-							+ roleName + " because it is not a self assign role", null);
-				}
-			}
-			rolesToBeGranted.add(role);
-			// check if the user can grant the role
-		} // end for
-
-		// call the database and grant the said user given roles
-		// ExternalFacingUser userToBeGrantedRoles = this.getUser(userId,
-		// granter);
-		// // finally write to the database
-		// userRole.grantUserRole(userToBeGrantedRoles, rolesToBeGranted);
 	}
 
 	/**
-	 * This method gets the user
-	 * 
-	 * @param userId
-	 *            The id of the user
-	 * @param user
-	 *            The external facing user
-	 * @return The external facing user
-	 * @throws NotFoundException
-	 * @throws BadRequestException
+	 * @see IUserRoleService.assignApprover
 	 */
-	// private ExternalFacingUser getUser(String userId, ExternalFacingUser
-	// user)
-	// throws NotFoundException, BadRequestException {
-	// if (user.getUserId().equals(userId)) {
-	// return user;
-	// } else {
-	// return userService.get(userId);
-	// }
-	// }
+	@Override
+	public void assignApprover(AssignApproverEntity assignApproverEntity) throws Exception {
+		// validate the assignApproverEntity
+		assignApproverEntity.validate();
+		// check that approver user id exists
+		ExternalFacingUser approver = mySqlUser.getUserById(assignApproverEntity.getApproverUserId());
+		if (approver == null)
+			throw new NotFoundException("AssignApproverEntity", "Approver not found", null);
+		// check that super approver user id exists
+		ExternalFacingUser superApprover = mySqlUser.getUserById(assignApproverEntity.getSuperApprover());
+		if (superApprover == null)
+			throw new NotFoundException("AssignApproverEntity", "Super Approver not found", null);
 
-	/**
-	 * This method tells if the given user can grant the roles. Admin and Role
-	 * assigner may grant any roles Back office user or bank admin can make bank
-	 * admin and bank users.
-	 * 
-	 * @param granter
-	 *            This is the granter user
-	 * @param roles
-	 *            The list of roles
-	 * @return True if the user can grant the roles and false if the user cant
-	 *         grant the roles
-	 */
-	private boolean isGrantingUserAdminOrRoleGranter(ExternalFacingUser granter, List<String> roles) {
-		boolean isAdminOrRoleGranter = false;
-		for (Role role : granter.getRoles()) {
-			String roleName = role.getRoleName();
-			// if the user is admin let him grant roles
-			if (roleName.toUpperCase().equals("ADMIN")) {
-				isAdminOrRoleGranter = true;
-				break;
-			}
-			// if the user is role assigner let him grant roles
-			if (roleName.toUpperCase().equals("ROLEASSIGNER")) {
-				isAdminOrRoleGranter = true;
-				break;
-			}
-			// if the user is Back office user then he can grant Bank admin or
-			// bank user
-			// if the user is a bank admin then he can grant bank admin or bank
-			// user
-			if (roleName.toUpperCase().equals("BACKOFFICEUSER") || roleName.toUpperCase().equals("BANKADMIN")) {
-				for (String roleToBeGranted : roles) {
-					if (roleToBeGranted.toUpperCase().equals("BANKADMIN")
-							|| roleToBeGranted.toUpperCase().equals("BANKUSER")) {
-						isAdminOrRoleGranter = true;
-					} else {
-						isAdminOrRoleGranter = false;
-					}
-				}
+		// for each user in list, fetch the user and set approver and
+		// super-approver and save
+		for (String userId : assignApproverEntity.getUsers()) {
+			try {
+				// check if user exists
+				ExternalFacingUser user = mySqlUser.getUserById(userId);
+				if (user == null)
+					throw new NotFoundException("ExternalFacingUser", "User not found while assigning approver", null);
+				// set approver id
+				user.setApproverId(approver.getId());
+				// set super approver id
+				user.setSuperApproverId(superApprover.getId());
+				mySqlUser.updateUser(user);
+			} catch (NotFoundException ex) {
+				// Log exception for not found user
+				logger.logException("UserService", "assignApprover", "exceptionAssignApprover",
+						"User not found while assigning approver, this is the user id :" + userId, ex);
 			}
 		}
-		return isAdminOrRoleGranter;
 	}
 
 }

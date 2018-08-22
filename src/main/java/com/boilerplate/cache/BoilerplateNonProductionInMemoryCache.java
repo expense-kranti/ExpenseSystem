@@ -1,7 +1,5 @@
 package com.boilerplate.cache;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
 

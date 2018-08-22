@@ -17,7 +17,7 @@ import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.Role;
+import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.sessions.Session;
 
 /**
@@ -198,16 +198,18 @@ public class HttpRequestIdInterceptor extends HandlerInterceptorAdapter {
 				authenitcationRequest.setPassword(impersinatorPassword);
 				Session session = this.userService.authenticate(authenitcationRequest);
 				boolean isImpersinatorOrAdminFound = false;
-				for (Role role : session.getExternalFacingUser().getRoles()) {
-					if (role.getRoleName().toUpperCase().equals("ADMIN")) {
+				for (UserRoleType role : session.getExternalFacingUser().getRoles()) {
+					if (role.equals(UserRoleType.Admin)) {
 						isImpersinatorOrAdminFound = true;
 						break;
 					}
 
-					if (role.getRoleName().toUpperCase().equals("IMPERSINATOR")) {
-						isImpersinatorOrAdminFound = true;
-						break;
-					}
+					// if
+					// (role.getRoleName().toUpperCase().equals("IMPERSINATOR"))
+					// {
+					// isImpersinatorOrAdminFound = true;
+					// break;
+					// }
 				}
 				if (isImpersinatorOrAdminFound == false) {
 					throw new UnauthorizedException("User", "User not allowed impersination", null);
@@ -233,16 +235,17 @@ public class HttpRequestIdInterceptor extends HandlerInterceptorAdapter {
 			authenitcationRequest.setPassword(impersinatorPassword);
 			Session session = this.userService.authenticate(authenitcationRequest);
 			boolean isImpersinatorOrAdminFound = false;
-			for (Role role : session.getExternalFacingUser().getRoles()) {
-				if (role.getRoleName().toUpperCase().equals("ADMIN")) {
+			for (UserRoleType role : session.getExternalFacingUser().getRoles()) {
+				if (role.equals(UserRoleType.Admin)) {
 					isImpersinatorOrAdminFound = true;
 					break;
 				}
 
-				if (role.getRoleName().toUpperCase().equals("IMPERSINATOR")) {
-					isImpersinatorOrAdminFound = true;
-					break;
-				}
+				// if (role.getRoleName().toUpperCase().equals("IMPERSINATOR"))
+				// {
+				// isImpersinatorOrAdminFound = true;
+				// break;
+				// }
 			}
 			if (isImpersinatorOrAdminFound == false) {
 				throw new UnauthorizedException("User", "User not allowed impersination", null);

@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.Encryption;
 import com.wordnik.swagger.annotations.ApiModel;
 
 /**
@@ -14,7 +15,7 @@ import com.wordnik.swagger.annotations.ApiModel;
  * @author gaurav.verma.icloud
  *
  */
-@ApiModel(value = "A User", description = "This is a user", parent = UpdateUserEntity.class)
+@ApiModel(value = "A User", description = "This is a user", parent = BaseEntity.class)
 public class ExternalFacingUser extends BaseEntity implements Serializable {
 
 	/**
@@ -44,13 +45,9 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	private String lastName;
 
 	/**
-	 * This is the role name of user
-	 */
-	private String roleName;
-	/**
 	 * The roles of the user
 	 */
-	private List<Role> roles;
+	private List<UserRoleType> roles;
 
 	/**
 	 * This is the phone number of the customer or user
@@ -173,30 +170,11 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * Gets the role name
-	 * 
-	 * @return the roleName
-	 */
-	public String getRoleName() {
-		return roleName;
-	}
-
-	/**
-	 * Sets the role name
-	 * 
-	 * @param roleName
-	 *            the roleName to set
-	 */
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
-	/**
 	 * Gets the roles of the user
 	 * 
 	 * @return The roles of the user
 	 */
-	public List<Role> getRoles() {
+	public List<UserRoleType> getRoles() {
 		return roles;
 	}
 
@@ -206,7 +184,7 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 * @param roles
 	 *            The roles of the user
 	 */
-	public void setRoles(List<Role> roles) {
+	public void setRoles(List<UserRoleType> roles) {
 		this.roles = roles;
 	}
 
@@ -302,6 +280,13 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	}
 
 	/**
+	 * This method hash's the password
+	 */
+	public void hashPassword() {
+		this.password = String.valueOf(Encryption.getHashCode(this.password));
+	}
+
+	/**
 	 * This is the email regex expression
 	 */
 	public static Pattern emailResxPattern = Pattern
@@ -330,10 +315,26 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	public boolean validate() throws ValidationFailedException {
 		// check whether first name, last name, email id, userId, password are
 		// not null or empty
-		if (this.getFirstName() == null || this.getLastName() == null || this.getUserId() == null
-				|| this.getPassword() == null || this.getEmail() == null || this.getPhoneNumber() == null)
-			throw new ValidationFailedException("UserEntity",
-					"First name, Last name, Password, EmailId, Mobile Number and User Id are mandatory", null);
+		if (this.isNullOrEmpty(this.getFirstName()))
+			throw new ValidationFailedException("User", "First Name is null/Empty", null);
+		if (this.isNullOrEmpty(this.getLastName()))
+			throw new ValidationFailedException("User", "Last Name is null/Empty", null);
+		if (this.isNullOrEmpty(this.getUserId()))
+			throw new ValidationFailedException("User", "User Id is null/Empty", null);
+		if (this.isNullOrEmpty(this.getEmail()))
+			throw new ValidationFailedException("User", "Email Id is null/Empty", null);
+		if (this.isNullOrEmpty(this.getPhoneNumber()))
+			throw new ValidationFailedException("User", "Mobile Number is null/Empty", null);
+		if (this.isNullOrEmpty(this.getPassword()))
+			throw new ValidationFailedException("User", "Password is null/Empty", null);
+		// check if role is given to the user
+		if (this.getRoles().size() == 0)
+			throw new ValidationFailedException("ExternalFacingUser", "User should be given at least one role", null);
+		// check email id format
+		Matcher matcher = emailResxPattern.matcher(this.getEmail());
+		if (matcher.matches() == false) {
+			throw new ValidationFailedException("ExternalFacingUser", "Email format is incorrect", null);
+		}
 		return true;
 	}
 

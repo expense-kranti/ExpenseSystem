@@ -1,9 +1,5 @@
 package com.boilerplate.service.interfaces;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.boilerplate.database.interfaces.IContent;
-import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.GenericKeyValuePairEncapsulationEntity;
 

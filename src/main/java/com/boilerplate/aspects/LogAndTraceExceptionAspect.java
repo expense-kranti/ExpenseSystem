@@ -14,6 +14,7 @@ import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.MethodPermissions;
+import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IMethodPermissionService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
@@ -88,12 +89,29 @@ public class LogAndTraceExceptionAspect {
 			}
 
 			if (methodPermissions != null) {
+				// changed by Ruchi for expense system
 				// check if user needs to be authenticated to execute the method
 				if (methodPermissions.getIsAuthenticationRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-					if (session.getExternalFacingUser().getUserId().equals("AKS:ANNONYMOUS"))
+					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Admin))
+						throw new UnauthorizedException("User", "User is not authorized", null);
+				}
+				// check if user needs to be approver or super-approver to
+				// execute this method
+				if (methodPermissions.getIsApproverRoleRequired()) {
+					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
+					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Super_Approver)
+							|| !session.getExternalFacingUser().getRoles().contains(UserRoleType.Approver))
+						throw new UnauthorizedException("User", "User is not authorized", null);
+				}
+				// check if user needs to be finance to execute this method
+				if (methodPermissions.getIsFinanceRoleRequired()) {
+					if (session == null)
+						throw new UnauthorizedException("User", "User is not logged in", null);
+					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Finance))
+						throw new UnauthorizedException("User", "User is not authorized", null);
 				}
 			}
 

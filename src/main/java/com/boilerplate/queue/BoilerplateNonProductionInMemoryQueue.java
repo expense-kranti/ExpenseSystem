@@ -2,7 +2,6 @@ package com.boilerplate.queue;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
-import com.boilerplate.asyncWork.AsyncWorkItem;
 import com.boilerplate.java.collections.BoilerplateMap;
 
 public class BoilerplateNonProductionInMemoryQueue implements IQueue{

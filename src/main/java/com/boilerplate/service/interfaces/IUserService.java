@@ -104,21 +104,4 @@ public interface IUserService {
 	 */
 	public void enableUser(String userId) throws BadRequestException, NotFoundException, Exception;
 
-	/**
-	 * This method is used to assign approvers to a list of users
-	 * 
-	 * @param assignApproverEntity
-	 *            This is the entity consisting of approvers and users
-	 * @throws ValidationFailedException
-	 *             Throw this exception if entity is invalid
-	 * @throws BadRequestException
-	 *             Throw this exception if user sends a bad request
-	 * @throws NotFoundException
-	 *             Throw this exception if user not found
-	 * @throws Exception
-	 *             Throw this exception if exception occurs while updating user
-	 */
-	public void assignApprover(AssignApproverEntity assignApproverEntity)
-			throws ValidationFailedException, NotFoundException, BadRequestException, Exception;
-
 }

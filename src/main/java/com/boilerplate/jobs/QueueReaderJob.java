@@ -1,25 +1,15 @@
 package com.boilerplate.jobs;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.aspects.LogAndTraceExceptionAspect;
 import com.boilerplate.asyncWork.AsyncWorkItem;
 import com.boilerplate.asyncWork.AsyncWorkItemList;
-import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.exceptions.rest.UnauthorizedException;
-import com.boilerplate.framework.HttpResponse;
-import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.jobs.exceptions.QueueServiceUnavailableException;
-import com.boilerplate.queue.IQueue;
 import com.boilerplate.queue.QueueFactory;
 import com.boilerplate.service.interfaces.IAuthTokenService;
 

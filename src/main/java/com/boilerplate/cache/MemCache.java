@@ -1,15 +1,11 @@
 package com.boilerplate.cache;
 
-import java.io.IOException;
+import com.boilerplate.framework.Logger;
+import com.boilerplate.java.Base;
 
 import net.rubyeye.xmemcached.MemcachedClient;
 import net.rubyeye.xmemcached.MemcachedClientBuilder;
-import net.rubyeye.xmemcached.XMemcachedClient;
 import net.rubyeye.xmemcached.XMemcachedClientBuilder;
-import net.rubyeye.xmemcached.exception.MemcachedClientException;
-
-import com.boilerplate.framework.Logger;
-import com.boilerplate.java.Base;
 
 public class MemCache  extends BaseCache implements ICache{
 

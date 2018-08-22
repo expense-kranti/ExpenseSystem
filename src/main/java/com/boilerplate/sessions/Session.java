@@ -4,18 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.BaseEntity;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.ExternalFacingUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 

@@ -3,7 +3,6 @@ package com.boilerplate.asyncWork;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.jobs.QueueReaderJob;
 
 /**
  * This class dispatches work items to all observers of the payload subject.

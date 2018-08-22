@@ -5,14 +5,11 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
-import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.GenericListEncapsulationEntity;
 import com.boilerplate.java.entities.MethodPermissions;
-import com.boilerplate.java.entities.Role;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -367,8 +364,7 @@ public class BaseRedisDataAccessLayer {
 	 * This method creates method permission.
 	 */
 	private void createMethodPermission() {
-		// This attribute tells us about server name
-		String salesForceBaseurl = getSalesForceBaseUrl();
+
 		// method permissions
 		BoilerplateMap<String, MethodPermissions> methodPermissionMap = new BoilerplateMap<>();
 
@@ -388,913 +384,16 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setPublishBusinessSubject("CHECK_SERVER_STATUS");
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticate(com.boilerplate.java.entities.AuthenticationRequest)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticate(com.boilerplate.java.entities.AuthenticationRequest)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish("http://localhost");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishBusinessSubject("USER_LOGIN");
-
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticatewithpoint(com.boilerplate.java.entities.AuthenticationRequest)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticatewithpoint(com.boilerplate.java.entities.AuthenticationRequest)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish("http://localhost");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishBusinessSubject("USER_LOGIN");
-
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish("http://localhost");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishBusinessSubject("GET_CURRENTLY_LOGGED_IN_USER");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate(
-				"{\"id\": \"@Id\",\"userId\": \"@userId\",\"authenticationProvider\": \"@authenticationProvider\",\"email\": \"@email\",\"firstName\": \"@firstName\",\"lastName\": \"@lastName\",\"middleName\": \"@middleName\",\"phoneNumber\": \"@phoneNumber\",\"ownerId\": \"@ownerId\",\"referalSource\": \"@referalSource\",\"campaignType\": \"@campaignType\",\"campaignSource\": \"@campaignSource\",\"campaignUUID\": \"@campaignUUID\"}");
-		methodPermission.setPublishBusinessSubject("CREATE_USER_AKS");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method attemptAssessment()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.attemptAssessment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method getAssesments()
-		methodPermission = new MethodPermissions();
-		methodPermission
-				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
-		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.AssessmentController.getAssesments()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method getAssessmentAttempt()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.AttemptAssessmentListEntity com.boilerplate.java.controllers.AssessmentController.getAssessmentAttempt()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method saveAssesment()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.AssessmentController.saveAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method submitAssesment()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method logout()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.UserController.logout()");
-		methodPermission.setMethodName("public void com.boilerplate.java.controllers.UserController.logout()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method automaticPasswordReset()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.automaticPasswordReset(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method change password
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.update(com.boilerplate.java.entities.UpdateUserPasswordEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method checkUserExistence
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setMethodName(
-				"public boolean com.boilerplate.java.controllers.UserController.checkUserExistence(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method deleteUserAndData
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.UserController.deleteUserAndData(com.boilerplate.java.entities.ManageUserEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.UserController.deleteUserAndData(com.boilerplate.java.entities.ManageUserEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method updateAUser
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateAUser(com.boilerplate.java.entities.UpdateUserEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for AssessmentController
-		// Validate answer
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.AssessmentQuestionSectionEntity com.boilerplate.java.controllers.AssessmentController.validateAnswer(com.boilerplate.java.entities.AssessmentQuestionSectionEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.AssessmentQuestionSectionEntity com.boilerplate.java.controllers.AssessmentController.validateAnswer(com.boilerplate.java.entities.AssessmentQuestionSectionEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// upload file api
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// get files on master tag basis
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.FileController.getFileOnMasterTag(java.lang.String)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.FileController.getFileOnMasterTag(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// get files on master tag basis
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.FileController.download(java.lang.String,javax.servlet.http.HttpServletResponse)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.FileController.download(java.lang.String,javax.servlet.http.HttpServletResponse)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// user update self api
-
-		// for method updateLoggedInUser(UpdateUserEntity)
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateLoggedInUser(com.boilerplate.java.entities.UpdateUserEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate("");
-		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
-
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for ContactController starts here
-
-		// method permission for send email method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission
-				.setMethodName("public void com.boilerplate.java.controllers.ContactController.contactUsEmail()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// method permission for contactUs method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ContactController.contactUs(com.boilerplate.java.entities.ContactUsEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for ScriptController starts here
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndAssessmentReport()");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndAssessmentReport()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for ReferralController methods starts here
-
-		// method permission for sendReferralLink method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ReferralController.sendReferralLink(com.boilerplate.java.entities.ReferalEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getUserReferralContacts method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getUserReferredContacts()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for validateReferContact method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ReferralController.validateReferContact(com.boilerplate.java.entities.ReferalEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ReferralController.validateReferContact(com.boilerplate.java.entities.ReferalEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for facebook refer link
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getFaceBookReferralLink()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/ReferReport");
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate(
-				"{\"userId\": \"@userId\",\"referralUUID\": \"@referralUUID\",\"type\": \"@type\",\"referralContacts\": @referralContacts}");
-		methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for linkedIn refer link
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getLinkedInReferralLink()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReferalEntity com.boilerplate.java.controllers.ReferralController.getLinkedInReferralLink()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		// methodPermission.setPublishMethod("POST");
-		// methodPermission.setPublishRequired(false);
-		// methodPermission.setUrlToPublish(salesForceBaseurl +
-		// "/services/apexrest/ReferReport");
-		// methodPermission.setDynamicPublishURl(false);
-		// methodPermission.setPublishTemplate(
-		// "{\"userId\": \"@userId\",\"referralUUID\":
-		// \"@referralUUID\",\"type\": \"@type\",\"referralContacts\":
-		// @referralContacts}");
-		// methodPermission.setPublishBusinessSubject("REFER_REPORT_CREATED_AKS");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getUserReferredSignedUpUsersCount method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCount()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.UserReferredSignedUpUsersCountEntity com.boilerplate.java.controllers.ReferralController.getUserReferredSignedUpUsersCount()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for ContactController starts here
-
-		// method permission for send email method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ContactController.contactUsEmail(com.boilerplate.java.entities.EmailEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-		// method permissions for EMICalculatorController methods starts here
-
-		// method permission for calculateEmi method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.EmiDataEntity com.boilerplate.java.controllers.EmiCalculatorController.calculateEmi(com.boilerplate.java.entities.EmiDataEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for CurrencyConversionController methods
-
-		// for findExchangeRateAndConvertCurrency method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.CurrencyConversionEntity com.boilerplate.java.controllers.CurrencyConversionController.findExchangeRateAndConvertCurrency(com.boilerplate.java.entities.CurrencyConversionEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.CurrencyConversionEntity com.boilerplate.java.controllers.CurrencyConversionController.findExchangeRateAndConvertCurrency(com.boilerplate.java.entities.CurrencyConversionEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for blog activity controller starts here
-
-		// method permission for saveActivity method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.BlogActivityEntity com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.BlogActivityEntity com.boilerplate.java.controllers.BlogActivityController.saveActivity(com.boilerplate.java.entities.BlogActivityEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/BlogActivity");
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate(
-				"{\"action\" : \"@action\",\"activity\" : \"@activity\",\"activityType\" : \"@actType\",\"userId\" : \"@userId\"}");
-		methodPermission.setPublishBusinessSubject("BLOG_ACTIVITY");
-
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for feedback controller starts here
-
-		// method permission for sendEmailOnFeedbackSubmit method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.FeedbackController.sendEmailOnFeedbackSubmit(com.boilerplate.java.entities.FeedBackEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate("");
-		methodPermission.setPublishBusinessSubject("UPDATE_LOGGED_IN_USER_AKS");
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions of remaining api made by urvij
-
-		// method permission for article-apis
-
-		// for approveArticle(ArticleEntity) method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ArticleController.approveArticle(com.boilerplate.java.entities.ArticleEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ArticleController.approveArticle(com.boilerplate.java.entities.ArticleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for attemptAssessment(ArticleEntity) method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ArticleController.attemptAssessment(com.boilerplate.java.entities.ArticleEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ArticleController.attemptAssessment(com.boilerplate.java.entities.ArticleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for getAssesments() method
-		methodPermission = new MethodPermissions();
-		methodPermission
-				.setId("public java.util.List com.boilerplate.java.controllers.ArticleController.getAssesents()");
-		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ArticleController.getAssesments()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for Assessment controller
-
-		// method permission for getTotalScore() method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ScoreEntity com.boilerplate.java.controllers.AssessmentController.getTotalScore()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ScoreEntity com.boilerplate.java.controllers.AssessmentController.getTotalScore()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method submitAssesment(AssessmentEntity)
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.AssessmentEntity com.boilerplate.java.controllers.AssessmentController.submitAssesment(com.boilerplate.java.entities.AssessmentEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method getSurveys()
-		methodPermission = new MethodPermissions();
-		methodPermission
-				.setId("public java.util.List com.boilerplate.java.controllers.AssessmentController.getSurveys()");
-		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.AssessmentController.getSurveys()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method getTopScorrer()
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.AssessmentController.getTopScorrer()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.collections.BoilerplateList com.boilerplate.java.controllers.AssessmentController.getTopScorrer()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for Script Controller
-
-		// for method setUserChangePasswordStatus()
-		methodPermission = new MethodPermissions();
-		methodPermission
-				.setId("public void com.boilerplate.java.controllers.ScriptController.setUserChangePasswordStatus()");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ScriptController.setUserChangePasswordStatus()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method addUserToRole(GenericListEncapsulationEntity)
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.UserRoleController.addUserToRole(java.lang.String,com.boilerplate.java.entities.GenericListEncapsulationEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method publishUserAKSOrReferReport
-		methodPermission = new MethodPermissions();
-		methodPermission
-				.setId("public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAKSOrReferReport()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for method updateUserTotalScore
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ScriptController.updateUserTotalScore(java.lang.String)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ScriptController.updateUserTotalScore(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for publishUserAndUserRelatedDataToMySQL method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL(java.lang.String)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ScriptController.publishUserAndUserRelatedDataToMySQL(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for RewardController
-
-		// for sendRewardWinningUserDetailsInEmail method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.RewardController.sendRewardWinningUserDetailsInEmail(com.boilerplate.java.entities.RewardEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.RewardController.sendRewardWinningUserDetailsInEmail(com.boilerplate.java.entities.RewardEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for Experian integration api
-
-		// for startSingle method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReportInputEntiity com.boilerplate.java.controllers.ExperianController.startSingle(com.boilerplate.java.entities.ReportInputEntiity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for CheckList Controller
-
-		// for saveCheckList method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.saveCheckList(com.boilerplate.java.entities.CheckListEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.saveCheckList(com.boilerplate.java.entities.CheckListEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// for getCheckList() method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.getCheckList()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.CheckListEntity com.boilerplate.java.controllers.CheckListController.getCheckList()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for Handbook Controller
-
-		// for saveAndPublishHandbook method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.Handbook com.boilerplate.java.controllers.HandbookController.publishHandbook(com.boilerplate.java.entities.Handbook)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.Handbook com.boilerplate.java.controllers.HandbookController.publishHandbook(com.boilerplate.java.entities.Handbook)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/MyHandBook");
-		methodPermission.setDynamicPublishURl(false);
-		methodPermission.setPublishTemplate(
-				"{\"userId\" : \"@userId\",\"category\" : \"@category\",\"categoryType\" : \"@categoryType\",\"employmentType\" : \"@employmentType\"}");
-		methodPermission.setPublishBusinessSubject("HANDBOOK_AKS");
-
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permissions for IncomTaxCalculatorController
-
-		// method permission for calculateSimpleTax method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateSimpleTax(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateSimpleTax(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for calculateIncomeTaxWithInvestments method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateIncomeTaxWithInvestments(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.calculateIncomeTaxWithInvestments(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getIncomeTaxData method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.getIncomeTaxData(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.IncomeTaxEntity com.boilerplate.java.controllers.IncomeTaxCalculatorController.getIncomeTaxData(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for saveIncomeTaxUserDetails method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.IncomeTaxCalculatorController.saveIncomeTaxUserDetails(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.IncomeTaxCalculatorController.saveIncomeTaxUserDetails(com.boilerplate.java.entities.IncomeTaxEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getWordPressDataStatistics method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.StatisticsDataEntity com.boilerplate.java.controllers.StatisticsController.getStatistics()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.StatisticsDataEntity com.boilerplate.java.controllers.StatisticsController.getStatistics()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// express controller
-
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExpressController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExpressEntity com.boilerplate.java.controllers.ExpressController.getNamesByMobileNumber(com.boilerplate.java.entities.ExpressEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getUserReferredUsersCountCurrentMonth method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredUsersCountCurrentMonth()");
-		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ReferralController.getUserReferredUsersCountCurrentMonth()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for validateName
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ExpressController.validateName(com.boilerplate.java.entities.ExpressEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ExpressController.validateName(com.boilerplate.java.entities.ExpressEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for experian start
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.start(com.boilerplate.java.entities.ReportInputEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.start(com.boilerplate.java.entities.ReportInputEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getUserDetails in express controller
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExpressController.getUserDetails()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExpressController.getUserDetails()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for voucherUploadFromFile in voucher controller
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.VoucherController.voucherUploadFromFile(java.lang.String)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.VoucherController.voucherUploadFromFile(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for answerQuestionAndMoveToNext in experian
-		// controller
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.answerQuestionAndMoveToNext(com.boilerplate.java.entities.ExperianQuestionAnswer)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ReportInputEntity com.boilerplate.java.controllers.ExperianController.answerQuestionAndMoveToNext(com.boilerplate.java.entities.ExperianQuestionAnswer)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getLatestReport()");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getLatestReport()");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReportById(java.lang.String)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.Report com.boilerplate.java.controllers.ReportController.getReportById(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for sendExperianEmail
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ExperianController.sendExperianEmail(com.boilerplate.java.entities.GenericListEncapsulationEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ExperianController.sendExperianEmail(com.boilerplate.java.entities.GenericListEncapsulationEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for processOfflineReport
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.ExperianController.processOfflineReport(java.lang.String)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.ExperianController.processOfflineReport(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setUrlToPublish(salesForceBaseurl + "/services/apexrest/Account");
-		methodPermission.setPublishMethod("POST");
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for user get otp method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getBotData(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for authenticate by otp method
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticateByOTP(com.boilerplate.java.entities.AuthenticationRequest)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticateByOTP(com.boilerplate.java.entities.AuthenticationRequest)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for create new module
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createModule(com.boilerplate.java.entities.ModuleEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.createModule(com.boilerplate.java.entities.ModuleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for update module
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.updateModule(com.boilerplate.java.entities.ModuleEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ModuleEntity com.boilerplate.java.controllers.LessonsController.updateModule(com.boilerplate.java.entities.ModuleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for create new sub module
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.createSubModule(com.boilerplate.java.entities.SubModuleEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.createSubModule(com.boilerplate.java.entities.SubModuleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for update sub module
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.updateSubModule(com.boilerplate.java.entities.SubModuleEntity)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.SubModuleEntity com.boilerplate.java.controllers.LessonsController.updateSubModule(com.boilerplate.java.entities.SubModuleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
 		// method permission for create user
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.createUser(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for update user
@@ -1303,10 +402,10 @@ public class BaseRedisDataAccessLayer {
 				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateUser(com.boilerplate.java.entities.ExternalFacingUser)");
 		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.updateUser(com.boilerplate.java.entities.ExternalFacingUser)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for disable user
@@ -1315,10 +414,10 @@ public class BaseRedisDataAccessLayer {
 				.setId("public void com.boilerplate.java.controllers.UserController.disableUser(java.lang.String)");
 		methodPermission.setMethodName(
 				"public void com.boilerplate.java.controllers.UserController.disableUser(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for enable user
@@ -1327,10 +426,10 @@ public class BaseRedisDataAccessLayer {
 				.setId("public void com.boilerplate.java.controllers.UserController.enableUser(java.lang.String)");
 		methodPermission.setMethodName(
 				"public void com.boilerplate.java.controllers.UserController.enableUser(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for assigning approvers
@@ -1339,10 +438,10 @@ public class BaseRedisDataAccessLayer {
 				"public void com.boilerplate.java.controllers.UserController.assignApprovers(com.boilerplate.java.entities.AssignApproverEntity)");
 		methodPermission.setMethodName(
 				"public void com.boilerplate.java.controllers.UserController.assignApprovers(com.boilerplate.java.entities.AssignApproverEntity)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for creating expense
@@ -1352,9 +451,9 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createUser(com.boilerplate.java.entities.ExpenseEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// method permission for updating expense
@@ -1364,9 +463,57 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setMethodName(
 				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateUser(com.boilerplate.java.entities.ExpenseEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for authenticating user
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticate(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticate(com.boilerplate.java.entities.AuthenticationRequest)");
+		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
-		methodPermission.setPublishRequired(false);
-		methodPermission.setDynamicPublishURl(false);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for get user(currently logged in user)
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExternalFacingUser com.boilerplate.java.controllers.UserController.getCurrentUser()");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for assignRoles
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.UserController.assignRoles(com.boilerplate.java.entities.SaveRoleEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.assignRoles(com.boilerplate.java.entities.SaveRoleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for getExpenses
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(com.boilerplate.java.entities.FetchExpenseEntity)");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(com.boilerplate.java.entities.FetchExpenseEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
 		// save the method permission map in configuration
@@ -1379,47 +526,52 @@ public class BaseRedisDataAccessLayer {
 	 * This method creates seed user and role.
 	 */
 	private void createSeedUserAndRole() {
-		GenericListEncapsulationEntity<Role> roles = new GenericListEncapsulationEntity<Role>();
-		roles.setEntityList(new BoilerplateList<Role>());
-		Role role = null;
-		role = new Role("Admin", "Admin", "Admin of the system", true, false);
-		roles.getEntityList().add(role);
-		Role roleAdmin = role;
-		role = new Role("Approver", "Approver", "This role can approve/reject expenses", true, false);
-		roles.getEntityList().add(role);
-		Role roleSuperApprover = role;
-		role = new Role("SuperApprover", "SuperApprover", "This role can approve/reject expenses", true, false);
-		roles.getEntityList().add(role);
-		role = new Role("Finance", "Finance", "This role can approve/reject expenses for payment", true, false);
-		roles.getEntityList().add(role);
-		this.set("ROLES", Base.toXML(roles));
-
-		// create annonnymous user
-		ExternalFacingUser user = new ExternalFacingUser();
-		user.setId("ANNONYMOUS");
-		user.setUserId("ANNONYMOUS");
-		user.setPassword("0");
-		user.setRoles(new BoilerplateList<Role>());
-		this.set("USER:" + user.getUserId(), user);
-
-		// create admin
-		user = new ExternalFacingUser();
-		user.setId("ADMIN");
-		user.setUserId("ADMIN");
-		user.setPassword("password");
-		user.setFirstName("Admin");
-		user.setRoles(new BoilerplateList<Role>());
-		user.getRoles().add(roleAdmin);
-		this.set("USER:" + user.getUserId(), user);
-
-		// create background
-		user = new ExternalFacingUser();
-		user.setId("BACKGROUND");
-		user.setUserId("BACKGROUND");
-		user.setPassword("0");
-		user.setRoles(new BoilerplateList<Role>());
-		user.getRoles().add(roleAdmin);
-		this.set("USER:" + user.getUserId(), user);
+		// GenericListEncapsulationEntity<Role> roles = new
+		// GenericListEncapsulationEntity<Role>();
+		// roles.setEntityList(new BoilerplateList<Role>());
+		// Role role = null;
+		// role = new Role("Admin", "Admin", "Admin of the system", true,
+		// false);
+		// roles.getEntityList().add(role);
+		// Role roleAdmin = role;
+		// role = new Role("Approver", "Approver", "This role can approve/reject
+		// expenses", true, false);
+		// roles.getEntityList().add(role);
+		// Role roleSuperApprover = role;
+		// role = new Role("SuperApprover", "SuperApprover", "This role can
+		// approve/reject expenses", true, false);
+		// roles.getEntityList().add(role);
+		// role = new Role("Finance", "Finance", "This role can approve/reject
+		// expenses for payment", true, false);
+		// roles.getEntityList().add(role);
+		// this.set("ROLES", Base.toXML(roles));
+		//
+		// // create annonnymous user
+		// ExternalFacingUser user = new ExternalFacingUser();
+		// user.setId("ANNONYMOUS");
+		// user.setUserId("ANNONYMOUS");
+		// user.setPassword("0");
+		// user.setRoles(new BoilerplateList<Role>());
+		// this.set("USER:" + user.getUserId(), user);
+		//
+		// // create admin
+		// user = new ExternalFacingUser();
+		// user.setId("ADMIN");
+		// user.setUserId("ADMIN");
+		// user.setPassword("password");
+		// user.setFirstName("Admin");
+		// user.setRoles(new BoilerplateList<Role>());
+		// // user.getRoles().add(roleAdmin);
+		// this.set("USER:" + user.getUserId(), user);
+		//
+		// // create background
+		// user = new ExternalFacingUser();
+		// user.setId("BACKGROUND");
+		// user.setUserId("BACKGROUND");
+		// user.setPassword("0");
+		// user.setRoles(new BoilerplateList<Role>());
+		// // ser.getRoles().add(roleAdmin);
+		// this.set("USER:" + user.getUserId(), user);
 
 	}
 
@@ -1957,6 +1109,10 @@ public class BaseRedisDataAccessLayer {
 				"FROM ExternalFacingUser user where user.userId = :UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_ID", "FROM ExpenseEntity expense where expense.id = :ExpenseId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_ID", "FROM ExternalFacingUser user where user.id = :Id");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_USEr_ROLES_BY_ID",
+				"FROM UserRoleEntity userRoles where userRoles.userId = :UserId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_USER_ID",
+				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
 
 		return vAllEAll;
 

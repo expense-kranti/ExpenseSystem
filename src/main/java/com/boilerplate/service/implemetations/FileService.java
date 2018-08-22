@@ -3,7 +3,6 @@ package com.boilerplate.service.implemetations;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +16,6 @@ import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
-import com.boilerplate.java.entities.Role;
 import com.boilerplate.service.interfaces.IFileService;
 
 public class FileService implements IFileService {

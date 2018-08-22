@@ -1,16 +1,12 @@
 package com.boilerplate.service.implemetations;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 
 import com.boilerplate.cache.CacheFactory;
 import com.boilerplate.database.interfaces.IPing;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ClientSideDiagnostic;
-import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.Ping;
 import com.boilerplate.queue.QueueFactory;
 import com.boilerplate.service.interfaces.IPingService;

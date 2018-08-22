@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.framework.RequestThreadLocal;
+import com.boilerplate.java.Constants;
 import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.SaveRoleEntity;
+import com.boilerplate.service.interfaces.IUserRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
 import com.boilerplate.sessions.SessionManager;
@@ -44,6 +48,12 @@ public class UserController extends BaseController {
 	 */
 	@Autowired
 	SessionManager sessionManager;
+
+	/**
+	 * This is the autowired instance of IUserRoleService
+	 */
+	@Autowired
+	IUserRoleService userRoleService;
 
 	/**
 	 * This API is used to create a new user
@@ -89,6 +99,17 @@ public class UserController extends BaseController {
 		return userService.updateUser(externalFacingUser);
 	}
 
+	/**
+	 * This API is used to authenticate a user
+	 * 
+	 * @param authenticationRequest
+	 *            this is the authentication request
+	 * @return Session
+	 * @throws UnauthorizedException
+	 *             throw this exception if user is unauthorized
+	 * @throws BadRequestException
+	 *             throw this exception if user sends a bad request
+	 */
 	@ApiOperation(value = "Authenticates a user by passing user name, password for default provider", notes = "The user is unique in the system for a given provider."
 			+ "The user may passed as a user id or as DEFAULT:userId")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
@@ -100,29 +121,17 @@ public class UserController extends BaseController {
 		// valid
 		Session session = this.userService.authenticate(authenticationRequest);
 
-		// // now put sessionId in a cookie, header and also as response back
-		// super.addHeader(Constants.AuthTokenHeaderKey,
-		// session.getSessionId());
-		//
-		// boolean isDSA = (authenticationRequest.getUserId()).contains("DSA:");
-		// if (isDSA)
-		// super.addCookie(Constants.DsaAuthTokenCookieKey,
-		// session.getSessionId(),
-		// sessionManager.getSessionTimeout());
-		// else
-		// super.addCookie(Constants.AuthTokenCookieKey, session.getSessionId(),
-		// sessionManager.getSessionTimeout());
-		//
-		// // add the user id for logging, we have to explictly do it here only
-		// in
-		// // this
-		// // case all other cases
-		// // are handeled by HttpRequestInterseptor
-		// super.addHeader(Constants.X_User_Id,
-		// session.getExternalFacingUser().getUserId());
-		// RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(),
-		// RequestThreadLocal.getHttpRequest(),
-		// RequestThreadLocal.getHttpResponse(), session);
+		// now put sessionId in a cookie, header and also as response back
+		super.addHeader(Constants.AuthTokenHeaderKey, session.getSessionId());
+		super.addCookie(Constants.AuthTokenCookieKey, session.getSessionId(), sessionManager.getSessionTimeout());
+
+		// add the user id for logging, we have to explictly do it here only in
+		// this
+		// case all other cases
+		// are handeled by HttpRequestInterseptor
+		super.addHeader(Constants.X_User_Id, session.getExternalFacingUser().getUserId());
+		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
+				RequestThreadLocal.getHttpResponse(), session);
 		return session;
 	}
 
@@ -195,7 +204,48 @@ public class UserController extends BaseController {
 	public @ResponseBody void assignApprovers(@RequestBody AssignApproverEntity assignApproverEntity)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
-		userService.assignApprover(assignApproverEntity);
+		userRoleService.assignApprover(assignApproverEntity);
+	}
+
+	/**
+	 * Gets the currently logged in user
+	 * 
+	 * @return The user
+	 * @throws NotFoundException
+	 *             If user is not found
+	 */
+	@ApiOperation(value = "Gets currently logged in user")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public @ResponseBody ExternalFacingUser getCurrentUser() throws Exception, NotFoundException, BadRequestException {
+		// session won't be null as has been checked in aspects
+		return this.userService.getUser(RequestThreadLocal.getSession().getExternalFacingUser().getUserId());
+
+	}
+
+	/**
+	 * This api is used to assign roles to a list of users
+	 * 
+	 * @param roles
+	 *            this is the list of roles
+	 * @throws BadRequestException
+	 *             throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             throw this exception if user no found
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while saving
+	 *             roles
+	 */
+	@ApiOperation(value = "Assign roles to users", notes = "The user is unique in the system, The creation date and updated "
+			+ "date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, manadatory fields are missing"),
+			@ApiResponse(code = 409, message = "The user does not exist") })
+	@RequestMapping(value = "/user/assignRoles", method = RequestMethod.POST)
+	public @ResponseBody void assignRoles(@RequestBody SaveRoleEntity role)
+			throws BadRequestException, NotFoundException, Exception {
+		// call the business layer
+		userRoleService.assignRoles(role);
 	}
 
 }

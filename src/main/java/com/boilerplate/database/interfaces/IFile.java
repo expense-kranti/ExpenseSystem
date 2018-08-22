@@ -2,6 +2,7 @@ package com.boilerplate.database.interfaces;
 
 
 import java.io.IOException;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IFile {

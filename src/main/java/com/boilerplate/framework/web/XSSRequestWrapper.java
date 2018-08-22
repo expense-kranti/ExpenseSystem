@@ -4,8 +4,6 @@ package com.boilerplate.framework.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import com.boilerplate.exceptions.rest.UnauthorizedException;
-
 public final class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	public XSSRequestWrapper(HttpServletRequest servletRequest) {

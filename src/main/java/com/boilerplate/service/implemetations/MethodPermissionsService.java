@@ -2,7 +2,6 @@ package com.boilerplate.service.implemetations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.boilerplate.database.interfaces.IMethodPermissions;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.service.interfaces.IMethodPermissionService;
 

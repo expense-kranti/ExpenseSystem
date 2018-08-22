@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.FileEntity;
 import com.boilerplate.service.interfaces.IFileService;

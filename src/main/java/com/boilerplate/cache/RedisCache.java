@@ -1,19 +1,15 @@
 package com.boilerplate.cache;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
-import redis.clients.jedis.JedisCommands;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
-import com.boilerplate.database.redis.implementation.BaseRedisDataAccessLayer;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * This is a singleton access point for the Redis cache.

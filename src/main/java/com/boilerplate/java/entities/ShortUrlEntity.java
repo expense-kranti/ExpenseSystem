@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.io.Serializable;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**

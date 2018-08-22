@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.boilerplate.java.Base;
 import com.boilerplate.java.Constants;
 import com.boilerplate.sessions.Session;

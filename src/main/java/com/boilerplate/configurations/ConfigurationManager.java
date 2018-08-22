@@ -3,18 +3,10 @@ package com.boilerplate.configurations;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.boilerplate.database.interfaces.IConfigurations;
 import com.boilerplate.java.collections.BoilerplateList;

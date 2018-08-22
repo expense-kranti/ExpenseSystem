@@ -2,6 +2,7 @@ package com.boilerplate.database.mysql.implementations;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.boilerplate.database.interfaces.IPing;
 
 public class MySQLPing extends MySQLBaseDataAccessLayer implements IPing {

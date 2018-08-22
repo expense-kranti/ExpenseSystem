@@ -1,5 +1,8 @@
 package com.boilerplate.service.implemetations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IUser;
@@ -7,10 +10,14 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.framework.Encryption;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.UserRoleEntity;
+import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
 
@@ -63,6 +70,7 @@ public class UserService implements IUserService {
 	 */
 	@Override
 	public ExternalFacingUser updateUser(ExternalFacingUser user) throws Exception {
+		// check admin authentication
 		// validate the input user entity
 		user.validate();
 		// check if user entity does not contain id
@@ -73,8 +81,11 @@ public class UserService implements IUserService {
 			throw new BadRequestException("UserEntity", "USer does not exist", null);
 		// set active status to true
 		user.setIsActive(true);
+		// hash password
+		user.hashPassword();
 		// save user in MySQL database
-		return mySqlUser.updateUser(user);
+		user = mySqlUser.updateUser(user);
+		return user;
 	}
 
 	/**
@@ -94,8 +105,12 @@ public class UserService implements IUserService {
 					null);
 		// set active status to true
 		user.setIsActive(true);
+		// hash password
+		user.hashPassword();
 		// save user in MySQL database
-		return mySqlUser.createUser(user);
+		user = mySqlUser.createUser(user);
+
+		return user;
 	}
 
 	/**
@@ -110,9 +125,23 @@ public class UserService implements IUserService {
 			// check if user exists
 			if (user == null)
 				throw new NotFoundException("ExternalFacingUser", "User not found", null);
+			// hash the password in authentication request
+			String hashedPassword = String.valueOf(Encryption.getHashCode(authenitcationRequest.getPassword()));
 			// Check if password matches
-			if (authenitcationRequest.getPassword() != user.getPassword())
-				throw new UnauthorizedException("ExternalFacingUser", "Password did not matchh", null);
+			if (!user.getPassword().equals(hashedPassword)) {
+				throw new UnauthorizedException("User", "User name or password incorrect", null);
+			}
+			// get user roles
+			List<UserRoleEntity> userRoles = mySqlUser.getUserRoles(user.getId());
+			// create a role list for user
+			List<UserRoleType> roles = new ArrayList<>();
+			// for each role entity fetched, add it in role list
+			for (UserRoleEntity userRoleEntity : userRoles) {
+				roles.add(userRoleEntity.getRole());
+			}
+			// set roles in user
+			user.setRoles(roles);
+			// create a new session with user, return it
 			Session session = sessionManager.createNewSession(user);
 
 			return session;
@@ -181,44 +210,5 @@ public class UserService implements IUserService {
 
 	}
 
-	/**
-	 * @see IUserService.assignApprover
-	 */
-	@Override
-	public void assignApprover(AssignApproverEntity assignApproverEntity) throws Exception {
-		// validate the assignApproverEntity
-		assignApproverEntity.validate();
-		// check that approver user id exists
-		ExternalFacingUser approver = mySqlUser.getUserById(assignApproverEntity.getApproverUserId());
-		if (approver == null)
-			throw new NotFoundException("AssignApproverEntity", "Approver not found", null);
-		// check that super approver user id exists
-		ExternalFacingUser superApprover = mySqlUser.getUserById(assignApproverEntity.getSuperApprover());
-		if (superApprover == null)
-			throw new NotFoundException("AssignApproverEntity", "Super Approver not found", null);
-		/**
-		 * Yet to implemented- check the roles of the approver and super
-		 * approver
-		 */
-		// for each user in list, fetch the user and set approver and
-		// super-approver and save
-		for (String userId : assignApproverEntity.getUsers()) {
-			try {
-				// check if user exists
-				ExternalFacingUser user = mySqlUser.getUserById(userId);
-				if (user == null)
-					throw new NotFoundException("ExternalFacingUser", "User not found while assigning approver", null);
-				// set approver id
-				user.setApproverId(approver.getId());
-				// set super approver id
-				user.setSuperApproverId(superApprover.getId());
-				mySqlUser.updateUser(user);
-			} catch (NotFoundException ex) {
-				// Log exception for not found user
-				logger.logException("UserService", "assignApprover", "exceptionAssignApprover",
-						"User not found while assigning approver, this is the user id :" + userId, ex);
-			}
-		}
-	}
-
+	
 }

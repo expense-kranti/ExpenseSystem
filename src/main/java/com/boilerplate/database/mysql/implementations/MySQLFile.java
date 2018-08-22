@@ -1,12 +1,7 @@
 package com.boilerplate.database.mysql.implementations;
 
-import java.io.IOException;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
-import org.joda.time.DateTime;
 
 import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.exceptions.rest.NotFoundException;

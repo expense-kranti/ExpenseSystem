@@ -3,7 +3,6 @@ package com.boilerplate.java.entities;
 import java.io.Serializable;
 import java.util.List;
 
-import com.boilerplate.java.collections.BoilerplateList;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 

@@ -3,8 +3,6 @@ package com.boilerplate.database.interfaces;
 import java.util.Map;
 import java.util.Set;
 
-import redis.clients.jedis.Jedis;
-
 public interface ISFUpdateHash {
 
 	/**

@@ -1,16 +1,12 @@
 package com.boilerplate.database.interfaces;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.boilerplate.java.entities.FileEntity;
-import com.boilerplate.java.entities.ReferalEntity;
 
 /**
  * This is for file data integration

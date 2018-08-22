@@ -1,13 +1,17 @@
 package com.boilerplate.java.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.service.interfaces.IExpenseService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -43,7 +47,7 @@ public class ExpenseController extends BaseController {
 	 */
 	@ApiOperation(value = "Creates a new expense entity in the system", notes = "The creation date and updated date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
-			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
+			@ApiResponse(code = 400, message = "Bad request, User id is null or empty"),
 			@ApiResponse(code = 404, message = "Is user does not exist") })
 	@RequestMapping(value = "/expense", method = RequestMethod.POST)
 	public @ResponseBody ExpenseEntity createUser(@RequestBody ExpenseEntity expenseEntity) throws Exception {
@@ -63,12 +67,33 @@ public class ExpenseController extends BaseController {
 	 */
 	@ApiOperation(value = "Updates an expense entity in the system", notes = "The creation date and updated date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
-			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
-			@ApiResponse(code = 404, message = "Is user does not exist") })
+			@ApiResponse(code = 400, message = "Bad request, User id is null or empty"),
+			@ApiResponse(code = 404, message = "User does not exist") })
 	@RequestMapping(value = "/expense", method = RequestMethod.PUT)
 	public @ResponseBody ExpenseEntity updateUser(@RequestBody ExpenseEntity expenseEntity) throws Exception {
 		// call the business layer
 		return expenseService.updateExpense(expenseEntity);
+	}
+
+	/**
+	 * This API is used to get expenses for a given user
+	 * 
+	 * @param userId
+	 *            this is the user id for which expenses need o be fetched
+	 * @return List of expenses
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while fetching
+	 *             data from database
+	 */
+	@ApiOperation(value = "Gets expenses for a given user", notes = "The creation date and updated date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, User id is null or empty"),
+			@ApiResponse(code = 404, message = "User does not exist") })
+	@RequestMapping(value = "/expense/getAll", method = RequestMethod.PUT)
+	public @ResponseBody List<ExpenseEntity> getExpenses(@RequestBody FetchExpenseEntity fetchExpenseEntity)
+			throws Exception {
+		// call the business layer
+		return expenseService.getExpenses(fetchExpenseEntity);
 	}
 
 }

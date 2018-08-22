@@ -3,7 +3,6 @@ package com.boilerplate.java.collections;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import com.boilerplate.java.Base;

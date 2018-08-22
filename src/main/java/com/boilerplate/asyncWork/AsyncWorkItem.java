@@ -1,6 +1,5 @@
 package com.boilerplate.asyncWork;
 
-import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateList;

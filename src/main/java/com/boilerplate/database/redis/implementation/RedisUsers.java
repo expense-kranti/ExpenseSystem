@@ -1,20 +1,6 @@
 package com.boilerplate.database.redis.implementation;
 
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.exceptions.rest.ConflictException;
-import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.java.entities.IdEntity;
-import com.boilerplate.java.entities.Role;
-import com.boilerplate.java.entities.UserEntity;
-
-import redis.clients.jedis.Jedis;
 
 /**
  * This class is a redis implementation of user

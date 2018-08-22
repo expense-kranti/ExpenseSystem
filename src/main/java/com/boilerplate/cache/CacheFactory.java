@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.java.collections.BoilerplateMap;
 

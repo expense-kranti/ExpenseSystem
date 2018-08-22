@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.database.interfaces.IDiagnostic;
 import com.boilerplate.java.entities.ClientSideDiagnostic;
-import com.boilerplate.service.implemetations.PingService;
 
 public class ClientSideLog implements IAsyncWorkObserver{
 

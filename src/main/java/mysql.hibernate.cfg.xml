@@ -31,5 +31,9 @@
 			resource="com/boilerplate/database/mysql/implementations/MySQLFile.hbm.xml" />
 		<mapping
 			resource="com/boilerplate/database/mysql/implementations/MySQLExpense.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLExpenseHistory.hbm.xml" />
+		<mapping
+			resource="com/boilerplate/database/mysql/implementations/MySQLUserRole.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

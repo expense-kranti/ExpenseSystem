@@ -1,7 +1,11 @@
 package com.boilerplate.database.interfaces;
 
+import java.util.List;
+
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.FetchExpenseEntity;
 
 /**
  * This interface has methods for CRUD operations of expense entity in MySQL
@@ -40,8 +44,21 @@ public interface IExpense {
 	 *            This is the id of the expense
 	 * @return This is the updated and saved expense entity
 	 * @throws BadRequestException
-	 *             TFShrow this exception if user sends a bad request
+	 *             Throw this exception if user sends a bad request
 	 */
 	public ExpenseEntity getExpense(String id) throws BadRequestException;
+
+	/**
+	 * This method is used to save expense history
+	 * 
+	 * @param expenseHistoryEntity
+	 *            this is the expense history to be saved
+	 * @throws Exception
+	 *             throw this exception if any exception occurs hile saving
+	 *             expense history
+	 */
+	public void saveExpenseHistory(ExpenseHistoryEntity expenseHistoryEntity) throws Exception;
+
+	public List<ExpenseEntity> getExpenses(FetchExpenseEntity fetchExpenseEntity) throws BadRequestException;
 
 }

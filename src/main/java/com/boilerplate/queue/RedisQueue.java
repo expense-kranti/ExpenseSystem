@@ -5,16 +5,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.h2.util.New;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.asyncWork.AsyncWorkItem;
-import com.boilerplate.database.redis.implementation.RedisQueueDataAccessLayer;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.collections.BoilerplateMap;
 import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 
 /**
  * This is the class used to implement a Redis Queue

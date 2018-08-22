@@ -11,7 +11,6 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.java.Constants;
 import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExternalFacingUser;
-import com.boilerplate.service.implemetations.UserService;
 
 public class SessionManager {
 
