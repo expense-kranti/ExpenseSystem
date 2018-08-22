@@ -1,11 +1,17 @@
 package com.boilerplate.service.implemetations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.SaveRoleEntity;
+import com.boilerplate.java.entities.UserRoleEntity;
+import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IUserRoleService;
 
 /**
@@ -59,20 +65,43 @@ public class UserRoleService implements IUserRoleService {
 		// validate the assignApproverEntity
 		assignApproverEntity.validate();
 		// check that approver user id exists
-		ExternalFacingUser approver = mySqlUser.getUserById(assignApproverEntity.getApproverUserId());
+		ExternalFacingUser approver = mySqlUser.getUser(assignApproverEntity.getApproverUserId());
 		if (approver == null)
 			throw new NotFoundException("AssignApproverEntity", "Approver not found", null);
+		// get user roles
+		List<UserRoleEntity> userRoles = mySqlUser.getUserRoles(approver.getId());
+		// create a role list for user
+		List<UserRoleType> roles = new ArrayList<>();
+		// for each role entity fetched, add it in role list
+		for (UserRoleEntity userRoleEntity : userRoles) {
+			roles.add(userRoleEntity.getRole());
+		}
+		// check if approver id has approver access or not
+		if (!roles.contains(UserRoleType.Approver))
+			throw new BadRequestException("AssignApproverEntity", "User Id of approver does not have sufficient rights",
+					null);
 		// check that super approver user id exists
-		ExternalFacingUser superApprover = mySqlUser.getUserById(assignApproverEntity.getSuperApprover());
+		ExternalFacingUser superApprover = mySqlUser.getUser(assignApproverEntity.getSuperApprover());
 		if (superApprover == null)
 			throw new NotFoundException("AssignApproverEntity", "Super Approver not found", null);
-
+		// get user roles
+		userRoles = mySqlUser.getUserRoles(superApprover.getId());
+		// create a role list for user
+		roles = new ArrayList<>();
+		// for each role entity fetched, add it in role list
+		for (UserRoleEntity userRoleEntity : userRoles) {
+			roles.add(userRoleEntity.getRole());
+		}
+		// check if approver id has approver access or not
+		if (!roles.contains(UserRoleType.Super_Approver))
+			throw new BadRequestException("AssignApproverEntity",
+					"User Id of super approver does not have sufficient rights", null);
 		// for each user in list, fetch the user and set approver and
 		// super-approver and save
 		for (String userId : assignApproverEntity.getUsers()) {
 			try {
 				// check if user exists
-				ExternalFacingUser user = mySqlUser.getUserById(userId);
+				ExternalFacingUser user = mySqlUser.getUser(userId);
 				if (user == null)
 					throw new NotFoundException("ExternalFacingUser", "User not found while assigning approver", null);
 				// set approver id

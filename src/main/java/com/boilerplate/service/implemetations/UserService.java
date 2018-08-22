@@ -12,8 +12,6 @@ import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Encryption;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.UserRoleEntity;
@@ -177,7 +175,7 @@ public class UserService implements IUserService {
 		if (userId == null)
 			throw new BadRequestException("ExternalFacingUser", "User id is null", null);
 		// check if user exists
-		ExternalFacingUser user = mySqlUser.getUserById(userId);
+		ExternalFacingUser user = mySqlUser.getUser(userId);
 		if (user == null)
 			throw new NotFoundException("ExternalFacingUser", "User not found", null);
 		// check if user is already disabled
@@ -198,7 +196,7 @@ public class UserService implements IUserService {
 		if (userId == null)
 			throw new BadRequestException("ExternalFacingUser", "User id is null", null);
 		// check if user exists
-		ExternalFacingUser user = mySqlUser.getUserById(userId);
+		ExternalFacingUser user = mySqlUser.getUser(userId);
 		if (user == null)
 			throw new NotFoundException("ExternalFacingUser", "User not found", null);
 		// check if user is already disabled
@@ -210,5 +208,4 @@ public class UserService implements IUserService {
 
 	}
 
-	
 }

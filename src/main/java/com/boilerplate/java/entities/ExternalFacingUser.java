@@ -327,9 +327,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 			throw new ValidationFailedException("User", "Mobile Number is null/Empty", null);
 		if (this.isNullOrEmpty(this.getPassword()))
 			throw new ValidationFailedException("User", "Password is null/Empty", null);
-		// check if role is given to the user
-		if (this.getRoles().size() == 0)
-			throw new ValidationFailedException("ExternalFacingUser", "User should be given at least one role", null);
 		// check email id format
 		Matcher matcher = emailResxPattern.matcher(this.getEmail());
 		if (matcher.matches() == false) {
