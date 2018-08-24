@@ -30,12 +30,30 @@ public class ExpenseEntity extends BaseEntity {
 	/**
 	 * this is the list of attachment ids of the bill uploaded with the expense
 	 */
-	private List<String> attachmentIds;
+	private List<AttachmentEntity> attachments;
 
 	/**
 	 * this is the id of the user by whom expense was filed
 	 */
 	private String userId;
+
+	/**
+	 * This method is used to get list of attachments *
+	 * 
+	 * @return
+	 */
+	public List<AttachmentEntity> getAttachments() {
+		return attachments;
+	}
+
+	/**
+	 * This method is used to set list of attchments ids
+	 * 
+	 * @param attachmentIds
+	 */
+	public void setAttachments(List<AttachmentEntity> attachments) {
+		this.attachments = attachments;
+	}
 
 	/**
 	 * This method is used to get title of the expense
@@ -115,7 +133,7 @@ public class ExpenseEntity extends BaseEntity {
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check if expense entity has all the mandatory fields
-		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachmentIds.size() == 0
+		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachments.size() == 0
 				|| isNullOrEmpty(this.getUserId()))
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
 

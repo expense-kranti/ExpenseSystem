@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+	<class name="com.boilerplate.java.entities.FileMappingEntity"
+		table="FileMapping">
+		<id name="id" column="Id">
+			<generator class="identity" />
+		</id>
+		<property name="attachmentId" column="AttachmentId" />
+		<property name="userId" column="UserId" />
+		<property name="expenseId" column="ExpenseId" />
+		<property name="isActive" column="IsActive" />
+		<property name="expenseHistoryId" column="ExpenseHistoryId" />
+		<property name="originalFileName" column="OriginalFileName" />
+
+	</class>
+</hibernate-mapping>

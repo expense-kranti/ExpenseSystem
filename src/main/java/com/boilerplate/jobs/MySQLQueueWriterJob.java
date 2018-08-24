@@ -179,13 +179,6 @@ public class MySQLQueueWriterJob {
 			subject = subjectsForCreateUser;
 			break;
 
-		case "UserFiles":
-			// fetch userIds Set from redis
-			elements = filePointer.fetchUserFileAndAddInQueue();
-			// set the subject
-			subject = subjectsForCreateUserFile;
-			break;
-
 		}
 		// if set is empty then do nothing
 		if (!elements.isEmpty() && !(elements == null)) {

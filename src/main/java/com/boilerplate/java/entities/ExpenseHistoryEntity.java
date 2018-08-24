@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import java.util.Date;
+import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
@@ -14,36 +15,35 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 public class ExpenseHistoryEntity extends BaseEntity {
 
 	/**
-	 * this is the default constructor
+	 * This is the default constructor
 	 */
 	public ExpenseHistoryEntity() {
-		// default constructor
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * this is the parameterized constructor for creating a new expense history
-	 * entity
+	 * this is the parameterized constructor
 	 * 
 	 * @param previousId
 	 * @param previousCreationDate
 	 * @param previousUpdationDate
-	 * @param attachmentId
 	 * @param title
 	 * @param description
-	 * @param userId
 	 * @param status
+	 * @param attachmentIds
+	 * @param userId
 	 */
-	public ExpenseHistoryEntity(String previousId, Date previousCreationDate, Date previousUpdationDate,
-			String attachmentId, String title, String description, String userId, ExpenseStatusType status) {
+	public ExpenseHistoryEntity(String previousId, Date previousCreationDate, Date previousUpdationDate, String title,
+			String description, ExpenseStatusType status, String userId) {
 		super();
 		this.previousId = previousId;
 		this.previousCreationDate = previousCreationDate;
 		this.previousUpdationDate = previousUpdationDate;
-		this.setAttachmentId(attachmentId);
-		this.setTitle(title);
-		this.setDescription(description);
-		this.setStatus(status);
-		this.setUserId(userId);
+		this.title = title;
+		this.description = description;
+		this.status = status;
+		this.userId = userId;
 	}
 
 	/**
@@ -75,11 +75,6 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 * This is the status of the expense
 	 */
 	private ExpenseStatusType status;
-
-	/**
-	 * this is the attachment id of the bill uploaded with the expense
-	 */
-	private String attachmentId;
 
 	/**
 	 * this is the id of the user by whom expense was filed
@@ -138,24 +133,6 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 */
 	public void setStatus(ExpenseStatusType status) {
 		this.status = status;
-	}
-
-	/**
-	 * This method is used to get attcahment id of the bill/file
-	 * 
-	 * @return
-	 */
-	public String getAttachmentId() {
-		return attachmentId;
-	}
-
-	/**
-	 * This method is used to set attchment id of the file
-	 * 
-	 * @param attachmentId
-	 */
-	public void setAttachmentId(String attachmentId) {
-		this.attachmentId = attachmentId;
 	}
 
 	/**

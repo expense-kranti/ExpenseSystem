@@ -54,11 +54,12 @@ public interface IExpense {
 	 * 
 	 * @param expenseHistoryEntity
 	 *            this is the expense history to be saved
+	 * @return
 	 * @throws Exception
 	 *             throw this exception if any exception occurs hile saving
 	 *             expense history
 	 */
-	public void saveExpenseHistory(ExpenseHistoryEntity expenseHistoryEntity) throws Exception;
+	public ExpenseHistoryEntity saveExpenseHistory(ExpenseHistoryEntity expenseHistoryEntity) throws Exception;
 
 	/**
 	 * This method is used to get list of expenses for a given user

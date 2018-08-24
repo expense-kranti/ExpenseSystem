@@ -108,10 +108,10 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 	 * @see IExpense.saveExpenseHistory
 	 */
 	@Override
-	public void saveExpenseHistory(ExpenseHistoryEntity expenseHistoryEntity) throws Exception {
+	public ExpenseHistoryEntity saveExpenseHistory(ExpenseHistoryEntity expenseHistoryEntity) throws Exception {
 		try {
 			// create a new expense history entity
-			super.create(expenseHistoryEntity);
+			return super.create(expenseHistoryEntity);
 		} catch (Exception ex) {
 			logger.logException("MySQLExpense", "saveExpenseHistory", "exceptionSaveExpenseHistory",
 					"Exception occurred while creating a new expense history", ex);

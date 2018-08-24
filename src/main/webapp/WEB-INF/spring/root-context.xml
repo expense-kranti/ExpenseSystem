@@ -5,6 +5,7 @@
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
+
 	<!--bean For Session, this will be used by User -->
 	<bean id="sessionManager" class="com.boilerplate.sessions.SessionManager"
 		init-method="initialize">
@@ -154,9 +155,7 @@
 		<property name="filePointer" ref="filePointer"></property>
 	</bean>
 
-	<bean id="filePointer"
-		class="com.boilerplate.database.redis.implementation.RedisFilePointer">
-	</bean>
+
 	<!--Bean for S3File -->
 	<bean id="file"
 		class="com.boilerplate.databases.s3FileSystem.implementations.S3File">
@@ -187,16 +186,21 @@
 		<property name="filePointer" ref="filePointer" />
 	</bean>
 
+	<bean id="filePointer"
+		class="com.boilerplate.database.mysql.implementations.MySQLFile">
+		<property name="configurationManager" ref="configurationManager" />
+	</bean>
 	<!-- Dependencies related to Expense apis -->
 
 	<bean id="mySqlExpense"
 		class="com.boilerplate.database.mysql.implementations.MySQLExpense">
 		<property name="configurationManager" ref="configurationManager" />
+
 	</bean>
 	<bean id="expenseService" class="com.boilerplate.service.implemetations.ExpenseService">
 		<property name="mySqlExpense" ref="mySqlExpense" />
 		<property name="mySqlUser" ref="mySqlUser" />
-
+		<property name="fileService" ref="fileService" />
 	</bean>
 
 	<bean id="userRoleService" class="com.boilerplate.service.implemetations.UserRoleService">

@@ -1,77 +1,52 @@
 package com.boilerplate.service.interfaces;
 
-import java.io.File;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
-import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.entities.FileEntity;
+import com.boilerplate.java.entities.AttachmentEntity;
+import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseHistoryEntity;
 
+/**
+ * This interface has methods for CRUD operations related to file mapping and
+ * file saving
+ * 
+ * @author ruchi
+ *
+ */
 public interface IFileService {
+
 	/**
-	 * This method saves a file to the file service provider
+	 * this method is used to save file onto disk
 	 * 
 	 * @param fileMasterTag
-	 *            The file master tag
+	 *            This is the file name given by user
 	 * @param file
-	 *            The file data
-	 * @return the file entity
+	 *            This is the file uploaded by user
+	 * @return Attachment id or file name on disk
+	 * @throws UpdateFailedException
+	 *             Throw this exception if file upload fails
 	 * @throws Exception
+	 *             throw this exception exception occurs while saving file
 	 */
-	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws UpdateFailedException, Exception;
+	public AttachmentEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
+			throws UpdateFailedException, Exception;
 
 	/**
-	 * This method is used to the list of files for given master tag
+	 * this method is used to save file mapping in MySQL
 	 * 
-	 * @param fileMasterTag
-	 *            the fileMasterTag against whom files are to be found
-	 * @return the list of files
+	 * @param expenseEntity
+	 *            this is the expense entity or which attachments need to be
+	 *            saved
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while saving
+	 *             file mapping
 	 */
-	public BoilerplateList<FileEntity> getAllFileListOnMasterTag(String fileMasterTag);
+	public void saveFileMapping(ExpenseEntity expenseEntity) throws Exception;
 
-	/**
-	 * This method is used to get pre signed s3url
-	 * 
-	 * @param id
-	 *            the id of the file
-	 * @return the pre signed s3url
-	 */
-	public String getPreSignedS3URL(String id);
-
-	/**
-	 * This method is used to getFile
-	 * 
-	 * @param id
-	 *            the file id
-	 * @return the file found
-	 * @throws NotFoundException
-	 *             thrown if the file is not found
-	 */
-	public FileEntity getFile(String id) throws NotFoundException;
-
-	/**
-	 * This method is used to get the list of all files against a user
-	 * 
-	 * @param userId
-	 *            the userId against whom files are to be found and get
-	 * @return the list of files against a user
-	 * @throws UnauthorizedException
-	 *             thrown if the user getting the files is not authorized
-	 */
-	public BoilerplateMap<String, FileEntity> getAllFileList(String userId) throws UnauthorizedException;
-
-	/**
-	 * This method is used to update the file entity
-	 * 
-	 * @param fileEntity
-	 *            contains the data to be updated
-	 */
-	public void updateFileEntity(FileEntity fileEntity);
-
-	public String saveFileOnLocal(String fileMasterTag, MultipartFile file) throws UpdateFailedException, Exception;
-
+	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity, ExpenseHistoryEntity expenseHistoryEntity)
+			throws BadRequestException, Exception;
 }

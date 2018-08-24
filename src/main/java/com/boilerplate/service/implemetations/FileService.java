@@ -1,8 +1,7 @@
 package com.boilerplate.service.implemetations;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +9,22 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.database.interfaces.IFile;
 import com.boilerplate.database.interfaces.IFilePointer;
-import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.exceptions.rest.UnauthorizedException;
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.collections.BoilerplateList;
-import com.boilerplate.java.collections.BoilerplateMap;
-import com.boilerplate.java.entities.FileEntity;
+import com.boilerplate.java.entities.AttachmentEntity;
+import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.FileMappingEntity;
 import com.boilerplate.service.interfaces.IFileService;
 
+/**
+ * this class implements IFileService
+ * 
+ * @author ruchi
+ *
+ */
 public class FileService implements IFileService {
 
 	/**
@@ -75,170 +80,76 @@ public class FileService implements IFileService {
 	}
 
 	/**
-	 * @throws Exception
-	 * @see IFileService.saveFile
-	 */
-	@Override
-	public FileEntity saveFile(String fileMasterTag, MultipartFile file) throws Exception {
-
-		try {
-			// validates the file size, If greater than Maximum_File_Upload_Size
-			// then throws the IOException.
-			if ((file.getSize() / (1024 * 1024)) > Long
-					.parseLong(configurationManager.get("Maximum_File_Upload_Size"))) {
-				throw new IOException(
-						"File size is greater than " + configurationManager.get("Maximum_File_Upload_Size") + "MB");
-			}
-			// save file to disk
-			String fileNameOnDisk = this.file.saveFile(file);
-			// save file data on DB
-
-			FileEntity fileEntity = new FileEntity();
-			// This will get content type of file
-			fileEntity.setContentType(java.nio.file.Files
-					.probeContentType(Paths.get(configurationManager.get("RootFileUploadLocation") + fileNameOnDisk)));
-			fileEntity.setFileMasterTag(fileMasterTag);
-			fileEntity.setFileName(fileNameOnDisk);
-			fileEntity.setFileNameOnDisk(fileNameOnDisk);
-			fileEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
-			// fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
-			fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileNameOnDisk));
-
-			// method to save file entity in redis database
-			fileEntity = filePointer.save(fileEntity);
-
-			// if true the add redis key in set for database migration
-			if (Boolean.parseBoolean(configurationManager.get("IsMySQLPublishQueueEnabled"))) {
-				filePointer.addInRedisSet(fileEntity.getFileName());
-			}
-			return fileEntity;
-		} catch (IOException ex) {
-			throw new UpdateFailedException("File", ex.toString(), ex);
-		}
-	}
-
-	/**
-	 * @see IFileService.getAllFileListOnMasterTag
-	 */
-	@Override
-	public BoilerplateList<FileEntity> getAllFileListOnMasterTag(String fileMasterTag) {
-		// set fullfile name on disk with pre signed url
-		BoilerplateList<FileEntity> fileEntityList = new BoilerplateList<>();
-		BoilerplateList<FileEntity> fileList = filePointer
-				.getAllFilesOnMasterTag(RequestThreadLocal.getSession().getExternalFacingUser().getId(), fileMasterTag);
-		for (Object fileObject : fileList) {
-			FileEntity fileEntity = (FileEntity) fileObject;
-			fileEntity.setFullFileNameOnDisk(file.getPreSignedS3URL(fileEntity.getId()));
-			fileEntityList.add(fileEntity);
-		}
-		return fileEntityList;
-	}
-
-	/**
-	 * @see IFileService.getPreSignedS3URL
-	 */
-	@Override
-	public String getPreSignedS3URL(String id) {
-		return file.getPreSignedS3URL(id);
-	}
-
-	/**
-	 * @see IFileService.getFile
-	 */
-	@Override
-	public FileEntity getFile(String id) throws NotFoundException {
-		// check if the user has permission to read the file or if the file
-		// exists
-		FileEntity fileEntity = filePointer.getFilePointerById(id);
-		if (fileEntity == null) {
-			throw new NotFoundException("File", "Not found or unauthorized", null);
-		}
-		boolean userHasRightsOnFile = false;
-
-		// validate that the user has the rights to read the file
-		if (fileEntity.getUserId().equals(RequestThreadLocal.getSession().getExternalFacingUser().getId())) {
-			userHasRightsOnFile = true;
-		}
-
-		if (fileEntity.getOrganizationId() != null) {
-			// if
-			// (RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId()
-			// .equals(fileEntity.getOrganizationId())) {
-			// userHasRightsOnFile = true;
-			// }
-		}
-
-		// for (Role role :
-		// RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
-		// if (role.getRoleName().toUpperCase().equals("ADMIN")
-		// || role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
-		// userHasRightsOnFile = true;
-		// break;
-		// }
-		// }
-
-		if (!userHasRightsOnFile) {
-			throw new NotFoundException("File", "Not found or unauthorized", null);
-		}
-		return fileEntity;
-	}
-
-	/**
-	 * @see IFileService.getAllFileList
-	 */
-	@Override
-	public BoilerplateMap<String, FileEntity> getAllFileList(String userId) throws UnauthorizedException {
-		boolean canExecute = false;
-		// for (Role role :
-		// RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
-		// if (role.getRoleName().toUpperCase().equals("ADMIN")
-		// || role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
-		// canExecute = true;
-		// }
-		// }
-		if (RequestThreadLocal.getSession().getExternalFacingUser().getId().equals(userId)) {
-			canExecute = true;
-		}
-
-		if (!canExecute)
-			throw new UnauthorizedException("File", "User doesnt have permissions to get files", null);
-
-		BoilerplateList<FileEntity> files = this.filePointer.getAllFiles(userId, null);
-		BoilerplateMap<String, FileEntity> map = new BoilerplateMap<String, FileEntity>();
-
-		for (Object file : files) {
-			map.put(((FileEntity) file).getId(), (FileEntity) file);
-		}
-		return map;
-	}
-
-	/**
-	 * @see IFileService.updateFileEntity
-	 */
-	@Override
-	public void updateFileEntity(FileEntity fileEntity) {
-		try {
-			filePointer.save(fileEntity);
-		} catch (Exception ex) {
-			logger.logException("FileService", "updateFileEntity", "", "ExceptionUpdateFileEntity", ex);
-		}
-	}
-
-	/**
 	 * @see IFileService.saveFileOnLocal
 	 */
 	@Override
-	public String saveFileOnLocal(String fileMasterTag, MultipartFile file)
+	public AttachmentEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
 			throws UpdateFailedException, Exception {
-		//generate unique file name for saving on local disk
+		// generate unique file name for saving on local disk
 		String fileNameOnDisk = UUID.randomUUID().toString() + "_" + file.getOriginalFilename() + "_"
 				+ RequestThreadLocal.getSession().getExternalFacingUser().getUserId();
-		//get path for saving file from configuration
+		// get path for saving file from configuration
 		String rootFileUploadLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
-		//generate path with file name
+		// generate path with file name
 		String filePath = rootFileUploadLocation + "/" + fileNameOnDisk;
-		//save file name onto disk
+		// save file name onto disk
 		file.transferTo(new java.io.File(filePath));
-		return fileNameOnDisk;
+		// create new attachment entity
+		AttachmentEntity attachmentEntity = new AttachmentEntity(fileMasterTag, fileNameOnDisk);
+		return attachmentEntity;
+	}
+
+	/**
+	 * @see IFileService.saveFileMapping
+	 */
+	@Override
+	public void saveFileMapping(ExpenseEntity expenseEntity) throws Exception {
+		// for each attachment in expense enitity
+		for (AttachmentEntity attachment : expenseEntity.getAttachments()) {
+			// create a new file mapping entity
+			FileMappingEntity fileMappingEntity = new FileMappingEntity(attachment.getAttachmentId(),
+					expenseEntity.getUserId(), expenseEntity.getId(), true, null, attachment.getOriginalFileName());
+			// save mapping in MySQL
+			filePointer.saveFileMapping(fileMappingEntity);
+		}
+	}
+
+	/**
+	 * @see IFileService.updateFileMapping
+	 */
+	@Override
+	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity,
+			ExpenseHistoryEntity expenseHistoryEntity) throws Exception {
+		List<AttachmentEntity> newAttachments = new ArrayList<>();
+		List<AttachmentEntity> allAttachments = expenseEntity.getAttachments();
+		// for each attachment in expense entity
+		for (AttachmentEntity attachment : allAttachments) {
+			// check if this attachment already exists for the given user and
+			// expense
+			if (filePointer.getFileMapping(attachment.getAttachmentId()) == null)
+				// add it in new attachment list
+				newAttachments.add(attachment);
+		}
+		// set new attachments in expense entity and save it
+		expenseEntity.setAttachments(newAttachments);
+		saveFileMapping(expenseEntity);
+		// fetch all attachments for given expense and user id
+		List<FileMappingEntity> fileMappings = filePointer.getFileMappingByExpenseId(expenseEntity.getId());
+		// if file mappings found
+		if (fileMappings.size() != 0 && newAttachments.size() != 0) {
+			// for each file mapping
+			for (FileMappingEntity fileMappingEntity : fileMappings) {
+				// if new attachment list does not contain the attachment id
+				if (!newAttachments.contains(fileMappingEntity.getAttachmentId())) {
+					// set is active to false
+					fileMappingEntity.setIsActive(false);
+					// set expense history id
+					fileMappingEntity.setExpenseHistoryId(expenseHistoryEntity.getId());
+					// update file mapping
+					filePointer.updateFileMapping(fileMappingEntity);
+				}
+			}
+		}
+		return allAttachments;
 	}
 }

@@ -10,7 +10,6 @@
 		</id>
 		<property name="title" column="Title" />
 		<property name="description" column="Description" />
-		<property name="attachmentId" column="AttachmentId" />
 		<property name="userId" column="UserId" />
 		<property name="status" column="Status">
 			<type name="org.hibernate.type.EnumType">

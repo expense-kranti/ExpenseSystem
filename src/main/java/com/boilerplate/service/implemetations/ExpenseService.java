@@ -4,18 +4,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.boilerplate.database.interfaces.IExpense;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.service.interfaces.IExpenseService;
+import com.boilerplate.service.interfaces.IFileService;
 
 /**
  * This class implements IExpenseService
@@ -28,6 +32,7 @@ public class ExpenseService implements IExpenseService {
 	/**
 	 * This is the instance of IUser
 	 */
+	@Autowired
 	IUser mySqlUser;
 
 	/**
@@ -43,6 +48,7 @@ public class ExpenseService implements IExpenseService {
 	/**
 	 * This is the autowired instance of IExpense
 	 */
+	@Autowired
 	IExpense mySqlExpense;
 
 	/**
@@ -52,6 +58,21 @@ public class ExpenseService implements IExpenseService {
 	 */
 	public void setMySqlExpense(IExpense mySqlExpense) {
 		this.mySqlExpense = mySqlExpense;
+	}
+
+	/**
+	 * This is the autowired instance of IFileService
+	 */
+	@Autowired
+	IFileService fileService;
+
+	/**
+	 * This method is used to set fileService
+	 * 
+	 * @param fileService
+	 */
+	public void setFileService(IFileService fileService) {
+		this.fileService = fileService;
 	}
 
 	/**
@@ -73,15 +94,17 @@ public class ExpenseService implements IExpenseService {
 		ExternalFacingUser externalFacingUser = mySqlUser.getUser(expenseEntity.getUserId());
 		if (externalFacingUser == null || !externalFacingUser.getIsActive())
 			throw new NotFoundException("ExpenseEntity", "USer not found or is inactive", null);
-		// set user id with id of the user
-		expenseEntity.setUserId(externalFacingUser.getId());
 		// set status of expense as submitted
 		expenseEntity.setStatus(ExpenseStatusType.Submitted);
+		List<AttachmentEntity> attachments = expenseEntity.getAttachments();
 		// set creation date and update date
 		expenseEntity.setCreationDate(new Date());
 		expenseEntity.setUpdationDate(new Date());
 		// save expense in database
-		return mySqlExpense.createExpense(expenseEntity);
+		expenseEntity = mySqlExpense.createExpense(expenseEntity);
+		// save attachment mapping
+		fileService.saveFileMapping(expenseEntity);
+		return expenseEntity;
 	}
 
 	/**
@@ -98,6 +121,7 @@ public class ExpenseService implements IExpenseService {
 		ExpenseEntity previousExpense = mySqlExpense.getExpense(expenseEntity.getId());
 		if (previousExpense == null)
 			throw new NotFoundException("ExpenseEntity", "Expense entity not found", null);
+
 		// Check whether user id exists and is active
 		ExternalFacingUser externalFacingUser = mySqlUser.getUser(expenseEntity.getUserId());
 		if (externalFacingUser == null || !externalFacingUser.getIsActive())
@@ -116,15 +140,17 @@ public class ExpenseService implements IExpenseService {
 		// create a new expense history entity using the data from expense
 		// entity
 		ExpenseHistoryEntity expenseHistoryEntity = new ExpenseHistoryEntity(previousExpense.getId(),
-				previousExpense.getCreationDate(), previousExpense.getUpdationDate(), previousExpense.getAttachmentId(),
-				previousExpense.getTitle(), previousExpense.getDescription(), previousExpense.getUserId(),
-				previousExpense.getStatus());
+				previousExpense.getCreationDate(), previousExpense.getUpdationDate(), previousExpense.getTitle(),
+				previousExpense.getDescription(), previousExpense.getStatus(), previousExpense.getUserId());
 		expenseHistoryEntity.setCreationDate(new Date());
 		// save this history in mysql
-		mySqlExpense.saveExpenseHistory(expenseHistoryEntity);
-
+		expenseHistoryEntity = mySqlExpense.saveExpenseHistory(expenseHistoryEntity);
 		// update expense
-		return mySqlExpense.updateExpense(expenseEntity);
+		expenseEntity = mySqlExpense.updateExpense(expenseEntity);
+		// update attachments
+		List<AttachmentEntity> attachments = fileService.updateFileMapping(expenseEntity, expenseHistoryEntity);
+		expenseEntity.setAttachments(attachments);
+		return expenseEntity;
 	}
 
 	/**
@@ -143,6 +169,9 @@ public class ExpenseService implements IExpenseService {
 		return mySqlExpense.getExpenses(fetchExpenseEntity);
 	}
 
+	/**
+	 * @see IExpenseService.getExpensesForApproval
+	 */
 	@Override
 	public List<Map<String, Object>> getExpensesForApproval(String approverId)
 			throws NotFoundException, ValidationFailedException, BadRequestException {
