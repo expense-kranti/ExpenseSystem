@@ -1,7 +1,9 @@
 package com.boilerplate.service.implemetations;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -99,7 +101,7 @@ public class FileService implements IFileService {
 			fileEntity.setFileName(fileNameOnDisk);
 			fileEntity.setFileNameOnDisk(fileNameOnDisk);
 			fileEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
-			//fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
+			// fileEntity.setOrganizationId(RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId());
 			fileEntity.setFullFileNameOnDisk(this.getPreSignedS3URL(fileNameOnDisk));
 
 			// method to save file entity in redis database
@@ -146,37 +148,39 @@ public class FileService implements IFileService {
 	@Override
 	public FileEntity getFile(String id) throws NotFoundException {
 		// check if the user has permission to read the file or if the file
-				// exists
-				FileEntity fileEntity = filePointer.getFilePointerById(id);
-				if (fileEntity == null) {
-					throw new NotFoundException("File", "Not found or unauthorized", null);
-				}
-				boolean userHasRightsOnFile = false;
+		// exists
+		FileEntity fileEntity = filePointer.getFilePointerById(id);
+		if (fileEntity == null) {
+			throw new NotFoundException("File", "Not found or unauthorized", null);
+		}
+		boolean userHasRightsOnFile = false;
 
-				// validate that the user has the rights to read the file
-				if (fileEntity.getUserId().equals(RequestThreadLocal.getSession().getExternalFacingUser().getId())) {
-					userHasRightsOnFile = true;
-				}
+		// validate that the user has the rights to read the file
+		if (fileEntity.getUserId().equals(RequestThreadLocal.getSession().getExternalFacingUser().getId())) {
+			userHasRightsOnFile = true;
+		}
 
-				if (fileEntity.getOrganizationId() != null) {
-//					if (RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId()
-//							.equals(fileEntity.getOrganizationId())) {
-//						userHasRightsOnFile = true;
-//					}
-				}
+		if (fileEntity.getOrganizationId() != null) {
+			// if
+			// (RequestThreadLocal.getSession().getExternalFacingUser().getOrganizationId()
+			// .equals(fileEntity.getOrganizationId())) {
+			// userHasRightsOnFile = true;
+			// }
+		}
 
-//				for (Role role : RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
-//					if (role.getRoleName().toUpperCase().equals("ADMIN")
-//							|| role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
-//						userHasRightsOnFile = true;
-//						break;
-//					}
-//				}
+		// for (Role role :
+		// RequestThreadLocal.getSession().getExternalFacingUser().getRoles()) {
+		// if (role.getRoleName().toUpperCase().equals("ADMIN")
+		// || role.getRoleName().toUpperCase().equals("BACKOFFICEUSER")) {
+		// userHasRightsOnFile = true;
+		// break;
+		// }
+		// }
 
-				if (!userHasRightsOnFile) {
-					throw new NotFoundException("File", "Not found or unauthorized", null);
-				}
-				return fileEntity;
+		if (!userHasRightsOnFile) {
+			throw new NotFoundException("File", "Not found or unauthorized", null);
+		}
+		return fileEntity;
 	}
 
 	/**
@@ -218,5 +222,23 @@ public class FileService implements IFileService {
 		} catch (Exception ex) {
 			logger.logException("FileService", "updateFileEntity", "", "ExceptionUpdateFileEntity", ex);
 		}
+	}
+
+	/**
+	 * @see IFileService.saveFileOnLocal
+	 */
+	@Override
+	public String saveFileOnLocal(String fileMasterTag, MultipartFile file)
+			throws UpdateFailedException, Exception {
+		//generate unique file name for saving on local disk
+		String fileNameOnDisk = UUID.randomUUID().toString() + "_" + file.getOriginalFilename() + "_"
+				+ RequestThreadLocal.getSession().getExternalFacingUser().getUserId();
+		//get path for saving file from configuration
+		String rootFileUploadLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
+		//generate path with file name
+		String filePath = rootFileUploadLocation + "/" + fileNameOnDisk;
+		//save file name onto disk
+		file.transferTo(new java.io.File(filePath));
+		return fileNameOnDisk;
 	}
 }

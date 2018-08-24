@@ -2,8 +2,7 @@ package com.boilerplate.service.implemetations;
 
 import java.util.Date;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
 
 import com.boilerplate.database.interfaces.IExpense;
 import com.boilerplate.database.interfaces.IUser;
@@ -11,7 +10,6 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
-import com.boilerplate.java.collections.BoilerplateList;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
@@ -143,6 +141,21 @@ public class ExpenseService implements IExpenseService {
 			throw new NotFoundException("ExternalFacingUser", "User not found", null);
 		// fetch list of expenses from database
 		return mySqlExpense.getExpenses(fetchExpenseEntity);
+	}
+
+	@Override
+	public List<Map<String, Object>> getExpensesForApproval(String approverId)
+			throws NotFoundException, ValidationFailedException, BadRequestException {
+		// check if approver id is not null or empty
+		if (approverId == null)
+			throw new ValidationFailedException("ExpenseEntity", "Approver id for fetching expenses is null or empty",
+					null);
+		// check if approver exists
+		if (mySqlUser.getUser(approverId) == null)
+			throw new NotFoundException("ExpenseEntity", "No user with gievn approver id found", null);
+		// get list of expenses filed under the given approver
+		return mySqlExpense.getExpensesForApprover(approverId);
+
 	}
 
 }

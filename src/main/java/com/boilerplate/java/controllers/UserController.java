@@ -70,7 +70,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user already exists in the system for the provider") })
-	@RequestMapping(value = "/user/create", method = RequestMethod.POST)
+	@RequestMapping(value = "/user", method = RequestMethod.POST)
 	public @ResponseBody ExternalFacingUser createUser(@RequestBody ExternalFacingUser externalFacingUser)
 			throws Exception {
 		// call the business layer
@@ -92,7 +92,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user already exists in the system for the provider") })
-	@RequestMapping(value = "/user/update", method = RequestMethod.PUT)
+	@RequestMapping(value = "/user", method = RequestMethod.PUT)
 	public @ResponseBody ExternalFacingUser updateUser(@RequestBody ExternalFacingUser externalFacingUser)
 			throws Exception {
 		// call the business layer
@@ -152,7 +152,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/user/disableUser/{userId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/disableUser/{userId}", method = RequestMethod.PUT)
 	public @ResponseBody void disableUser(@RequestParam String userId)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
@@ -176,7 +176,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/user/enableUser/{userId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/enableUser/{userId}", method = RequestMethod.PUT)
 	public @ResponseBody void enableUser(@RequestParam String userId)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
@@ -200,7 +200,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/user/assignApprovers", method = RequestMethod.POST)
+	@RequestMapping(value = "/assignApprovers", method = RequestMethod.POST)
 	public @ResponseBody void assignApprovers(@RequestBody AssignApproverEntity assignApproverEntity)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
@@ -241,7 +241,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, manadatory fields are missing"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/user/assignRoles", method = RequestMethod.POST)
+	@RequestMapping(value = "/assignRoles", method = RequestMethod.POST)
 	public @ResponseBody void assignRoles(@RequestBody SaveRoleEntity role)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer

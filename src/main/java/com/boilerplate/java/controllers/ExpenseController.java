@@ -1,13 +1,14 @@
 package com.boilerplate.java.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.boilerplate.java.entities.ExpenseEntity;
@@ -89,11 +90,21 @@ public class ExpenseController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User id is null or empty"),
 			@ApiResponse(code = 404, message = "User does not exist") })
-	@RequestMapping(value = "/expense/getAll", method = RequestMethod.PUT)
+	@RequestMapping(value = "/getAll", method = RequestMethod.PUT)
 	public @ResponseBody List<ExpenseEntity> getExpenses(@RequestBody FetchExpenseEntity fetchExpenseEntity)
 			throws Exception {
 		// call the business layer
 		return expenseService.getExpenses(fetchExpenseEntity);
+	}
+
+	@ApiOperation(value = "Gets expenses for a given approver/super approver", notes = "The creation date and updated date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, User id is null or empty"),
+			@ApiResponse(code = 404, message = "User does not exist") })
+	@RequestMapping(value = "/getForApprover/{approverId}", method = RequestMethod.GET)
+	public @ResponseBody List<Map<String, Object>> getExpenses(@RequestParam String approverId) throws Exception {
+		// call the business layer
+		return expenseService.getExpensesForApproval(approverId);
 	}
 
 }

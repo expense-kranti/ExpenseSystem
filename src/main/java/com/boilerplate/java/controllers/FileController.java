@@ -32,7 +32,7 @@ public class FileController extends BaseController {
 	 */
 	@Autowired
 	IFileService fileService;
-	
+
 	/**
 	 * This method uploads a file, saves it attributes and metadata and assignes
 	 * owner to the file (the logged in user)
@@ -43,25 +43,25 @@ public class FileController extends BaseController {
 	 *            The file
 	 * @param fileMetaProperties
 	 *            The metadata associated with the file
-	 * @throws Exception 
+	 * @throws Exception
 	 * @returns the Id of the file for fetching in future
 	 */
 	@ApiOperation(value = "Uploads a file")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 404, message = "If one of the ciritical servers is not rechable") })
 	@RequestMapping(value = "/file/{fileMasterTag}", method = RequestMethod.POST)
-	public @ResponseBody FileEntity upload(
+	public @ResponseBody String upload(
 			@ApiParam(value = "The master tag to be applied to the file", required = true, name = "fileMasterTag", allowMultiple = false) @PathVariable String fileMasterTag,
-			@RequestParam(value = "The file being uploaded") MultipartFile file)
-			throws Exception {
+			@RequestParam(value = "The file being uploaded") MultipartFile file) throws Exception {
 		// find the name of file
 
-		return fileService.saveFile(fileMasterTag, file);
+		return fileService.saveFileOnLocal(fileMasterTag, file);
 	}
-	
+
 	/**
-	 * This api gets the files on the basis of file master tag * @return The
-	 * file entity list
+	 * This api gets the files on the basis of file master tag
+	 * 
+	 * @return The file entity list
 	 */
 	@ApiOperation(value = "Gets all files on the basis of file master tag")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
@@ -71,7 +71,7 @@ public class FileController extends BaseController {
 			throws Exception {
 		return this.fileService.getAllFileListOnMasterTag(fileMasterTag);
 	}
-	
+
 	/**
 	 * This method gets a given file by Id
 	 * 
@@ -92,8 +92,7 @@ public class FileController extends BaseController {
 	@RequestMapping(value = "/file/{id}", method = RequestMethod.GET)
 	public void download(
 			@ApiParam(value = "The id of the file", required = true, name = "id", allowMultiple = false) @PathVariable String id,
-			HttpServletResponse response) throws Exception, NotFoundException,
-			FileNotFoundException, IOException {
+			HttpServletResponse response) throws Exception, NotFoundException, FileNotFoundException, IOException {
 		// Redirects to S3 file URL
 		String preSignedS3Url = fileService.getPreSignedS3URL(id);
 		response.sendRedirect(preSignedS3Url);

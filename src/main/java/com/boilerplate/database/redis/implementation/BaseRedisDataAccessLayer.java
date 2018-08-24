@@ -516,6 +516,30 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for getExpenses for approvers/super approvers
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(java.lang.String)");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for getExpenses for approvers/super approvers
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -595,6 +619,7 @@ public class BaseRedisDataAccessLayer {
 		// This attribute tells us about server name
 		BoilerplateMap<String, String> vAllEDev = new BoilerplateMap<String, String>();
 		// put all configuration
+		vAllEDev.put("DESTINATION_FOR_SAVING_FILE_ON_DISK", "/home/ruchi/ExpenseBills");
 
 		return vAllEDev;
 
@@ -638,10 +663,12 @@ public class BaseRedisDataAccessLayer {
 				"FROM ExternalFacingUser user where user.userId = :UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_ID", "FROM ExpenseEntity expense where expense.id = :ExpenseId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_ID", "FROM ExternalFacingUser user where user.id = :Id");
-		vAllEAll.put("SQL_QUERY_FOR_GETTING_USEr_ROLES_BY_ID",
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_USER_ROLES_BY_ID",
 				"FROM UserRoleEntity userRoles where userRoles.userId = :UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_USER_ID",
 				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID",
+				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.AttachmentId as attachmentId, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.MiddleName,' ',user.LastName) as name FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and (user.ApproverId = @ApproverId or user.SuperApproverId = @ApproverId)");
 
 		return vAllEAll;
 

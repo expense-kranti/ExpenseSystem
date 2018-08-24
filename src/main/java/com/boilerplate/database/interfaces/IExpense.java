@@ -1,6 +1,7 @@
 package com.boilerplate.database.interfaces;
 
 import java.util.List;
+import java.util.Map;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.java.entities.ExpenseEntity;
@@ -59,6 +60,18 @@ public interface IExpense {
 	 */
 	public void saveExpenseHistory(ExpenseHistoryEntity expenseHistoryEntity) throws Exception;
 
+	/**
+	 * This method is used to get list of expenses for a given user
+	 * 
+	 * @param fetchExpenseEntity
+	 *            This entity contain user id, date range and status for
+	 *            filtration
+	 * @return List of expenses
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
 	public List<ExpenseEntity> getExpenses(FetchExpenseEntity fetchExpenseEntity) throws BadRequestException;
+
+	public List<Map<String, Object>> getExpensesForApprover(String approverId) throws BadRequestException;
 
 }

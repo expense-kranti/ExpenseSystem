@@ -152,4 +152,34 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		return expenses;
 	}
 
+	/**
+	 * @see IExpense.getExpensesForApprover
+	 */
+	@Override
+	public List<Map<String, Object>> getExpensesForApprover(String approverId) throws BadRequestException {
+		// Get the SQL query from configurations to get expense
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// replace approver id in sql query
+		hSQLQuery = hSQLQuery.replaceAll("@ApproverId", approverId);
+		// This variable is used to hold the query response
+		List<Map<String, Object>> expenseMap = new ArrayList<>();
+		try {
+			// Execute query
+			expenseMap = super.executeSelectNative(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLExpense", "getExpensesForApprover", "exceptionGetExpensesForApprover",
+					"While trying to get expense data, This is the approverId~ " + approverId + "This is the query"
+							+ hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLExpense",
+					"While trying to get expense data for approver~ " + ex.toString(), ex);
+		}
+		return expenseMap;
+	}
+
 }

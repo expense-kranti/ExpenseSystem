@@ -1,5 +1,7 @@
 package com.boilerplate.java.entities;
 
+import java.util.List;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
@@ -26,9 +28,9 @@ public class ExpenseEntity extends BaseEntity {
 	private ExpenseStatusType status;
 
 	/**
-	 * this is the attachment id of the bill uploaded with the expense
+	 * this is the list of attachment ids of the bill uploaded with the expense
 	 */
-	private String attachmentId;
+	private List<String> attachmentIds;
 
 	/**
 	 * this is the id of the user by whom expense was filed
@@ -90,24 +92,6 @@ public class ExpenseEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get attcahment id of the bill/file
-	 * 
-	 * @return
-	 */
-	public String getAttachmentId() {
-		return attachmentId;
-	}
-
-	/**
-	 * This method is used to set attchment id of the file
-	 * 
-	 * @param attachmentId
-	 */
-	public void setAttachmentId(String attachmentId) {
-		this.attachmentId = attachmentId;
-	}
-
-	/**
 	 * This method is used to get user id
 	 * 
 	 * @return
@@ -131,7 +115,7 @@ public class ExpenseEntity extends BaseEntity {
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check if expense entity has all the mandatory fields
-		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || isNullOrEmpty(this.attachmentId)
+		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachmentIds.size() == 0
 				|| isNullOrEmpty(this.getUserId()))
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
 

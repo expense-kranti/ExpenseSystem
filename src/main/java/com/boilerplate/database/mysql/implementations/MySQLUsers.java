@@ -302,10 +302,13 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 
 	}
 
+	/**
+	 * @see IUser.getUserRoles
+	 */
 	@Override
 	public List<UserRoleEntity> getUserRoles(String userId) throws BadRequestException {
 		// Get the SQL query from configurations to get user roles
-		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USEr_ROLES_BY_ID");
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USER_ROLES_BY_ID");
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();

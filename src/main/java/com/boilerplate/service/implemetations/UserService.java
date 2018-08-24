@@ -123,6 +123,9 @@ public class UserService implements IUserService {
 			// check if user exists
 			if (user == null)
 				throw new NotFoundException("ExternalFacingUser", "User not found", null);
+			// check if user is active or not
+			if (!user.getIsActive())
+				throw new BadRequestException("ExternalFacingUser", "User is inactive", null);
 			// hash the password in authentication request
 			String hashedPassword = String.valueOf(Encryption.getHashCode(authenitcationRequest.getPassword()));
 			// Check if password matches
@@ -148,7 +151,7 @@ public class UserService implements IUserService {
 					"External Facing User: " + authenitcationRequest.getUserId().toUpperCase()
 							+ " With entered Password: " + authenitcationRequest.getPassword() + " not found",
 					"Converting this exception to Unauthorized for security", nfe);
-			throw new UnauthorizedException("USER", "User name or password incorrect", null);
+			throw new UnauthorizedException("User", "User name or password incorrect", null);
 		}
 
 	}

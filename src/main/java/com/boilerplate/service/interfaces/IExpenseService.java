@@ -1,7 +1,7 @@
 package com.boilerplate.service.interfaces;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -56,7 +56,25 @@ public interface IExpenseService {
 	public ExpenseEntity updateExpense(ExpenseEntity expenseEntity)
 			throws BadRequestException, ValidationFailedException, NotFoundException, Exception;
 
+	/**
+	 * This method is used to get all expenses for a given user id according to
+	 * the status of expenses and a date range
+	 * 
+	 * @param fetchExpenseEntity
+	 *            This entity contain user id, date range and status for
+	 *            filtration
+	 * @return Expense list
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if user not found
+	 * @throws ValidationFailedException
+	 *             throw this exception if entity is invalid
+	 */
 	public List<ExpenseEntity> getExpenses(FetchExpenseEntity fetchExpenseEntity)
 			throws ValidationFailedException, NotFoundException, BadRequestException;
+
+	public List<Map<String, Object>> getExpensesForApproval(String approverId)
+			throws NotFoundException, ValidationFailedException, BadRequestException;
 
 }

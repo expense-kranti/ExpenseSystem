@@ -332,6 +332,9 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 		if (matcher.matches() == false) {
 			throw new ValidationFailedException("ExternalFacingUser", "Email format is incorrect", null);
 		}
+		// check if user id and email are same
+		if (this.getUserId() != this.getEmail())
+			throw new ValidationFailedException("ExternalFacingUser", "Email id and user id should be same", null);
 		return true;
 	}
 

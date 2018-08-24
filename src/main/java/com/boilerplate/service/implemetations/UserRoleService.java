@@ -96,24 +96,25 @@ public class UserRoleService implements IUserRoleService {
 		if (!roles.contains(UserRoleType.Super_Approver))
 			throw new BadRequestException("AssignApproverEntity",
 					"User Id of super approver does not have sufficient rights", null);
+		List<ExternalFacingUser> users = new ArrayList<>();
+		// fetch all the users in a list
+		for (String userId : assignApproverEntity.getUsers()) {
+			// check if user exists
+			ExternalFacingUser user = mySqlUser.getUser(userId);
+			if (user == null)
+				throw new NotFoundException("ExternalFacingUser", "User not found while assigning approver", null);
+			users.add(user);
+		}
+
 		// for each user in list, fetch the user and set approver and
 		// super-approver and save
-		for (String userId : assignApproverEntity.getUsers()) {
-			try {
-				// check if user exists
-				ExternalFacingUser user = mySqlUser.getUser(userId);
-				if (user == null)
-					throw new NotFoundException("ExternalFacingUser", "User not found while assigning approver", null);
-				// set approver id
-				user.setApproverId(approver.getId());
-				// set super approver id
-				user.setSuperApproverId(superApprover.getId());
-				mySqlUser.updateUser(user);
-			} catch (NotFoundException ex) {
-				// Log exception for not found user
-				logger.logException("UserService", "assignApprover", "exceptionAssignApprover",
-						"User not found while assigning approver, this is the user id :" + userId, ex);
-			}
+		for (ExternalFacingUser userEntity : users) {
+			// set approver id
+			userEntity.setApproverId(approver.getId());
+			// set super approver id
+			userEntity.setSuperApproverId(superApprover.getId());
+			mySqlUser.updateUser(userEntity);
+
 		}
 	}
 

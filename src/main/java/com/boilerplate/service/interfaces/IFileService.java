@@ -1,5 +1,7 @@
 package com.boilerplate.service.interfaces;
 
+import java.io.File;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -69,5 +71,7 @@ public interface IFileService {
 	 *            contains the data to be updated
 	 */
 	public void updateFileEntity(FileEntity fileEntity);
+
+	public String saveFileOnLocal(String fileMasterTag, MultipartFile file) throws UpdateFailedException, Exception;
 
 }
