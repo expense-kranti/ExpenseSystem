@@ -24,10 +24,33 @@ public interface IFilePointer {
 	 */
 	public void saveFileMapping(FileMappingEntity fileMappingEntity) throws Exception;
 
+	/**
+	 * this method is used to get file mapping for the gien attachment id
+	 * 
+	 * @param attachmentId
+	 *            his is the attachment id
+	 * @return File mapping
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
 	public FileMappingEntity getFileMapping(String attachmentId) throws BadRequestException;
 
+	/**
+	 * This method is used update file mapping
+	 * 
+	 * @param fileMappingEntity
+	 *            this is the file mapping entity to be updated
+	 */
 	public void updateFileMapping(FileMappingEntity fileMappingEntity);
 
+	/**
+	 * This method is used to get file mapping by expense id
+	 * 
+	 * @param expenseId
+	 *            this is the expense id for which list needs to be fetched
+	 * @return
+	 * @throws BadRequestException
+	 */
 	public List<FileMappingEntity> getFileMappingByExpenseId(String expenseId) throws BadRequestException;
 
 }

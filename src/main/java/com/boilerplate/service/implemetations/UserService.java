@@ -1,6 +1,8 @@
 package com.boilerplate.service.implemetations;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,14 @@ import com.boilerplate.framework.Encryption;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.SaveRoleEntity;
 import com.boilerplate.java.entities.UserRoleEntity;
 import com.boilerplate.java.entities.UserRoleType;
+import com.boilerplate.service.interfaces.IUserRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
+
+import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
 
 /**
  * This class Implements the IUserService class
@@ -64,6 +70,21 @@ public class UserService implements IUserService {
 	}
 
 	/**
+	 * this is the autowired instance of user role service
+	 */
+	@Autowired
+	IUserRoleService userRoleService;
+
+	/**
+	 * This method is used to set autowired instance of IUserRoleService
+	 * 
+	 * @param userRoleService
+	 */
+	public void setUserRoleService(IUserRoleService userRoleService) {
+		this.userRoleService = userRoleService;
+	}
+
+	/**
 	 * @see IUserService.updateUser
 	 */
 	@Override
@@ -107,7 +128,11 @@ public class UserService implements IUserService {
 		user.hashPassword();
 		// save user in MySQL database
 		user = mySqlUser.createUser(user);
-
+		// create a new save role entity
+		SaveRoleEntity roleEntity = new SaveRoleEntity(user.getId(),
+				new ArrayList<UserRoleType>(Arrays.asList(UserRoleType.Employee)));
+		// assign default/Employee role to user
+		userRoleService.assignRoles(roleEntity);
 		return user;
 	}
 

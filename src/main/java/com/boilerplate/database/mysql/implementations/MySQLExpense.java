@@ -12,9 +12,12 @@ import com.boilerplate.database.interfaces.IExpense;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RDBMSUtility;
+import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.FetchExpenseEntity;
+import com.boilerplate.java.entities.FileMappingEntity;
+import com.boilerplate.java.entities.UserRoleType;
 
 /**
  * this class implements IExpense
@@ -156,14 +159,16 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 	 * @see IExpense.getExpensesForApprover
 	 */
 	@Override
-	public List<Map<String, Object>> getExpensesForApprover(String approverId) throws BadRequestException {
+	public List<Map<String, Object>> getExpensesForApprover(String approverId, UserRoleType role)
+			throws BadRequestException {
 		// Get the SQL query from configurations to get expense
 		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID");
+		// Modify query
+		hSQLQuery = RDBMSUtility.queryConstructionOfExpensesForApprovers(hSQLQuery, role, approverId);
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		// replace approver id in sql query
-		hSQLQuery = hSQLQuery.replaceAll("@ApproverId", approverId);
+
 		// This variable is used to hold the query response
 		List<Map<String, Object>> expenseMap = new ArrayList<>();
 		try {
@@ -180,6 +185,33 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 					"While trying to get expense data for approver~ " + ex.toString(), ex);
 		}
 		return expenseMap;
+	}
+
+	@Override
+	public List<FileMappingEntity> getFileMappingsForExpenses(String expenseIds) throws BadRequestException {
+		// Get the SQL query from configurations to get expense
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// put expense ids in query parameter map
+		queryParameterMap.put("ExpenseIds", expenseIds);
+		// This variable is used to hold the query response
+		List<FileMappingEntity> fileMappings = new ArrayList<>();
+		try {
+			// Execute query
+			fileMappings = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLExpense", "getAttachemntsForExpenses", "exceptionGetAttachemntsForExpenses",
+					"While trying to get file mappings, This is the list fo expense ids~ " + expenseIds
+							+ "This is the query" + hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLExpense",
+					"While trying to get expense data for approver~ " + ex.toString(), ex);
+		}
+		return fileMappings;
 	}
 
 }

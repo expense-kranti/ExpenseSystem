@@ -13,6 +13,34 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 public class ExpenseEntity extends BaseEntity {
 
 	/**
+	 * This is the default constructor
+	 */
+	public ExpenseEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param title
+	 * @param description
+	 * @param status
+	 * @param attachments
+	 * @param userId
+	 * @param userName
+	 */
+	public ExpenseEntity(String id, String title, String description, ExpenseStatusType status,
+			List<AttachmentEntity> attachments, String userId, String userName) {
+		super();
+		this.setId(id);
+		this.title = title;
+		this.description = description;
+		this.status = status;
+		this.attachments = attachments;
+		this.userId = userId;
+		this.userName = userName;
+	}
+
+	/**
 	 * this is the title of the expense
 	 */
 	private String title;
@@ -36,6 +64,17 @@ public class ExpenseEntity extends BaseEntity {
 	 * this is the id of the user by whom expense was filed
 	 */
 	private String userId;
+
+	/**
+	 * This is the complete name of the user
+	 */
+	private String userName;
+
+	/**
+	 * This is the reason/comment given by approver on rejection/approval of any
+	 * expense
+	 */
+	private String approverComments;
 
 	/**
 	 * This method is used to get list of attachments *
@@ -125,6 +164,42 @@ public class ExpenseEntity extends BaseEntity {
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 * This method is used to get user name
+	 * 
+	 * @return
+	 */
+	public String getUserName() {
+		return userName;
+	}
+
+	/**
+	 * This method is used to set user name
+	 * 
+	 * @param userName
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	/**
+	 * This method is used to get approver comments
+	 * 
+	 * @return
+	 */
+	public String getApproverComments() {
+		return approverComments;
+	}
+
+	/**
+	 * This method is used to set approver comments
+	 * 
+	 * @param approverComments
+	 */
+	public void setApproverComments(String approverComments) {
+		this.approverComments = approverComments;
 	}
 
 	/**

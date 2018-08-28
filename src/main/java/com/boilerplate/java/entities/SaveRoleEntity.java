@@ -14,6 +14,24 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 public class SaveRoleEntity extends BaseEntity {
 
 	/**
+	 * This is the default constructor
+	 */
+	public SaveRoleEntity() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param userId
+	 * @param roles
+	 */
+	public SaveRoleEntity(String userId, List<UserRoleType> roles) {
+		super();
+		this.userId = userId;
+		this.roles = roles;
+	}
+
+	/**
 	 * This is the user id
 	 */
 	private String userId;

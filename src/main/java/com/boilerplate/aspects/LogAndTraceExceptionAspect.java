@@ -102,9 +102,9 @@ public class LogAndTraceExceptionAspect {
 				if (methodPermissions.getIsApproverRoleRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Super_Approver)
-							|| !session.getExternalFacingUser().getRoles().contains(UserRoleType.Approver))
-						throw new UnauthorizedException("User", "User is not authorized", null);
+					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Super_Approver))
+						if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Approver))
+							throw new UnauthorizedException("User", "User is not authorized", null);
 				}
 				// check if user needs to be finance to execute this method
 				if (methodPermissions.getIsFinanceRoleRequired()) {

@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.FetchExpenseEntity;
+import com.boilerplate.java.entities.FileMappingEntity;
+import com.boilerplate.java.entities.UserRoleType;
 
 /**
  * This interface has methods for CRUD operations of expense entity in MySQL
@@ -73,6 +76,20 @@ public interface IExpense {
 	 */
 	public List<ExpenseEntity> getExpenses(FetchExpenseEntity fetchExpenseEntity) throws BadRequestException;
 
-	public List<Map<String, Object>> getExpensesForApprover(String approverId) throws BadRequestException;
+	/**
+	 * This method is used to fetch list of expenses filed under an approver
+	 * 
+	 * @param approverId
+	 *            this is the id of the approver
+	 * @param role
+	 *            this is the role of the approver
+	 * @return List of expenses
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
+	public List<Map<String, Object>> getExpensesForApprover(String approverId, UserRoleType role)
+			throws BadRequestException;
+
+	public List<FileMappingEntity> getFileMappingsForExpenses(String expenseIds) throws BadRequestException;
 
 }

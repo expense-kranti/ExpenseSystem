@@ -35,7 +35,7 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 * @param userId
 	 */
 	public ExpenseHistoryEntity(String previousId, Date previousCreationDate, Date previousUpdationDate, String title,
-			String description, ExpenseStatusType status, String userId) {
+			String description, ExpenseStatusType status, String userId, String approverComments) {
 		super();
 		this.previousId = previousId;
 		this.previousCreationDate = previousCreationDate;
@@ -44,6 +44,7 @@ public class ExpenseHistoryEntity extends BaseEntity {
 		this.description = description;
 		this.status = status;
 		this.userId = userId;
+		this.approverComments = approverComments;
 	}
 
 	/**
@@ -80,6 +81,12 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 * this is the id of the user by whom expense was filed
 	 */
 	private String userId;
+
+	/**
+	 * This is the reason/comment given by approver on rejection/approval of any
+	 * expense
+	 */
+	private String approverComments;
 
 	/**
 	 * This method is used to get title of the expense
@@ -205,6 +212,24 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 */
 	public void setPreviousUpdationDate(Date previousUpdationDate) {
 		this.previousUpdationDate = previousUpdationDate;
+	}
+
+	/**
+	 * This method is used to get approver comments
+	 * 
+	 * @return
+	 */
+	public String getApproverComments() {
+		return approverComments;
+	}
+
+	/**
+	 * This method is used to set approver comments
+	 * 
+	 * @param approverComments
+	 */
+	public void setApproverComments(String approverComments) {
+		this.approverComments = approverComments;
 	}
 
 	@Override

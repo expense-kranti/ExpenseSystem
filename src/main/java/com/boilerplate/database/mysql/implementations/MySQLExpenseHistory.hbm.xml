@@ -21,5 +21,6 @@
 		<property name="previousId" column="PreviousId" />
 		<property name="previousCreationDate" column="Previous_CreationDate" />
 		<property name="previousUpdationDate" column="Previous_UpdatedDate" />
+		<property name="approverComments" column="ApproverComments" />
 	</class>
 </hibernate-mapping>

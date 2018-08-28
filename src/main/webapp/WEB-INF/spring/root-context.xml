@@ -24,6 +24,7 @@
 	<bean id="userService" class="com.boilerplate.service.implemetations.UserService">
 		<property name="sessionManager" ref="sessionManager"></property>
 		<property name="mySqlUser" ref="mySqlUser"></property>
+		<property name="userRoleService" ref="userRoleService" />
 	</bean>
 
 	<!-- Bean for the Redis Queue Data Access Layer -->
@@ -201,9 +202,16 @@
 		<property name="mySqlExpense" ref="mySqlExpense" />
 		<property name="mySqlUser" ref="mySqlUser" />
 		<property name="fileService" ref="fileService" />
+		<property name="sendEmailService" ref="sendEmailService" />
 	</bean>
 
 	<bean id="userRoleService" class="com.boilerplate.service.implemetations.UserRoleService">
+		<property name="mySqlUser" ref="mySqlUser" />
+
+	</bean>
+
+	<bean id="sendEmailService" class="com.boilerplate.service.implemetations.SendEmailService">
+		<property name="configurationManager" ref="configurationManager" />
 		<property name="mySqlUser" ref="mySqlUser" />
 
 	</bean>

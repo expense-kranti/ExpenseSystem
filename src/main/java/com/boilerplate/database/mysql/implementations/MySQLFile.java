@@ -105,6 +105,9 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 
 	}
 
+	/**
+	 * @see IFilePointer.getFileMappingByExpenseId
+	 */
 	@Override
 	public List<FileMappingEntity> getFileMappingByExpenseId(String expenseId) throws BadRequestException {
 		// Get the SQL query from configurations to get file mapping by expense
@@ -123,8 +126,8 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 		} catch (Exception ex) {
 			// Log exception
 			logger.logException("MySQLExpense", "getFileMappingByExpenseId", "exceptionGetFileMappingByExpenseId",
-					"While trying to get file mapping data, This is the expenseId~ " + expenseId
-							+ "This is the query" + hSQLQuery,
+					"While trying to get file mapping data, This is the expenseId~ " + expenseId + "This is the query"
+							+ hSQLQuery,
 					ex);
 			// Throw exception
 			throw new BadRequestException("MySQLExpense", "While trying to get file mapping data ~ " + ex.toString(),

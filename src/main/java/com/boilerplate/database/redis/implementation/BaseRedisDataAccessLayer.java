@@ -444,12 +444,24 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for assignRoles
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.UserController.assignRoles(com.boilerplate.java.entities.SaveRoleEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.assignRoles(com.boilerplate.java.entities.SaveRoleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permission for creating expense
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createUser(com.boilerplate.java.entities.ExpenseEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createExpense(com.boilerplate.java.entities.ExpenseEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createUser(com.boilerplate.java.entities.ExpenseEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.createExpense(com.boilerplate.java.entities.ExpenseEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -459,9 +471,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for updating expense
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateUser(com.boilerplate.java.entities.ExpenseEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateExpense(com.boilerplate.java.entities.ExpenseEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateUser(com.boilerplate.java.entities.ExpenseEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.updateExpense(com.boilerplate.java.entities.ExpenseEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -492,55 +504,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for assignRoles
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.UserController.assignRoles(com.boilerplate.java.entities.SaveRoleEntity)");
-		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.UserController.assignRoles(com.boilerplate.java.entities.SaveRoleEntity)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setIsApproverRoleRequired(false);
-		methodPermission.setIsFinanceRoleRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
 		// method permission for getExpenses
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(com.boilerplate.java.entities.FetchExpenseEntity)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForEmployee(com.boilerplate.java.entities.FetchExpenseEntity)");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(com.boilerplate.java.entities.FetchExpenseEntity)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForEmployee(com.boilerplate.java.entities.FetchExpenseEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for getExpenses for approvers/super approvers
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(java.lang.String)");
-		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenses(java.lang.String)");
-		methodPermission.setIsAuthenticationRequired(true);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setIsApproverRoleRequired(false);
-		methodPermission.setIsFinanceRoleRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getExpenses for approvers/super approvers
-		methodPermission = new MethodPermissions();
-		methodPermission.setId(
-				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
-		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.FileEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
-		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(true);
-		methodPermission.setIsApproverRoleRequired(false);
-		methodPermission.setIsFinanceRoleRequired(false);
-		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
-		// method permission for getExpenses for approvers/super approvers
+		// method permission for file upload
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
 				"public com.boilerplate.java.entities.AttachmentEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
@@ -549,6 +525,30 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for getExpenses for approvers/super approvers
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(java.lang.String,com.boilerplate.java.entities.UserRoleType)");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(java.lang.String,com.boilerplate.java.entities.UserRoleType)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(true);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for approverExpense for approvers/super approvers
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpense(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpense(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(true);
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
@@ -669,6 +669,18 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AdminId", "admin");
 		vAllEAll.put("AdminPassword", "password");
 		vAllEAll.put("Maximum_File_Upload_Size", "5");
+		// Email configuration data
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_SUBMISSION", "Expense Submitted for your approval");
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_APPROVED", "Expense Approved by Approver");
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_REJECTION", "Expense Rejected by Approver");
+		vAllEAll.put("CONTENT_FOR_EXPENSE_SUBMISSION",
+				"An expense is filed by @employeeName, please take necessary action");
+		vAllEAll.put("CONTENT_FOR_EXPENSE_APPROVED",
+				"An expense filed by @employeeName has been approved by @approverName, please have a look and take necessary action");
+		vAllEAll.put("CONTENT_FOR_EXPENSE_REJECTION",
+				"An expense file by you has been rejected by @approverName, please have a look and take necessary action");
+
+		// SQL queries
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_MOBILE_OR_EMAIL_ID",
 				"FROM ExternalFacingUser user where user.phoneNumber = :Mobile or user.email = :Email");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_USER_ID",
@@ -680,11 +692,13 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_USER_ID",
 				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID",
-				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.AttachmentId as attachmentId, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.MiddleName,' ',user.LastName) as name FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and (user.ApproverId = @ApproverId or user.SuperApproverId = @ApproverId)");
+				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',Coalesce(user.MiddleName),' ',user.LastName) as name FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and user.ApproverId = @ApproverId user.SuperApproverId = @ApproverId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_EXPENSE_ID",
 				"FROM FileMappingEntity mapping where mapping.expenseId = :ExpenseId and mapping.isActive = true");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS",
+				"FROM FileMappingEntity mapping where mapping.expenseId in (:ExpenseIds) and mapping.isActive = true");
 
 		return vAllEAll;
 
