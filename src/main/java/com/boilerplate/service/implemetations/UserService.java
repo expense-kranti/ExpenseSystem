@@ -1,6 +1,7 @@
 package com.boilerplate.service.implemetations;
 
-import java.lang.reflect.Array;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +23,6 @@ import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IUserRoleService;
 import com.boilerplate.service.interfaces.IUserService;
 import com.boilerplate.sessions.Session;
-
-import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
 
 /**
  * This class Implements the IUserService class
@@ -142,6 +141,7 @@ public class UserService implements IUserService {
 	@Override
 	public Session authenticate(AuthenticationRequest authenitcationRequest)
 			throws UnauthorizedException, BadRequestException {
+
 		ExternalFacingUser user = null;
 		try {
 			user = mySqlUser.getUserById(authenitcationRequest.getUserId());
@@ -155,7 +155,10 @@ public class UserService implements IUserService {
 			String hashedPassword = String.valueOf(Encryption.getHashCode(authenitcationRequest.getPassword()));
 			// Check if password matches
 			if (!user.getPassword().equals(hashedPassword)) {
-				throw new UnauthorizedException("User", "User name or password incorrect", null);
+				logger.logInfo("UserService", "authenticate", "exceptionAuthenticate",
+						"incoming password : " + authenitcationRequest.getPassword() + "hashed db password"
+								+ user.getPassword() + "hashed incoming password" + hashedPassword);
+				throw new UnauthorizedException("User", "User name or password	 incorrect", null);
 			}
 			// get user roles
 			List<UserRoleEntity> userRoles = mySqlUser.getUserRoles(user.getId());
@@ -172,11 +175,14 @@ public class UserService implements IUserService {
 
 			return session;
 		} catch (Exception nfe) {
+			logger.logInfo("UserService", "authenticate", "exceptionAuthenticate", "incoming password : "
+					+ authenitcationRequest.getPassword() + "hashed db password" + user.getPassword());
 			logger.logException("UserService", "authenticate",
 					"External Facing User: " + authenitcationRequest.getUserId().toUpperCase()
 							+ " With entered Password: " + authenitcationRequest.getPassword() + " not found",
 					"Converting this exception to Unauthorized for security", nfe);
-			throw new UnauthorizedException("User", "User name or password incorrect", null);
+			throw new UnauthorizedException("User", "User name or password is incorrect" + "incoming password : "
+					+ authenitcationRequest.getPassword() + "hashed db password" + user.getPassword(), null);
 		}
 
 	}
@@ -190,7 +196,7 @@ public class UserService implements IUserService {
 		if (userId == null)
 			throw new BadRequestException("ExternalFacingUser", "User id for fetching user is null", null);
 		// create a new user enityt
-		ExternalFacingUser user = mySqlUser.getUserById(userId);
+		ExternalFacingUser user = mySqlUser.getUser(userId);
 		return user;
 	}
 
@@ -234,6 +240,53 @@ public class UserService implements IUserService {
 		user.setIsActive(true);
 		mySqlUser.updateUser(user);
 
+	}
+
+	/**
+	 * @see IUserService.authenticateUsingGoogle
+	 */
+	@Override
+	public Session authenticateUsingGoogle(String idTokenString) throws GeneralSecurityException, IOException {
+		// HttpTransport httpTransport = new NetHttpTransport();
+		// GoogleIdTokenVerifier verifier = new
+		// GoogleIdTokenVerifier.Builder(httpTransport,
+		// new JacksonFactory().getDefaultInstance())
+		// // Specify the CLIENT_ID of the app that accesses the
+		// // backend:
+		// .setAudience(Collections.singletonList(
+		// "428760649180-n99urcelfgmp4iiab879907qoigsgjkg.apps.googleusercontent.com"))
+		// // Or, if multiple clients access the backend:
+		// // .setAudience(Arrays.asList(CLIENT_ID_1, CLIENT_ID_2,
+		// // CLIENT_ID_3))
+		// .build();
+		//
+		// // (Receive idTokenString by HTTPS POST)
+		//
+		// GoogleIdToken idToken = verifier.verify(idTokenString);
+		// if (idToken != null) {
+		// Payload payload = idToken.getPayload();
+		//
+		// // Print user identifier
+		// String userId = payload.getSubject();
+		// System.out.println("User ID: " + userId);
+		//
+		// // Get profile information from payload
+		// String email = payload.getEmail();
+		// boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+		// String name = (String) payload.get("name");
+		// String locale = (String) payload.get("locale");
+		// String familyName = (String) payload.get("family_name");
+		// String givenName = (String) payload.get("given_name");
+		// String hdClaim = (String) payload.getHostedDomain();
+		//
+		// // Use or store profile information
+		// // ...
+		// return null;
+		//
+		// } else {
+		// System.out.println("Invalid ID token.");
+		// }
+		return null;
 	}
 
 }

@@ -80,6 +80,22 @@ public class UserRoleService implements IUserRoleService {
 		if (!roles.contains(UserRoleType.Approver))
 			throw new BadRequestException("AssignApproverEntity", "User Id of approver does not have sufficient rights",
 					null);
+		// check that finance user id exists
+		ExternalFacingUser finance = mySqlUser.getUser(assignApproverEntity.getFinanceId());
+		if (finance == null)
+			throw new NotFoundException("AssignApproverEntity", "Finance not found", null);
+		// get user roles
+		userRoles = mySqlUser.getUserRoles(finance.getId());
+		// create a role list for user
+		roles = new ArrayList<>();
+		// for each role entity fetched, add it in role list
+		for (UserRoleEntity userRoleEntity : userRoles) {
+			roles.add(userRoleEntity.getRole());
+		}
+		// check if approver id has approver access or not
+		if (!roles.contains(UserRoleType.Finance))
+			throw new BadRequestException("AssignApproverEntity", "User Id of finance does not have sufficient rights",
+					null);
 		// check that super approver user id exists
 		ExternalFacingUser superApprover = mySqlUser.getUser(assignApproverEntity.getSuperApprover());
 		if (superApprover == null)
@@ -113,6 +129,8 @@ public class UserRoleService implements IUserRoleService {
 			userEntity.setApproverId(approver.getId());
 			// set super approver id
 			userEntity.setSuperApproverId(superApprover.getId());
+			// set finance id
+			userEntity.setFinanceId(finance.getId());
 			mySqlUser.updateUser(userEntity);
 
 		}

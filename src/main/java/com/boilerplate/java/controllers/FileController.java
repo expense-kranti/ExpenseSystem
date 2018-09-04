@@ -1,14 +1,32 @@
 package com.boilerplate.java.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.service.interfaces.IFileService;
 import com.wordnik.swagger.annotations.Api;
@@ -56,50 +74,26 @@ public class FileController extends BaseController {
 		return fileService.saveFileOnLocal(fileMasterTag, file);
 	}
 
-	// /**
-	// * This api gets the files on the basis of file master tag
-	// *
-	// * @return The file entity list
-	// */
-	// @ApiOperation(value = "Gets all files on the basis of file master tag")
-	// @ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
-	// @ApiResponse(code = 404, message = "If one of the ciritical servers is
-	// not rechable") })
-	// @RequestMapping(value = "/file/masterTag/{fileMasterTag}", method =
-	// RequestMethod.GET)
-	// public @ResponseBody BoilerplateList<FileEntity>
-	// getFileOnMasterTag(@PathVariable String fileMasterTag)
-	// throws Exception {
-	// return this.fileService.getAllFileListOnMasterTag(fileMasterTag);
-	// }
-	//
-	// /**
-	// * This method gets a given file by Id
-	// *
-	// * @param id
-	// * The id of the file
-	// * @param response
-	// * The file stream
-	// * @throws NotFoundException
-	// * If the file is not found
-	// * @throws FileNotFoundException
-	// * If the file is not found
-	// * @throws IOException
-	// * If there is an error in IO
-	// */
-	// @ApiOperation(value = "Downlads a file")
-	// @ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
-	// @ApiResponse(code = 404, message = "If one of the ciritical servers is
-	// not rechable") })
-	// @RequestMapping(value = "/file/{id}", method = RequestMethod.GET)
-	// public void download(
-	// @ApiParam(value = "The id of the file", required = true, name = "id",
-	// allowMultiple = false) @PathVariable String id,
-	// HttpServletResponse response) throws Exception, NotFoundException,
-	// FileNotFoundException, IOException {
-	// // Redirects to S3 file URL
-	// String preSignedS3Url = fileService.getPreSignedS3URL(id);
-	// response.sendRedirect(preSignedS3Url);
-	// }
+	@RequestMapping(value = "/pdf/{fileName:.+}", method = RequestMethod.GET)
+	public void downloadPDFResource(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("fileName") String fileName) {
+		// If user is not authorized - he should be thrown out from here
+		// itself
 
+		// Authorized user will download the file
+		// String dataDirectory =
+		// request.getServletContext().getRealPath("/home/ruchi/Downloads/");
+		String dataDirectory = "/home/ruchi/Downloads/";
+		Path file = Paths.get(dataDirectory, fileName);
+		if (Files.exists(file)) {
+			response.setContentType("application/pdf");
+			response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+			try {
+				Files.copy(file, response.getOutputStream());
+				response.getOutputStream().flush();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 }

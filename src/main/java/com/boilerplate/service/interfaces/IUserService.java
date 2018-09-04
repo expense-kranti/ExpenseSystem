@@ -1,10 +1,12 @@
 package com.boilerplate.service.interfaces;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.AuthenticationRequest;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.sessions.Session;
@@ -103,5 +105,7 @@ public interface IUserService {
 	 *             Throw this exception if exception occurs while updating user
 	 */
 	public void enableUser(String userId) throws BadRequestException, NotFoundException, Exception;
+
+	public Session authenticateUsingGoogle(String idToken) throws GeneralSecurityException, IOException;
 
 }

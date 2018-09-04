@@ -35,7 +35,7 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 * @param userId
 	 */
 	public ExpenseHistoryEntity(String previousId, Date previousCreationDate, Date previousUpdationDate, String title,
-			String description, ExpenseStatusType status, String userId, String approverComments) {
+			String description, ExpenseStatusType status, String userId, String approverComments, float amount) {
 		super();
 		this.previousId = previousId;
 		this.previousCreationDate = previousCreationDate;
@@ -45,6 +45,7 @@ public class ExpenseHistoryEntity extends BaseEntity {
 		this.status = status;
 		this.userId = userId;
 		this.approverComments = approverComments;
+		this.amount = amount;
 	}
 
 	/**
@@ -87,6 +88,29 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 * expense
 	 */
 	private String approverComments;
+
+	/**
+	 * This is the amount of the expense
+	 */
+	private float amount;
+
+	/**
+	 * This method is used to get amount
+	 * 
+	 * @return
+	 */
+	public float getAmount() {
+		return amount;
+	}
+
+	/**
+	 * This method is used o set amount
+	 * 
+	 * @param amount
+	 */
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
 	/**
 	 * This method is used to get title of the expense

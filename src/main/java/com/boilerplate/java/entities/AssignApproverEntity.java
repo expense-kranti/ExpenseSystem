@@ -29,6 +29,11 @@ public class AssignApproverEntity extends BaseEntity {
 	private String superApprover;
 
 	/**
+	 * This is the id of the finance approver
+	 */
+	private String financeId;
+
+	/**
 	 * This method is used get approver user id
 	 * 
 	 * @return
@@ -83,13 +88,32 @@ public class AssignApproverEntity extends BaseEntity {
 	}
 
 	/**
+	 * This method is used to get finance id
+	 * 
+	 * @return
+	 */
+	public String getFinanceId() {
+		return financeId;
+	}
+
+	/**
+	 * This method is used to set finance id
+	 * 
+	 * @param financeId
+	 */
+	public void setFinanceId(String financeId) {
+		this.financeId = financeId;
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check whether all the mandatory data is not null or empty
-		if (isNullOrEmpty(this.approverUserId) || isNullOrEmpty(superApprover))
-			throw new ValidationFailedException("AssignApproverEntity", "Approver or Super approver is null", null);
+		if (isNullOrEmpty(this.getApproverUserId()) || isNullOrEmpty(this.getSuperApprover())
+				|| isNullOrEmpty(this.getFinanceId()))
+			throw new ValidationFailedException("AssignApproverEntity", "All approver's ids are manadatory", null);
 		// Check if list of users is not null or empty
 		if (this.users.size() == 0)
 			throw new ValidationFailedException("AssignApproverEntity", "List of users is empty", null);

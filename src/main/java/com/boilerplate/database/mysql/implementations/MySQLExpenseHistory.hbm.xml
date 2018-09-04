@@ -22,5 +22,6 @@
 		<property name="previousCreationDate" column="Previous_CreationDate" />
 		<property name="previousUpdationDate" column="Previous_UpdatedDate" />
 		<property name="approverComments" column="ApproverComments" />
+		<property name="amount" column="Amount" />
 	</class>
 </hibernate-mapping>

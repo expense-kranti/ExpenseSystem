@@ -1,10 +1,22 @@
 package com.boilerplate.service.implemetations;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.database.interfaces.IFile;
@@ -86,8 +98,8 @@ public class FileService implements IFileService {
 	public AttachmentEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
 			throws UpdateFailedException, Exception {
 		// generate unique file name for saving on local disk
-		String fileNameOnDisk = UUID.randomUUID().toString() + "_" + file.getOriginalFilename() + "_"
-				+ RequestThreadLocal.getSession().getExternalFacingUser().getUserId();
+		String fileNameOnDisk = UUID.randomUUID().toString();
+		fileNameOnDisk = fileNameOnDisk.replace(".", "_");
 		// get path for saving file from configuration
 		String rootFileUploadLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
 		// generate path with file name
@@ -151,5 +163,22 @@ public class FileService implements IFileService {
 			}
 		}
 		return allAttachments;
+	}
+
+	@Override
+	public void getFile(HttpServletResponse response) throws MalformedURLException, IOException {
+		// get path for getting file from configuration
+		String rootFileSavedLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
+		// generate path with file name
+		String filePath = rootFileSavedLocation + "/"
+				+ "52596d96-e4dd-435c-b022-383d4bdbeb2f_Dump20180827_sql_finance1@krantitech_com";
+
+		File file = new File(filePath);
+		InputStream in = new FileInputStream(file);
+		response.setContentType("pdf");
+		response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+		response.setHeader("Content-Length", String.valueOf(file.length()));
+		FileCopyUtils.copy(in, response.getOutputStream());
+
 	}
 }

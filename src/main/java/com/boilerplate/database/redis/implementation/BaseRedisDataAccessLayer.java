@@ -543,15 +543,50 @@ public class BaseRedisDataAccessLayer {
 		// method permission for approverExpense for approvers/super approvers
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpense(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpenseForApprover(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpense(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpenseForApprover(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(true);
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for get expenses for finanace
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for file download
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.FileController.downloadPDFResource(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.FileController.downloadPDFResource(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for approve for finance
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ExpenseController.approveExpenseForFinance(com.boilerplate.java.entities.ExpenseReportEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ExpenseController.approveExpenseForFinance(com.boilerplate.java.entities.ExpenseReportEntity)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -670,15 +705,16 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("AdminPassword", "password");
 		vAllEAll.put("Maximum_File_Upload_Size", "5");
 		// Email configuration data
-		vAllEAll.put("SUBJECT_FOR_EXPENSE_SUBMISSION", "Expense Submitted for your approval");
-		vAllEAll.put("SUBJECT_FOR_EXPENSE_APPROVED", "Expense Approved by Approver");
-		vAllEAll.put("SUBJECT_FOR_EXPENSE_REJECTION", "Expense Rejected by Approver");
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_SUBMISSION", "Expense Submitted");
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_RE_SUBMISSION", "Expense Re-submitted");
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_APPROVED", "Expense Approved");
+		vAllEAll.put("SUBJECT_FOR_EXPENSE_REJECTION", "Expense Rejected");
 		vAllEAll.put("CONTENT_FOR_EXPENSE_SUBMISSION",
 				"An expense is filed by @employeeName, please take necessary action");
 		vAllEAll.put("CONTENT_FOR_EXPENSE_APPROVED",
-				"An expense filed by @employeeName has been approved by @approverName, please have a look and take necessary action");
+				"An expense filed by @employeeName has been approved by respective Approver, please have a look and take necessary action");
 		vAllEAll.put("CONTENT_FOR_EXPENSE_REJECTION",
-				"An expense file by you has been rejected by @approverName, please have a look and take necessary action");
+				"An expense filed by you has been rejected by your approver, please have a look and take necessary action");
 
 		// SQL queries
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_MOBILE_OR_EMAIL_ID",
@@ -692,14 +728,15 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_USER_ID",
 				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID",
-				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',Coalesce(user.MiddleName),' ',user.LastName) as name FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and user.ApproverId = @ApproverId user.SuperApproverId = @ApproverId");
+				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',Coalesce(user.MiddleName,''),' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and user.ApproverId = @ApproverId user.SuperApproverId = @ApproverId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_EXPENSE_ID",
 				"FROM FileMappingEntity mapping where mapping.expenseId = :ExpenseId and mapping.isActive = true");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS",
 				"FROM FileMappingEntity mapping where mapping.expenseId in (:ExpenseIds) and mapping.isActive = true");
-
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_FINANCE_ID",
+				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',Coalesce(user.MiddleName,''),' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status = ':Status' and user.FinanceId = :FinanceId");
 		return vAllEAll;
 
 	}

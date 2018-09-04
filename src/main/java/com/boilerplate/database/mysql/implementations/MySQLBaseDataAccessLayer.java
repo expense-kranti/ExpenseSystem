@@ -204,8 +204,8 @@ public class MySQLBaseDataAccessLayer {
 
 			return aliasToValueMapList;
 		} catch (Exception ex) {
-			logger.logException("MySQLBaseDataAccessLayer", "executeSelectNative", "try-catch block", ex.getMessage(),
-					ex);
+			logger.logException("MySQLBaseDataAccessLayer", "executeSelectNative", "try-catch block",
+					ex.getMessage() + "~~~" + ex.fillInStackTrace(), ex);
 			session.getTransaction().rollback();
 			throw ex;
 		} finally {

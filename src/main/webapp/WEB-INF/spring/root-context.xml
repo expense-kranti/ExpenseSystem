@@ -12,7 +12,6 @@
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="session" ref="session" />
 		<property name="queueReaderJob" ref="queueReaderJob"></property>
-		<property name="userService" ref="userService"></property>
 	</bean>
 	<!-- This is one of the possible implementations for session -->
 	<bean id="session"

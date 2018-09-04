@@ -10,7 +10,7 @@ import com.boilerplate.framework.Encryption;
 import com.wordnik.swagger.annotations.ApiModel;
 
 /**
- * This is the user entity expcted as an input.
+ * This is the user entity expected as an input.
  * 
  * @author gaurav.verma.icloud
  *
@@ -73,6 +73,11 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 * This is the user id of the super approver
 	 */
 	private String superApproverId;
+
+	/**
+	 * This is the finance id
+	 */
+	private String financeId;
 
 	/**
 	 * This method gets the email of the user
@@ -277,6 +282,24 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 */
 	public void setSuperApproverId(String superApproverId) {
 		this.superApproverId = superApproverId;
+	}
+
+	/**
+	 * This method is used to get finance id
+	 * 
+	 * @return
+	 */
+	public String getFinanceId() {
+		return financeId;
+	}
+
+	/**
+	 * This method is used to set finance id
+	 * 
+	 * @param financeId
+	 */
+	public void setFinanceId(String financeId) {
+		this.financeId = financeId;
 	}
 
 	/**

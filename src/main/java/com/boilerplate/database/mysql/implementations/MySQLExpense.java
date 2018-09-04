@@ -5,16 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IExpense;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RDBMSUtility;
 import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.FileMappingEntity;
 import com.boilerplate.java.entities.UserRoleType;
@@ -187,6 +191,9 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		return expenseMap;
 	}
 
+	/**
+	 * @see IExpense.getFileMappingsForExpenses
+	 */
 	@Override
 	public List<FileMappingEntity> getFileMappingsForExpenses(String expenseIds) throws BadRequestException {
 		// Get the SQL query from configurations to get expense
@@ -195,7 +202,8 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// put expense ids in query parameter map
-		queryParameterMap.put("ExpenseIds", expenseIds);
+		// queryParameterMap.put("ExpenseIds", expenseIds);
+		hSQLQuery = hSQLQuery.replaceAll(":ExpenseIds", expenseIds);
 		// This variable is used to hold the query response
 		List<FileMappingEntity> fileMappings = new ArrayList<>();
 		try {
@@ -212,6 +220,68 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 					"While trying to get expense data for approver~ " + ex.toString(), ex);
 		}
 		return fileMappings;
+	}
+
+	/**
+	 * @see IExpense.getExpensesForFinance
+	 */
+	@Override
+	public List<Map<String, Object>> getExpensesForFinance(String financeId, ExpenseStatusType expenseStatus)
+			throws BadRequestException {
+		// Get the SQL query from configurations to get expense
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_FINANCE_ID");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// put finance id in query parameter map
+		queryParameterMap.put("FinanceId", financeId);
+		hSQLQuery = hSQLQuery.replace(":Status", expenseStatus.toString());
+
+		// This variable is used to hold the query response
+		List<Map<String, Object>> expenseMap = new ArrayList<>();
+		try {
+			// Execute query
+			expenseMap = super.executeSelectNative(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLExpense", "getExpensesForFinance", "exceptionGetExpensesForFinance",
+					"While trying to get expense data, This is the financeId~ " + financeId + "This is the query"
+							+ hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLExpense",
+					"While trying to get expense data for finance~ " + ex.toString(), ex);
+		}
+		return expenseMap;
+	}
+
+	/**
+	 * @see IExpense.saveExpenseList
+	 */
+	@Override
+	public void saveExpenseList(List<ExpenseEntity> expenses) throws Exception {
+		Session session = null;
+		try {
+			// open a session
+			session = HibernateUtility.getSessionFactory().openSession();
+			// get all the configurations from the DB as a list
+			Transaction transaction = session.beginTransaction();
+			// for each roles
+			for (ExpenseEntity expense : expenses)
+				// save expense in MySQL
+				session.saveOrUpdate(expense);
+			// commit the transaction
+			transaction.commit();
+		} catch (Exception ex) {
+			logger.logException("MySQLExpense", "update/create expenses", "try-catch block", ex.getMessage(), ex);
+			session.getTransaction().rollback();
+			throw ex;
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
 	}
 
 }

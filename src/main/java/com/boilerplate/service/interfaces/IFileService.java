@@ -1,7 +1,14 @@
 package com.boilerplate.service.interfaces;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
@@ -47,6 +54,23 @@ public interface IFileService {
 	 */
 	public void saveFileMapping(ExpenseEntity expenseEntity) throws Exception;
 
-	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity, ExpenseHistoryEntity expenseHistoryEntity)
-			throws BadRequestException, Exception;
+	/**
+	 * This method is used to update file mappings while updating expense
+	 * 
+	 * @param expenseEntity
+	 *            This is the updated expense entity
+	 * @param expenseHistoryEntity
+	 *            This is the previous expense
+	 * @return List of attachments
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while saving
+	 *             file mapping
+	 */
+	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity,
+			ExpenseHistoryEntity expenseHistoryEntity) throws BadRequestException, Exception;
+
+	public void getFile(HttpServletResponse attachmentId)
+			throws FileNotFoundException, MalformedURLException, IOException;
 }

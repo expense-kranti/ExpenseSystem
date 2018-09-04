@@ -51,22 +51,6 @@ public class SessionManager {
 	}
 
 	/**
-	 * This is the user service
-	 */
-	@Autowired
-	com.boilerplate.service.interfaces.IUserService userService;
-
-	/**
-	 * This sets the user service
-	 * 
-	 * @param userService
-	 *            An instance of user service
-	 */
-	public void setUserService(com.boilerplate.service.interfaces.IUserService userService) {
-		this.userService = userService;
-	}
-
-	/**
 	 * This is an instance of the queue job, to save the session back on to the
 	 * database async
 	 */

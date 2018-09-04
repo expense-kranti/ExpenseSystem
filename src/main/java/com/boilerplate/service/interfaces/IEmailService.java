@@ -1,5 +1,6 @@
 package com.boilerplate.service.interfaces;
 
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.java.entities.ExpenseEntity;
 
 /**
@@ -19,6 +20,10 @@ public interface IEmailService {
 	 * @throws Exception
 	 *             throw this exception if any exception occurs
 	 */
-	public void sendEmailOnSubmission(ExpenseEntity expenseEntity) throws Exception;
+	public void sendEmailOnSubmission(ExpenseEntity expenseEntity, boolean isResubmitted) throws Exception;
+
+	public void sendEmailOnRejection(ExpenseEntity expenseEntity) throws BadRequestException;
+
+	public void sendEmailOnApproval(ExpenseEntity expenseEntity) throws BadRequestException;
 
 }

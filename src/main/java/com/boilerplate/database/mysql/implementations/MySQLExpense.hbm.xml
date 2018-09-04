@@ -19,6 +19,8 @@
 		</property>
 		<property name="creationDate" column="CreationDate" />
 		<property name="updationDate" column="UpdatedDate" />
-	<property name="approverComments" column="ApproverComments" />
+		<property name="approverComments" column="ApproverComments" />
+		<property name="amount" column="Amount" />
+
 	</class>
 </hibernate-mapping>

@@ -7,6 +7,7 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.FileMappingEntity;
 import com.boilerplate.java.entities.UserRoleType;
@@ -90,6 +91,36 @@ public interface IExpense {
 	public List<Map<String, Object>> getExpensesForApprover(String approverId, UserRoleType role)
 			throws BadRequestException;
 
+	/**
+	 * This method is used to get file mappings
+	 * 
+	 * @param expenseIds
+	 *            This is the list of expense ids
+	 * @return List of file mappings
+	 * @throws BadRequestException
+	 *             Throw this exssception if user sends a bad request
+	 */
 	public List<FileMappingEntity> getFileMappingsForExpenses(String expenseIds) throws BadRequestException;
 
+	/**
+	 * This method is used to get expenses for finance
+	 * 
+	 * @param financeId
+	 *            This is the id of the finance
+	 * @return List<Map<String, Object>>
+	 * @throws BadRequestException
+	 */
+	public List<Map<String, Object>> getExpensesForFinance(String financeId, ExpenseStatusType expenseStatus)
+			throws BadRequestException;
+
+	/**
+	 * This method is used to save a list of expenses
+	 * 
+	 * @param expenses
+	 *            This is the list of expenses
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs while saving
+	 *             expense
+	 */
+	public void saveExpenseList(List<ExpenseEntity> expenses) throws Exception;
 }

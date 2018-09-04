@@ -15,6 +15,8 @@ import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpenseApproveOrRejectEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseReportEntity;
+import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IExpenseService;
@@ -112,7 +114,7 @@ public class ExpenseController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
-	@RequestMapping(value = "/getExpensesForEmployee", method = RequestMethod.PUT)
+	@RequestMapping(value = "/getExpensesForEmployee", method = RequestMethod.GET)
 	public @ResponseBody List<ExpenseEntity> getExpensesForEmployee(@RequestBody FetchExpenseEntity fetchExpenseEntity)
 			throws ValidationFailedException, NotFoundException, BadRequestException {
 		// call the business layer
@@ -165,12 +167,55 @@ public class ExpenseController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
-	@RequestMapping(value = "/approveExpense", method = RequestMethod.POST)
-	public @ResponseBody ExpenseEntity approveExpense(
+	@RequestMapping(value = "/approveForApprovers", method = RequestMethod.POST)
+	public @ResponseBody ExpenseEntity approveExpenseForApprover(
 			@RequestBody ExpenseApproveOrRejectEntity expenseApproveOrRejectEntity)
 			throws ValidationFailedException, BadRequestException, NotFoundException, Exception {
 		// call the business layer
-		return expenseService.approveExpense(expenseApproveOrRejectEntity);
+		return expenseService.approveExpenseForApprover(expenseApproveOrRejectEntity);
+	}
+
+	/**
+	 * This api is used to get list for expenses for finance
+	 * 
+	 * @return List of reports
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
+	@ApiOperation(value = "Gets expenses for finance", notes = "The creation date and updated date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
+			@ApiResponse(code = 404, message = "If entity does not exist") })
+	@RequestMapping(value = "/getExpensesForFinance/{expenseStatus}", method = RequestMethod.GET)
+	public @ResponseBody List<ExpenseReportEntity> getExpensesForFinance(@RequestParam ExpenseStatusType expenseStatus)
+			throws BadRequestException {
+		// call the business layer
+		return expenseService.getExpensesForFinance(expenseStatus);
+	}
+
+	/**
+	 * This API is used to approve/reject/move to ready for payment state by
+	 * Finance
+	 * 
+	 * @param expenseReportEntity
+	 *            This entity contains all the expenses to be updated
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity fails any validation rules
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs wile
+	 *             saving/updating data in MySQL
+	 */
+	@ApiOperation(value = "Approve an expense", notes = "The creation date and updated date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
+			@ApiResponse(code = 404, message = "If entity does not exist") })
+	@RequestMapping(value = "/approveForFinance", method = RequestMethod.POST)
+	public @ResponseBody void approveExpenseForFinance(@RequestBody ExpenseReportEntity expenseReportEntity)
+			throws BadRequestException, ValidationFailedException, Exception {
+		// call the business layer
+		expenseService.approveExpenseForFinance(expenseReportEntity);
 	}
 
 }

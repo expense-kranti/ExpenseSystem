@@ -29,7 +29,7 @@ public class ExpenseEntity extends BaseEntity {
 	 * @param userName
 	 */
 	public ExpenseEntity(String id, String title, String description, ExpenseStatusType status,
-			List<AttachmentEntity> attachments, String userId, String userName) {
+			List<AttachmentEntity> attachments, String userId, String userName, String approverComments, float amount) {
 		super();
 		this.setId(id);
 		this.title = title;
@@ -38,6 +38,8 @@ public class ExpenseEntity extends BaseEntity {
 		this.attachments = attachments;
 		this.userId = userId;
 		this.userName = userName;
+		this.approverComments = approverComments;
+		this.amount = amount;
 	}
 
 	/**
@@ -75,6 +77,29 @@ public class ExpenseEntity extends BaseEntity {
 	 * expense
 	 */
 	private String approverComments;
+
+	/**
+	 * This is the amount of the expense
+	 */
+	private float amount;
+
+	/**
+	 * This method is used to get amount
+	 * 
+	 * @return
+	 */
+	public float getAmount() {
+		return amount;
+	}
+
+	/**
+	 * This method is used o set amount
+	 * 
+	 * @param amount
+	 */
+	public void setAmount(float amount) {
+		this.amount = amount;
+	}
 
 	/**
 	 * This method is used to get list of attachments *
@@ -208,8 +233,7 @@ public class ExpenseEntity extends BaseEntity {
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check if expense entity has all the mandatory fields
-		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachments.size() == 0
-				|| isNullOrEmpty(this.getUserId()))
+		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachments.size() == 0)
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
 
 		return false;

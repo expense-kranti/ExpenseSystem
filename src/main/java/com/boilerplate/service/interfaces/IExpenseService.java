@@ -1,13 +1,14 @@
 package com.boilerplate.service.interfaces;
 
 import java.util.List;
-import java.util.Map;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpenseApproveOrRejectEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseReportEntity;
+import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.UserRoleType;
 
@@ -95,7 +96,44 @@ public interface IExpenseService {
 	public List<ExpenseEntity> getExpensesForApproval(String approverId, UserRoleType role)
 			throws NotFoundException, ValidationFailedException, BadRequestException;
 
-	public ExpenseEntity approveExpense(ExpenseApproveOrRejectEntity expenseApproveOrRejectEntity)
+	/**
+	 * This method is used to approve expenses by approver/super approver
+	 * 
+	 * @param expenseApproveOrRejectEntity
+	 *            This entity has details for approval/rejection of an expense
+	 * @return Expense Entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if user not found
+	 * @throws ValidationFailedException
+	 *             throw this exception if entity is invalid
+	 */
+	public ExpenseEntity approveExpenseForApprover(ExpenseApproveOrRejectEntity expenseApproveOrRejectEntity)
 			throws ValidationFailedException, BadRequestException, NotFoundException, Exception;
 
+	/**
+	 * This method is used to get list of expenses for finance in report format
+	 * 
+	 * @return List of reports
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
+	public List<ExpenseReportEntity> getExpensesForFinance(ExpenseStatusType expenseStatus) throws BadRequestException;
+
+	/**
+	 * This method is used to approve/rejects/move to ready for payment state
+	 * for finance
+	 * 
+	 * @param reportEntity
+	 *            This is the report entity containing all the expenses
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if entity not found
+	 * @throws ValidationFailedException
+	 *             throw this exception if entity is invalid
+	 */
+	public void approveExpenseForFinance(ExpenseReportEntity reportEntity)
+			throws BadRequestException, ValidationFailedException, Exception;
 }
