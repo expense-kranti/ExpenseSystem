@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
@@ -49,6 +50,10 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 	public void saveFileMapping(FileMappingEntity fileMappingEntity) throws Exception {
 		try {
 			super.create(fileMappingEntity);
+		} catch (ConstraintViolationException cex) {
+			logger.logException("MySQLFile", "saveFileMapping", "exeptionSaveFileMapping",
+					"ConstraintViolationException occurred while saving file mapping", cex);
+			throw cex;
 		} catch (Exception ex) {
 			logger.logException("MySQLFile", "saveFileMapping", "exeptionSaveFileMapping",
 					"Exeption occurred while saving file mapping", ex);
@@ -134,6 +139,37 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 					ex);
 		}
 		return mappings;
+	}
+
+	/**
+	 * @see IFilePointer.getFileMappingByAttachmentId
+	 */
+	@Override
+	public FileMappingEntity getFileMappingByAttachmentId(String attachmentId) throws BadRequestException {
+		// Get the SQL query from configurations to get file mapping by expense
+		// id
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_ATTACHMENT_ID");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put id in query parameter
+		queryParameterMap.put("AttachmentId", attachmentId);
+		// This variable is used to hold the query response
+		List<FileMappingEntity> mappings = new ArrayList<>();
+		try {
+			// Execute query
+			mappings = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLExpense", "getFileMappingByExpenseId", "exceptionGetFileMappingByAttachmentId",
+					"While trying to get file mapping data, This is the attachmentId~ " + attachmentId
+							+ "This is the query" + hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLExpense", "While trying to get file mapping data ~ " + ex.toString(),
+					ex);
+		}
+		return mappings.get(0);
 	}
 
 }

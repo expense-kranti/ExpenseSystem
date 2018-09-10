@@ -10,15 +10,13 @@
 		</id>
 		<property name="firstName" column="FirstName" />
 		<property name="lastName" column="LastName" />
-		<property name="phoneNumber" column="MobileNumber" />
 		<property name="email" column="EmailId" />
-		<property name="password" column="Password" />
-		<property name="middleName" column="MiddleName" />
 		<property name="userId" column="UserId" />
 		<property name="isActive" column="Active" />
 		<property name="approverId" column="ApproverId" />
 		<property name="superApproverId" column="SuperApproverId" />
 		<property name="financeId" column="FinanceId" />
+		<property name="authenticationProvider" column="AuthenticationProvider" />
 
 	</class>
 </hibernate-mapping>

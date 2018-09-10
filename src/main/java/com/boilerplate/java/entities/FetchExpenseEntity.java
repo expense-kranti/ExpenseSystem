@@ -1,15 +1,8 @@
 package com.boilerplate.java.entities;
 
-import java.util.Date;
-
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 public class FetchExpenseEntity extends BaseEntity {
-
-	/**
-	 * This is the id of the user
-	 */
-	private String userId;
 
 	/**
 	 * This is the start date for expense filtering
@@ -25,24 +18,6 @@ public class FetchExpenseEntity extends BaseEntity {
 	 * This is the type expenses to be fetched
 	 */
 	private ExpenseStatusType expenseType;
-
-	/**
-	 * this method is used to get user id
-	 * 
-	 * @return
-	 */
-	public String getUserId() {
-		return userId;
-	}
-
-	/**
-	 * This method is used to set user id
-	 * 
-	 * @param userId
-	 */
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 
 	/**
 	 * This method is used get start date
@@ -115,9 +90,6 @@ public class FetchExpenseEntity extends BaseEntity {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// check if user id is not null
-		if (isNullOrEmpty(this.getUserId()))
-			throw new ValidationFailedException("FetchExpenseEntity", "User id should not be null", null);
 		// check if start date is given then end date is mandatory and vice
 		// versa
 		if (isNullOrEmpty(this.getStartDate())) {

@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.framework.Encryption;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This is the user entity expected as an input.
@@ -19,65 +19,106 @@ import com.wordnik.swagger.annotations.ApiModel;
 public class ExternalFacingUser extends BaseEntity implements Serializable {
 
 	/**
+	 * This is the default constructor
+	 */
+	public ExternalFacingUser() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * This is the parameterized constructor
+	 * 
+	 * @param userId
+	 * @param email
+	 * @param firstName
+	 * @param lastName
+	 * @param roles
+	 * @param isActive
+	 * @param password
+	 * @param approverId
+	 * @param superApproverId
+	 * @param financeId
+	 * @param authenticationProvider
+	 */
+	public ExternalFacingUser(String userId, String email, String firstName, String lastName, List<UserRoleType> roles,
+			boolean isActive, String approverId, String superApproverId, String financeId,
+			String authenticationProvider) {
+		super();
+		this.userId = userId;
+		this.email = email;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.roles = roles;
+		this.isActive = isActive;
+		this.approverId = approverId;
+		this.superApproverId = superApproverId;
+		this.financeId = financeId;
+		this.authenticationProvider = authenticationProvider;
+	}
+
+	/**
 	 * This is the user's Id, this is not the system generated Id, it is the id
 	 * created by the user.
 	 */
+	@ApiModelProperty(value = "This is the id of the user", required = true, notes = "This is the id of the user")
 	private String userId;
-
-	/**
-	 * This is the middle name of the user
-	 */
-	private String middleName;
 
 	/**
 	 * This is the email of the user
 	 */
+	@ApiModelProperty(value = "This is the email of the user", required = true, notes = "This is the email of the user")
 	public String email;
 
 	/**
 	 * This is the first name of the user
 	 */
+	@ApiModelProperty(value = "This is the firstName of the user", required = true, notes = "This is the firstName of the user")
 	private String firstName;
 
 	/**
 	 * This is the last name of the user
 	 */
+	@ApiModelProperty(value = "This is the lastName of the user", required = true, notes = "This is the lastName of the user")
 	private String lastName;
 
 	/**
 	 * The roles of the user
 	 */
+	@ApiModelProperty(value = "This is the list of roles of the user", required = true, notes = "This is the list of roles of the user")
 	private List<UserRoleType> roles;
-
-	/**
-	 * This is the phone number of the customer or user
-	 */
-	private String phoneNumber;
 
 	/**
 	 * This indicates whether user is disabled by admin or not
 	 */
+	@ApiModelProperty(value = "This is the active status of the user", required = true, notes = "This is the active status of the user")
 	private boolean isActive;
-
-	/**
-	 * This is the password of the user
-	 */
-	private String password;
 
 	/**
 	 * This is the user id of the approver
 	 */
+	@ApiModelProperty(value = "This is the approverId of the user", required = true, notes = "This is the approverId of the user")
 	private String approverId;
 
 	/**
 	 * This is the user id of the super approver
 	 */
+	@ApiModelProperty(value = "This is the id of the user", required = true, notes = "This is the id of the user")
 	private String superApproverId;
 
 	/**
 	 * This is the finance id
 	 */
+	@ApiModelProperty(value = "This is the financeId of the user", required = true, notes = "This is the financeId of the user")
 	private String financeId;
+
+	/**
+	 * This is the authentication provider. Default means that the user is
+	 * authenticated by the user name and password. A user may use SSO and other
+	 * authentication providers like facebook,\ google and others.
+	 */
+	@ApiModelProperty(value = "This is the authenticationProvider of the user", required = true, notes = "This is the authenticationProvider of the user")
+	private String authenticationProvider;
 
 	/**
 	 * This method gets the email of the user
@@ -137,44 +178,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * This method gets the phone number
-	 * 
-	 * @return The phone number
-	 */
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	/**
-	 * This method sets the phone number of the user
-	 * 
-	 * @param phoneNumber
-	 *            The phone number
-	 */
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	/**
-	 * This method gets the middle name
-	 * 
-	 * @return The middleName
-	 */
-	public String getMiddleName() {
-		return middleName;
-	}
-
-	/**
-	 * This method sets the middle name
-	 * 
-	 * @param middleName
-	 *            The middleName
-	 */
-	public void setMiddleName(String middleName) {
-		this.middleName = middleName;
-	}
-
-	/**
 	 * Gets the roles of the user
 	 * 
 	 * @return The roles of the user
@@ -228,24 +231,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 */
 	public void setIsActive(boolean isActive) {
 		this.isActive = isActive;
-	}
-
-	/**
-	 * This method is used to get password
-	 * 
-	 * @return
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * This method is used to set password
-	 * 
-	 * @param password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	/**
@@ -303,10 +288,21 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	}
 
 	/**
-	 * This method hash's the password
+	 * this method is used to get authentication provider
+	 * 
+	 * @return
 	 */
-	public void hashPassword() {
-		this.password = String.valueOf(Encryption.getHashCode(this.password));
+	public String getAuthenticationProvider() {
+		return authenticationProvider;
+	}
+
+	/**
+	 * This method is used to set authentication provider
+	 * 
+	 * @param authenticationProvider
+	 */
+	public void setAuthenticationProvider(String authenticationProvider) {
+		this.authenticationProvider = authenticationProvider;
 	}
 
 	/**
@@ -346,10 +342,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 			throw new ValidationFailedException("User", "User Id is null/Empty", null);
 		if (this.isNullOrEmpty(this.getEmail()))
 			throw new ValidationFailedException("User", "Email Id is null/Empty", null);
-		if (this.isNullOrEmpty(this.getPhoneNumber()))
-			throw new ValidationFailedException("User", "Mobile Number is null/Empty", null);
-		if (this.isNullOrEmpty(this.getPassword()))
-			throw new ValidationFailedException("User", "Password is null/Empty", null);
 		// check email id format
 		Matcher matcher = emailResxPattern.matcher(this.getEmail());
 		if (matcher.matches() == false) {

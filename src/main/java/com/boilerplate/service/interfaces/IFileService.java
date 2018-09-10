@@ -6,12 +6,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
@@ -71,6 +74,21 @@ public interface IFileService {
 	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity,
 			ExpenseHistoryEntity expenseHistoryEntity) throws BadRequestException, Exception;
 
-	public void getFile(HttpServletResponse attachmentId)
-			throws FileNotFoundException, MalformedURLException, IOException;
+	/**
+	 * Thi method is used to download a file
+	 * 
+	 * @param request
+	 *            This is the http request
+	 * @param response
+	 *            This is the response
+	 * @param fileName
+	 *            This is the file name
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             throw this exception if file maping is not found
+	 */
+	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException;
+
 }

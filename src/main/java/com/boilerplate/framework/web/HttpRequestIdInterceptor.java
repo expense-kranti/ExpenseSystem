@@ -169,6 +169,7 @@ public class HttpRequestIdInterceptor extends HandlerInterceptorAdapter {
 				sessionManager.saveSessionOnExit(RequestThreadLocal.getSession());
 			}
 		}
+		//String cookie = response.
 		RequestThreadLocal.remove();
 	}
 
@@ -186,91 +187,8 @@ public class HttpRequestIdInterceptor extends HandlerInterceptorAdapter {
 	private String getSessionId(HttpServletRequest request)
 			throws UnauthorizedException, NotFoundException, BadRequestException {
 
-		// check for impersionate blog
-		// firstly we check the case of impersination
-		if (request.getHeader(Constants.X_Impersinator) != null) {
-			String impersonator = request.getHeader(Constants.X_Impersinator);
-			String impersinatorPassword = request.getHeader(Constants.X_Impersinator_Password);
-			String impersonatedUserUUId = request.getHeader(Constants.X_User_LoginId_To_Be_Impersonated_Blog);
-			if (impersonatedUserUUId != null) {
-				AuthenticationRequest authenitcationRequest = new AuthenticationRequest();
-				authenitcationRequest.setUserId(impersonator);
-				authenitcationRequest.setPassword(impersinatorPassword);
-				Session session = this.userService.authenticate(authenitcationRequest);
-				boolean isImpersinatorOrAdminFound = false;
-				for (UserRoleType role : session.getExternalFacingUser().getRoles()) {
-					if (role.equals(UserRoleType.Admin)) {
-						isImpersinatorOrAdminFound = true;
-						break;
-					}
-
-					// if
-					// (role.getRoleName().toUpperCase().equals("IMPERSINATOR"))
-					// {
-					// isImpersinatorOrAdminFound = true;
-					// break;
-					// }
-				}
-				if (isImpersinatorOrAdminFound == false) {
-					throw new UnauthorizedException("User", "User not allowed impersination", null);
-				}
-				// get user id on the basis of uuid
-				ExternalFacingUser user = this.userService.getUser(impersonatedUserUUId);
-				// create a session
-				Session sessionCreated = this.sessionManager.createNewSession(user);
-				return sessionCreated.getSessionId();
-			}
-			// check if the ipersinator is a correct user
-
-		}
-		// firstly we check the case of impersination
-		if (request.getHeader(Constants.X_Impersinator) != null) {
-			String impersonator = request.getHeader(Constants.X_Impersinator);
-			String impersinatorPassword = request.getHeader(Constants.X_Impersinator_Password);
-			String impersonatedUser = request.getHeader(Constants.X_User_LoginId_To_Be_Impersonated);
-
-			// check if the ipersinator is a correct user
-			AuthenticationRequest authenitcationRequest = new AuthenticationRequest();
-			authenitcationRequest.setUserId(impersonator);
-			authenitcationRequest.setPassword(impersinatorPassword);
-			Session session = this.userService.authenticate(authenitcationRequest);
-			boolean isImpersinatorOrAdminFound = false;
-			for (UserRoleType role : session.getExternalFacingUser().getRoles()) {
-				if (role.equals(UserRoleType.Admin)) {
-					isImpersinatorOrAdminFound = true;
-					break;
-				}
-
-				// if (role.getRoleName().toUpperCase().equals("IMPERSINATOR"))
-				// {
-				// isImpersinatorOrAdminFound = true;
-				// break;
-				// }
-			}
-			if (isImpersinatorOrAdminFound == false) {
-				throw new UnauthorizedException("User", "User not allowed impersination", null);
-			}
-			// if so get the user being impesontaed
-			ExternalFacingUser user = this.userService.getUser(impersonatedUser);
-			// create a session
-			Session sessionCreated = this.sessionManager.createNewSession(user);
-			return sessionCreated.getSessionId();
-		}
 		// check the session Id in cookie
 		String value = "";
-		if (request.getCookies() != null) {
-			for (Cookie cookie : request.getCookies()) {
-				if (cookie.getName().equals(Constants.AuthTokenCookieKey)) {
-					value = cookie.getValue();
-				}
-			}
-		}
-		if (value.equals("") == false)
-			return value;
-		// check the session Id in Header
-		if (request.getHeader(Constants.AuthTokenHeaderKey) != null) {
-			return request.getHeader(Constants.AuthTokenHeaderKey);
-		}
 		// check the session Id in query string
 		if (request.getQueryString() != null) {
 			String queryStringValues[] = request.getQueryString().toUpperCase().split("&");
@@ -280,8 +198,25 @@ public class HttpRequestIdInterceptor extends HandlerInterceptorAdapter {
 				}
 			}
 		}
+		
+		if (value.equals("") == false)
+			return value;
+		// check the session Id in Header
+		if (request.getHeader(Constants.AuthTokenHeaderKey) != null) {
+			return request.getHeader(Constants.AuthTokenHeaderKey);
+		}
 
-		return null;
+		
+		if (request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if (cookie.getName().equals(Constants.AuthTokenCookieKey)) {
+					value = cookie.getValue();
+				}
+			}
+		}
+		
+
+		return value;
 	}
 
 }

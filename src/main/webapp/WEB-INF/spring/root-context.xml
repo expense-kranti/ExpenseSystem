@@ -24,6 +24,8 @@
 		<property name="sessionManager" ref="sessionManager"></property>
 		<property name="mySqlUser" ref="mySqlUser"></property>
 		<property name="userRoleService" ref="userRoleService" />
+		<property name="configurationManager" ref="configurationManager"></property>
+
 	</bean>
 
 	<!-- Bean for the Redis Queue Data Access Layer -->

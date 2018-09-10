@@ -253,13 +253,27 @@ public class UserController extends BaseController {
 		userRoleService.assignRoles(role);
 	}
 
+	/**
+	 * This API is used to authenticate user through google SSO
+	 * 
+	 * @param idToken
+	 *            This is the id token provided by google after successful login
+	 * @return Session with user
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if user is not found
+	 * @throws Exception
+	 *             throw this exception if any exception occurs while saving a
+	 *             new user
+	 */
 	@ApiOperation(value = "Authenticate using google SSO", notes = "The user is unique in the system, The creation date and updated "
 			+ "date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, manadatory fields are missing"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
 	@RequestMapping(value = "/sSOauthenticate/{idToken}", method = RequestMethod.POST)
-	public @ResponseBody Session assignRoles(@RequestParam String idToken)
+	public @ResponseBody Session ssoLogin(@RequestParam String idToken)
 			throws BadRequestException, NotFoundException, Exception {
 		// Call authentication service to check if user name and password are
 		// valid
@@ -269,10 +283,10 @@ public class UserController extends BaseController {
 		super.addHeader(Constants.AuthTokenHeaderKey, session.getSessionId());
 		super.addCookie(Constants.AuthTokenCookieKey, session.getSessionId(), sessionManager.getSessionTimeout());
 
-		// add the user id for logging, we have to explictly do it here only in
+		// add the user id for logging, we have to explicitly do it here only in
 		// this
 		// case all other cases
-		// are handeled by HttpRequestInterseptor
+		// are handled by HttpRequestInterseptor
 		super.addHeader(Constants.X_User_Id, session.getExternalFacingUser().getUserId());
 		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
 				RequestThreadLocal.getHttpResponse(), session);

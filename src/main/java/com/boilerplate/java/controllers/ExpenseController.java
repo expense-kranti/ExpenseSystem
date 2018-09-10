@@ -114,7 +114,7 @@ public class ExpenseController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
-	@RequestMapping(value = "/getExpensesForEmployee", method = RequestMethod.GET)
+	@RequestMapping(value = "/getExpensesForEmployee", method = RequestMethod.POST)
 	public @ResponseBody List<ExpenseEntity> getExpensesForEmployee(@RequestBody FetchExpenseEntity fetchExpenseEntity)
 			throws ValidationFailedException, NotFoundException, BadRequestException {
 		// call the business layer
@@ -140,11 +140,11 @@ public class ExpenseController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
-	@RequestMapping(value = "/getExpensesForApprover/{approverId}/{role}", method = RequestMethod.GET)
-	public @ResponseBody List<ExpenseEntity> getExpensesForApprover(@RequestParam String approverId,
-			@RequestParam UserRoleType role) throws NotFoundException, ValidationFailedException, BadRequestException {
+	@RequestMapping(value = "/getExpensesForApprover", method = RequestMethod.GET)
+	public @ResponseBody List<ExpenseEntity> getExpensesForApprover(@RequestParam UserRoleType role)
+			throws NotFoundException, ValidationFailedException, BadRequestException {
 		// call the business layer
-		return expenseService.getExpensesForApproval(approverId, role);
+		return expenseService.getExpensesForApproval(role);
 	}
 
 	/**

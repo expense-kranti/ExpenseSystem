@@ -14,6 +14,6 @@
 		<property name="isActive" column="IsActive" />
 		<property name="expenseHistoryId" column="ExpenseHistoryId" />
 		<property name="originalFileName" column="OriginalFileName" />
-
+		<property name="contentType" column="ContentType" />
 	</class>
 </hibernate-mapping>

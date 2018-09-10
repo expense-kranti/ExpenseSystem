@@ -1,31 +1,23 @@
 package com.boilerplate.java.controllers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.service.interfaces.IFileService;
@@ -74,26 +66,26 @@ public class FileController extends BaseController {
 		return fileService.saveFileOnLocal(fileMasterTag, file);
 	}
 
-	@RequestMapping(value = "/pdf/{fileName:.+}", method = RequestMethod.GET)
-	public void downloadPDFResource(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable("fileName") String fileName) {
-		// If user is not authorized - he should be thrown out from here
-		// itself
-
-		// Authorized user will download the file
-		// String dataDirectory =
-		// request.getServletContext().getRealPath("/home/ruchi/Downloads/");
-		String dataDirectory = "/home/ruchi/Downloads/";
-		Path file = Paths.get(dataDirectory, fileName);
-		if (Files.exists(file)) {
-			response.setContentType("application/pdf");
-			response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
-			try {
-				Files.copy(file, response.getOutputStream());
-				response.getOutputStream().flush();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
+	/**
+	 * This API is used to download a file
+	 * 
+	 * @param request
+	 *            This is the http request
+	 * @param response
+	 *            this is the repsonse containing the file
+	 * @param fileName
+	 *            This is the file name
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if file mapping or file is not found
+	 */
+	@ApiOperation(value = "Donloads a file")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
+			@ApiResponse(code = 404, message = "If file or file mapping is not found") })
+	@RequestMapping(value = "/downoad/{fileName:.+}", method = RequestMethod.GET)
+	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException {
+		fileService.downloadFile(request, response, fileName);
 	}
 }

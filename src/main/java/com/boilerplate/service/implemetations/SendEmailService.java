@@ -77,9 +77,7 @@ public class SendEmailService implements IEmailService {
 		// prepare bcc list
 		BoilerplateList<String> bccs = new BoilerplateList<>();
 		// employee name
-		String name = expenseUser.getFirstName() + " "
-				+ (expenseUser.getMiddleName() == null ? " " : expenseUser.getMiddleName()) + " "
-				+ expenseUser.getLastName();
+		String name = expenseUser.getFirstName() + " " + expenseUser.getLastName();
 		// subject for email
 		String subject = null;
 		if (isResubmitted)
@@ -134,9 +132,7 @@ public class SendEmailService implements IEmailService {
 		// prepare bcc list
 		BoilerplateList<String> bccs = new BoilerplateList<>();
 		// employee name
-		String name = expenseUser.getFirstName() + " "
-				+ (expenseUser.getMiddleName() == null ? " " : expenseUser.getMiddleName()) + " "
-				+ expenseUser.getLastName();
+		String name = expenseUser.getFirstName() + " " + expenseUser.getLastName();
 		String body = configurationManager.get("CONTENT_FOR_EXPENSE_APPROVED").replace("@employeeName", name);
 
 		try {

@@ -6,23 +6,32 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.database.interfaces.IFile;
 import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.AttachmentEntity;
@@ -97,6 +106,10 @@ public class FileService implements IFileService {
 	@Override
 	public AttachmentEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
 			throws UpdateFailedException, Exception {
+		// get content type
+		String contentType = file.getContentType();
+		if (contentType == null)
+			throw new ValidationFailedException("AttachmentEntity", "exceptionSaveFileOnLocal", null);
 		// generate unique file name for saving on local disk
 		String fileNameOnDisk = UUID.randomUUID().toString();
 		fileNameOnDisk = fileNameOnDisk.replace(".", "_");
@@ -107,7 +120,8 @@ public class FileService implements IFileService {
 		// save file name onto disk
 		file.transferTo(new java.io.File(filePath));
 		// create new attachment entity
-		AttachmentEntity attachmentEntity = new AttachmentEntity(fileMasterTag, fileNameOnDisk);
+		AttachmentEntity attachmentEntity = new AttachmentEntity(file.getOriginalFilename(), fileNameOnDisk,
+				contentType);
 		return attachmentEntity;
 	}
 
@@ -120,7 +134,8 @@ public class FileService implements IFileService {
 		for (AttachmentEntity attachment : expenseEntity.getAttachments()) {
 			// create a new file mapping entity
 			FileMappingEntity fileMappingEntity = new FileMappingEntity(attachment.getAttachmentId(),
-					expenseEntity.getUserId(), expenseEntity.getId(), true, null, attachment.getOriginalFileName());
+					expenseEntity.getUserId(), expenseEntity.getId(), true, null, attachment.getOriginalFileName(),
+					attachment.getContentType());
 			// save mapping in MySQL
 			filePointer.saveFileMapping(fileMappingEntity);
 		}
@@ -165,20 +180,30 @@ public class FileService implements IFileService {
 		return allAttachments;
 	}
 
+	/**
+	 * @see IFileService.downloadFile
+	 */
 	@Override
-	public void getFile(HttpServletResponse response) throws MalformedURLException, IOException {
-		// get path for getting file from configuration
-		String rootFileSavedLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
-		// generate path with file name
-		String filePath = rootFileSavedLocation + "/"
-				+ "52596d96-e4dd-435c-b022-383d4bdbeb2f_Dump20180827_sql_finance1@krantitech_com";
-
-		File file = new File(filePath);
-		InputStream in = new FileInputStream(file);
-		response.setContentType("pdf");
-		response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
-		response.setHeader("Content-Length", String.valueOf(file.length()));
-		FileCopyUtils.copy(in, response.getOutputStream());
-
+	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException {
+		// Fetch the file mapping for the given file
+		FileMappingEntity fileMappingEntity = filePointer.getFileMapping(fileName);
+		// check if file mapping exists for the given file
+		if (fileMappingEntity == null)
+			throw new NotFoundException("FileMappingEntity", "File mapping not found for the given file name", null);
+		// get the root file saving location
+		String fileLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
+		Path file = Paths.get(fileLocation, fileName);
+		if (Files.exists(file)) {
+			response.addHeader("Content-Disposition",
+					"attachment; filename=" + fileMappingEntity.getOriginalFileName());
+			response.setContentType(fileMappingEntity.getContentType());
+			try {
+				Files.copy(file, response.getOutputStream());
+				response.getOutputStream().flush();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 }

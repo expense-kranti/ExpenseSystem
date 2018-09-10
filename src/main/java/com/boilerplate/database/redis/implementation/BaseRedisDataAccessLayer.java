@@ -483,9 +483,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for authenticating user
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticate(com.boilerplate.java.entities.AuthenticationRequest)");
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.ssoLogin(java.lang.String)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.authenticate(com.boilerplate.java.entities.AuthenticationRequest)");
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.ssoLogin(java.lang.String)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(false);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -531,9 +531,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for getExpenses for approvers/super approvers
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(java.lang.String,com.boilerplate.java.entities.UserRoleType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(com.boilerplate.java.entities.UserRoleType)");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(java.lang.String,com.boilerplate.java.entities.UserRoleType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(com.boilerplate.java.entities.UserRoleType)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(true);
@@ -567,9 +567,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for file download
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public void com.boilerplate.java.controllers.FileController.downloadPDFResource(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String)");
+				"public void com.boilerplate.java.controllers.FileController.downloadFile(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String)");
 		methodPermission.setMethodName(
-				"public void com.boilerplate.java.controllers.FileController.downloadPDFResource(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String)");
+				"public void com.boilerplate.java.controllers.FileController.downloadFile(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -587,6 +587,19 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsApproverRoleRequired(false);
 		methodPermission.setIsFinanceRoleRequired(true);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for approve for finance
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.sSOauthenticate(java.lang.String)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.sSOauthenticate(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));
@@ -699,6 +712,9 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("CrossDomainHeaders",
 				"Access-Control-Allow-Headers:*;Access-Control-Allow-Methods:*;Access-Control-Allow-Origin:*;Access-Control-Allow-Credentials: true;Access-Control-Expose-Headers:*");
 		vAllEAll.put("DefaultUserStatus", "1");
+		vAllEAll.put("DefaultAuthenticationProvider", "DEFAULT");
+		vAllEAll.put("HD_CLAIM", "krantitechservices.in");
+
 		vAllEAll.put("Offer_Initial_Month_Size", "1");
 		// Admin credentials
 		vAllEAll.put("AdminId", "admin");
@@ -728,7 +744,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_USER_ID",
 				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID",
-				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',Coalesce(user.MiddleName,''),' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and user.ApproverId = @ApproverId user.SuperApproverId = @ApproverId");
+				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and user.ApproverId = @ApproverId user.SuperApproverId = @ApproverId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_EXPENSE_ID",
@@ -736,7 +752,10 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS",
 				"FROM FileMappingEntity mapping where mapping.expenseId in (:ExpenseIds) and mapping.isActive = true");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_FINANCE_ID",
-				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',Coalesce(user.MiddleName,''),' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status = ':Status' and user.FinanceId = :FinanceId");
+				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments, expense.CreationDate as creationDate, expense.UpdatedDate as updatedDate FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status = ':Status' and user.FinanceId = :FinanceId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_ATTACHMENT_ID",
+				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId and mapping.isActive = true");
+
 		return vAllEAll;
 
 	}

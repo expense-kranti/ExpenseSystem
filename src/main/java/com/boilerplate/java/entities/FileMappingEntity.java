@@ -22,7 +22,7 @@ public class FileMappingEntity extends BaseEntity {
 	 * this is the parameterized constructor
 	 */
 	public FileMappingEntity(String attachmentId, String userId, String expenseId, boolean isActive,
-			String expenseHistoryId, String fileName) {
+			String expenseHistoryId, String fileName, String contentType) {
 		super();
 		this.attachmentId = attachmentId;
 		this.userId = userId;
@@ -30,6 +30,7 @@ public class FileMappingEntity extends BaseEntity {
 		this.isActive = isActive;
 		this.expenseHistoryId = expenseHistoryId;
 		this.originalFileName = fileName;
+		this.contentType = contentType;
 	}
 
 	/**
@@ -61,6 +62,11 @@ public class FileMappingEntity extends BaseEntity {
 	 * updated along with file
 	 */
 	private String expenseHistoryId;
+
+	/**
+	 * This is the content type of the file
+	 */
+	private String contentType;
 
 	/**
 	 * This method is used to get attachment id
@@ -168,6 +174,24 @@ public class FileMappingEntity extends BaseEntity {
 	 */
 	public void setOriginalFileName(String originalFileName) {
 		this.originalFileName = originalFileName;
+	}
+
+	/**
+	 * This method is used to get content type
+	 * 
+	 * @return
+	 */
+	public String getContentType() {
+		return contentType;
+	}
+
+	/**
+	 * This method is used to set content type
+	 * 
+	 * @param contentType
+	 */
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 
 	@Override

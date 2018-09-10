@@ -1,7 +1,6 @@
 package com.boilerplate.service.interfaces;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
@@ -106,6 +105,21 @@ public interface IUserService {
 	 */
 	public void enableUser(String userId) throws BadRequestException, NotFoundException, Exception;
 
-	public Session authenticateUsingGoogle(String idToken) throws GeneralSecurityException, IOException;
+	/**
+	 * This method is used authenticate a user throgh google sso login
+	 * 
+	 * @param idToken
+	 *            This is the idToken returned by google SSO
+	 * @return Session
+	 * @throws IOException
+	 *             throw this exception if any exception occurs while db
+	 *             operation
+	 * @throws BadRequestException
+	 *             throw this exception if user sends bad request
+	 * @throws Exception
+	 *             throw this exception if any exception occurs while fetching
+	 *             user
+	 */
+	public Session authenticateUsingGoogle(String idToken) throws IOException, BadRequestException, Exception;
 
 }

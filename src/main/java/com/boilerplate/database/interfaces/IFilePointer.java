@@ -48,9 +48,21 @@ public interface IFilePointer {
 	 * 
 	 * @param expenseId
 	 *            this is the expense id for which list needs to be fetched
-	 * @return
+	 * @return List of file mappings
 	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
 	 */
 	public List<FileMappingEntity> getFileMappingByExpenseId(String expenseId) throws BadRequestException;
+
+	/**
+	 * This method is used to get file mapping by attachment id
+	 * 
+	 * @param attachmentId
+	 *            This is the attachment id
+	 * @return The file mapping entity
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
+	public FileMappingEntity getFileMappingByAttachmentId(String attachmentId) throws BadRequestException;
 
 }

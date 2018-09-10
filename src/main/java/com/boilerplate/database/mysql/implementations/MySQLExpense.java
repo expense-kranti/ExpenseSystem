@@ -15,6 +15,7 @@ import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RDBMSUtility;
+import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
@@ -139,7 +140,7 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// Put id in query parameter
-		queryParameterMap.put("UserId", fetchExpenseEntity.getUserId());
+		queryParameterMap.put("UserId", RequestThreadLocal.getSession().getExternalFacingUser().getId());
 		// This variable is used to hold the query response
 		List<ExpenseEntity> expenses = new ArrayList<>();
 		try {
@@ -148,8 +149,9 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		} catch (Exception ex) {
 			// Log exception
 			logger.logException("MySQLExpense", "getExpenses", "exceptionGetExpenses",
-					"While trying to get expense data, This is the user id~ " + fetchExpenseEntity.getUserId()
-							+ "This is the query" + hSQLQuery,
+					"While trying to get expense data, This is the user id~ "
+							+ RequestThreadLocal.getSession().getExternalFacingUser().getId() + "This is the query"
+							+ hSQLQuery,
 					ex);
 			// Throw exception
 			throw new BadRequestException("MySQLExpense", "While trying to get expense data ~ " + ex.toString(), ex);

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -86,13 +85,16 @@ public class ExpenseService implements IExpenseService {
 	}
 
 	/**
-	 * This is the logger
+	 * This is the autowired instance of IEmailService
 	 */
-	private Logger logger = Logger.getInstance(ExpenseService.class);
-
 	@Autowired
 	IEmailService sendEmailService;
 
+	/**
+	 * This method is used to set autowired instance of IEmailService
+	 * 
+	 * @param sendEmailService
+	 */
 	public void setSendEmailService(IEmailService sendEmailService) {
 		this.sendEmailService = sendEmailService;
 	}
@@ -110,8 +112,6 @@ public class ExpenseService implements IExpenseService {
 		// Check whether user id exists and is active
 		ExternalFacingUser externalFacingUser = mySqlUser
 				.getUser(RequestThreadLocal.getSession().getExternalFacingUser().getId());
-		if (externalFacingUser == null || !externalFacingUser.getIsActive())
-			throw new NotFoundException("ExpenseEntity", "User not found or is inactive", null);
 		// check if user has been assigned all the approvers
 		if (externalFacingUser.getApproverId() == null || externalFacingUser.getSuperApproverId() == null
 				|| externalFacingUser.getFinanceId() == null)
@@ -120,7 +120,7 @@ public class ExpenseService implements IExpenseService {
 					null);
 		// set status of expense as submitted
 		expenseEntity.setStatus(ExpenseStatusType.Submitted);
-		List<AttachmentEntity> attachments = expenseEntity.getAttachments();
+		expenseEntity.setUserId(externalFacingUser.getId());
 		// set creation date and update date
 		expenseEntity.setCreationDate(new Date());
 		expenseEntity.setUpdationDate(new Date());
@@ -180,7 +180,7 @@ public class ExpenseService implements IExpenseService {
 		// set creation date and update date
 		expenseEntity.setCreationDate(previousExpense.getCreationDate());
 		expenseEntity.setUpdationDate(new Date());
-
+		expenseEntity.getId();
 		// update expense
 		expenseEntity = mySqlExpense.updateExpense(expenseEntity);
 		// update attachments
@@ -199,26 +199,45 @@ public class ExpenseService implements IExpenseService {
 			throws ValidationFailedException, NotFoundException, BadRequestException {
 		// validate entity
 		fetchExpenseEntity.validate();
-		// check if user exists
-		if (mySqlUser.getUser(fetchExpenseEntity.getUserId()) == null)
-			throw new NotFoundException("ExternalFacingUser", "User not found", null);
 		// fetch list of expenses from database
-		return mySqlExpense.getExpenses(fetchExpenseEntity);
+		List<ExpenseEntity> expenses = mySqlExpense.getExpenses(fetchExpenseEntity);
+		// list of expense ids
+		String expenseIds = "";
+		// for each expense, fetch its attachment
+		for (ExpenseEntity eachExpense : expenses) {
+			// put the expense id in a list
+			expenseIds += eachExpense.getId() + ",";
+		}
+		expenseIds = expenseIds.substring(0, expenseIds.length() - 1);
+		// Fetch attachments for the given list of expense ids
+		List<FileMappingEntity> fileMappings = mySqlExpense.getFileMappingsForExpenses(expenseIds);
+		// for each expense mapping
+		for (ExpenseEntity expense : expenses) {
+			List<AttachmentEntity> attachments = new ArrayList<>();
+			// fetch file mappings for current expense
+			for (FileMappingEntity fileMapping : fileMappings) {
+				if (fileMapping.getExpenseId().equals(String.valueOf(expense.getId()))) {
+					AttachmentEntity attachmentEntity = new AttachmentEntity(fileMapping.getOriginalFileName(),
+							fileMapping.getAttachmentId(), fileMapping.getContentType());
+					attachments.add(attachmentEntity);
+				}
+			}
+			expense.setAttachments(attachments);
+		}
+		return expenses;
 	}
 
 	/**
 	 * @see IExpenseService.getExpensesForApproval
 	 */
 	@Override
-	public List<ExpenseEntity> getExpensesForApproval(String approverId, UserRoleType role)
+	public List<ExpenseEntity> getExpensesForApproval(UserRoleType role)
 			throws NotFoundException, ValidationFailedException, BadRequestException {
-		// check if approver id is not null or empty
+		// fetch approver id
+		String approverId = RequestThreadLocal.getSession().getExternalFacingUser().getId();
 		if (approverId == null)
 			throw new ValidationFailedException("ExpenseEntity", "Approver id for fetching expenses is null or empty",
 					null);
-		// check if approver exists
-		if (mySqlUser.getUser(approverId) == null)
-			throw new NotFoundException("ExpenseEntity", "No user with gievn approver id found", null);
 		// get list of expenses filed under the given approver
 		List<Map<String, Object>> expenseMap = mySqlExpense.getExpensesForApprover(approverId, role);
 		// check if expenses are not null
@@ -243,7 +262,7 @@ public class ExpenseService implements IExpenseService {
 			for (FileMappingEntity fileMapping : fileMappings) {
 				if (fileMapping.getExpenseId().equals(String.valueOf(expense.get("id")))) {
 					AttachmentEntity attachmentEntity = new AttachmentEntity(fileMapping.getOriginalFileName(),
-							fileMapping.getAttachmentId());
+							fileMapping.getAttachmentId(), fileMapping.getContentType());
 					attachments.add(attachmentEntity);
 				}
 			}
@@ -253,7 +272,7 @@ public class ExpenseService implements IExpenseService {
 					ExpenseStatusType.valueOf(String.valueOf(expense.get("status"))), attachments,
 					String.valueOf(expense.get("userId")), String.valueOf(expense.get("name")),
 					String.valueOf(expense.get("approverComments")),
-					Float.valueOf(String.valueOf(expense.get("amount"))));
+					Float.valueOf(String.valueOf(expense.get("amount"))), null, null);
 			// add the expense entity in list
 			expenseList.add(expenseEntity);
 		}
@@ -344,7 +363,7 @@ public class ExpenseService implements IExpenseService {
 			for (FileMappingEntity fileMapping : fileMappings) {
 				if (fileMapping.getExpenseId().equals(String.valueOf(expense.get("id")))) {
 					AttachmentEntity attachmentEntity = new AttachmentEntity(fileMapping.getOriginalFileName(),
-							fileMapping.getAttachmentId());
+							fileMapping.getAttachmentId(), fileMapping.getContentType());
 					attachments.add(attachmentEntity);
 				}
 			}
@@ -355,7 +374,8 @@ public class ExpenseService implements IExpenseService {
 					ExpenseStatusType.valueOf(String.valueOf(expense.get("status"))), attachments,
 					String.valueOf(expense.get("userId")), String.valueOf(expense.get("name")),
 					String.valueOf(expense.get("approverComments")),
-					Float.valueOf(String.valueOf(expense.get("amount"))));
+					Float.valueOf(String.valueOf(expense.get("amount"))), (Date) expense.get("creationDate"),
+					(Date) expense.get("updatedDate"));
 			// add the expense entity in list
 			expenseList.add(expenseEntity);
 		}
@@ -383,7 +403,7 @@ public class ExpenseService implements IExpenseService {
 			}
 			// create a new expense report entity
 			ExpenseReportEntity reportEntity = new ExpenseReportEntity(name, userId, totalAmount, expenses,
-					ExpenseStatusType.Approver_Approved);
+					expenseStatus);
 			// add the report entity in list
 			reportEntities.add(reportEntity);
 		}

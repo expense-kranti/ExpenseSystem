@@ -18,10 +18,11 @@ public class AttachmentEntity extends BaseEntity {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AttachmentEntity(String originalFileName, String attachmentId) {
+	public AttachmentEntity(String originalFileName, String attachmentId, String contentType) {
 		super();
 		this.originalFileName = originalFileName;
 		this.attachmentId = attachmentId;
+		this.contentType = contentType;
 	}
 
 	/**
@@ -35,7 +36,13 @@ public class AttachmentEntity extends BaseEntity {
 	private String attachmentId;
 
 	/**
-	 * This ethod is used to get original file name
+	 * This is the content type of the file attached
+	 */
+
+	private String contentType;
+
+	/**
+	 * This method is used to get original file name
 	 * 
 	 * @return
 	 */
@@ -70,9 +77,28 @@ public class AttachmentEntity extends BaseEntity {
 		this.attachmentId = attachmentId;
 	}
 
+	/**
+	 * This method is used to get content type
+	 * 
+	 * @return
+	 */
+	public String getContentType() {
+		return contentType;
+	}
+
+	/**
+	 * This method is used to set content type
+	 * 
+	 * @param contentType
+	 */
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
+		if (this.getAttachmentId() == null || this.getContentType() == null || this.getOriginalFileName() == null)
+			throw new ValidationFailedException("AttachmentEntity", "exceptionValidate", null);
 		return false;
 	}
 

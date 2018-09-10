@@ -1,5 +1,6 @@
 package com.boilerplate.java.entities;
 
+import java.util.Date;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
@@ -29,7 +30,8 @@ public class ExpenseEntity extends BaseEntity {
 	 * @param userName
 	 */
 	public ExpenseEntity(String id, String title, String description, ExpenseStatusType status,
-			List<AttachmentEntity> attachments, String userId, String userName, String approverComments, float amount) {
+			List<AttachmentEntity> attachments, String userId, String userName, String approverComments, float amount,
+			Date creationDate, Date updatedDate) {
 		super();
 		this.setId(id);
 		this.title = title;
@@ -40,6 +42,8 @@ public class ExpenseEntity extends BaseEntity {
 		this.userName = userName;
 		this.approverComments = approverComments;
 		this.amount = amount;
+		this.setCreationDate(creationDate);
+		this.setUpdationDate(updatedDate);
 	}
 
 	/**

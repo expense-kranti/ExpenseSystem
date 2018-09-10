@@ -81,8 +81,6 @@ public interface IExpenseService {
 	 * This method is used to get list of expenses filed under a given approver
 	 * or super approver
 	 * 
-	 * @param approverId
-	 *            This is the id of the approver
 	 * @param role
 	 *            this is the role of the approver
 	 * @return List of expenses
@@ -93,7 +91,7 @@ public interface IExpenseService {
 	 * @throws ValidationFailedException
 	 *             throw this exception if entity is invalid
 	 */
-	public List<ExpenseEntity> getExpensesForApproval(String approverId, UserRoleType role)
+	public List<ExpenseEntity> getExpensesForApproval(UserRoleType role)
 			throws NotFoundException, ValidationFailedException, BadRequestException;
 
 	/**
