@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
-import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
@@ -82,14 +81,11 @@ public interface IExpense {
 	 * 
 	 * @param approverId
 	 *            this is the id of the approver
-	 * @param role
-	 *            this is the role of the approver
 	 * @return List of expenses
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 */
-	public List<Map<String, Object>> getExpensesForApprover(String approverId, UserRoleType role)
-			throws BadRequestException;
+	public List<ExpenseEntity> getExpensesForApprover(String approverId) throws BadRequestException;
 
 	/**
 	 * This method is used to get file mappings
@@ -123,4 +119,21 @@ public interface IExpense {
 	 *             expense
 	 */
 	public void saveExpenseList(List<ExpenseEntity> expenses) throws Exception;
+
+	/**
+	 * This method is used o delete expense when exception occurs while saving
+	 * file mapping
+	 * 
+	 * @param expenseEntity
+	 *            Thi is the expense entity to be deleted
+	 */
+	public void deleteExpense(ExpenseEntity expenseEntity);
+
+	/**
+	 * This method is used to get all active expenses 
+	 * @return
+	 * 			List of expenses
+	 * @throws BadRequestException
+	 */
+	public List<ExpenseEntity> getAllExpenses() throws BadRequestException;
 }

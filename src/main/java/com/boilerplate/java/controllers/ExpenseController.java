@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.ExpenseApproveOrRejectEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseReportEntity;
+import com.boilerplate.java.entities.ExpenseReviewEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.UserRoleType;
@@ -118,7 +118,7 @@ public class ExpenseController extends BaseController {
 	public @ResponseBody List<ExpenseEntity> getExpensesForEmployee(@RequestBody FetchExpenseEntity fetchExpenseEntity)
 			throws ValidationFailedException, NotFoundException, BadRequestException {
 		// call the business layer
-		return expenseService.getExpenses(fetchExpenseEntity);
+		return expenseService.getExpensesForUser(fetchExpenseEntity);
 	}
 
 	/**
@@ -141,10 +141,10 @@ public class ExpenseController extends BaseController {
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
 	@RequestMapping(value = "/getExpensesForApprover", method = RequestMethod.GET)
-	public @ResponseBody List<ExpenseEntity> getExpensesForApprover(@RequestParam UserRoleType role)
+	public @ResponseBody List<ExpenseEntity> getExpensesForApprover()
 			throws NotFoundException, ValidationFailedException, BadRequestException {
 		// call the business layer
-		return expenseService.getExpensesForApproval(role);
+		return expenseService.getExpensesForApproval();
 	}
 
 	/**
@@ -168,11 +168,10 @@ public class ExpenseController extends BaseController {
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
 	@RequestMapping(value = "/approveForApprovers", method = RequestMethod.POST)
-	public @ResponseBody ExpenseEntity approveExpenseForApprover(
-			@RequestBody ExpenseApproveOrRejectEntity expenseApproveOrRejectEntity)
+	public @ResponseBody ExpenseEntity approveExpenseForApprover(@RequestBody ExpenseReviewEntity expenseReviewEntity)
 			throws ValidationFailedException, BadRequestException, NotFoundException, Exception {
 		// call the business layer
-		return expenseService.approveExpenseForApprover(expenseApproveOrRejectEntity);
+		return expenseService.approveExpenseForApprover(expenseReviewEntity);
 	}
 
 	/**
@@ -186,11 +185,11 @@ public class ExpenseController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
-	@RequestMapping(value = "/getExpensesForFinance/{expenseStatus}", method = RequestMethod.GET)
-	public @ResponseBody List<ExpenseReportEntity> getExpensesForFinance(@RequestParam ExpenseStatusType expenseStatus)
+	@RequestMapping(value = "/getExpensesForFinance", method = RequestMethod.GET)
+	public @ResponseBody List<ExpenseReportEntity> getReportsForFinance()
 			throws BadRequestException {
 		// call the business layer
-		return expenseService.getExpensesForFinance(expenseStatus);
+		return expenseService.getExpensesForFinance();
 	}
 
 	/**
@@ -216,6 +215,29 @@ public class ExpenseController extends BaseController {
 			throws BadRequestException, ValidationFailedException, Exception {
 		// call the business layer
 		expenseService.approveExpenseForFinance(expenseReportEntity);
+	}
+
+	/**
+	 * This API is used to approve/reject a single expense by finance
+	 * 
+	 * @param expenseReviewEntity
+	 *            This is the expense review entity
+	 * @throws ValidationFailedException
+	 *             Throw this exception if user sends an invalid request
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if expense not found
+	 */
+	@ApiOperation(value = "Approve/Reject a single expense by finance", notes = "Individual expense can be approved or rejcted by finance")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
+			@ApiResponse(code = 404, message = "If entity does not exist") })
+	@RequestMapping(value = "/expenseReviewByFinance", method = RequestMethod.POST)
+	public @ResponseBody void expenseReviewByFinance(@RequestBody ExpenseReviewEntity expenseReviewEntity)
+			throws ValidationFailedException, BadRequestException, NotFoundException {
+		// call the business layer
+		expenseService.expenseReviewByFinance(expenseReviewEntity);
 	}
 
 }

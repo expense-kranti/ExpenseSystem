@@ -16,7 +16,6 @@ import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RDBMSUtility;
 import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
@@ -165,32 +164,28 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 	 * @see IExpense.getExpensesForApprover
 	 */
 	@Override
-	public List<Map<String, Object>> getExpensesForApprover(String approverId, UserRoleType role)
-			throws BadRequestException {
+	public List<ExpenseEntity> getExpensesForApprover(String approverId) throws BadRequestException {
 		// Get the SQL query from configurations to get expense
-		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID");
-		// Modify query
-		hSQLQuery = RDBMSUtility.queryConstructionOfExpensesForApprovers(hSQLQuery, role, approverId);
+		String SQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER");
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-
+		// replace approver id
+		SQLQuery = SQLQuery.replace("@ApproverId", approverId);
 		// This variable is used to hold the query response
-		List<Map<String, Object>> expenseMap = new ArrayList<>();
+		List<ExpenseEntity> expenses = new ArrayList<>();
 		try {
 			// Execute query
-			expenseMap = super.executeSelectNative(hSQLQuery, queryParameterMap);
+			expenses = super.executeSelect(SQLQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Log exception
 			logger.logException("MySQLExpense", "getExpensesForApprover", "exceptionGetExpensesForApprover",
-					"While trying to get expense data, This is the approverId~ " + approverId + "This is the query"
-							+ hSQLQuery,
-					ex);
+					"While trying to get expense data, This is the approverId~ " + approverId + SQLQuery, ex);
 			// Throw exception
 			throw new BadRequestException("MySQLExpense",
 					"While trying to get expense data for approver~ " + ex.toString(), ex);
 		}
-		return expenseMap;
+		return expenses;
 	}
 
 	/**
@@ -284,6 +279,23 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 			}
 		}
 
+	}
+
+	@Override
+	public void deleteExpense(ExpenseEntity expenseEntity) {
+		try {
+			super.delete(expenseEntity);
+		} catch (Exception ex) {
+			logger.logException("MySQLExpense", "delete expenses", "try-catch block", ex.getMessage(), ex);
+			throw ex;
+		}
+	}
+
+	@Override
+	public List<ExpenseEntity> getAllExpenses() throws BadRequestException {
+		// This variable is used to hold the query response
+		List<ExpenseEntity> expenses = super.get(ExpenseEntity.class);
+		return expenses;
 	}
 
 }

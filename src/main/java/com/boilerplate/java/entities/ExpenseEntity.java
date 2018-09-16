@@ -30,14 +30,14 @@ public class ExpenseEntity extends BaseEntity {
 	 * @param userName
 	 */
 	public ExpenseEntity(String id, String title, String description, ExpenseStatusType status,
-			List<AttachmentEntity> attachments, String userId, String userName, String approverComments, float amount,
+			List<FileMappingEntity> fileMappings, String userId, String userName, String approverComments, float amount,
 			Date creationDate, Date updatedDate) {
 		super();
 		this.setId(id);
 		this.title = title;
 		this.description = description;
 		this.status = status;
-		this.attachments = attachments;
+		this.fileMappings = fileMappings;
 		this.userId = userId;
 		this.userName = userName;
 		this.approverComments = approverComments;
@@ -64,7 +64,7 @@ public class ExpenseEntity extends BaseEntity {
 	/**
 	 * this is the list of attachment ids of the bill uploaded with the expense
 	 */
-	private List<AttachmentEntity> attachments;
+	private List<FileMappingEntity> fileMappings;
 
 	/**
 	 * this is the id of the user by whom expense was filed
@@ -103,24 +103,6 @@ public class ExpenseEntity extends BaseEntity {
 	 */
 	public void setAmount(float amount) {
 		this.amount = amount;
-	}
-
-	/**
-	 * This method is used to get list of attachments *
-	 * 
-	 * @return
-	 */
-	public List<AttachmentEntity> getAttachments() {
-		return attachments;
-	}
-
-	/**
-	 * This method is used to set list of attchments ids
-	 * 
-	 * @param attachmentIds
-	 */
-	public void setAttachments(List<AttachmentEntity> attachments) {
-		this.attachments = attachments;
 	}
 
 	/**
@@ -232,12 +214,31 @@ public class ExpenseEntity extends BaseEntity {
 	}
 
 	/**
+	 * This method is used to get file mappings
+	 * 
+	 * @return
+	 */
+	public List<FileMappingEntity> getFileMappings() {
+		return fileMappings;
+	}
+
+	/**
+	 * This method is used to set file mappings
+	 * 
+	 * @param fileMappings
+	 */
+	public void setFileMappings(List<FileMappingEntity> fileMappings) {
+		this.fileMappings = fileMappings;
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check if expense entity has all the mandatory fields
-		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachments.size() == 0)
+		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.fileMappings == null
+				|| this.fileMappings.size() == 0 || this.getAmount() == 0)
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
 
 		return false;

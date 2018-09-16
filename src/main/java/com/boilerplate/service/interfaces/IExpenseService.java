@@ -5,9 +5,9 @@ import java.util.List;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.boilerplate.java.entities.ExpenseApproveOrRejectEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseReportEntity;
+import com.boilerplate.java.entities.ExpenseReviewEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.UserRoleType;
@@ -74,15 +74,13 @@ public interface IExpenseService {
 	 * @throws ValidationFailedException
 	 *             throw this exception if entity is invalid
 	 */
-	public List<ExpenseEntity> getExpenses(FetchExpenseEntity fetchExpenseEntity)
+	public List<ExpenseEntity> getExpensesForUser(FetchExpenseEntity fetchExpenseEntity)
 			throws ValidationFailedException, NotFoundException, BadRequestException;
 
 	/**
 	 * This method is used to get list of expenses filed under a given approver
 	 * or super approver
 	 * 
-	 * @param role
-	 *            this is the role of the approver
 	 * @return List of expenses
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
@@ -91,7 +89,7 @@ public interface IExpenseService {
 	 * @throws ValidationFailedException
 	 *             throw this exception if entity is invalid
 	 */
-	public List<ExpenseEntity> getExpensesForApproval(UserRoleType role)
+	public List<ExpenseEntity> getExpensesForApproval()
 			throws NotFoundException, ValidationFailedException, BadRequestException;
 
 	/**
@@ -107,7 +105,7 @@ public interface IExpenseService {
 	 * @throws ValidationFailedException
 	 *             throw this exception if entity is invalid
 	 */
-	public ExpenseEntity approveExpenseForApprover(ExpenseApproveOrRejectEntity expenseApproveOrRejectEntity)
+	public ExpenseEntity approveExpenseForApprover(ExpenseReviewEntity expenseReviewEntity)
 			throws ValidationFailedException, BadRequestException, NotFoundException, Exception;
 
 	/**
@@ -117,7 +115,7 @@ public interface IExpenseService {
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 */
-	public List<ExpenseReportEntity> getExpensesForFinance(ExpenseStatusType expenseStatus) throws BadRequestException;
+	public List<ExpenseReportEntity> getExpensesForFinance() throws BadRequestException;
 
 	/**
 	 * This method is used to approve/rejects/move to ready for payment state
@@ -134,4 +132,20 @@ public interface IExpenseService {
 	 */
 	public void approveExpenseForFinance(ExpenseReportEntity reportEntity)
 			throws BadRequestException, ValidationFailedException, Exception;
+
+	/**
+	 * This method is used by finance to approve/reject a single expense
+	 * 
+	 * @param expenseReviewEntity
+	 *            This entity determines the review action, expense id and
+	 *            comments(if any)
+	 * @throws ValidationFailedException
+	 *             Throw this exception if request fails any validation
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if expense is not found
+	 */
+	public void expenseReviewByFinance(ExpenseReviewEntity expenseReviewEntity)
+			throws ValidationFailedException, BadRequestException, NotFoundException;
 }

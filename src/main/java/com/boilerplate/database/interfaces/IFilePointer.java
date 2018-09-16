@@ -22,7 +22,7 @@ public interface IFilePointer {
 	 *             Throw this exception if any exception occurs while saving
 	 *             file mapping
 	 */
-	public void saveFileMapping(FileMappingEntity fileMappingEntity) throws Exception;
+	public void saveFileMapping(List<FileMappingEntity> fileMappings) throws Exception;
 
 	/**
 	 * this method is used to get file mapping for the gien attachment id

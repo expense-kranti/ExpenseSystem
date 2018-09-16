@@ -272,6 +272,7 @@ public class MySQLBaseDataAccessLayer {
 
 			// open a session
 			session = HibernateUtility.getSessionFactory().openSession();
+			session.enableFilter("activeFilter").setParameter("activeStatus", new Boolean(true));
 
 			// get the user using a hsql query
 			Query query = session.createQuery(hSQLQuery);

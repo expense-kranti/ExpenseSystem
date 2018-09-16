@@ -42,8 +42,7 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 * @param authenticationProvider
 	 */
 	public ExternalFacingUser(String userId, String email, String firstName, String lastName, List<UserRoleType> roles,
-			boolean isActive, String approverId, String superApproverId, String financeId,
-			String authenticationProvider) {
+			boolean isActive, String approverId, String authenticationProvider) {
 		super();
 		this.userId = userId;
 		this.email = email;
@@ -52,8 +51,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 		this.roles = roles;
 		this.isActive = isActive;
 		this.approverId = approverId;
-		this.superApproverId = superApproverId;
-		this.financeId = financeId;
 		this.authenticationProvider = authenticationProvider;
 	}
 
@@ -99,18 +96,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 */
 	@ApiModelProperty(value = "This is the approverId of the user", required = true, notes = "This is the approverId of the user")
 	private String approverId;
-
-	/**
-	 * This is the user id of the super approver
-	 */
-	@ApiModelProperty(value = "This is the id of the user", required = true, notes = "This is the id of the user")
-	private String superApproverId;
-
-	/**
-	 * This is the finance id
-	 */
-	@ApiModelProperty(value = "This is the financeId of the user", required = true, notes = "This is the financeId of the user")
-	private String financeId;
 
 	/**
 	 * This is the authentication provider. Default means that the user is
@@ -249,42 +234,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 */
 	public void setApproverId(String approverId) {
 		this.approverId = approverId;
-	}
-
-	/**
-	 * This method is used to get super approver id
-	 * 
-	 * @return
-	 */
-	public String getSuperApproverId() {
-		return superApproverId;
-	}
-
-	/**
-	 * This method is used to set super approver id
-	 * 
-	 * @param superApproverId
-	 */
-	public void setSuperApproverId(String superApproverId) {
-		this.superApproverId = superApproverId;
-	}
-
-	/**
-	 * This method is used to get finance id
-	 * 
-	 * @return
-	 */
-	public String getFinanceId() {
-		return financeId;
-	}
-
-	/**
-	 * This method is used to set finance id
-	 * 
-	 * @param financeId
-	 */
-	public void setFinanceId(String financeId) {
-		this.financeId = financeId;
 	}
 
 	/**

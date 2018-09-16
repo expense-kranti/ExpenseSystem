@@ -33,7 +33,7 @@ public class RDBMSUtility {
 		} else {
 			// remove date filtering part from sql query
 			sqlQuery = sqlQuery.replace(
-					"and Date(expense.creationDate) >'@StartDate' and Date(expense.creationDate) <= '@EndDate'", "");
+					"Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and", "");
 		}
 
 		// check if fetchExpenseEntity contains status of expense
@@ -41,33 +41,10 @@ public class RDBMSUtility {
 			// replace status type in sql query
 			sqlQuery = sqlQuery.replace("@Status", fetchExpenseEntity.getExpenseType().toString());
 		else
-			sqlQuery = sqlQuery.replace("and expense.status = '@Status'", "");
+			sqlQuery = sqlQuery.replace("and  expense.status = '@Status'", "");
 		// return modified sql query
 		return sqlQuery;
 
-	}
-
-	/**
-	 * This method is used to construct query for getting expenses filed under
-	 * approvers/super approvers
-	 * 
-	 * @param query
-	 *            this is the query to be modified
-	 * @param role
-	 *            this is the role for which expenses need to be fetched
-	 * @param approverId
-	 *            This is the approver's id
-	 * @return Modified sql query
-	 */
-	public static String queryConstructionOfExpensesForApprovers(String query, UserRoleType role, String approverId) {
-		// check if role is approver or super approver
-		if (role.equals(UserRoleType.Approver))
-			query = query.replaceAll("user.SuperApproverId = @ApproverId", "");
-		else if (role.equals(UserRoleType.Super_Approver))
-			query = query.replaceAll("user.ApproverId = @ApproverId", "");
-		// replace approver id
-		query = query.replaceAll("@ApproverId", approverId);
-		return query;
 	}
 
 }

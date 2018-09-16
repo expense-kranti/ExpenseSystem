@@ -5,14 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.FileMappingEntity;
+import com.boilerplate.java.entities.UserRoleEntity;
+import com.boilerplate.java.entities.UserRoleType;
 
 /**
  * this class implements IFilePointer
@@ -47,17 +52,28 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 	 * @see IFilePointer.saveFileMapping
 	 */
 	@Override
-	public void saveFileMapping(FileMappingEntity fileMappingEntity) throws Exception {
+	public void saveFileMapping(List<FileMappingEntity> fileMappings) throws Exception {
+		Session session = null;
 		try {
-			super.create(fileMappingEntity);
-		} catch (ConstraintViolationException cex) {
-			logger.logException("MySQLFile", "saveFileMapping", "exeptionSaveFileMapping",
-					"ConstraintViolationException occurred while saving file mapping", cex);
-			throw cex;
+			// open a session
+			session = HibernateUtility.getSessionFactory().openSession();
+			// get all the configurations from the DB as a list
+			Transaction transaction = session.beginTransaction();
+			// for each file mapping
+			for (FileMappingEntity fileMapping : fileMappings) {
+				// save file mapping in MySQL
+				session.saveOrUpdate(fileMapping);
+			}
+			// commit the transaction
+			transaction.commit();
 		} catch (Exception ex) {
-			logger.logException("MySQLFile", "saveFileMapping", "exeptionSaveFileMapping",
-					"Exeption occurred while saving file mapping", ex);
+			logger.logException("MySQLFile", "create", "try-catch block", ex.getMessage(), ex);
+			session.getTransaction().rollback();
 			throw ex;
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
 		}
 
 	}

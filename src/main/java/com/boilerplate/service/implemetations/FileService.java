@@ -1,11 +1,6 @@
 package com.boilerplate.service.implemetations;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,12 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +23,6 @@ import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
-import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
 import com.boilerplate.java.entities.FileMappingEntity;
@@ -104,7 +92,7 @@ public class FileService implements IFileService {
 	 * @see IFileService.saveFileOnLocal
 	 */
 	@Override
-	public AttachmentEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
+	public FileMappingEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
 			throws UpdateFailedException, Exception {
 		// get content type
 		String contentType = file.getContentType();
@@ -120,64 +108,76 @@ public class FileService implements IFileService {
 		// save file name onto disk
 		file.transferTo(new java.io.File(filePath));
 		// create new attachment entity
-		AttachmentEntity attachmentEntity = new AttachmentEntity(file.getOriginalFilename(), fileNameOnDisk,
-				contentType);
-		return attachmentEntity;
+		FileMappingEntity fileMappingEntity = new FileMappingEntity(fileNameOnDisk,
+				RequestThreadLocal.getSession().getExternalFacingUser().getId(), null, true, null,
+				file.getOriginalFilename(), contentType);
+		return fileMappingEntity;
 	}
 
 	/**
 	 * @see IFileService.saveFileMapping
 	 */
 	@Override
-	public void saveFileMapping(ExpenseEntity expenseEntity) throws Exception {
+	public boolean saveFileMapping(ExpenseEntity expenseEntity) throws Exception {
+		List<FileMappingEntity> fileMappings = new ArrayList<>();
 		// for each attachment in expense enitity
-		for (AttachmentEntity attachment : expenseEntity.getAttachments()) {
+		for (FileMappingEntity eachMapping : expenseEntity.getFileMappings()) {
 			// create a new file mapping entity
-			FileMappingEntity fileMappingEntity = new FileMappingEntity(attachment.getAttachmentId(),
-					expenseEntity.getUserId(), expenseEntity.getId(), true, null, attachment.getOriginalFileName(),
-					attachment.getContentType());
-			// save mapping in MySQL
-			filePointer.saveFileMapping(fileMappingEntity);
+			FileMappingEntity fileMappingEntity = new FileMappingEntity(eachMapping.getAttachmentId(),
+					expenseEntity.getUserId(), expenseEntity.getId(), true, null, eachMapping.getOriginalFileName(),
+					eachMapping.getContentType());
+			fileMappings.add(fileMappingEntity);
 		}
+		try {
+			// save mapping in MySQL
+			filePointer.saveFileMapping(fileMappings);
+		} catch (Exception ex) {
+			return false;
+		}
+		// return true, if all file mapping were saved succesfully
+		return true;
+
 	}
 
 	/**
 	 * @see IFileService.updateFileMapping
 	 */
 	@Override
-	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity,
+	public List<FileMappingEntity> updateFileMapping(ExpenseEntity expenseEntity,
 			ExpenseHistoryEntity expenseHistoryEntity) throws Exception {
-		List<AttachmentEntity> newAttachments = new ArrayList<>();
-		List<AttachmentEntity> allAttachments = expenseEntity.getAttachments();
+		List<FileMappingEntity> newMappings = new ArrayList<>();
+		List<FileMappingEntity> allMappings = expenseEntity.getFileMappings();
 		// for each attachment in expense entity
-		for (AttachmentEntity attachment : allAttachments) {
+		for (FileMappingEntity eachMapping : allMappings) {
 			// check if this attachment already exists for the given user and
 			// expense
-			if (filePointer.getFileMapping(attachment.getAttachmentId()) == null)
+			if (filePointer.getFileMapping(eachMapping.getAttachmentId()) == null)
 				// add it in new attachment list
-				newAttachments.add(attachment);
+				newMappings.add(eachMapping);
 		}
 		// set new attachments in expense entity and save it
-		expenseEntity.setAttachments(newAttachments);
+		expenseEntity.setFileMappings(newMappings);
 		saveFileMapping(expenseEntity);
 		// fetch all attachments for given expense and user id
 		List<FileMappingEntity> fileMappings = filePointer.getFileMappingByExpenseId(expenseEntity.getId());
 		// if file mappings found
-		if (fileMappings.size() != 0 && newAttachments.size() != 0) {
+		if (fileMappings.size() != 0 && newMappings.size() != 0) {
 			// for each file mapping
 			for (FileMappingEntity fileMappingEntity : fileMappings) {
-				// if new attachment list does not contain the attachment id
-				if (!newAttachments.contains(fileMappingEntity.getAttachmentId())) {
-					// set is active to false
-					fileMappingEntity.setIsActive(false);
-					// set expense history id
-					fileMappingEntity.setExpenseHistoryId(expenseHistoryEntity.getId());
-					// update file mapping
-					filePointer.updateFileMapping(fileMappingEntity);
+				for (FileMappingEntity newMapping : newMappings) {
+					// if new attachment list does not contain the attachment id
+					if (!newMapping.getAttachmentId().equals(fileMappingEntity.getAttachmentId())) {
+						// set is active to false
+						fileMappingEntity.setIsActive(false);
+						// set expense history id
+						fileMappingEntity.setExpenseHistoryId(expenseHistoryEntity.getId());
+						// update file mapping
+						filePointer.updateFileMapping(fileMappingEntity);
+					}
 				}
 			}
 		}
-		return allAttachments;
+		return allMappings;
 	}
 
 	/**

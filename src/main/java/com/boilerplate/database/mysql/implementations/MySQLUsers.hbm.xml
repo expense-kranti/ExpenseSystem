@@ -14,8 +14,6 @@
 		<property name="userId" column="UserId" />
 		<property name="isActive" column="Active" />
 		<property name="approverId" column="ApproverId" />
-		<property name="superApproverId" column="SuperApproverId" />
-		<property name="financeId" column="FinanceId" />
 		<property name="authenticationProvider" column="AuthenticationProvider" />
 
 	</class>

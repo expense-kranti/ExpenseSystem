@@ -519,9 +519,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for file upload
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.AttachmentEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+				"public com.boilerplate.java.entities.FileMappingEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.AttachmentEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+				"public com.boilerplate.java.entities.FileMappingEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -531,9 +531,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for getExpenses for approvers/super approvers
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(com.boilerplate.java.entities.UserRoleType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover()");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover(com.boilerplate.java.entities.UserRoleType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForApprover()");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(true);
@@ -543,21 +543,33 @@ public class BaseRedisDataAccessLayer {
 		// method permission for approverExpense for approvers/super approvers
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpenseForApprover(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpenseForApprover(com.boilerplate.java.entities.ExpenseReviewEntity)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpenseForApprover(com.boilerplate.java.entities.ExpenseApproveOrRejectEntity)");
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.approveExpenseForApprover(com.boilerplate.java.entities.ExpenseReviewEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(true);
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
-		// method permission for get expenses for finanace
+		// method permission for get expenses for finance
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance()");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance()");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for approve/reject individual expense by finance
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.ExpenseController.expenseReviewByFinance(com.boilerplate.java.entities.ExpenseReviewEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.ExpenseController.expenseReviewByFinance(com.boilerplate.java.entities.ExpenseReviewEntity)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -610,53 +622,6 @@ public class BaseRedisDataAccessLayer {
 	 * This method creates seed user and role.
 	 */
 	private void createSeedUserAndRole() {
-		// GenericListEncapsulationEntity<Role> roles = new
-		// GenericListEncapsulationEntity<Role>();
-		// roles.setEntityList(new BoilerplateList<Role>());
-		// Role role = null;
-		// role = new Role("Admin", "Admin", "Admin of the system", true,
-		// false);
-		// roles.getEntityList().add(role);
-		// Role roleAdmin = role;
-		// role = new Role("Approver", "Approver", "This role can approve/reject
-		// expenses", true, false);
-		// roles.getEntityList().add(role);
-		// Role roleSuperApprover = role;
-		// role = new Role("SuperApprover", "SuperApprover", "This role can
-		// approve/reject expenses", true, false);
-		// roles.getEntityList().add(role);
-		// role = new Role("Finance", "Finance", "This role can approve/reject
-		// expenses for payment", true, false);
-		// roles.getEntityList().add(role);
-		// this.set("ROLES", Base.toXML(roles));
-		//
-		// // create annonnymous user
-		// ExternalFacingUser user = new ExternalFacingUser();
-		// user.setId("ANNONYMOUS");
-		// user.setUserId("ANNONYMOUS");
-		// user.setPassword("0");
-		// user.setRoles(new BoilerplateList<Role>());
-		// this.set("USER:" + user.getUserId(), user);
-		//
-		// // create admin
-		// user = new ExternalFacingUser();
-		// user.setId("ADMIN");
-		// user.setUserId("ADMIN");
-		// user.setPassword("password");
-		// user.setFirstName("Admin");
-		// user.setRoles(new BoilerplateList<Role>());
-		// // user.getRoles().add(roleAdmin);
-		// this.set("USER:" + user.getUserId(), user);
-		//
-		// // create background
-		// user = new ExternalFacingUser();
-		// user.setId("BACKGROUND");
-		// user.setUserId("BACKGROUND");
-		// user.setPassword("0");
-		// user.setRoles(new BoilerplateList<Role>());
-		// // ser.getRoles().add(roleAdmin);
-		// this.set("USER:" + user.getUserId(), user);
-
 	}
 
 	/**
@@ -743,8 +708,8 @@ public class BaseRedisDataAccessLayer {
 				"FROM UserRoleEntity userRoles where userRoles.userId = :UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_USER_ID",
 				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
-		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER_OR_SUPER_APPROVER_ID",
-				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status in ('Submitted','Re_Submitted') and user.ApproverId = @ApproverId user.SuperApproverId = @ApproverId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER",
+				"FROM ExpenseEntity expense where expense.status in ('Submitted','Re_Submitted') and expense.userId in (select user.id from ExternalFacingUser user where user.approverId = @ApproverId)");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_EXPENSE_ID",
@@ -755,7 +720,7 @@ public class BaseRedisDataAccessLayer {
 				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments, expense.CreationDate as creationDate, expense.UpdatedDate as updatedDate FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status = ':Status' and user.FinanceId = :FinanceId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_ATTACHMENT_ID",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId and mapping.isActive = true");
-
+		vAllEAll.put("GET_ALL_ACTIVE_EXPENSES", "FROM ExpenseEntity expense");
 		return vAllEAll;
 
 	}

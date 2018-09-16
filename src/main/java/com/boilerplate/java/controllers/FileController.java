@@ -1,10 +1,5 @@
 package com.boilerplate.java.controllers;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
-import com.boilerplate.java.entities.AttachmentEntity;
+import com.boilerplate.java.entities.FileMappingEntity;
 import com.boilerplate.service.interfaces.IFileService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -59,7 +54,7 @@ public class FileController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 404, message = "If one of the ciritical servers is not rechable") })
 	@RequestMapping(value = "/file/{fileMasterTag}", method = RequestMethod.POST)
-	public @ResponseBody AttachmentEntity upload(
+	public @ResponseBody FileMappingEntity upload(
 			@ApiParam(value = "The master tag to be applied to the file", required = true, name = "fileMasterTag", allowMultiple = false) @PathVariable String fileMasterTag,
 			@RequestParam(value = "The file being uploaded") MultipartFile file) throws Exception {
 		// call service layer

@@ -1,24 +1,19 @@
 package com.boilerplate.service.interfaces;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
-import com.boilerplate.java.entities.AttachmentEntity;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.FileMappingEntity;
 
 /**
  * This interface has methods for CRUD operations related to file mapping and
@@ -42,7 +37,7 @@ public interface IFileService {
 	 * @throws Exception
 	 *             throw this exception exception occurs while saving file
 	 */
-	public AttachmentEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
+	public FileMappingEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
 			throws UpdateFailedException, Exception;
 
 	/**
@@ -55,7 +50,7 @@ public interface IFileService {
 	 *             Throw this exception if any exception occurs while saving
 	 *             file mapping
 	 */
-	public void saveFileMapping(ExpenseEntity expenseEntity) throws Exception;
+	public boolean saveFileMapping(ExpenseEntity expenseEntity) throws Exception;
 
 	/**
 	 * This method is used to update file mappings while updating expense
@@ -71,7 +66,7 @@ public interface IFileService {
 	 *             Throw this exception if any exception occurs while saving
 	 *             file mapping
 	 */
-	public List<AttachmentEntity> updateFileMapping(ExpenseEntity expenseEntity,
+	public List<FileMappingEntity> updateFileMapping(ExpenseEntity expenseEntity,
 			ExpenseHistoryEntity expenseHistoryEntity) throws BadRequestException, Exception;
 
 	/**

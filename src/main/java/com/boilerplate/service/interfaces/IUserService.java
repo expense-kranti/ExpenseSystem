@@ -18,53 +18,6 @@ import com.boilerplate.sessions.Session;
  *
  */
 public interface IUserService {
-	/**
-	 * This method is used to create a new user
-	 * 
-	 * @param externalFacingUser
-	 *            This is the user to be saved
-	 * @return Saved user entity
-	 * @throws ValidationFailedException
-	 *             Throw this exception if user entity is invalid
-	 * @throws BadRequestException
-	 *             Throw this exception if user sends a bad request
-	 * @throws Exception
-	 *             Throw this exception if any exception occurs while saving
-	 *             user
-	 */
-	public ExternalFacingUser createUser(ExternalFacingUser externalFacingUser)
-			throws ValidationFailedException, BadRequestException, Exception;
-
-	/**
-	 * This method is used to update user in system
-	 * 
-	 * @param user
-	 *            This is the updated user entity that has to saved
-	 * @return Updated user entity
-	 * @throws ValidationFailedException
-	 *             Throw this exception if user entity is invalid
-	 * @throws BadRequestException
-	 *             Throw this exception if user sends a bad request
-	 * @throws Exception
-	 *             Throw this exception if any exception occurs while saving
-	 *             user
-	 */
-	public ExternalFacingUser updateUser(ExternalFacingUser user)
-			throws ValidationFailedException, BadRequestException, Exception;
-
-	/**
-	 * This method is used to autenticate a user
-	 * 
-	 * @param authenitcationRequest
-	 *            This is the authentication request
-	 * @return Session
-	 * @throws UnauthorizedException
-	 *             Throw this exception if user is unauthorized
-	 * @throws BadRequestException
-	 *             Throw this exception if user sends bad request
-	 */
-	public Session authenticate(AuthenticationRequest authenitcationRequest)
-			throws UnauthorizedException, BadRequestException;
 
 	/**
 	 * This method is used to get user by user id

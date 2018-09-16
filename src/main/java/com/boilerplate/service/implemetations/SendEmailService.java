@@ -67,13 +67,14 @@ public class SendEmailService implements IEmailService {
 		// fetch approver from database for this user
 		ExternalFacingUser approver = mySqlUser.getUser(expenseUser.getApproverId());
 		// fetch super approver
-		ExternalFacingUser superApprover = mySqlUser.getUser(expenseUser.getSuperApproverId());
+		// ExternalFacingUser superApprover =
+		// mySqlUser.getUser(expenseUser.getSuperApproverId());
 		// prepare tos list
 		BoilerplateList<String> tos = new BoilerplateList<>();
 		tos.add(approver.getEmail());
 		// prepare ccs list
 		BoilerplateList<String> ccs = new BoilerplateList<>();
-		ccs.add(superApprover.getEmail());
+		// ccs.add(superApprover.getEmail());
 		// prepare bcc list
 		BoilerplateList<String> bccs = new BoilerplateList<>();
 		// employee name
@@ -122,10 +123,11 @@ public class SendEmailService implements IEmailService {
 		// fetch user from expense
 		ExternalFacingUser expenseUser = mySqlUser.getUser(expenseEntity.getUserId());
 		// fetch the finance email id
-		ExternalFacingUser financeUser = mySqlUser.getUser(expenseUser.getFinanceId());
+		// ExternalFacingUser financeUser =
+		// mySqlUser.getUser(expenseUser.getFinanceId());
 		// prepare tos list
 		BoilerplateList<String> tos = new BoilerplateList<>();
-		tos.add(financeUser.getEmail());
+		// tos.add(financeUser.getEmail());
 		// prepare ccs list
 		BoilerplateList<String> ccs = new BoilerplateList<>();
 		ccs.add(expenseUser.getEmail());
