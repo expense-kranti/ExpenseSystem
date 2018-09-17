@@ -56,10 +56,6 @@
 	</bean>
 
 
-	<!-- Bean for content management -->
-	<bean id="content"
-		class="com.boilerplate.database.redis.implementation.RedisContent">
-	</bean>
 
 	<bean id="methodPermissions"
 		class="com.boilerplate.database.redis.implementation.RedisMethodPermissions">
@@ -128,14 +124,6 @@
 		</property>
 	</bean>
 
-
-
-	<bean id="publishLibrary" class="com.boilerplate.aspects.PublishLibrary">
-		<property name="queueReaderJob" ref="queueReaderJob"></property>
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
-
-
 	<bean id="authTokenService" class="com.boilerplate.service.implemetations.AuthTokenService">
 		<property name="configurationManager" ref="configurationManager"></property>
 	</bean>
@@ -153,27 +141,13 @@
 
 	<bean id="fileService" class="com.boilerplate.service.implemetations.FileService">
 		<property name="configurationManager" ref="configurationManager"></property>
-		<property name="file" ref="file"></property>
 		<property name="filePointer" ref="filePointer"></property>
 	</bean>
 
-
-	<!--Bean for S3File -->
-	<bean id="file"
-		class="com.boilerplate.databases.s3FileSystem.implementations.S3File">
-		<property name="configurationManager" ref="configurationManager"></property>
-	</bean>
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="26843545" /> <!-- 25 megs -->
 	</bean>
-
-
-
-	<bean id="redisSFUpdateHashAccess"
-		class="com.boilerplate.database.redis.implementation.RedisSFUpdateHash">
-	</bean>
-
 
 	<!--Dependencies for saving user in mysql database -->
 	<bean id="mySqlUser"

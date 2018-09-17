@@ -126,12 +126,4 @@
 		<property name="sessionManager" ref="sessionManager"></property>
 	</bean>
 
-	<bean id="cleanupCRMPublishHash" class="com.boilerplate.jobs.CleanupCRMPublishHash"
-		init-method="initialize">
-		<property name="configurationManager" ref="configurationManager"></property>
-		<property name="redisSFUpdateHashAccess" ref="redisSFUpdateHashAccess"></property>
-		<property name="authTokenService" ref="authTokenService"></property>
-	</bean>
-
-
 </beans>

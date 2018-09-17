@@ -1,23 +1,35 @@
 package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class FetchExpenseEntity extends BaseEntity {
 
 	/**
 	 * This is the start date for expense filtering
 	 */
+	@ApiModelProperty(value = "This is the start date for the filtering of expenses", required = true, notes = "This is the start date for the filtering of expenses")
 	private String startDate;
 
 	/**
 	 * this is the end date for expense filtering
 	 */
+	@ApiModelProperty(value = "This is the end date for the filtering of expenses", required = true, notes = "This is the end date for the filtering of expenses")
 	private String endDate;
 
 	/**
 	 * This is the type expenses to be fetched
 	 */
+	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
+	@JsonIgnore
 	private ExpenseStatusType expenseType;
+
+	/**
+	 * This is the string for enum ExpenseStatusType
+	 */
+	@ApiModelProperty(value = "This is the string equivalent of the expense status type", required = true, notes = "This is the string equivalent of the expense status type")
+	private String statusString;
 
 	/**
 	 * This method is used get start date
@@ -73,16 +85,20 @@ public class FetchExpenseEntity extends BaseEntity {
 		this.expenseType = expenseType;
 	}
 
+	/**
+	 * @see BaseEntity.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	/**
@@ -102,7 +118,7 @@ public class FetchExpenseEntity extends BaseEntity {
 				throw new ValidationFailedException("FetchExpenseEntity",
 						"Either none or both the dates should be given", null);
 		}
-		return false;
+		return true;
 	}
 
 }

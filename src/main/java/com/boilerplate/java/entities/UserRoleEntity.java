@@ -8,7 +8,8 @@ public class UserRoleEntity extends BaseEntity {
 	 * Default constructor
 	 */
 	public UserRoleEntity() {
-		// do nothing constructor
+		// call the super constructor
+		super();
 	}
 
 	/**
@@ -34,6 +35,11 @@ public class UserRoleEntity extends BaseEntity {
 	 * this is the id of the user
 	 */
 	private String userId;
+
+	/**
+	 * This is the string equivalent for status type
+	 */
+	private String roleTypeString;
 
 	/**
 	 * This method is used to get role
@@ -72,6 +78,27 @@ public class UserRoleEntity extends BaseEntity {
 	}
 
 	/**
+	 * This method is used to get role type string
+	 * 
+	 * @return
+	 */
+	public String getRoleTypeString() {
+		return roleTypeString;
+	}
+
+	/**
+	 * This method is used to set role type string
+	 * 
+	 * @param roleTypeString
+	 */
+	public void setRoleTypeString(String roleTypeString) {
+		this.roleTypeString = roleTypeString;
+		for (UserRoleType role : UserRoleType.values())
+			if (roleTypeString.equalsIgnoreCase(String.valueOf(role)))
+				this.setRole(role);
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
@@ -90,8 +117,7 @@ public class UserRoleEntity extends BaseEntity {
 	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	/**
@@ -99,8 +125,7 @@ public class UserRoleEntity extends BaseEntity {
 	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

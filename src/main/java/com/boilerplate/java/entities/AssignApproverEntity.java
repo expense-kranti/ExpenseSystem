@@ -5,8 +5,8 @@ import java.util.List;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 
 /**
- * This class defines the entity used for assigning and updating
- * approvers/super-approver to a list of users
+ * This class defines the entity used for assigning and updating approvers to a
+ * list of users
  * 
  * @author ruchi
  *
@@ -22,16 +22,6 @@ public class AssignApproverEntity extends BaseEntity {
 	 * This is the list of users
 	 */
 	private List<String> users;
-
-	/**
-	 * This is the user id of the super-approver
-	 */
-	private String superApprover;
-
-	/**
-	 * This is the id of the finance approver
-	 */
-	private String financeId;
 
 	/**
 	 * This method is used get approver user id
@@ -70,55 +60,18 @@ public class AssignApproverEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get super appover
-	 * 
-	 * @return
-	 */
-	public String getSuperApprover() {
-		return superApprover;
-	}
-
-	/**
-	 * This method is used to et super approver
-	 * 
-	 * @param superApprover
-	 */
-	public void setSuperApprover(String superApprover) {
-		this.superApprover = superApprover;
-	}
-
-	/**
-	 * This method is used to get finance id
-	 * 
-	 * @return
-	 */
-	public String getFinanceId() {
-		return financeId;
-	}
-
-	/**
-	 * This method is used to set finance id
-	 * 
-	 * @param financeId
-	 */
-	public void setFinanceId(String financeId) {
-		this.financeId = financeId;
-	}
-
-	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check whether all the mandatory data is not null or empty
-		if (isNullOrEmpty(this.getApproverUserId()) || isNullOrEmpty(this.getSuperApprover())
-				|| isNullOrEmpty(this.getFinanceId()))
-			throw new ValidationFailedException("AssignApproverEntity", "All approver's ids are manadatory", null);
+		if (isNullOrEmpty(this.getApproverUserId()))
+			throw new ValidationFailedException("AssignApproverEntity", "Approver's id is manadatory", null);
 		// Check if list of users is not null or empty
 		if (this.users.size() == 0)
 			throw new ValidationFailedException("AssignApproverEntity", "List of users is empty", null);
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -126,8 +79,7 @@ public class AssignApproverEntity extends BaseEntity {
 	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	/**
@@ -135,8 +87,7 @@ public class AssignApproverEntity extends BaseEntity {
 	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

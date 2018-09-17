@@ -3,6 +3,8 @@ package com.boilerplate.java.entities;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This entity defines the report entity
@@ -16,16 +18,23 @@ public class ExpenseReportEntity extends BaseEntity {
 	 * This is the default constructor
 	 */
 	public ExpenseReportEntity() {
+		// call the super constructor
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
+	 * This is the parameterized constructor
+	 * 
 	 * @param userName
+	 *            This is the user name
 	 * @param userId
+	 *            This is the user id
 	 * @param totalAmount
+	 *            This is the total amount of all the expenses
 	 * @param expenses
+	 *            This is the list of expenses
 	 * @param status
+	 *            This is the status of the report
 	 */
 	public ExpenseReportEntity(String userName, String userId, float totalAmount, List<ExpenseEntity> expenses,
 			ExpenseStatusType status) {
@@ -40,27 +49,39 @@ public class ExpenseReportEntity extends BaseEntity {
 	/**
 	 * This is the name of the user to whom report belongs
 	 */
+	@ApiModelProperty(value = "This is the user name of the report", required = true, notes = "This is the user name of the report")
 	private String userName;
 
 	/**
 	 * This is the id of the user
 	 */
+	@ApiModelProperty(value = "This is the id of the user", required = true, notes = "This is the id of the user")
 	private String userId;
 
 	/**
 	 * This is the total amount for all the expenses
 	 */
+	@ApiModelProperty(value = "This is the total amount of all the expenses", required = true, notes = "This is the total amount of all the expenses")
 	private float totalAmount;
 
 	/**
 	 * This is the list of all expenses
 	 */
+	@ApiModelProperty(value = "This is the list of expenses", required = true, notes = "This is the list of expenses")
 	private List<ExpenseEntity> expenses;
 
 	/**
-	 * This is the status of the report
+	 * This is the status of the expense
 	 */
+	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
+	@JsonIgnore
 	private ExpenseStatusType status;
+
+	/**
+	 * This is the string for enum ExpenseStatusType
+	 */
+	@ApiModelProperty(value = "This is the string equivalent of the expense status type", required = true, notes = "This is the string equivalent of the expense status type")
+	private String statusString;
 
 	/**
 	 * This method is used to get user name
@@ -152,22 +173,49 @@ public class ExpenseReportEntity extends BaseEntity {
 		this.status = status;
 	}
 
+	/**
+	 * This method is used to get status string
+	 * 
+	 * @return
+	 */
+	public String getStatusString() {
+		return statusString;
+	}
+
+	/**
+	 * This method is used to set status string
+	 * 
+	 * @param statusString
+	 */
+	public void setStatusString(String statusString) {
+		this.statusString = statusString;
+		for (ExpenseStatusType status : ExpenseStatusType.values())
+			if (statusString.equalsIgnoreCase(String.valueOf(status)))
+				this.setStatus(status);
+	}
+
+	/**
+	 * @see BaseEntity.validate
+	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see BaseEntity.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }
