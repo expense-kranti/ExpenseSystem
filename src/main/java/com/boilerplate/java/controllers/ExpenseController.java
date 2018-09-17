@@ -18,7 +18,6 @@ import com.boilerplate.java.entities.ExpenseReportEntity;
 import com.boilerplate.java.entities.ExpenseReviewEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.FetchExpenseEntity;
-import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IExpenseService;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -181,6 +180,7 @@ public class ExpenseController extends BaseController {
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 * @throws NotFoundException
+	 *             Throw this exception if entity is not found
 	 */
 	@ApiOperation(value = "Gets expenses for finance", notes = "The creation date and updated date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
@@ -244,7 +244,7 @@ public class ExpenseController extends BaseController {
 	 * This aPI is used to get expense reports in finance approved state/ready
 	 * for payment state
 	 * 
-	 * @return
+	 * @return List of expense reports
 	 * @throws BadRequestException
 	 */
 	@ApiOperation(value = "Gets expense reports for finance", notes = "The creation date and updated date are automatically filled.")

@@ -1,9 +1,9 @@
 package com.boilerplate.java.entities;
 
 import java.util.Date;
-import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * this class extends the expense entity and defines some extra parameters which
@@ -19,7 +19,6 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	 */
 	public ExpenseHistoryEntity() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -51,47 +50,56 @@ public class ExpenseHistoryEntity extends BaseEntity {
 	/**
 	 * This is the id of the expense in expense table
 	 */
+	@ApiModelProperty(value = "This is the previousId of the expense", required = true, notes = "This is the id from the expense table")
 	private String previousId;
 
 	/**
 	 * this is the creation date of the expense
 	 */
+	@ApiModelProperty(value = "This is the original creation date of the expense", required = true, notes = "This is the original creation date of the expense")
 	private Date previousCreationDate;
 
 	/**
 	 * This is the last update date of expense prior to saving this history
 	 */
+	@ApiModelProperty(value = "This is the original update date of the expense", required = true, notes = "This is the original update date of the expense")
 	private Date previousUpdationDate;
 
 	/**
 	 * this is the title of the expense
 	 */
+	@ApiModelProperty(value = "This is the title of the expense", required = true, notes = "This is the title of the expense")
 	private String title;
 
 	/**
 	 * This is the description of the expense
 	 */
+	@ApiModelProperty(value = "This is the description of the expense", required = true, notes = "This is the description of the expense")
 	private String description;
 
 	/**
 	 * This is the status of the expense
 	 */
+	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
 	private ExpenseStatusType status;
 
 	/**
 	 * this is the id of the user by whom expense was filed
 	 */
+	@ApiModelProperty(value = "This is the userId of the expense", required = true, notes = "This is the userId of the expense")
 	private String userId;
 
 	/**
 	 * This is the reason/comment given by approver on rejection/approval of any
 	 * expense
 	 */
+	@ApiModelProperty(value = "This is the approverComments of the expense", required = true, notes = "This is the approverComments of the expense")
 	private String approverComments;
 
 	/**
 	 * This is the amount of the expense
 	 */
+	@ApiModelProperty(value = "This is the amount of the expense", required = true, notes = "This is the amount of the expense")
 	private float amount;
 
 	/**
@@ -256,22 +264,28 @@ public class ExpenseHistoryEntity extends BaseEntity {
 		this.approverComments = approverComments;
 	}
 
+	/**
+	 * @see BaseEntity.validate
+	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see BaseEntity.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

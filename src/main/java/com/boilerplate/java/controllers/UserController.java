@@ -102,10 +102,10 @@ public class UserController extends BaseController {
 	}
 
 	/**
-	 * This API is used to assign approvers to a list of users
+	 * This API is used to assign approver to a list of users
 	 * 
 	 * @param assignApproverEntity
-	 *            This is the entity consisting of approvers and users
+	 *            This is the entity consisting of approver and users
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 * @throws NotFoundException
@@ -113,12 +113,12 @@ public class UserController extends BaseController {
 	 * @throws Exception
 	 *             Throw this exception if exception occurs while updating user
 	 */
-	@ApiOperation(value = "Assigns approver and super-approver to a list of users", notes = "The user is unique in the system, The creation date and updated "
+	@ApiOperation(value = "Assigns approver to a list of users", notes = "The user is unique in the system, The creation date and updated "
 			+ "date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/assignApprovers", method = RequestMethod.POST)
+	@RequestMapping(value = "/assignApprover", method = RequestMethod.POST)
 	public @ResponseBody void assignApprovers(@RequestBody AssignApproverEntity assignApproverEntity)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer

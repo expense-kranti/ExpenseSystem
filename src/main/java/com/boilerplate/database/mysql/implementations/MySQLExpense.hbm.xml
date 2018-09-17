@@ -14,6 +14,7 @@
 		<property name="title" column="Title" />
 		<property name="description" column="Description" />
 		<property name="userId" column="UserId" />
+		<property name="userName" column="UserName" />
 		<property name="status" column="Status">
 			<type name="org.hibernate.type.EnumType">
 				<param name="enumClass">com.boilerplate.java.entities.ExpenseStatusType</param>

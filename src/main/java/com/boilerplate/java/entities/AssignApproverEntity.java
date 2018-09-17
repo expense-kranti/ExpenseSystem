@@ -3,6 +3,7 @@ package com.boilerplate.java.entities;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This class defines the entity used for assigning and updating approvers to a
@@ -16,11 +17,13 @@ public class AssignApproverEntity extends BaseEntity {
 	/**
 	 * This is the user id of the approver
 	 */
+	@ApiModelProperty(value = "This is the id of the approver for user", required = true, notes = "This user is eligible for approving/rejecting user's expenses")
 	private String approverUserId;
 
 	/**
 	 * This is the list of users
 	 */
+	@ApiModelProperty(value = "This is the list of users", required = true, notes = "The users in this list will come under the given approver,super approver and finance")
 	private List<String> users;
 
 	/**

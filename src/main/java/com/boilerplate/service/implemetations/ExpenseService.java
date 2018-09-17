@@ -115,6 +115,8 @@ public class ExpenseService implements IExpenseService {
 		// set status of expense as submitted
 		expenseEntity.setStatus(ExpenseStatusType.Submitted);
 		expenseEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
+		expenseEntity.setUserName(RequestThreadLocal.getSession().getExternalFacingUser().getFirstName() + " "
+				+ RequestThreadLocal.getSession().getExternalFacingUser().getLastName());
 		// set creation date and update date
 		expenseEntity.setCreationDate(new Date());
 		expenseEntity.setUpdationDate(new Date());
@@ -368,10 +370,13 @@ public class ExpenseService implements IExpenseService {
 		return expenses;
 	}
 
+	/**
+	 * @see IExpenseService.getExpenseReportsForFinance
+	 */
 	@Override
 	public List<ExpenseReportEntity> getExpenseReportsForFinance(ExpenseStatusType status) throws BadRequestException {
 		// fetch the list of user ids with there total amount
-		List<Map<String, Object>> userAmounts = mySqlExpense.getUserAmountsForFinance();
+		List<Map<String, Object>> userAmounts = mySqlExpense.getUserAmountsForFinance(status);
 		// fetch all expenses with finance approved status
 		List<ExpenseEntity> expenses = mySqlExpense.getExpensesByStatus(status);
 		// list of reports

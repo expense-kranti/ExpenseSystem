@@ -731,7 +731,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS",
 				"FROM FileMappingEntity mapping where mapping.expenseId in (:ExpenseIds) and mapping.isActive = true");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USER_AMOUNTS",
-				"SELECT ex.UserId , sum(ex.Amount) as TotalAmount, CONCAT(user.FirstName,' ',user.LastName) as Name FROM Expenses ex join User user on user.Id = ex.UserId where ex.Status = 'Finance_Approved' group by ex.UserId");
+				"SELECT ex.UserId , sum(ex.Amount) as TotalAmount, CONCAT(user.FirstName,' ',user.LastName) as Name FROM Expenses ex join User user on user.Id = ex.UserId where ex.Status = ':Status' group by ex.UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_ATTACHMENT_ID",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId and mapping.isActive = true");
 		vAllEAll.put("GET_ALL_ACTIVE_EXPENSES", "FROM ExpenseEntity expense");

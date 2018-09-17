@@ -106,7 +106,7 @@ public interface IExpense {
 	 * @return List<Map<String, Object>>
 	 * @throws BadRequestException
 	 */
-	public List<Map<String, Object>> getUserAmountsForFinance() throws BadRequestException;
+	public List<Map<String, Object>> getUserAmountsForFinance(ExpenseStatusType status) throws BadRequestException;
 
 	/**
 	 * This method is used to save a list of expenses
