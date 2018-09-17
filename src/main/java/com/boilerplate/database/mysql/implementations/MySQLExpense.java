@@ -223,17 +223,13 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 	 * @see IExpense.getExpensesForFinance
 	 */
 	@Override
-	public List<Map<String, Object>> getExpensesForFinance(String financeId, ExpenseStatusType expenseStatus)
-			throws BadRequestException {
-		// Get the SQL query from configurations to get expense
-		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_FINANCE_ID");
+	public List<Map<String, Object>> getUserAmountsForFinance() throws BadRequestException {
+		// Get the SQL query from configurations to get user amounts for
+		// expenses with finance_approved status
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USER_AMOUNTS");
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		// put finance id in query parameter map
-		queryParameterMap.put("FinanceId", financeId);
-		hSQLQuery = hSQLQuery.replace(":Status", expenseStatus.toString());
-
 		// This variable is used to hold the query response
 		List<Map<String, Object>> expenseMap = new ArrayList<>();
 		try {
@@ -241,10 +237,8 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 			expenseMap = super.executeSelectNative(hSQLQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Log exception
-			logger.logException("MySQLExpense", "getExpensesForFinance", "exceptionGetExpensesForFinance",
-					"While trying to get expense data, This is the financeId~ " + financeId + "This is the query"
-							+ hSQLQuery,
-					ex);
+			logger.logException("MySQLExpense", "getUserAmountsForFinance", "exceptionGetUserAmountsForFinance",
+					"While trying to get expense data, This is the query" + hSQLQuery, ex);
 			// Throw exception
 			throw new BadRequestException("MySQLExpense",
 					"While trying to get expense data for finance~ " + ex.toString(), ex);
@@ -295,6 +289,32 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 	public List<ExpenseEntity> getAllExpenses() throws BadRequestException {
 		// This variable is used to hold the query response
 		List<ExpenseEntity> expenses = super.get(ExpenseEntity.class);
+		return expenses;
+	}
+
+	@Override
+	public List<ExpenseEntity> getExpensesByStatus(ExpenseStatusType status) throws BadRequestException {
+		// Get the SQL query from configurations to get expense
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_BY_STATUS");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put id in query parameter
+		queryParameterMap.put("Status", status);
+		// This variable is used to hold the query response
+		List<ExpenseEntity> expenses = new ArrayList<>();
+		try {
+			// Execute query
+			expenses = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLExpense", "getExpensesByStatus", "exceptionGetExpensesByStatus",
+					"While trying to get expense data, This is the query" + hSQLQuery, ex);
+			// Throw exception
+			throw new BadRequestException("MySQLExpense", "While trying to get expense data ~ " + ex.toString(), ex);
+		}
+		if (expenses.size() == 0)
+			return null;
 		return expenses;
 	}
 

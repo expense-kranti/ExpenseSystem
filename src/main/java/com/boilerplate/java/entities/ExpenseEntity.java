@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This entity defines the attributes for expense
@@ -17,17 +19,25 @@ public class ExpenseEntity extends BaseEntity {
 	 * This is the default constructor
 	 */
 	public ExpenseEntity() {
+		// call the super constructor
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
+	 * This is the parameterized constructor
+	 * 
 	 * @param title
+	 *            This is the title of the expense
 	 * @param description
+	 *            This is teh description of the expense
 	 * @param status
-	 * @param attachments
+	 *            This is the status of the expense
+	 * @param fileMappings
+	 *            This is the list of file mappings
 	 * @param userId
+	 *            This is the id of user filing the expense
 	 * @param userName
+	 *            This is the user name
 	 */
 	public ExpenseEntity(String id, String title, String description, ExpenseStatusType status,
 			List<FileMappingEntity> fileMappings, String userId, String userName, String approverComments, float amount,
@@ -49,43 +59,58 @@ public class ExpenseEntity extends BaseEntity {
 	/**
 	 * this is the title of the expense
 	 */
+	@ApiModelProperty(value = "This is the title of the expense", required = true, notes = "This is the title of the expense")
 	private String title;
 
 	/**
 	 * This is the description of the expense
 	 */
+	@ApiModelProperty(value = "This is the description of the expense", required = true, notes = "This is the description of the expense")
 	private String description;
 
 	/**
 	 * This is the status of the expense
 	 */
+	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
+	@JsonIgnore
 	private ExpenseStatusType status;
 
 	/**
 	 * this is the list of attachment ids of the bill uploaded with the expense
 	 */
+	@ApiModelProperty(value = "This is the list of attachments of the expense", required = true, notes = "This is the list of attachments of the expense")
 	private List<FileMappingEntity> fileMappings;
 
 	/**
 	 * this is the id of the user by whom expense was filed
 	 */
+	@ApiModelProperty(value = "This is the id of the user who filed this expense", required = true, notes = "This is the id of the user who filed this expense")
 	private String userId;
 
 	/**
 	 * This is the complete name of the user
 	 */
+	@ApiModelProperty(value = "This is the name of the user who filed this expense", required = true, notes = "This is the name of the user who filed this expense")
 	private String userName;
 
 	/**
 	 * This is the reason/comment given by approver on rejection/approval of any
 	 * expense
 	 */
+	@ApiModelProperty(value = "This is the approverComments of the expense", required = true, notes = "This is the approverComments of the expense")
 	private String approverComments;
 
 	/**
 	 * This is the amount of the expense
 	 */
+	@ApiModelProperty(value = "This is the amount of the expense", required = true, notes = "This is the amount of the expense")
 	private float amount;
+
+	/**
+	 * This is the string for enum ExpenseStatusType
+	 */
+	@ApiModelProperty(value = "This is the string equivalent of the expense status type", required = true, notes = "This is the string equivalent of the expense status type")
+	private String statusString;
 
 	/**
 	 * This method is used to get amount
@@ -232,6 +257,27 @@ public class ExpenseEntity extends BaseEntity {
 	}
 
 	/**
+	 * This method is used to get status string
+	 * 
+	 * @return
+	 */
+	public String getStatusString() {
+		return statusString;
+	}
+
+	/**
+	 * This method is used to set status string
+	 * 
+	 * @param statusString
+	 */
+	public void setStatusString(String statusString) {
+		this.statusString = statusString;
+		for (ExpenseStatusType status : ExpenseStatusType.values())
+			if (statusString.equalsIgnoreCase(String.valueOf(status)))
+				this.setStatus(status);
+	}
+
+	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
@@ -241,7 +287,7 @@ public class ExpenseEntity extends BaseEntity {
 				|| this.fileMappings.size() == 0 || this.getAmount() == 0)
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -249,8 +295,7 @@ public class ExpenseEntity extends BaseEntity {
 	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 	/**
@@ -258,8 +303,7 @@ public class ExpenseEntity extends BaseEntity {
 	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

@@ -180,14 +180,14 @@ public class ExpenseController extends BaseController {
 	 * @return List of reports
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
 	 */
 	@ApiOperation(value = "Gets expenses for finance", notes = "The creation date and updated date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
 	@RequestMapping(value = "/getExpensesForFinance", method = RequestMethod.GET)
-	public @ResponseBody List<ExpenseReportEntity> getReportsForFinance()
-			throws BadRequestException {
+	public @ResponseBody List<ExpenseEntity> getExpensesForFinance() throws BadRequestException, NotFoundException {
 		// call the business layer
 		return expenseService.getExpensesForFinance();
 	}
@@ -238,6 +238,24 @@ public class ExpenseController extends BaseController {
 			throws ValidationFailedException, BadRequestException, NotFoundException {
 		// call the business layer
 		expenseService.expenseReviewByFinance(expenseReviewEntity);
+	}
+
+	/**
+	 * This aPI is used to get expense reports in finance approved state/ready
+	 * for payment state
+	 * 
+	 * @return
+	 * @throws BadRequestException
+	 */
+	@ApiOperation(value = "Gets expense reports for finance", notes = "The creation date and updated date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
+			@ApiResponse(code = 404, message = "If entity does not exist") })
+	@RequestMapping(value = "/getExpenseReportsForFinance", method = RequestMethod.GET)
+	public @ResponseBody List<ExpenseReportEntity> getReportsForFinance(@RequestParam ExpenseStatusType status)
+			throws BadRequestException {
+		// call the business layer
+		return expenseService.getExpenseReportsForFinance(status);
 	}
 
 }

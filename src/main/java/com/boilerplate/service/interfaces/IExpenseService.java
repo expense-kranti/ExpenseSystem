@@ -111,11 +111,12 @@ public interface IExpenseService {
 	/**
 	 * This method is used to get list of expenses for finance in report format
 	 * 
-	 * @return List of reports
+	 * @return List of expenses
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
 	 */
-	public List<ExpenseReportEntity> getExpensesForFinance() throws BadRequestException;
+	public List<ExpenseEntity> getExpensesForFinance() throws BadRequestException, NotFoundException;
 
 	/**
 	 * This method is used to approve/rejects/move to ready for payment state
@@ -148,4 +149,6 @@ public interface IExpenseService {
 	 */
 	public void expenseReviewByFinance(ExpenseReviewEntity expenseReviewEntity)
 			throws ValidationFailedException, BadRequestException, NotFoundException;
+
+	public List<ExpenseReportEntity> getExpenseReportsForFinance(ExpenseStatusType status) throws BadRequestException;
 }

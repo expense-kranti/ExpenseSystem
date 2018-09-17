@@ -86,4 +86,13 @@ public interface IFileService {
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException;
 
+	/**
+	 * This method is used to check if files in list of file mappings exists in
+	 * the system
+	 * 
+	 * @param mappings
+	 *            This is the list of file mappings
+	 * @return boolean
+	 */
+	public boolean checkFileExistence(List<FileMappingEntity> mappings);
 }

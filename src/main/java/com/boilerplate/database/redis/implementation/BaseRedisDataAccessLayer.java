@@ -555,9 +555,21 @@ public class BaseRedisDataAccessLayer {
 		// method permission for get expenses for finance
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance()");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance()");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance()");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance()");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for get expense reports for finance
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -703,6 +715,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_USER_ID",
 				"FROM ExternalFacingUser user where user.userId = :UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_ID", "FROM ExpenseEntity expense where expense.id = :ExpenseId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_STATUS",
+				"FROM ExpenseEntity expense where expense.status = :Status");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USERS_BY_ID", "FROM ExternalFacingUser user where user.id = :Id");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_USER_ROLES_BY_ID",
 				"FROM UserRoleEntity userRoles where userRoles.userId = :UserId");
@@ -716,8 +730,8 @@ public class BaseRedisDataAccessLayer {
 				"FROM FileMappingEntity mapping where mapping.expenseId = :ExpenseId and mapping.isActive = true");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS",
 				"FROM FileMappingEntity mapping where mapping.expenseId in (:ExpenseIds) and mapping.isActive = true");
-		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_FINANCE_ID",
-				"Select expense.Id as id, expense.Title as title, expense.Description as description, expense.UserId as userId, expense.Status as status, CONCAT(user.FirstName,' ',user.LastName) as name, expense.Amount as amount, expense.ApproverComments as approverComments, expense.CreationDate as creationDate, expense.UpdatedDate as updatedDate FROM Expenses expense Left join User user on expense.UserId = user.Id where user.Active = 1 and expense.Status = ':Status' and user.FinanceId = :FinanceId");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_USER_AMOUNTS",
+				"SELECT ex.UserId , sum(ex.Amount) as TotalAmount, CONCAT(user.FirstName,' ',user.LastName) as Name FROM Expenses ex join User user on user.Id = ex.UserId where ex.Status = 'Finance_Approved' group by ex.UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_ATTACHMENT_ID",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId and mapping.isActive = true");
 		vAllEAll.put("GET_ALL_ACTIVE_EXPENSES", "FROM ExpenseEntity expense");

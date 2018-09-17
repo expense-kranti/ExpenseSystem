@@ -108,12 +108,13 @@ public class ExpenseService implements IExpenseService {
 		// entity should not have any id
 		if (expenseEntity.getId() != null)
 			throw new ValidationFailedException("ExpenseEntity", "Id should be null", null);
-		// Check whether user id exists and is active
-		ExternalFacingUser externalFacingUser = mySqlUser
-				.getUser(RequestThreadLocal.getSession().getExternalFacingUser().getId());
+		// check whether file mappings provided exists
+		if (!fileService.checkFileExistence(expenseEntity.getFileMappings()))
+			throw new NotFoundException("FileMappinEntity", "One or all the file mappings were not found in the system",
+					null);
 		// set status of expense as submitted
 		expenseEntity.setStatus(ExpenseStatusType.Submitted);
-		expenseEntity.setUserId(externalFacingUser.getId());
+		expenseEntity.setUserId(RequestThreadLocal.getSession().getExternalFacingUser().getId());
 		// set creation date and update date
 		expenseEntity.setCreationDate(new Date());
 		expenseEntity.setUpdationDate(new Date());
@@ -196,28 +197,6 @@ public class ExpenseService implements IExpenseService {
 		if (expenses == null || expenses.isEmpty())
 			throw new NotFoundException("ExpenseEntity", "No expenses were found for the currently logged in user",
 					null);
-		// // list of expense ids
-		// String expenseIds = "";
-		// // for each expense, fetch its attachment
-		// for (ExpenseEntity eachExpense : expenses) {
-		// // put the expense id in a list
-		// expenseIds += eachExpense.getId() + ",";
-		// }
-		// expenseIds = expenseIds.substring(0, expenseIds.length() - 1);
-		// // Fetch attachments for the given list of expense ids
-		// List<FileMappingEntity> fileMappings =
-		// mySqlExpense.getFileMappingsForExpenses(expenseIds);
-		// // for each expense mapping
-		// for (ExpenseEntity expense : expenses) {
-		// List<FileMappingEntity> mappings = new ArrayList<>();
-		// // fetch file mappings for current expense
-		// for (FileMappingEntity fileMapping : fileMappings) {
-		// if
-		// (fileMapping.getExpenseId().equals(String.valueOf(expense.getId())))
-		// mappings.add(fileMapping);
-		// }
-		// expense.setFileMappings(mappings);
-		// }
 		return expenses;
 	}
 
@@ -250,35 +229,8 @@ public class ExpenseService implements IExpenseService {
 		// check if expenses are not null
 		if (expenses.size() == 0)
 			throw new BadRequestException("ExpenseEntity", "No expenses found", null);
-		// list of expense ids
-		String expenseIds = "";
-		// for each expense, fetch its attachment
-		for (ExpenseEntity eachExpense : expenses) {
-			// put the expense id in a list
-			expenseIds += eachExpense.getId() + ",";
-		}
-		expenseIds = expenseIds.substring(0, expenseIds.length() - 1);
-		// Fetch attachments for the given list of expense ids
-		List<FileMappingEntity> fileMappings = mySqlExpense.getFileMappingsForExpenses(expenseIds);
-		// create a list of expenses
-		List<ExpenseEntity> expenseList = new ArrayList<>();
-		// for each expense mapping
-		for (ExpenseEntity expense : expenses) {
-			List<FileMappingEntity> attachments = new ArrayList<>();
-			// fetch file mappings for current expense
-			for (FileMappingEntity fileMapping : fileMappings) {
-				if (fileMapping.getExpenseId().equals(expense.getId())) {
-					FileMappingEntity attachmentEntity = new FileMappingEntity(fileMapping.getAttachmentId(),
-							RequestThreadLocal.getSession().getExternalFacingUser().getId(), expense.getId(), true,
-							null, fileMapping.getOriginalFileName(), fileMapping.getContentType());
-					attachments.add(attachmentEntity);
-				}
-			}
-			expense.setFileMappings(attachments);
-			// add the expense entity in list
-			expenseList.add(expense);
-		}
-		return expenseList;
+
+		return expenses;
 	}
 
 	/**
@@ -345,92 +297,6 @@ public class ExpenseService implements IExpenseService {
 	}
 
 	/**
-	 * @see IExpenseService.getExpensesForFinance
-	 */
-	@Override
-	public List<ExpenseReportEntity> getExpensesForFinance() throws BadRequestException {
-		// get the currently logged in user's id
-		String financeId = RequestThreadLocal.getSession().getExternalFacingUser().getId();
-		// get list of expenses filed under the given approver
-		List<Map<String, Object>> expenseMap = mySqlExpense.getExpensesForFinance(financeId,
-				ExpenseStatusType.Finance_Approved);
-		// check if expenses are not null
-		if (expenseMap.size() == 0)
-			throw new BadRequestException("ExpenseEntity", "No expenses found", null);
-		// list of expense ids
-		String expenseIds = "";
-		// set for expense ids
-		BoilerplateSet<String> userIds = new BoilerplateSet<>();
-		// for each expense, fetch its attachment
-		for (Map<String, Object> eachExpense : expenseMap) {
-			// put the expense id in a list
-			expenseIds += eachExpense.get("id") + ",";
-			// put id in set
-			userIds.add(String.valueOf(eachExpense.get("userId")));
-		}
-		expenseIds = expenseIds.substring(0, expenseIds.length() - 1);
-		// Fetch attachments for the given list of expense ids
-		List<FileMappingEntity> fileMappings = mySqlExpense.getFileMappingsForExpenses(expenseIds);
-		// create a list of expenses
-		List<ExpenseEntity> expenseList = new ArrayList<>();
-		// for each expense mapping
-		for (Map<String, Object> expense : expenseMap) {
-			List<FileMappingEntity> attachments = new ArrayList<>();
-			// fetch file mappings for current expense
-			for (FileMappingEntity fileMapping : fileMappings) {
-				if (fileMapping.getExpenseId().equals(String.valueOf(expense.get("id")))) {
-					FileMappingEntity attachmentEntity = new FileMappingEntity(fileMapping.getAttachmentId(),
-							RequestThreadLocal.getSession().getExternalFacingUser().getId(),
-							String.valueOf(expense.get("id")), true, null, fileMapping.getOriginalFileName(),
-							fileMapping.getContentType());
-					attachments.add(attachmentEntity);
-				}
-			}
-
-			// create a new expense entity
-			ExpenseEntity expenseEntity = new ExpenseEntity(String.valueOf(expense.get("id")),
-					String.valueOf(expense.get("title")), String.valueOf(expense.get("description")),
-					ExpenseStatusType.valueOf(String.valueOf(expense.get("status"))), attachments,
-					String.valueOf(expense.get("userId")), String.valueOf(expense.get("name")),
-					String.valueOf(expense.get("approverComments")),
-					Float.valueOf(String.valueOf(expense.get("amount"))), (Date) expense.get("creationDate"),
-					(Date) expense.get("updatedDate"));
-			// add the expense entity in list
-			expenseList.add(expenseEntity);
-		}
-		// List of expense reports
-		List<ExpenseReportEntity> reportEntities = new ArrayList<>();
-		// for each expense in unique set
-		for (String userId : userIds) {
-			// List of expenses
-			List<ExpenseEntity> expenses = new ArrayList<>();
-			// total amount
-			float totalAmount = 0f;
-			// name of the user
-			String name = null;
-			// traverse through list of expense
-			for (ExpenseEntity expenseEntity : expenseList) {
-				// if expense belongs to user
-				if (expenseEntity.getUserId().equals(userId)) {
-					// add the expense to the list of expenses
-					expenses.add(expenseEntity);
-					// add the amount in total amount
-					totalAmount += expenseEntity.getAmount();
-					// set name
-					name = expenseEntity.getUserName();
-				}
-			}
-			// create a new expense report entity
-			ExpenseReportEntity reportEntity = new ExpenseReportEntity(name, userId, totalAmount, expenses,
-					ExpenseStatusType.Finance_Approved);
-			// add the report entity in list
-			reportEntities.add(reportEntity);
-		}
-		return reportEntities;
-
-	}
-
-	/**
 	 * @see IExpenseService.approveExpenseForFinance
 	 */
 	@Override
@@ -486,6 +352,44 @@ public class ExpenseService implements IExpenseService {
 		expenseEntity.setStatus(expenseReviewEntity.getStatus());
 		// update the expense entity in the system
 		mySqlExpense.updateExpense(expenseEntity);
+	}
+
+	/**
+	 * @see IExpenseService.getExpensesForFinance
+	 */
+	@Override
+	public List<ExpenseEntity> getExpensesForFinance() throws BadRequestException, NotFoundException {
+		List<ExpenseEntity> expenses = new ArrayList<>();
+		expenses = mySqlExpense.getExpensesByStatus(ExpenseStatusType.Approver_Approved);
+		// check if expense list is not null or empty
+		if (expenses == null || expenses.size() == 0)
+			throw new NotFoundException("ExpenseEntity", "No expense found in approver_approved state", null);
+		// return list of expense
+		return expenses;
+	}
+
+	@Override
+	public List<ExpenseReportEntity> getExpenseReportsForFinance(ExpenseStatusType status) throws BadRequestException {
+		// fetch the list of user ids with there total amount
+		List<Map<String, Object>> userAmounts = mySqlExpense.getUserAmountsForFinance();
+		// fetch all expenses with finance approved status
+		List<ExpenseEntity> expenses = mySqlExpense.getExpensesByStatus(status);
+		// list of reports
+		List<ExpenseReportEntity> reports = new ArrayList<>();
+		// fr each expense, add it to expense report of that user
+		for (Map<String, Object> userAmount : userAmounts) {
+			List<ExpenseEntity> expenseList = new ArrayList<>();
+			for (ExpenseEntity expenseEntity : expenses) {
+				if (userAmount.get("UserId").equals(expenseEntity.getUserId()))
+					expenseList.add(expenseEntity);
+			}
+			ExpenseReportEntity expenseReportEntity = new ExpenseReportEntity(String.valueOf(userAmount.get("Name")),
+					String.valueOf(userAmount.get("UserId")),
+					Float.valueOf(String.valueOf(userAmount.get("TotalAmount"))), expenses,
+					ExpenseStatusType.Finance_Approved);
+			reports.add(expenseReportEntity);
+		}
+		return reports;
 	}
 
 }

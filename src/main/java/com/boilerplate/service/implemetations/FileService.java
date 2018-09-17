@@ -1,5 +1,6 @@
 package com.boilerplate.service.implemetations;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -205,5 +206,24 @@ public class FileService implements IFileService {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * @see IFileService.checkFileExistence
+	 */
+	@Override
+	public boolean checkFileExistence(List<FileMappingEntity> mappings) {
+		// for each file mapping check if files have been uploaded
+		for (FileMappingEntity fileMappingEntity : mappings) {
+			// get the file location
+			File file = new File(configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK") + "/"
+					+ fileMappingEntity.getAttachmentId());
+			// check if file exists
+			if (!file.exists())
+				// return false if file doesn't exist
+				return false;
+		}
+		// if all files exist, return true
+		return true;
 	}
 }

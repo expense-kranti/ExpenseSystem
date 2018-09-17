@@ -108,7 +108,7 @@ public class ExpenseReviewEntity extends BaseEntity {
 	}
 
 	/**
-	 * Base.validate
+	 * @see Base.validate
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
@@ -124,16 +124,20 @@ public class ExpenseReviewEntity extends BaseEntity {
 		return true;
 	}
 
+	/**
+	 * @see Base.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	/**
+	 * @see Base.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

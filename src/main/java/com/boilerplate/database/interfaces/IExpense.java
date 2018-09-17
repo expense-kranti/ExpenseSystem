@@ -106,8 +106,7 @@ public interface IExpense {
 	 * @return List<Map<String, Object>>
 	 * @throws BadRequestException
 	 */
-	public List<Map<String, Object>> getExpensesForFinance(String financeId, ExpenseStatusType expenseStatus)
-			throws BadRequestException;
+	public List<Map<String, Object>> getUserAmountsForFinance() throws BadRequestException;
 
 	/**
 	 * This method is used to save a list of expenses
@@ -130,10 +129,12 @@ public interface IExpense {
 	public void deleteExpense(ExpenseEntity expenseEntity);
 
 	/**
-	 * This method is used to get all active expenses 
-	 * @return
-	 * 			List of expenses
+	 * This method is used to get all active expenses
+	 * 
+	 * @return List of expenses
 	 * @throws BadRequestException
 	 */
 	public List<ExpenseEntity> getAllExpenses() throws BadRequestException;
+
+	public List<ExpenseEntity> getExpensesByStatus(ExpenseStatusType status) throws BadRequestException;
 }
