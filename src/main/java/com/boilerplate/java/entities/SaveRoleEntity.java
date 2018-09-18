@@ -3,6 +3,7 @@ package com.boilerplate.java.entities;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This is save role entity used to take input from API for a given user id with
@@ -18,12 +19,15 @@ public class SaveRoleEntity extends BaseEntity {
 	 */
 	public SaveRoleEntity() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
+	 * This is the parameterized constructor
+	 * 
 	 * @param userId
+	 *            This is the id of user
 	 * @param roles
+	 *            tHIS IS THE LIST OF ROLES
 	 */
 	public SaveRoleEntity(String userId, List<UserRoleType> roles) {
 		super();
@@ -34,11 +38,13 @@ public class SaveRoleEntity extends BaseEntity {
 	/**
 	 * This is the user id
 	 */
+	@ApiModelProperty(value = "This is the user id", required = true, notes = "This is the user id")
 	private String userId;
 
 	/**
 	 * this is the list of roles for given user
 	 */
+	@ApiModelProperty(value = "This is the list of roles", required = true, notes = "This is the list of roles")
 	private List<UserRoleType> roles;
 
 	/**
@@ -88,18 +94,23 @@ public class SaveRoleEntity extends BaseEntity {
 		// check if role is null or empty
 		if (this.getRoles().size() == 0)
 			throw new ValidationFailedException("UserRoleEntity", "Role is null/empty", null);
-		return false;
+		return true;
 	}
 
+	/**
+	 * @see BaseEntity.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	/**
+	 * @see BaseEntity.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
+
 }

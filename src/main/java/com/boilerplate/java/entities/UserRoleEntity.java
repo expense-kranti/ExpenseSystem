@@ -1,6 +1,7 @@
 package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class UserRoleEntity extends BaseEntity {
 
@@ -29,16 +30,19 @@ public class UserRoleEntity extends BaseEntity {
 	/**
 	 * This is the role
 	 */
+	@ApiModelProperty(value = "This is the role", required = true, notes = "This is the role")
 	private UserRoleType role;
 
 	/**
 	 * this is the id of the user
 	 */
+	@ApiModelProperty(value = "This is the userId", required = true, notes = "This is the userId")
 	private String userId;
 
 	/**
 	 * This is the string equivalent for status type
 	 */
+	@ApiModelProperty(value = "This is the role in string", required = true, notes = "This is the role in string")
 	private String roleTypeString;
 
 	/**

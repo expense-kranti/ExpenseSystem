@@ -271,10 +271,6 @@ public class ExpenseService implements IExpenseService {
 				&& !approverId.equals(externalFacingUser.getApproverId()))
 			throw new UnauthorizedException("ExpenseEntity", "User is not authorized to approve/reject this expense",
 					null);
-		// match the approver/super approver with currently logged in user
-		if (!externalFacingUser.getApproverId().equals(approverId))
-			throw new UnauthorizedException("ExpenseEntity",
-					"User is not assigned as approver/super approver for this expense", null);
 		// create a new expense history entity using the data from expense
 		// entity
 		ExpenseHistoryEntity expenseHistoryEntity = new ExpenseHistoryEntity(expenseEntity.getId(),

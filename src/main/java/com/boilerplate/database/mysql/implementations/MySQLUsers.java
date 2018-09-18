@@ -46,7 +46,7 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	public void setConfigurationManager(ConfigurationManager configurationManager) {
 		this.configurationManager = configurationManager;
 	}
-	
+
 	/**
 	 * @see IUser.createUser
 	 */
@@ -225,6 +225,33 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 			return null;
 		return userRoles;
 
+	}
+
+	/**
+	 * @see IUser.getFinanceUsers
+	 */
+	@Override
+	public List<Map<String, Object>> getFinanceUsers() throws BadRequestException {
+		// Get the SQL query from configurations to get users
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_FINANCE_USERS");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// This variable is used to hold the query response
+		List<Map<String, Object>> users = new ArrayList<>();
+		try {
+			// Execute query
+			users = super.executeSelectNative(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLUsers", "getFinanceUsers", "exceptionGetFinanceUsers",
+					"While trying to get finance users, This is the query" + hSQLQuery, ex);
+			// Throw exception
+			throw new BadRequestException("MySQLUsers", "While trying to get user data ~ " + ex.toString(), ex);
+		}
+		if (users.size() == 0)
+			return null;
+		return users;
 	}
 
 }
