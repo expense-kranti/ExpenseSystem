@@ -70,7 +70,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/disableUser/{userId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/disableUser", method = RequestMethod.PUT)
 	public @ResponseBody void disableUser(@RequestParam String userId)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
@@ -94,7 +94,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, User name or password is empty"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/enableUser/{userId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/enableUser", method = RequestMethod.PUT)
 	public @ResponseBody void enableUser(@RequestParam String userId)
 			throws BadRequestException, NotFoundException, Exception {
 		// call the business layer
@@ -185,7 +185,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, manadatory fields are missing"),
 			@ApiResponse(code = 409, message = "The user does not exist") })
-	@RequestMapping(value = "/sSOauthenticate/{idToken}", method = RequestMethod.POST)
+	@RequestMapping(value = "/sSOauthenticate", method = RequestMethod.POST)
 	public @ResponseBody Session ssoLogin(@RequestParam String idToken)
 			throws BadRequestException, NotFoundException, Exception {
 		// Call authentication service to check if user name and password are

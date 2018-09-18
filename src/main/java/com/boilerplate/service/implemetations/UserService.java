@@ -127,13 +127,20 @@ public class UserService implements IUserService {
 	 */
 	@Override
 	public void disableUser(String userId) throws Exception {
-		// check if user id is not null
 		if (userId == null)
 			throw new BadRequestException("ExternalFacingUser", "User id is null", null);
 		// check if user exists
 		ExternalFacingUser user = mySqlUser.getUser(userId);
+		// check if user id is not null
 		if (user == null)
 			throw new NotFoundException("ExternalFacingUser", "User not found", null);
+		// check if user is not admin
+		List<UserRoleEntity> roles = mySqlUser.getUserRoles(userId);
+		// check if any role is admin or not
+		for (UserRoleEntity userRoleEntity : roles) {
+			if (userRoleEntity.getRole().equals(UserRoleType.Admin))
+				throw new BadRequestException("UserRoleEntity", "Admin cannot be disabled", null);
+		}
 		// check if user is already disabled
 		if (!user.getIsActive())
 			throw new BadRequestException("ExternalFacingUser", "user is already disabled", null);

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
-import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.EmailUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.collections.BoilerplateList;
@@ -73,9 +72,11 @@ public class SendEmailService implements IEmailService {
 		// fetch approver from database for this user
 		ExternalFacingUser approver = mySqlUser.getUser(expenseUser.getApproverId());
 		// check if approver is not null
-		if (approver == null)
-			throw new NotFoundException("ExternalFacingUser",
-					"Approver has not been assigned, please check with your admin to assign an approver", null);
+		if (approver == null) {
+			logger.logWarning("SendEmailService", "sendEmailOnSubmission", "exceptionSendEmailOnSubmission",
+					"Approver not found for sending email");
+			return;
+		}
 		// prepare tos list
 		BoilerplateList<String> tos = new BoilerplateList<>();
 		tos.add(approver.getEmail());

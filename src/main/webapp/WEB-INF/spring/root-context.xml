@@ -142,6 +142,7 @@
 	<bean id="fileService" class="com.boilerplate.service.implemetations.FileService">
 		<property name="configurationManager" ref="configurationManager"></property>
 		<property name="filePointer" ref="filePointer"></property>
+		<property name="mySqlUser" ref="mySqlUser" />
 	</bean>
 
 	<bean id="multipartResolver"

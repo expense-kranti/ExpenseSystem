@@ -23,7 +23,7 @@
 			console.log("ID Token: " + id_token);
 			var xhr = new XMLHttpRequest();
 			xhr.open('POST',
-					'http://localhost:8080/ExpenseSystem/sSOauthenticate/{idToken}?idToken='
+					'http://localhost:8080/ExpenseSystem/sSOauthenticate?idToken='
 							+ id_token, true);
 			xhr.setRequestHeader('Content-Type', 'application/json');
 			xhr.onload = function() {

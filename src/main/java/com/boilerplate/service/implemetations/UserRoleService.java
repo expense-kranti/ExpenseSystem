@@ -49,9 +49,11 @@ public class UserRoleService implements IUserRoleService {
 	public void assignRoles(SaveRoleEntity saveRoleEntity) throws Exception {
 		// validate entity
 		saveRoleEntity.validate();
+		ExternalFacingUser user = mySqlUser.getUser(saveRoleEntity.getUserId());
 		// check if user exists or not
-		if (mySqlUser.getUser(saveRoleEntity.getUserId()) == null)
-			throw new NotFoundException("SaveRoleEntity", "User not found with id:" + saveRoleEntity.getUserId(), null);
+		if (user == null || !user.getIsActive())
+			throw new NotFoundException("SaveRoleEntity",
+					"User not found or is inactive with id:" + saveRoleEntity.getUserId(), null);
 		// save roles in mysql
 		mySqlUser.saveUserRoles(saveRoleEntity);
 

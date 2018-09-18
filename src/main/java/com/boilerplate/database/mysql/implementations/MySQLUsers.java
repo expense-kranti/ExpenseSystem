@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ExternalFacingUser;
@@ -188,7 +189,7 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 		} catch (Exception ex) {
 			logger.logException("MySQLBaseDataAccessLayer", "create", "try-catch block", ex.getMessage(), ex);
 			session.getTransaction().rollback();
-			throw ex;
+			throw new ValidationFailedException("UserRoleEntity", "Could not save roles", null);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

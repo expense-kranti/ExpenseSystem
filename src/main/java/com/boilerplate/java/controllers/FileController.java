@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.java.entities.FileMappingEntity;
 import com.boilerplate.service.interfaces.IFileService;
 import com.wordnik.swagger.annotations.Api;
@@ -74,13 +75,15 @@ public class FileController extends BaseController {
 	 *             Throw this exception if user sends bad request
 	 * @throws NotFoundException
 	 *             Throw this exception if file mapping or file is not found
+	 * @throws UnauthorizedException
 	 */
 	@ApiOperation(value = "Donloads a file")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 404, message = "If file or file mapping is not found") })
 	@RequestMapping(value = "/downoad/{fileName:.+}", method = RequestMethod.GET)
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException {
+			@PathVariable("fileName") String fileName)
+			throws BadRequestException, NotFoundException, UnauthorizedException {
 		fileService.downloadFile(request, response, fileName);
 	}
 }

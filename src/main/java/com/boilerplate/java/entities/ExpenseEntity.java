@@ -72,7 +72,6 @@ public class ExpenseEntity extends BaseEntity {
 	 * This is the status of the expense
 	 */
 	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
-	@JsonIgnore
 	private ExpenseStatusType status;
 
 	/**
@@ -163,6 +162,7 @@ public class ExpenseEntity extends BaseEntity {
 	 * @param description
 	 */
 	public void setDescription(String description) {
+		description.join(",");
 		this.description = description;
 	}
 

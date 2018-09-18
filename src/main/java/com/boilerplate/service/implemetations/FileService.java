@@ -13,20 +13,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.boilerplate.database.interfaces.IFile;
 import com.boilerplate.database.interfaces.IFilePointer;
+import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.FileMappingEntity;
+import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IFileService;
 
 /**
@@ -58,22 +60,6 @@ public class FileService implements IFileService {
 	}
 
 	/**
-	 * This is the file service provider on data layer
-	 */
-	@Autowired
-	IFile file;
-
-	/**
-	 * Sets the file provider
-	 * 
-	 * @param file
-	 *            The file provider
-	 */
-	public void setFile(IFile file) {
-		this.file = file;
-	}
-
-	/**
 	 * This is the instance of filePointer
 	 */
 	@Autowired
@@ -87,6 +73,21 @@ public class FileService implements IFileService {
 	 */
 	public void setFilePointer(IFilePointer filePointer) {
 		this.filePointer = filePointer;
+	}
+
+	/**
+	 * This is the instance of IUser
+	 */
+	IUser mySqlUser;
+
+	/**
+	 * This method set the mysqluser
+	 * 
+	 * @param mySqlUser
+	 *            the mySqlUser to set
+	 */
+	public void setMySqlUser(IUser mySqlUser) {
+		this.mySqlUser = mySqlUser;
 	}
 
 	/**
@@ -132,6 +133,7 @@ public class FileService implements IFileService {
 		try {
 			// save mapping in MySQL
 			filePointer.saveFileMapping(fileMappings);
+			expenseEntity.setFileMappings(filePointer.getFileMappingByExpenseId(expenseEntity.getId()));
 		} catch (Exception ex) {
 			return false;
 		}
@@ -185,13 +187,28 @@ public class FileService implements IFileService {
 	 * @see IFileService.downloadFile
 	 */
 	@Override
-	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException {
+	public void downloadFile(HttpServletRequest request, HttpServletResponse response, String fileName)
+			throws BadRequestException, NotFoundException, UnauthorizedException {
 		// Fetch the file mapping for the given file
 		FileMappingEntity fileMappingEntity = filePointer.getFileMapping(fileName);
 		// check if file mapping exists for the given file
 		if (fileMappingEntity == null)
 			throw new NotFoundException("FileMappingEntity", "File mapping not found for the given file name", null);
+		// fetch the currenlty logged in user
+		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
+		// check if current user if finance/super-approver
+		if (!currentUser.getRoles().contains(UserRoleType.Super_Approver)
+				&& !currentUser.getRoles().contains(UserRoleType.Finance)) {
+			// fetch the file owner
+			ExternalFacingUser fileOwner = mySqlUser.getUser(fileMappingEntity.getUserId());
+			// check if current user is approver for the file owner
+			if (!fileOwner.getApproverId().equals(currentUser.getId())
+					&& !fileOwner.getId().equals(currentUser.getId())) {
+				// check if current user is file owner
+				throw new UnauthorizedException("FileMappingEntity", "User is not authorized to download this file",
+						null);
+			}
+		}
 		// get the root file saving location
 		String fileLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
 		Path file = Paths.get(fileLocation, fileName);

@@ -5,11 +5,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
@@ -82,9 +82,12 @@ public interface IFileService {
 	 *             Throw this exception if user sends a bad request
 	 * @throws NotFoundException
 	 *             throw this exception if file maping is not found
+	 * @throws UnauthorizedException
+	 *             Throw this exception if user is not authorized to download
+	 *             the file
 	 */
-	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable("fileName") String fileName) throws BadRequestException, NotFoundException;
+	public void downloadFile(HttpServletRequest request, HttpServletResponse response, String fileName)
+			throws BadRequestException, NotFoundException, UnauthorizedException;
 
 	/**
 	 * This method is used to check if files in list of file mappings exists in
