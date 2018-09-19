@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
@@ -40,14 +39,14 @@ public class ExpenseEntity extends BaseEntity {
 	 *            This is the user name
 	 */
 	public ExpenseEntity(String id, String title, String description, ExpenseStatusType status,
-			List<FileMappingEntity> fileMappings, String userId, String userName, String approverComments, float amount,
+			List<String> attachmentIds, String userId, String userName, String approverComments, float amount,
 			Date creationDate, Date updatedDate) {
 		super();
 		this.setId(id);
 		this.title = title;
 		this.description = description;
 		this.status = status;
-		this.fileMappings = fileMappings;
+		this.attachmentIds = attachmentIds;
 		this.userId = userId;
 		this.userName = userName;
 		this.approverComments = approverComments;
@@ -78,7 +77,7 @@ public class ExpenseEntity extends BaseEntity {
 	 * this is the list of attachment ids of the bill uploaded with the expense
 	 */
 	@ApiModelProperty(value = "This is the list of attachments of the expense", required = true, notes = "This is the list of attachments of the expense")
-	private List<FileMappingEntity> fileMappings;
+	private List<String> attachmentIds;
 
 	/**
 	 * this is the id of the user by whom expense was filed
@@ -162,7 +161,6 @@ public class ExpenseEntity extends BaseEntity {
 	 * @param description
 	 */
 	public void setDescription(String description) {
-		description.join(",");
 		this.description = description;
 	}
 
@@ -239,21 +237,21 @@ public class ExpenseEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get file mappings
+	 * This method is used to get list of attachment ids
 	 * 
 	 * @return
 	 */
-	public List<FileMappingEntity> getFileMappings() {
-		return fileMappings;
+	public List<String> getAttachmentIds() {
+		return attachmentIds;
 	}
 
 	/**
-	 * This method is used to set file mappings
+	 * This method is used to set attachment ids
 	 * 
-	 * @param fileMappings
+	 * @param attachmentIds
 	 */
-	public void setFileMappings(List<FileMappingEntity> fileMappings) {
-		this.fileMappings = fileMappings;
+	public void setAttachmentIds(List<String> attachmentIds) {
+		this.attachmentIds = attachmentIds;
 	}
 
 	/**
@@ -283,8 +281,8 @@ public class ExpenseEntity extends BaseEntity {
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// check if expense entity has all the mandatory fields
-		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.fileMappings == null
-				|| this.fileMappings.size() == 0 || this.getAmount() == 0)
+		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachmentIds == null
+				|| this.attachmentIds.size() == 0 || this.getAmount() == 0)
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
 
 		return true;

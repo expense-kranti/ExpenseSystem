@@ -15,6 +15,7 @@ import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.framework.HibernateUtility;
 import com.boilerplate.framework.Logger;
+import com.boilerplate.java.entities.FileDetailsEntity;
 import com.boilerplate.java.entities.FileMappingEntity;
 import com.boilerplate.java.entities.UserRoleEntity;
 import com.boilerplate.java.entities.UserRoleType;
@@ -82,14 +83,14 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 	 * @see IFilePointer.getFileMapping
 	 */
 	@Override
-	public FileMappingEntity getFileMapping(String attachmentId) throws BadRequestException {
+	public FileMappingEntity getFileMapping(String fileId) throws BadRequestException {
 		// Get the SQL query from configurations to get file mapping
 		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_FILE_MAPPING");
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// Put id in query parameter
-		queryParameterMap.put("AttachmentId", attachmentId);
+		queryParameterMap.put("FileId", fileId);
 		// This variable is used to hold the query response
 		List<FileMappingEntity> mappings = new ArrayList<>();
 		try {
@@ -97,13 +98,12 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 			mappings = super.executeSelect(hSQLQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Log exception
-			logger.logException("MySQLExpense", "getFileMapping", "exceptionGetFileMapping",
-					"While trying to get file mapping data, This is the attachmentId~ " + attachmentId
-							+ "This is the query" + hSQLQuery,
+			logger.logException("MySQLFile", "getFileMapping", "exceptionGetFileMapping",
+					"While trying to get file mapping data, This is the file id~ " + fileId + "This is the query"
+							+ hSQLQuery,
 					ex);
 			// Throw exception
-			throw new BadRequestException("MySQLExpense", "While trying to get file mapping data ~ " + ex.toString(),
-					ex);
+			throw new BadRequestException("MySQLFile", "While trying to get file mapping data ~ " + ex.toString(), ex);
 		}
 		if (mappings.size() == 0)
 			return null;
@@ -146,13 +146,12 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 			mappings = super.executeSelect(hSQLQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Log exception
-			logger.logException("MySQLExpense", "getFileMappingByExpenseId", "exceptionGetFileMappingByExpenseId",
+			logger.logException("MySQLFile", "getFileMappingByExpenseId", "exceptionGetFileMappingByExpenseId",
 					"While trying to get file mapping data, This is the expenseId~ " + expenseId + "This is the query"
 							+ hSQLQuery,
 					ex);
 			// Throw exception
-			throw new BadRequestException("MySQLExpense", "While trying to get file mapping data ~ " + ex.toString(),
-					ex);
+			throw new BadRequestException("MySQLFile", "While trying to get file mapping data ~ " + ex.toString(), ex);
 		}
 		return mappings;
 	}
@@ -177,15 +176,61 @@ public class MySQLFile extends MySQLBaseDataAccessLayer implements IFilePointer 
 			mappings = super.executeSelect(hSQLQuery, queryParameterMap);
 		} catch (Exception ex) {
 			// Log exception
-			logger.logException("MySQLExpense", "getFileMappingByExpenseId", "exceptionGetFileMappingByAttachmentId",
+			logger.logException("MySQLFile", "getFileMappingByExpenseId", "exceptionGetFileMappingByAttachmentId",
 					"While trying to get file mapping data, This is the attachmentId~ " + attachmentId
 							+ "This is the query" + hSQLQuery,
 					ex);
 			// Throw exception
-			throw new BadRequestException("MySQLExpense", "While trying to get file mapping data ~ " + ex.toString(),
-					ex);
+			throw new BadRequestException("MySQLFile", "While trying to get file mapping data ~ " + ex.toString(), ex);
 		}
 		return mappings.get(0);
+	}
+
+	/**
+	 * @see IFilePointer.saveFileDetails
+	 */
+	@Override
+	public void saveFileDetails(FileDetailsEntity fileDetailsEntity) throws Exception {
+		try {
+			super.create(fileDetailsEntity);
+		} catch (Exception ex) {
+			logger.logException("MySQLFile", "saveFileDetails", "exeptionSaveFileDetails",
+					"Exeption occurred while saving details of file uploaded", ex);
+			throw ex;
+		}
+	}
+
+	/**
+	 * @see IFilePointer.getFileDetailsByAttachmentId
+	 */
+	@Override
+	public FileDetailsEntity getFileDetailsByAttachmentId(String attachmentId) throws BadRequestException {
+		// Get the SQL query from configurations to get file details by
+		// attachment id
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_FILE_DETAILS_BY_ATTACHMENT_ID");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
+		// Put id in query parameter
+		queryParameterMap.put("AttachmentId", attachmentId);
+		// This variable is used to hold the query response
+		List<FileDetailsEntity> fileDetails = new ArrayList<>();
+		try {
+			// Execute query
+			fileDetails = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLFile", "getFileDetailsByAttachmentId", "exceptionGetFileDetailsByAttachmentId",
+					"While trying to get file details data, This is the attachmentId~ " + attachmentId
+							+ "This is the query" + hSQLQuery,
+					ex);
+			// Throw exception
+			throw new BadRequestException("MySQLFile", "While trying to get file details data ~ " + ex.toString(), ex);
+		}
+		if (fileDetails.size() == 0)
+			return null;
+		return fileDetails.get(0);
+
 	}
 
 }

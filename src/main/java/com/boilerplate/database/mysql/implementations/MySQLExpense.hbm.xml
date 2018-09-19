@@ -25,13 +25,6 @@
 		<property name="updationDate" column="UpdatedDate" />
 		<property name="approverComments" column="ApproverComments" />
 		<property name="amount" column="Amount" />
-		<bag name="fileMappings" table="FileMapping" inverse="true" lazy="false"
-			fetch="select">
-			<key>
-				<column name="ExpenseId" not-null="true" />
-			</key>
-			<one-to-many class="com.boilerplate.java.entities.FileMappingEntity" />
-			<filter name="activeFilter" condition="IsActive = :activeStatus" />
-		</bag>
+
 	</class>
 </hibernate-mapping>

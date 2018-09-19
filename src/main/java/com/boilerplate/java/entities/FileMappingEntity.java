@@ -1,6 +1,8 @@
 package com.boilerplate.java.entities;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.boilerplate.java.Base;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * This entity is used for handling mapping of file against its user id and
@@ -12,6 +14,26 @@ import com.boilerplate.exceptions.rest.ValidationFailedException;
 public class FileMappingEntity extends BaseEntity {
 
 	/**
+	 * This is the parameterized constructor
+	 * 
+	 * @param fileId
+	 * @param userId
+	 * @param expenseId
+	 * @param isActive
+	 * @param expenseHistoryId
+	 */
+	public FileMappingEntity(String fileId, String userId, String expenseId, boolean isActive, String expenseHistoryId,
+			String attachmentId) {
+		super();
+		this.fileId = fileId;
+		this.userId = userId;
+		this.expenseId = expenseId;
+		this.isActive = isActive;
+		this.expenseHistoryId = expenseHistoryId;
+		this.attachmentId = attachmentId;
+	}
+
+	/**
 	 * this is the default constructor
 	 */
 	public FileMappingEntity() {
@@ -19,72 +41,42 @@ public class FileMappingEntity extends BaseEntity {
 	}
 
 	/**
-	 * this is the parameterized constructor
+	 * This is the id of the file generated after saving it in file details
+	 * table
 	 */
-	public FileMappingEntity(String attachmentId, String userId, String expenseId, boolean isActive,
-			String expenseHistoryId, String fileName, String contentType) {
-		super();
-		this.attachmentId = attachmentId;
-		this.userId = userId;
-		this.expenseId = expenseId;
-		this.isActive = isActive;
-		this.expenseHistoryId = expenseHistoryId;
-		this.originalFileName = fileName;
-		this.contentType = contentType;
-	}
+	@ApiModelProperty(value = "This is the file id of the file details", notes = "This is the file id of the file details")
+	private String fileId;
 
 	/**
-	 * This is the original file name given by user
+	 * This is the attachment id
 	 */
-	private String originalFileName;
-	/**
-	 * This is the id of the foe generated after uploading it
-	 */
+	@ApiModelProperty(value = "This is the attachment id of the file details", notes = "This is the attachment id of the file details")
 	private String attachmentId;
 
 	/**
 	 * This is the id of user who filed the expense/uploaded file
 	 */
+	@ApiModelProperty(value = "This is the id of user who filed the expense/uploaded file", notes = "This is the id of user who filed the expense/uploaded file")
 	private String userId;
 
 	/**
 	 * This is the id of the expense for which file has been uploaded
 	 */
+	@ApiModelProperty(value = "This is the id of the expense for which file has been uploaded", notes = "This is the id of the expense for which file has been uploaded")
 	private String expenseId;
 
 	/**
 	 * This indicates whether this is the latest bill attached with the expense
 	 */
+	@ApiModelProperty(value = "This indicates whether this is the latest bill attached with the expense", notes = "This indicates whether this is the latest bill attached with the expense")
 	private boolean isActive;
 
 	/**
 	 * This is the id of expense history which is generated if expense is
 	 * updated along with file
 	 */
+	@ApiModelProperty(value = "This is the id of expense history which is generated if expense is updated along with file", notes = "This is the id of expense history which is generated if expense is updated along with file")
 	private String expenseHistoryId;
-
-	/**
-	 * This is the content type of the file
-	 */
-	private String contentType;
-
-	/**
-	 * This method is used to get attachment id
-	 * 
-	 * @return
-	 */
-	public String getAttachmentId() {
-		return attachmentId;
-	}
-
-	/**
-	 * This method is used to set attachment id
-	 * 
-	 * @param attachmentId
-	 */
-	public void setAttachmentId(String attachmentId) {
-		this.attachmentId = attachmentId;
-	}
 
 	/**
 	 * This method is used to get user id
@@ -159,57 +151,64 @@ public class FileMappingEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get original file name
+	 * This method is used to get file id
 	 * 
 	 * @return
 	 */
-	public String getOriginalFileName() {
-		return originalFileName;
+	public String getFileId() {
+		return fileId;
 	}
 
 	/**
-	 * This method is used to set original file name
+	 * This method is used to et file id
 	 * 
-	 * @param originalFileName
+	 * @param fileId
 	 */
-	public void setOriginalFileName(String originalFileName) {
-		this.originalFileName = originalFileName;
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
 	}
 
 	/**
-	 * This method is used to get content type
+	 * This method is usedt to get attachment id
 	 * 
 	 * @return
 	 */
-	public String getContentType() {
-		return contentType;
+	public String getAttachmentId() {
+		return attachmentId;
 	}
 
 	/**
-	 * This method is used to set content type
+	 * This method is used to set attachment id
 	 * 
-	 * @param contentType
+	 * @param attachemntId
 	 */
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+	public void setAttachmentId(String attachmentId) {
+		this.attachmentId = attachmentId;
 	}
 
+	/**
+	 * @see Base.validate
+	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * @see Base.transformToInternal
+	 */
 	@Override
 	public BaseEntity transformToInternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
+	/**
+	 * @see Base.transformToExternal
+	 */
 	@Override
 	public BaseEntity transformToExternal() {
-		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

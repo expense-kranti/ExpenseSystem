@@ -519,9 +519,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for file upload
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public com.boilerplate.java.entities.FileMappingEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+				"public com.boilerplate.java.entities.FileDetailsEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
 		methodPermission.setMethodName(
-				"public com.boilerplate.java.entities.FileMappingEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
+				"public com.boilerplate.java.entities.FileDetailsEntity com.boilerplate.java.controllers.FileController.upload(java.lang.String,org.springframework.web.multipart.MultipartFile)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -725,7 +725,7 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER",
 				"FROM ExpenseEntity expense where expense.status in ('Submitted','Re_Submitted') and expense.userId in (select user.id from ExternalFacingUser user where user.approverId = @ApproverId)");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING",
-				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId");
+				"FROM FileMappingEntity mapping where mapping.fileId = :FileId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_EXPENSE_ID",
 				"FROM FileMappingEntity mapping where mapping.expenseId = :ExpenseId and mapping.isActive = true");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_LIST_OF_EXPENSE_IDS",
@@ -734,6 +734,9 @@ public class BaseRedisDataAccessLayer {
 				"SELECT ex.UserId , sum(ex.Amount) as TotalAmount, CONCAT(user.FirstName,' ',user.LastName) as Name FROM Expenses ex join User user on user.Id = ex.UserId where ex.Status = ':Status' group by ex.UserId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_ATTACHMENT_ID",
 				"FROM FileMappingEntity mapping where mapping.attachmentId = :AttachmentId and mapping.isActive = true");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_DETAILS_BY_ATTACHMENT_ID",
+				"FROM FileDetailsEntity details where details.attachmentId = :AttachmentId");
+
 		vAllEAll.put("GET_ALL_ACTIVE_EXPENSES", "FROM ExpenseEntity expense");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FINANCE_USERS",
 				"select user.Id as id, user.UserId as userId, user.EmailId as email, user.FirstName as firstName, user.LastName as lastName FROM User user join UserRole role on user.id = role.userId where role.role = 'Finance'");

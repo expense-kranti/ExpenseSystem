@@ -13,6 +13,7 @@ import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.UpdateFailedException;
 import com.boilerplate.java.entities.ExpenseEntity;
 import com.boilerplate.java.entities.ExpenseHistoryEntity;
+import com.boilerplate.java.entities.FileDetailsEntity;
 import com.boilerplate.java.entities.FileMappingEntity;
 
 /**
@@ -37,7 +38,7 @@ public interface IFileService {
 	 * @throws Exception
 	 *             throw this exception exception occurs while saving file
 	 */
-	public FileMappingEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
+	public FileDetailsEntity saveFileOnLocal(String fileMasterTag, MultipartFile file)
 			throws UpdateFailedException, Exception;
 
 	/**
@@ -59,15 +60,14 @@ public interface IFileService {
 	 *            This is the updated expense entity
 	 * @param expenseHistoryEntity
 	 *            This is the previous expense
-	 * @return List of attachments
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 * @throws Exception
 	 *             Throw this exception if any exception occurs while saving
 	 *             file mapping
 	 */
-	public List<FileMappingEntity> updateFileMapping(ExpenseEntity expenseEntity,
-			ExpenseHistoryEntity expenseHistoryEntity) throws BadRequestException, Exception;
+	public void updateFileMapping(ExpenseEntity expenseEntity, ExpenseHistoryEntity expenseHistoryEntity)
+			throws BadRequestException, Exception;
 
 	/**
 	 * Thi method is used to download a file
@@ -90,12 +90,15 @@ public interface IFileService {
 			throws BadRequestException, NotFoundException, UnauthorizedException;
 
 	/**
-	 * This method is used to check if files in list of file mappings exists in
-	 * the system
+	 * This method is used to check if attachment ids procided in expense are
+	 * present in system and record is present in database
 	 * 
-	 * @param mappings
-	 *            This is the list of file mappings
-	 * @return boolean
+	 * @param attachments
+	 *            This is the lit of attachments
+	 * @throws NotFoundException
+	 *             Throw this exception if file not found
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
 	 */
-	public boolean checkFileExistence(List<FileMappingEntity> mappings);
+	public void checkFileExistence(List<String> attachments) throws NotFoundException, BadRequestException;
 }

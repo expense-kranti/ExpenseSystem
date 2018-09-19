@@ -179,6 +179,8 @@
 		<property name="mySqlUser" ref="mySqlUser" />
 		<property name="fileService" ref="fileService" />
 		<property name="sendEmailService" ref="sendEmailService" />
+		<property name="filePointer" ref="filePointer" />
+
 	</bean>
 
 	<bean id="userRoleService" class="com.boilerplate.service.implemetations.UserRoleService">

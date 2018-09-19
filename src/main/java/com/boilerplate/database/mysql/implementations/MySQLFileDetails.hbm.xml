@@ -3,17 +3,14 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-	<class name="com.boilerplate.java.entities.FileMappingEntity"
-		table="FileMapping">
+	<class name="com.boilerplate.java.entities.FileDetailsEntity"
+		table="FileDetails">
 		<id name="id" column="Id">
 			<generator class="identity" />
 		</id>
-		<property name="fileId" column="FileId" />
-		<property name="userId" column="UserId" />
-		<property name="expenseId" column="ExpenseId" />
-		<property name="isActive" column="IsActive" />
-		<property name="expenseHistoryId" column="ExpenseHistoryId" />
 		<property name="attachmentId" column="AttachmentId" />
-
+		<property name="userId" column="UserId" />
+		<property name="originalFileName" column="OriginalFileName" />
+		<property name="contentType" column="ContentType" />
 	</class>
 </hibernate-mapping>
