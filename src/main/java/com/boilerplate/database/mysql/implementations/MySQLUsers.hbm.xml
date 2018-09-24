@@ -15,7 +15,13 @@
 		<property name="isActive" column="Active" />
 		<property name="approverId" column="ApproverId" />
 		<property name="authenticationProvider" column="AuthenticationProvider" />
-
+		<bag name="roles" table="UserRole" inverse="true" lazy="false"
+			fetch="select">
+			<key>
+				<column name="UserId" not-null="true" />
+			</key>
+			<one-to-many class="com.boilerplate.java.entities.UserRoleEntity" />
+		</bag>
 	</class>
 </hibernate-mapping>
 

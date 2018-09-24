@@ -22,7 +22,6 @@ public class FetchExpenseEntity extends BaseEntity {
 	 * This is the type expenses to be fetched
 	 */
 	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
-	@JsonIgnore
 	private ExpenseStatusType expenseType;
 
 	/**

@@ -179,7 +179,7 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 			// get all the configurations from the DB as a list
 			Transaction transaction = session.beginTransaction();
 			// for each roles
-			for (UserRoleType role : userRoles.getRoles()) {
+			for (String role : userRoles.getRoleIds()) {
 				// save role in MySQL
 				UserRoleEntity userRole = new UserRoleEntity(role, userRoles.getUserId());
 				session.saveOrUpdate(userRole);

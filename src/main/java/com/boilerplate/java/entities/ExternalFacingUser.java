@@ -41,8 +41,8 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 * @param financeId
 	 * @param authenticationProvider
 	 */
-	public ExternalFacingUser(String userId, String email, String firstName, String lastName, List<UserRoleType> roles,
-			boolean isActive, String approverId, String authenticationProvider) {
+	public ExternalFacingUser(String userId, String email, String firstName, String lastName,
+			List<UserRoleEntity> roles, boolean isActive, String approverId, String authenticationProvider) {
 		super();
 		this.userId = userId;
 		this.email = email;
@@ -83,7 +83,7 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 * The roles of the user
 	 */
 	@ApiModelProperty(value = "This is the list of roles of the user", required = true, notes = "This is the list of roles of the user")
-	private List<UserRoleType> roles;
+	private List<UserRoleEntity> roles;
 
 	/**
 	 * This indicates whether user is disabled by admin or not
@@ -104,6 +104,49 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 */
 	@ApiModelProperty(value = "This is the authenticationProvider of the user", required = true, notes = "This is the authenticationProvider of the user")
 	private String authenticationProvider;
+
+	/**
+	 * This is the list of roles set by getting roles from db for the user in
+	 * question
+	 */
+	@ApiModelProperty(value = "This is the list fo role types", required = true, notes = "This is the list fo role types")
+	private List<UserRoleType> roleTypes;
+
+	/**
+	 * This method is used to getRoles
+	 * 
+	 * @return
+	 */
+	public List<UserRoleEntity> getRoles() {
+		return roles;
+	}
+
+	/**
+	 * This method is used to set roles
+	 * 
+	 * @param roles
+	 */
+	public void setRoles(List<UserRoleEntity> roles) {
+		this.roles = roles;
+	}
+
+	/**
+	 * This method is used to get role types
+	 * 
+	 * @return
+	 */
+	public List<UserRoleType> getRoleTypes() {
+		return roleTypes;
+	}
+
+	/**
+	 * This method is used to set role types
+	 * 
+	 * @param roleTypes
+	 */
+	public void setRoleTypes(List<UserRoleType> roleTypes) {
+		this.roleTypes = roleTypes;
+	}
 
 	/**
 	 * This method gets the email of the user
@@ -160,25 +203,6 @@ public class ExternalFacingUser extends BaseEntity implements Serializable {
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	/**
-	 * Gets the roles of the user
-	 * 
-	 * @return The roles of the user
-	 */
-	public List<UserRoleType> getRoles() {
-		return roles;
-	}
-
-	/**
-	 * Sets the roles of the user
-	 * 
-	 * @param roles
-	 *            The roles of the user
-	 */
-	public void setRoles(List<UserRoleType> roles) {
-		this.roles = roles;
 	}
 
 	/**

@@ -119,8 +119,10 @@ public class ExpenseReviewEntity extends BaseEntity {
 		// check if status is only finance approve or finance rejected
 		if (!this.status.equals(ExpenseStatusType.Finance_Approved))
 			if (!this.status.equals(ExpenseStatusType.Finance_Rejected))
-				throw new ValidationFailedException("ExpenseStatusType",
-						"Finance can either reject an expense or approve it, any other status is not allowed", null);
+				if (!this.status.equals(ExpenseStatusType.Ready_For_Payment))
+					throw new ValidationFailedException("ExpenseStatusType",
+							"Finance can either reject an expense or approve it, any other status is not allowed",
+							null);
 		return true;
 	}
 

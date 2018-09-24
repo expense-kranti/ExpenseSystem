@@ -25,7 +25,7 @@
 		<property name="mySqlUser" ref="mySqlUser"></property>
 		<property name="userRoleService" ref="userRoleService" />
 		<property name="configurationManager" ref="configurationManager"></property>
-
+		<property name="mySqlRole" ref="mySqlRole" />
 	</bean>
 
 	<!-- Bean for the Redis Queue Data Access Layer -->
@@ -154,6 +154,10 @@
 	<bean id="mySqlUser"
 		class="com.boilerplate.database.mysql.implementations.MySQLUsers">
 		<property name="configurationManager" ref="configurationManager" />
+	</bean>
+
+	<bean id="mySqlRole"
+		class="com.boilerplate.database.mysql.implementations.MySQLRole">
 	</bean>
 
 	<bean id="mySQLQueueWriterJob" class="com.boilerplate.jobs.MySQLQueueWriterJob"

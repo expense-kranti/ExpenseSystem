@@ -86,12 +86,14 @@ public class LogAndTraceExceptionAspect {
 			}
 
 			if (methodPermissions != null) {
+
 				// changed by Ruchi for expense system
 				// check if user needs to be authenticated to execute the method
 				if (methodPermissions.getIsAuthenticationRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Admin))
+
+					if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.ADMIN))
 						throw new UnauthorizedException("User", "User is not authorized", null);
 				}
 				// check if user needs to be approver or super-approver to
@@ -99,15 +101,17 @@ public class LogAndTraceExceptionAspect {
 				if (methodPermissions.getIsApproverRoleRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Super_Approver))
-						if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Approver))
+
+					if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.SUPER_APPROVER))
+						if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.APPROVER))
 							throw new UnauthorizedException("User", "User is not authorized", null);
 				}
 				// check if user needs to be finance to execute this method
 				if (methodPermissions.getIsFinanceRoleRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-					if (!session.getExternalFacingUser().getRoles().contains(UserRoleType.Finance))
+
+					if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.FINANCE))
 						throw new UnauthorizedException("User", "User is not authorized", null);
 				}
 			}

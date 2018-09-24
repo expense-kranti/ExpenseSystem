@@ -242,17 +242,17 @@ public class ExpenseService implements IExpenseService {
 		List<ExpenseEntity> expenses = new ArrayList<>();
 		// check if user is approver or super-approver
 		List<UserRoleEntity> roles = mySqlUser.getUserRoles(approverId);
-		for (UserRoleEntity userRoleEntity : roles) {
-			// check if user is approver or super/approver
-			if (userRoleEntity.getRole().equals(UserRoleType.Super_Approver)) {
-				// get all the expenses
-				expenses = mySqlExpense.getAllExpenses();
-				break;
-			} else if (userRoleEntity.getRole().equals(UserRoleType.Approver)) {
-				expenses = mySqlExpense.getExpensesForApprover(approverId);
-				break;
-			}
-		}
+//		for (UserRoleEntity userRoleEntity : roles) {
+//			// check if user is approver or super/approver
+//			if (userRoleEntity.getRole().equals(UserRoleType.Super_Approver)) {
+//				// get all the expenses
+//				expenses = mySqlExpense.getAllExpenses();
+//				break;
+//			} else if (userRoleEntity.getRole().equals(UserRoleType.Approver)) {
+//				expenses = mySqlExpense.getExpensesForApprover(approverId);
+//				break;
+//			}
+//		}
 
 		// check if expenses are not null
 		if (expenses.size() == 0)
@@ -293,11 +293,13 @@ public class ExpenseService implements IExpenseService {
 		String approverId = RequestThreadLocal.getSession().getExternalFacingUser().getId();
 		// check if approver is super-approver or matches with approver id
 		// assigned to the user
-		if (!RequestThreadLocal.getSession().getExternalFacingUser().getRoles().contains(UserRoleType.Super_Approver)
-				&& !approverId.equals(externalFacingUser.getApproverId()))
-			throw new UnauthorizedException("ExpenseEntity", "User is not authorized to approve/reject this expense",
-					null);
-		// create a new expense history entity using the data from expense
+		// if
+		// (!RequestThreadLocal.getSession().getExternalFacingUser().getRoles().contains(UserRoleType.Super_Approver)
+		// && !approverId.equals(externalFacingUser.getApproverId()))
+		// throw new UnauthorizedException("ExpenseEntity", "User is not
+		// authorized to approve/reject this expense",
+		// null);
+		// // create a new expense history entity using the data from expense
 		// entity
 		ExpenseHistoryEntity expenseHistoryEntity = new ExpenseHistoryEntity(expenseEntity.getId(),
 				expenseEntity.getCreationDate(), expenseEntity.getUpdationDate(), expenseEntity.getTitle(),

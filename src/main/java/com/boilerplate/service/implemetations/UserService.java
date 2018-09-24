@@ -8,13 +8,16 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
+import com.boilerplate.database.interfaces.IRole;
 import com.boilerplate.database.interfaces.IUser;
+import com.boilerplate.database.mysql.implementations.MySQLExpense;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.ExternalFacingUser;
+import com.boilerplate.java.entities.RoleEntity;
 import com.boilerplate.java.entities.SaveRoleEntity;
 import com.boilerplate.java.entities.UserRoleEntity;
 import com.boilerplate.java.entities.UserRoleType;
@@ -39,6 +42,7 @@ public class UserService implements IUserService {
 	/**
 	 * This is the instance of IUser
 	 */
+	@Autowired
 	IUser mySqlUser;
 
 	/**
@@ -49,6 +53,21 @@ public class UserService implements IUserService {
 	 */
 	public void setMySqlUser(IUser mySqlUser) {
 		this.mySqlUser = mySqlUser;
+	}
+
+	/**
+	 * This is the autowired instance of IRole
+	 */
+	@Autowired
+	IRole mySqlRole;
+
+	/**
+	 * This method is used to set instance of IRole
+	 * 
+	 * @param mySqlRole
+	 */
+	public void setMySqlRole(IRole mySqlRole) {
+		this.mySqlRole = mySqlRole;
 	}
 
 	/**
@@ -108,17 +127,18 @@ public class UserService implements IUserService {
 			throw new BadRequestException("ExternalFacingUser", "User id for fetching user is null", null);
 		// create a new user enityt
 		ExternalFacingUser user = mySqlUser.getUser(userId);
-		// get user roles
-		List<UserRoleEntity> userRoles = mySqlUser.getUserRoles(user.getId());
-		// create a role list for user
-		List<UserRoleType> roles = new ArrayList<>();
-		// for each role entity fetched, add it in role list
-		for (UserRoleEntity userRoleEntity : userRoles) {
-			roles.add(userRoleEntity.getRole());
-			// set roles in user
-			user.setRoles(roles);
-
-		}
+		// // get user roles
+		// List<UserRoleEntity> userRoles =
+		// mySqlUser.getUserRoles(user.getId());
+		// // create a role list for user
+		// List<UserRoleType> roles = new ArrayList<>();
+		// // for each role entity fetched, add it in role list
+		// for (UserRoleEntity userRoleEntity : userRoles) {
+		// roles.add(userRoleEntity.getRole());
+		// // set roles in user
+		// user.setRoles(roles);
+		//
+		// }
 		return user;
 	}
 
@@ -134,13 +154,14 @@ public class UserService implements IUserService {
 		// check if user id is not null
 		if (user == null)
 			throw new NotFoundException("ExternalFacingUser", "User not found", null);
-		// check if user is not admin
-		List<UserRoleEntity> roles = mySqlUser.getUserRoles(userId);
-		// check if any role is admin or not
-		for (UserRoleEntity userRoleEntity : roles) {
-			if (userRoleEntity.getRole().equals(UserRoleType.Admin))
-				throw new BadRequestException("UserRoleEntity", "Admin cannot be disabled", null);
-		}
+		// // check if user is not admin
+		// List<UserRoleEntity> roles = mySqlUser.getUserRoles(userId);
+		// // check if any role is admin or not
+		// for (UserRoleEntity userRoleEntity : roles) {
+		// if (userRoleEntity.getRole().equals(UserRoleType.Admin))
+		// throw new BadRequestException("UserRoleEntity", "Admin cannot be
+		// disabled", null);
+		// }
 		// check if user is already disabled
 		if (!user.getIsActive())
 			throw new BadRequestException("ExternalFacingUser", "user is already disabled", null);
@@ -199,8 +220,7 @@ public class UserService implements IUserService {
 			// save uer in MySQl
 			user = mySqlUser.createUser(user);
 			// create a new role entity
-			SaveRoleEntity saveRoleEntity = new SaveRoleEntity(user.getId(),
-					new ArrayList<>(Arrays.asList(UserRoleType.Employee)));
+			SaveRoleEntity saveRoleEntity = new SaveRoleEntity(user.getId(), new ArrayList<>(Arrays.asList("1")));
 			// assign default role to user
 			userRoleService.assignRoles(saveRoleEntity);
 		} else {
@@ -208,17 +228,18 @@ public class UserService implements IUserService {
 				throw new BadRequestException("ExternalFacingUser", "User is disabled, please contact your admin",
 						null);
 		}
-		// get user roles
-		List<UserRoleEntity> userRoles = mySqlUser.getUserRoles(user.getId());
-		// create a role list for user
-		List<UserRoleType> roles = new ArrayList<>();
+		// get all roles
+		List<RoleEntity> allRoles = mySqlRole.getAllRoles();
+		List<UserRoleType> roleTypes = new ArrayList<>();
 		// for each role entity fetched, add it in role list
-		for (UserRoleEntity userRoleEntity : userRoles) {
-			roles.add(userRoleEntity.getRole());
-			// set roles in user
-			user.setRoles(roles);
-
+		for (UserRoleEntity userRoleEntity : user.getRoles()) {
+			// for each role
+			for (RoleEntity roleEntity : allRoles) {
+				if (userRoleEntity.getRoleId().equals(roleEntity.getId()))
+					roleTypes.add(UserRoleType.valueOf(roleEntity.getRoleName().toUpperCase()));
+			}
 		}
+		user.setRoleTypes(roleTypes);
 
 		// create a new session with user, return it
 		Session session = sessionManager.createNewSession(user);

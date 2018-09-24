@@ -70,18 +70,17 @@ public class UserRoleService implements IUserRoleService {
 		ExternalFacingUser approver = mySqlUser.getUser(assignApproverEntity.getApproverUserId());
 		if (approver == null)
 			throw new NotFoundException("AssignApproverEntity", "Approver not found", null);
-		// get user roles
-		List<UserRoleEntity> userRoles = mySqlUser.getUserRoles(approver.getId());
 		// create a role list for user
 		List<UserRoleType> roles = new ArrayList<>();
 		// for each role entity fetched, add it in role list
-		for (UserRoleEntity userRoleEntity : userRoles) {
-			roles.add(userRoleEntity.getRole());
-		}
-		// check if approver id has approver access or not
-		if (!roles.contains(UserRoleType.Approver))
-			throw new BadRequestException("AssignApproverEntity", "User Id of approver does not have sufficient rights",
-					null);
+		// for (UserRoleEntity userRoleEntity : approver.getRoles()) {
+		// roles.add(userRoleEntity.getRole());
+		// }
+		// // check if approver id has approver access or not
+		// if (!roles.contains(UserRoleType.Approver))
+		// throw new BadRequestException("AssignApproverEntity", "User Id of
+		// approver does not have sufficient rights",
+		//			null);
 		List<ExternalFacingUser> users = new ArrayList<>();
 		// fetch all the users in a list
 		for (String userId : assignApproverEntity.getUsers()) {

@@ -11,36 +11,36 @@ public enum UserRoleType {
 	/**
 	 * Empty user
 	 */
-	Empty,
+	EMPTY,
 
 	/**
 	 * This is the role for an employee
 	 */
-	Employee,
+	EMPLOYEE,
 
 	/**
 	 * This role is for admin
 	 */
-	Admin,
+	ADMIN,
 
 	/**
 	 * This role is for approver
 	 */
-	Approver,
+	APPROVER,
 
 	/**
 	 * This role is for super-approver
 	 */
-	Super_Approver,
+	SUPER_APPROVER,
 
 	/**
 	 * This role is for finance
 	 */
-	Finance,
+	FINANCE,
 
 	/**
 	 * This is the system role
 	 */
-	System
+	SYSTEM
 
 }

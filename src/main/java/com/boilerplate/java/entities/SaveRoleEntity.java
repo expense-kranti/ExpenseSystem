@@ -29,10 +29,10 @@ public class SaveRoleEntity extends BaseEntity {
 	 * @param roles
 	 *            tHIS IS THE LIST OF ROLES
 	 */
-	public SaveRoleEntity(String userId, List<UserRoleType> roles) {
+	public SaveRoleEntity(String userId, List<String> roleIds) {
 		super();
 		this.userId = userId;
-		this.roles = roles;
+		this.roleIds = roleIds;
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class SaveRoleEntity extends BaseEntity {
 	 * this is the list of roles for given user
 	 */
 	@ApiModelProperty(value = "This is the list of roles", required = true, notes = "This is the list of roles")
-	private List<UserRoleType> roles;
+	private List<String> roleIds;
 
 	/**
 	 * This method is used to get list user id
@@ -70,8 +70,8 @@ public class SaveRoleEntity extends BaseEntity {
 	 * 
 	 * @return
 	 */
-	public List<UserRoleType> getRoles() {
-		return roles;
+	public List<String> getRoleIds() {
+		return roleIds;
 	}
 
 	/**
@@ -79,8 +79,8 @@ public class SaveRoleEntity extends BaseEntity {
 	 * 
 	 * @param roles
 	 */
-	public void setRoles(List<UserRoleType> roles) {
-		this.roles = roles;
+	public void setRoleIds(List<String> roleIds) {
+		this.roleIds = roleIds;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class SaveRoleEntity extends BaseEntity {
 		if (this.isNullOrEmpty(this.getUserId()))
 			throw new ValidationFailedException("UserRoleEntity", "User id is null/empty", null);
 		// check if role is null or empty
-		if (this.getRoles().size() == 0)
+		if (this.getRoleIds() == null || this.getRoleIds().size() == 0)
 			throw new ValidationFailedException("UserRoleEntity", "Role is null/empty", null);
 		return true;
 	}

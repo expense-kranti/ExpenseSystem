@@ -21,17 +21,17 @@ public class UserRoleEntity extends BaseEntity {
 	 * @param userId
 	 *            This is the user id
 	 */
-	public UserRoleEntity(UserRoleType role, String userId) {
+	public UserRoleEntity(String roleId, String userId) {
 		super();
-		this.role = role;
+		this.roleId = roleId;
 		this.userId = userId;
 	}
 
 	/**
 	 * This is the role
 	 */
-	@ApiModelProperty(value = "This is the role", required = true, notes = "This is the role")
-	private UserRoleType role;
+	@ApiModelProperty(value = "This is the role id", required = true, notes = "This is the role")
+	private String roleId;
 
 	/**
 	 * this is the id of the user
@@ -40,18 +40,12 @@ public class UserRoleEntity extends BaseEntity {
 	private String userId;
 
 	/**
-	 * This is the string equivalent for status type
-	 */
-	@ApiModelProperty(value = "This is the role in string", required = true, notes = "This is the role in string")
-	private String roleTypeString;
-
-	/**
 	 * This method is used to get role
 	 * 
 	 * @return
 	 */
-	public UserRoleType getRole() {
-		return role;
+	public String getRoleId() {
+		return roleId;
 	}
 
 	/**
@@ -59,8 +53,8 @@ public class UserRoleEntity extends BaseEntity {
 	 * 
 	 * @param role
 	 */
-	public void setRole(UserRoleType role) {
-		this.role = role;
+	public void setRoleId(String roleId) {
+		this.roleId = roleId;
 	}
 
 	/**
@@ -82,27 +76,6 @@ public class UserRoleEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get role type string
-	 * 
-	 * @return
-	 */
-	public String getRoleTypeString() {
-		return roleTypeString;
-	}
-
-	/**
-	 * This method is used to set role type string
-	 * 
-	 * @param roleTypeString
-	 */
-	public void setRoleTypeString(String roleTypeString) {
-		this.roleTypeString = roleTypeString;
-		for (UserRoleType role : UserRoleType.values())
-			if (roleTypeString.equalsIgnoreCase(String.valueOf(role)))
-				this.setRole(role);
-	}
-
-	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
@@ -111,8 +84,8 @@ public class UserRoleEntity extends BaseEntity {
 		if (this.isNullOrEmpty(this.getUserId()))
 			throw new ValidationFailedException("UserRoleEntity", "User id is null/empty", null);
 		// check if role is null or empty
-		if (this.getRole() == null)
-			throw new ValidationFailedException("UserRoleEntity", "Role is null/empty", null);
+		if (this.isNullOrEmpty(this.getRoleId()))
+			throw new ValidationFailedException("UserRoleEntity", "Role id is null/empty", null);
 		return false;
 	}
 

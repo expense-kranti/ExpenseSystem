@@ -210,17 +210,20 @@ public class FileService implements IFileService {
 		// fetch the currenlty logged in user
 		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
 		// check if current user if finance/super-approver
-		if (!currentUser.getRoles().contains(UserRoleType.Super_Approver)
-				&& !currentUser.getRoles().contains(UserRoleType.Finance)) {
-			// fetch the file owner
-			ExternalFacingUser fileOwner = mySqlUser.getUser(fileDetailsEntity.getUserId());
-			// check if current user is approver for the file owner
-			if (fileOwner.getApproverId() != null && !fileOwner.getApproverId().equals(currentUser.getId())
-					&& !fileOwner.getId().equals(currentUser.getId()))
-				// check if current user is file owner
-				throw new UnauthorizedException("FileMappingEntity", "User is not authorized to download this file",
-						null);
-		}
+		// if (!currentUser.getRoles().contains(UserRoleType.Super_Approver)
+		// && !currentUser.getRoles().contains(UserRoleType.Finance)) {
+		// // fetch the file owner
+		// ExternalFacingUser fileOwner =
+		// mySqlUser.getUser(fileDetailsEntity.getUserId());
+		// // check if current user is approver for the file owner
+		// if (fileOwner.getApproverId() != null &&
+		// !fileOwner.getApproverId().equals(currentUser.getId())
+		// && !fileOwner.getId().equals(currentUser.getId()))
+		// // check if current user is file owner
+		// throw new UnauthorizedException("FileMappingEntity", "User is not
+		// authorized to download this file",
+		// null);
+		// }
 		// get the root file saving location
 		String fileLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
 		Path file = Paths.get(fileLocation, fileName);

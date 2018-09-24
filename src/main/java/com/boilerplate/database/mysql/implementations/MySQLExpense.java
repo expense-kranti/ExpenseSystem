@@ -230,7 +230,7 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		queryParameterMap.put("Status", status);
+		hSQLQuery = hSQLQuery.replaceAll("@Status", String.valueOf(status));
 		// This variable is used to hold the query response
 		List<Map<String, Object>> expenseMap = new ArrayList<>();
 		try {
