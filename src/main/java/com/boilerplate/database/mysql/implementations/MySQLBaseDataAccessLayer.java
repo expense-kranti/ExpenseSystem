@@ -332,7 +332,8 @@ public class MySQLBaseDataAccessLayer {
 		try {
 			// open a session
 			session = HibernateUtility.getSessionFactory().openSession();
-			session.enableFilter("activeFilter").setParameter("activeStatus", new Boolean(true));
+			// session.enableFilter("activeFilter").setParameter("activeStatus",
+			// new Boolean(true));
 
 			// begin a transaction
 			Transaction transaction = session.beginTransaction();

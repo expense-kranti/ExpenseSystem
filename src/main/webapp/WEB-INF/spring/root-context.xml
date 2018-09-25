@@ -189,13 +189,12 @@
 
 	<bean id="userRoleService" class="com.boilerplate.service.implemetations.UserRoleService">
 		<property name="mySqlUser" ref="mySqlUser" />
-
+		<property name="mySqlRole" ref="mySqlRole" />
 	</bean>
 
 	<bean id="sendEmailService" class="com.boilerplate.service.implemetations.SendEmailService">
 		<property name="configurationManager" ref="configurationManager" />
 		<property name="mySqlUser" ref="mySqlUser" />
-
 	</bean>
 
 

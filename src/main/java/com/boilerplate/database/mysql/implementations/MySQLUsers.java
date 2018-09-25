@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.boilerplate.configurations.ConfigurationManager;
@@ -111,6 +112,9 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 		}
 	}
 
+	/**
+	 * @see IUser.getUserById
+	 */
 	@Override
 	public ExternalFacingUser getUserById(String userId) throws BadRequestException {
 		// Get the SQL query from configurations to get users
@@ -168,37 +172,6 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	}
 
 	/**
-	 * @see IUser.saveUserRoles
-	 */
-	@Override
-	public void saveUserRoles(SaveRoleEntity userRoles) throws Exception {
-		Session session = null;
-		try {
-			// open a session
-			session = HibernateUtility.getSessionFactory().openSession();
-			// get all the configurations from the DB as a list
-			Transaction transaction = session.beginTransaction();
-			// for each roles
-			for (String role : userRoles.getRoleIds()) {
-				// save role in MySQL
-				UserRoleEntity userRole = new UserRoleEntity(role, userRoles.getUserId());
-				session.saveOrUpdate(userRole);
-			}
-			// commit the transaction
-			transaction.commit();
-		} catch (Exception ex) {
-			logger.logException("MySQLBaseDataAccessLayer", "create", "try-catch block", ex.getMessage(), ex);
-			session.getTransaction().rollback();
-			throw new ValidationFailedException("UserRoleEntity", "Could not save roles", null);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-		}
-
-	}
-
-	/**
 	 * @see IUser.getUserRoles
 	 */
 	@Override
@@ -253,6 +226,20 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 		if (users.size() == 0)
 			return null;
 		return users;
+	}
+
+	/**
+	 * @see IUser.getAllUsers
+	 */
+	@Override
+	public List<ExternalFacingUser> getAllUsers() throws BadRequestException {
+		try{
+			return super.get(ExternalFacingUser.class);
+		}catch (Exception e) {
+			//log the exception
+			logger.logException("MySQLUsers", "getAllUsers", "eceptionGetAllUsers", "Exception occurred while getting all users", e);
+		throw new BadRequestException("ExternalFacingUser", "Some exception occurred while getting users", null);
+		}
 	}
 
 }

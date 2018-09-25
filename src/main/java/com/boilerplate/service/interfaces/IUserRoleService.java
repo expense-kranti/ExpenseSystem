@@ -1,5 +1,8 @@
 package com.boilerplate.service.interfaces;
 
+import com.boilerplate.exceptions.rest.BadRequestException;
+import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.SaveRoleEntity;
 
@@ -33,5 +36,20 @@ public interface IUserRoleService {
 	 *             approvers
 	 */
 	public void assignApprover(AssignApproverEntity assignApproverEntity) throws Exception;
+
+	/**
+	 * This method is used to delete roles of a user
+	 * 
+	 * @param saveRoleEntity
+	 *            This entity contains role ids and user id of the user
+	 * @throws ValidationFailedException
+	 *             Throw this exception if entity is invalid
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception role/user is not found
+	 */
+	public void deleteRoles(SaveRoleEntity saveRoleEntity)
+			throws ValidationFailedException, BadRequestException, NotFoundException;
 
 }

@@ -154,7 +154,6 @@ public class LogAndTraceExceptionAspect {
 			// or it will cause performance issue
 
 			// update user state in case of generic error update
-
 			logger.logTraceExitException(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
 					proceedingJoinPoint.getSignature().getName(), proceedingJoinPoint.getArgs(), th,
 					RequestThreadLocal.getSession());

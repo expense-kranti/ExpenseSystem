@@ -1,5 +1,7 @@
 package com.boilerplate.java.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -136,7 +138,7 @@ public class UserController extends BaseController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	public @ResponseBody ExternalFacingUser getCurrentUser() throws Exception, NotFoundException, BadRequestException {
-		// session won't be null as has been checked in aspects
+		// call the business layer
 		return this.userService.getUser(RequestThreadLocal.getSession().getExternalFacingUser().getId());
 
 	}
@@ -204,6 +206,45 @@ public class UserController extends BaseController {
 		RequestThreadLocal.setRequest(RequestThreadLocal.getRequestId(), RequestThreadLocal.getHttpRequest(),
 				RequestThreadLocal.getHttpResponse(), session);
 		return session;
+	}
+
+	/**
+	 * This API is used to delete roles of a user
+	 * 
+	 * @param role
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if entity is not found
+	 * @throws Exception
+	 *             Throw this exception if any exception occurs
+	 */
+	@ApiOperation(value = "Delete roles of users", notes = "The user is unique in the system, The creation date and updated "
+			+ "date are automatically filled.")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
+			@ApiResponse(code = 400, message = "Bad request, manadatory fields are missing"),
+			@ApiResponse(code = 404, message = "The user does not exist") })
+	@RequestMapping(value = "/deleteRoles", method = RequestMethod.POST)
+	public @ResponseBody void deleteRoles(@RequestBody SaveRoleEntity role)
+			throws BadRequestException, NotFoundException, Exception {
+		// call the business layer
+		userRoleService.deleteRoles(role);
+	}
+
+	/**
+	 * This API is used to get all the users(active/inactive)
+	 * 
+	 * @return List of users
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 */
+	@ApiOperation(value = "Get all users")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found") })
+	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	public @ResponseBody List<ExternalFacingUser> getAllUsers() throws BadRequestException {
+		// call the business layer
+		return this.userService.getAllUsers();
+
 	}
 
 }

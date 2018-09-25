@@ -79,17 +79,6 @@ public interface IUser {
 	public ExternalFacingUser getUser(String id) throws BadRequestException;
 
 	/**
-	 * This method is used to save user roles
-	 * 
-	 * @param userRoles
-	 *            this is the list of user role entities
-	 * @throws Exception
-	 *             Throw this exception if any exception occurs while saving
-	 *             user
-	 */
-	public void saveUserRoles(SaveRoleEntity userRoles) throws Exception;
-
-	/**
 	 * This method is used to get roles for the given user id
 	 * 
 	 * @param userId
@@ -105,8 +94,17 @@ public interface IUser {
 	 * 
 	 * @return List of finance users
 	 * @throws BadRequestException
-	 *             Throw this exception if user senda bad request
+	 *             Throw this exception if user sends a bad request
 	 */
 	public List<Map<String, Object>> getFinanceUsers() throws BadRequestException;
+
+	/**
+	 * This method is used to get all users
+	 * 
+	 * @return List of users
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 */
+	public List<ExternalFacingUser> getAllUsers() throws BadRequestException;
 
 }

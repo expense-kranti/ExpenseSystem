@@ -92,7 +92,7 @@ public class SaveRoleEntity extends BaseEntity {
 		if (this.isNullOrEmpty(this.getUserId()))
 			throw new ValidationFailedException("UserRoleEntity", "User id is null/empty", null);
 		// check if role is null or empty
-		if (this.getRoleIds() == null || this.getRoleIds().size() == 0)
+		if (this.getRoleIds() == null || this.getRoleIds().size() == 0 || this.roleIds.isEmpty())
 			throw new ValidationFailedException("UserRoleEntity", "Role is null/empty", null);
 		return true;
 	}

@@ -456,6 +456,29 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for delete roles
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public void com.boilerplate.java.controllers.UserController.deleteRoles(com.boilerplate.java.entities.SaveRoleEntity)");
+		methodPermission.setMethodName(
+				"public void com.boilerplate.java.controllers.UserController.deleteRoles(com.boilerplate.java.entities.SaveRoleEntity)");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for get all users
+		methodPermission = new MethodPermissions();
+		methodPermission.setId("public java.util.List com.boilerplate.java.controllers.UserController.getAllUsers()");
+		methodPermission
+				.setMethodName("public java.util.List com.boilerplate.java.controllers.UserController.getAllUsers()");
+		methodPermission.setIsAuthenticationRequired(true);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permission for creating expense
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(

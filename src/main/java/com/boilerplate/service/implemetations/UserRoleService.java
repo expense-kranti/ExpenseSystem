@@ -3,9 +3,13 @@ package com.boilerplate.service.implemetations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.boilerplate.database.interfaces.IRole;
 import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.Logger;
 import com.boilerplate.java.entities.AssignApproverEntity;
 import com.boilerplate.java.entities.ExternalFacingUser;
@@ -25,6 +29,7 @@ public class UserRoleService implements IUserRoleService {
 	/**
 	 * This is the instance of IUser
 	 */
+	@Autowired
 	IUser mySqlUser;
 
 	/**
@@ -35,6 +40,21 @@ public class UserRoleService implements IUserRoleService {
 	 */
 	public void setMySqlUser(IUser mySqlUser) {
 		this.mySqlUser = mySqlUser;
+	}
+
+	/**
+	 * This is the autowired instance of Irole
+	 */
+	@Autowired
+	IRole mySqlRole;
+
+	/**
+	 * This method is used to set the autowired instance of IRole
+	 * 
+	 * @param mySqlRole
+	 */
+	public void setMySqlRole(IRole mySqlRole) {
+		this.mySqlRole = mySqlRole;
 	}
 
 	/**
@@ -52,10 +72,9 @@ public class UserRoleService implements IUserRoleService {
 		ExternalFacingUser user = mySqlUser.getUser(saveRoleEntity.getUserId());
 		// check if user exists or not
 		if (user == null || !user.getIsActive())
-			throw new NotFoundException("SaveRoleEntity",
-					"User not found or is inactive with id:" + saveRoleEntity.getUserId(), null);
+			throw new NotFoundException("ExternalFacingUser", "User not found or is inactive", null);
 		// save roles in mysql
-		mySqlUser.saveUserRoles(saveRoleEntity);
+		mySqlRole.saveUserRoles(saveRoleEntity);
 
 	}
 
@@ -80,7 +99,7 @@ public class UserRoleService implements IUserRoleService {
 		// if (!roles.contains(UserRoleType.Approver))
 		// throw new BadRequestException("AssignApproverEntity", "User Id of
 		// approver does not have sufficient rights",
-		//			null);
+		// null);
 		List<ExternalFacingUser> users = new ArrayList<>();
 		// fetch all the users in a list
 		for (String userId : assignApproverEntity.getUsers()) {
@@ -99,6 +118,36 @@ public class UserRoleService implements IUserRoleService {
 			mySqlUser.updateUser(userEntity);
 
 		}
+	}
+
+	@Override
+	public void deleteRoles(SaveRoleEntity saveRoleEntity)
+			throws ValidationFailedException, BadRequestException, NotFoundException {
+		// validate entity
+		saveRoleEntity.validate();
+		ExternalFacingUser user = mySqlUser.getUser(saveRoleEntity.getUserId());
+		// check if user exists or not
+		if (user == null || !user.getIsActive())
+			throw new NotFoundException("ExternalFacingUser", "User not found or is inactive", null);
+		// check if user has some roles
+		if (user.getRoles() == null || user.getRoles().size() == 0)
+			throw new BadRequestException("ExternalFacingUser", "User does not have any roles to be deleted", null);
+		List<UserRoleEntity> rolesToDelete = new ArrayList<>();
+		// list of role ids of user
+		List<String> roleIds = new ArrayList<>();
+		for (UserRoleEntity userRoleEntity : user.getRoles()) {
+			roleIds.add(userRoleEntity.getRoleId());
+			if (saveRoleEntity.getRoleIds().contains(userRoleEntity.getRoleId()))
+				rolesToDelete.add(userRoleEntity);
+		}
+		// check if role mapping to be deleted exists or not
+		for (String roleId : saveRoleEntity.getRoleIds()) {
+			if (!roleIds.contains(roleId))
+				throw new BadRequestException("UserRoleEntity",
+						"Role id :" + roleId + " does not exist for the given user", null);
+		}
+		// delete the roles
+		mySqlRole.deleteRoles(rolesToDelete);
 	}
 
 }

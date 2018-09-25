@@ -11,4 +11,3 @@
 		<property name="roleId" column="RoleId" />
 	</class>
 </hibernate-mapping>
-

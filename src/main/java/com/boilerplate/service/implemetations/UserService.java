@@ -228,11 +228,18 @@ public class UserService implements IUserService {
 				throw new BadRequestException("ExternalFacingUser", "User is disabled, please contact your admin",
 						null);
 		}
+		// check if user has at least 1 role
+		if (user.getRoles() == null || user.getRoles().size() == 0)
+			throw new BadRequestException("ExternalFacingUser",
+					"User does not have any role, please check with your admin", null);
 		// get all roles
 		List<RoleEntity> allRoles = mySqlRole.getAllRoles();
+		List<UserRoleEntity> userRoles = new ArrayList<>();
+		userRoles.addAll(user.getRoles());
+		user.setRoles(userRoles);
 		List<UserRoleType> roleTypes = new ArrayList<>();
 		// for each role entity fetched, add it in role list
-		for (UserRoleEntity userRoleEntity : user.getRoles()) {
+		for (UserRoleEntity userRoleEntity : userRoles) {
 			// for each role
 			for (RoleEntity roleEntity : allRoles) {
 				if (userRoleEntity.getRoleId().equals(roleEntity.getId()))
@@ -244,6 +251,14 @@ public class UserService implements IUserService {
 		// create a new session with user, return it
 		Session session = sessionManager.createNewSession(user);
 		return session;
+	}
+
+	/**
+	 * @see IUserService.getAllUsers
+	 */
+	@Override
+	public List<ExternalFacingUser> getAllUsers() throws BadRequestException {
+		return mySqlUser.getAllUsers();
 	}
 
 }
