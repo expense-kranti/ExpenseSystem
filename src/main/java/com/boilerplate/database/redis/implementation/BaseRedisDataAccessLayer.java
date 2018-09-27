@@ -747,6 +747,8 @@ public class BaseRedisDataAccessLayer {
 				"FROM ExpenseEntity expense where expense.userId = :UserId and Date(expense.creationDate) >='@StartDate' and Date(expense.creationDate) <= '@EndDate' and expense.status = '@Status'");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_BY_APPROVER",
 				"FROM ExpenseEntity expense where expense.status in ('Submitted','Re_Submitted') and expense.userId in (select user.id from ExternalFacingUser user where user.approverId = @ApproverId)");
+		vAllEAll.put("SQL_QUERY_FOR_GETTING_EXPENSE_FOR_SUPER_APPROVER",
+				"FROM ExpenseEntity expense where expense.status in ('Submitted','Re_Submitted')");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING",
 				"FROM FileMappingEntity mapping where mapping.fileId = :FileId");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FILE_MAPPING_BY_EXPENSE_ID",

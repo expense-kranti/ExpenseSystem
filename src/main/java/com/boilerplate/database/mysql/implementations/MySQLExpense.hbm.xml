@@ -5,8 +5,8 @@
 <!-- Generated 22 Oct, 2014 2:29:42 PM by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
 	<filter-def name="activeFilter">
-	<filter-param name="activeStatus" type="boolean" />
-</filter-def>
+		<filter-param name="activeStatus" type="boolean" />
+	</filter-def>
 	<class name="com.boilerplate.java.entities.ExpenseEntity" table="Expenses">
 		<id name="id" column="Id">
 			<generator class="identity" />
@@ -25,6 +25,12 @@
 		<property name="updationDate" column="UpdatedDate" />
 		<property name="approverComments" column="ApproverComments" />
 		<property name="amount" column="Amount" />
-
+		<bag name="fileMappings" table="FileMapping" inverse="true" lazy="false"
+			fetch="select">
+			<key>
+				<column name="ExpenseId" not-null="true" />
+			</key>
+			<one-to-many class="com.boilerplate.java.entities.FileMappingEntity" />
+		</bag>
 	</class>
 </hibernate-mapping>

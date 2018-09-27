@@ -172,36 +172,6 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	}
 
 	/**
-	 * @see IUser.getUserRoles
-	 */
-	@Override
-	public List<UserRoleEntity> getUserRoles(String userId) throws BadRequestException {
-		// Get the SQL query from configurations to get user roles
-		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USER_ROLES_BY_ID");
-		// Make a new instance of BoilerplateMap ,used to define query
-		// parameters
-		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		// Put id in query parameter
-		queryParameterMap.put("UserId", userId);
-		// This variable is used to hold the query response
-		List<UserRoleEntity> userRoles = new ArrayList<>();
-		try {
-			// Execute query
-			userRoles = super.executeSelect(hSQLQuery, queryParameterMap);
-		} catch (Exception ex) {
-			// Log exception
-			logger.logException("MySQLUsers", "getUserRoles", "exceptionGetUserRoles",
-					"While trying to get user roles, This is the id~ " + userId + "This is the query" + hSQLQuery, ex);
-			// Throw exception
-			throw new BadRequestException("MySQLUsers", "While trying to get user roles ~ " + ex.toString(), ex);
-		}
-		if (userRoles.size() == 0)
-			return null;
-		return userRoles;
-
-	}
-
-	/**
 	 * @see IUser.getFinanceUsers
 	 */
 	@Override
@@ -233,12 +203,13 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	 */
 	@Override
 	public List<ExternalFacingUser> getAllUsers() throws BadRequestException {
-		try{
+		try {
 			return super.get(ExternalFacingUser.class);
-		}catch (Exception e) {
-			//log the exception
-			logger.logException("MySQLUsers", "getAllUsers", "eceptionGetAllUsers", "Exception occurred while getting all users", e);
-		throw new BadRequestException("ExternalFacingUser", "Some exception occurred while getting users", null);
+		} catch (Exception e) {
+			// log the exception
+			logger.logException("MySQLUsers", "getAllUsers", "eceptionGetAllUsers",
+					"Exception occurred while getting all users", e);
+			throw new BadRequestException("ExternalFacingUser", "Some exception occurred while getting users", null);
 		}
 	}
 

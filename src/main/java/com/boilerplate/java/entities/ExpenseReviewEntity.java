@@ -101,9 +101,8 @@ public class ExpenseReviewEntity extends BaseEntity {
 	 */
 	public void setStatusString(String statusString) throws ValidationFailedException {
 		this.statusString = statusString;
-		for (ExpenseStatusType status : ExpenseStatusType.values())
-			if (statusString.equalsIgnoreCase(String.valueOf(status)))
-				this.setStatus(status);
+		if (ExpenseStatusType.valueOf(statusString.toUpperCase()) != null)
+			this.status = ExpenseStatusType.valueOf(statusString.toUpperCase());
 
 	}
 
@@ -112,17 +111,13 @@ public class ExpenseReviewEntity extends BaseEntity {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
+		// check if status is not null
+		if (this.getStatus() == null)
+			throw new ValidationFailedException("ExpenseReviewEntity", "Invalid value for status string", null);
 		// validate that none of the fields are null or empty
-		if (isNullOrEmpty(this.getExpenseId()) || this.getStatus() == null)
-			throw new ValidationFailedException("ExpenseReviewEntity",
-					"Either expense id is null or status is null or has an invalid value", null);
-		// check if status is only finance approve or finance rejected
-		if (!this.status.equals(ExpenseStatusType.Finance_Approved))
-			if (!this.status.equals(ExpenseStatusType.Finance_Rejected))
-				if (!this.status.equals(ExpenseStatusType.Ready_For_Payment))
-					throw new ValidationFailedException("ExpenseStatusType",
-							"Finance can either reject an expense or approve it, any other status is not allowed",
-							null);
+		if (isNullOrEmpty(this.getExpenseId()))
+			throw new ValidationFailedException("ExpenseReviewEntity", "Either expense id is null or empty", null);
+
 		return true;
 	}
 

@@ -1,5 +1,6 @@
 package com.boilerplate.java.controllers;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +109,9 @@ public class ExpenseController extends BaseController {
 	 *             Throw this exception if user sends a bad request
 	 * @throws ValidationFailedException
 	 *             Throw this exception if entity fails any validation rules
+	 * @throws ParseException
+	 *             Throw this exception if parse exception occurs while parsing
+	 *             date
 	 */
 	@ApiOperation(value = "Gets expenses for a given user", notes = "The creation date and updated date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
@@ -115,7 +119,7 @@ public class ExpenseController extends BaseController {
 			@ApiResponse(code = 404, message = "If entity does not exist") })
 	@RequestMapping(value = "/getExpensesForEmployee", method = RequestMethod.POST)
 	public @ResponseBody List<ExpenseEntity> getExpensesForEmployee(@RequestBody FetchExpenseEntity fetchExpenseEntity)
-			throws ValidationFailedException, NotFoundException, BadRequestException {
+			throws ValidationFailedException, NotFoundException, BadRequestException, ParseException {
 		// call the business layer
 		return expenseService.getExpensesForUser(fetchExpenseEntity);
 	}

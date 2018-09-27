@@ -134,7 +134,7 @@ public interface IExpense {
 	 * @return List of expenses
 	 * @throws BadRequestException
 	 */
-	public List<ExpenseEntity> getAllExpenses() throws BadRequestException;
+	public List<ExpenseEntity> getExpensesForSuper() throws BadRequestException;
 
 	public List<ExpenseEntity> getExpensesByStatus(ExpenseStatusType status) throws BadRequestException;
 }

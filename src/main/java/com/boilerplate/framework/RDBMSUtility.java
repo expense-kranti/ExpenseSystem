@@ -37,11 +37,11 @@ public class RDBMSUtility {
 		}
 
 		// check if fetchExpenseEntity contains status of expense
-		if (fetchExpenseEntity.getExpenseType() != null)
+		if (fetchExpenseEntity.getExpenseStatusType() != null)
 			// replace status type in sql query
-			sqlQuery = sqlQuery.replace("@Status", fetchExpenseEntity.getExpenseType().toString());
+			sqlQuery = sqlQuery.replace("@Status", fetchExpenseEntity.getExpenseStatusType().toString());
 		else
-			sqlQuery = sqlQuery.replace("and  expense.status = '@Status'", "");
+			sqlQuery = sqlQuery.replace("and expense.status = '@Status'", "");
 		// return modified sql query
 		return sqlQuery;
 

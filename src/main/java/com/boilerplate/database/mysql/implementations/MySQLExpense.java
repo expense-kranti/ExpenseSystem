@@ -286,13 +286,36 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 		}
 	}
 
+	/**
+	 * @see IExpense.getExpensesForSuper
+	 */
 	@Override
-	public List<ExpenseEntity> getAllExpenses() throws BadRequestException {
+	public List<ExpenseEntity> getExpensesForSuper() throws BadRequestException {
+		// Get the SQL query from configurations to get expense
+		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_EXPENSE_FOR_SUPER_APPROVER");
+		// Make a new instance of BoilerplateMap ,used to define query
+		// parameters
+		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
 		// This variable is used to hold the query response
-		List<ExpenseEntity> expenses = super.get(ExpenseEntity.class);
+		List<ExpenseEntity> expenses = new ArrayList<>();
+		try {
+			// Execute query
+			expenses = super.executeSelect(hSQLQuery, queryParameterMap);
+		} catch (Exception ex) {
+			// Log exception
+			logger.logException("MySQLExpense", "getExpensesForSuper", "exceptionGetExpensesForSuper",
+					"While trying to get expense data, This is the query" + hSQLQuery, ex);
+			// Throw exception
+			throw new BadRequestException("MySQLExpense", "While trying to get expense data ~ " + ex.toString(), ex);
+		}
+		if (expenses.size() == 0)
+			return null;
 		return expenses;
 	}
 
+	/**
+	 * @see IExpense.getExpensesByStatus
+	 */
 	@Override
 	public List<ExpenseEntity> getExpensesByStatus(ExpenseStatusType status) throws BadRequestException {
 		// Get the SQL query from configurations to get expense

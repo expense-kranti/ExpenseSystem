@@ -13,6 +13,7 @@ import com.boilerplate.database.interfaces.IUser;
 import com.boilerplate.database.mysql.implementations.MySQLExpense;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.framework.HttpResponse;
 import com.boilerplate.framework.HttpUtility;
 import com.boilerplate.framework.Logger;
@@ -126,20 +127,8 @@ public class UserService implements IUserService {
 		if (userId == null)
 			throw new BadRequestException("ExternalFacingUser", "User id for fetching user is null", null);
 		// create a new user enityt
-		ExternalFacingUser user = mySqlUser.getUser(userId);
-		// // get user roles
-		// List<UserRoleEntity> userRoles =
-		// mySqlUser.getUserRoles(user.getId());
-		// // create a role list for user
-		// List<UserRoleType> roles = new ArrayList<>();
-		// // for each role entity fetched, add it in role list
-		// for (UserRoleEntity userRoleEntity : userRoles) {
-		// roles.add(userRoleEntity.getRole());
-		// // set roles in user
-		// user.setRoles(roles);
-		//
-		// }
-		return user;
+		return mySqlUser.getUser(userId);
+
 	}
 
 	/**
@@ -154,17 +143,27 @@ public class UserService implements IUserService {
 		// check if user id is not null
 		if (user == null)
 			throw new NotFoundException("ExternalFacingUser", "User not found", null);
-		// // check if user is not admin
-		// List<UserRoleEntity> roles = mySqlUser.getUserRoles(userId);
-		// // check if any role is admin or not
-		// for (UserRoleEntity userRoleEntity : roles) {
-		// if (userRoleEntity.getRole().equals(UserRoleType.Admin))
-		// throw new BadRequestException("UserRoleEntity", "Admin cannot be
-		// disabled", null);
-		// }
 		// check if user is already disabled
 		if (!user.getIsActive())
 			throw new BadRequestException("ExternalFacingUser", "user is already disabled", null);
+		// check if user has some roles
+		if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+			// check if user being disabled is not admin
+			List<UserRoleEntity> userRoleMappings = new ArrayList<>();
+			userRoleMappings.addAll(user.getRoles());
+			// get all roles
+			List<RoleEntity> allRoles = mySqlRole.getAllRoles();
+			// check if user does not have admin as a role
+			for (UserRoleEntity userRoleEntity : userRoleMappings) {
+				for (RoleEntity roleEntity : allRoles) {
+					if (roleEntity.getRoleName().equals(UserRoleType.ADMIN.toString()))
+						if (userRoleEntity.getRoleId().equals(roleEntity.getId()))
+							throw new ValidationFailedException("UserRoleEntity",
+									"The user you are trying to disable is an admin", null);
+				}
+			}
+
+		}
 		// set active to false
 		user.setIsActive(false);
 		mySqlUser.updateUser(user);
@@ -228,10 +227,13 @@ public class UserService implements IUserService {
 				throw new BadRequestException("ExternalFacingUser", "User is disabled, please contact your admin",
 						null);
 		}
+		user = null;
+		user = mySqlUser.getUserById(email);
 		// check if user has at least 1 role
 		if (user.getRoles() == null || user.getRoles().size() == 0)
 			throw new BadRequestException("ExternalFacingUser",
 					"User does not have any role, please check with your admin", null);
+
 		// get all roles
 		List<RoleEntity> allRoles = mySqlRole.getAllRoles();
 		List<UserRoleEntity> userRoles = new ArrayList<>();

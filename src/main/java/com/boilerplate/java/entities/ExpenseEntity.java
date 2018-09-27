@@ -1,9 +1,11 @@
 package com.boilerplate.java.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.ValidationFailedException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
@@ -70,6 +72,7 @@ public class ExpenseEntity extends BaseEntity {
 	/**
 	 * This is the status of the expense
 	 */
+	@JsonIgnore
 	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
 	private ExpenseStatusType status;
 
@@ -105,10 +108,62 @@ public class ExpenseEntity extends BaseEntity {
 	private float amount;
 
 	/**
-	 * This is the string for enum ExpenseStatusType
+	 * This is the list of file mappings
 	 */
-	@ApiModelProperty(value = "This is the string equivalent of the expense status type", required = true, notes = "This is the string equivalent of the expense status type")
+	@JsonIgnore
+	@ApiModelProperty(value = "This is the list of file mappings for the expense", required = true, notes = "This is the list of file mappings for the expense")
+	private List<FileMappingEntity> fileMappings;
+
+	/**
+	 * This is the string equivalent of status
+	 */
+	@ApiModelProperty(value = "This is the string conversion of status", notes = "This is the string conversion of status")
 	private String statusString;
+
+	/**
+	 * This method is used to get status string
+	 * 
+	 * @return
+	 */
+	public String getStatusString() {
+		return statusString;
+	}
+
+	/**
+	 * This method is used to get status string
+	 * 
+	 * @param statusString
+	 */
+	public void setStatusString(String statusString) {
+		this.statusString = statusString;
+	}
+
+	/**
+	 * This method is used to get file mappings
+	 * 
+	 * @return
+	 */
+	public List<FileMappingEntity> getFileMappings() {
+		return fileMappings;
+	}
+
+	/**
+	 * This method is used to set file mappings
+	 * 
+	 * @param fileMappings
+	 */
+	public void setFileMappings(List<FileMappingEntity> fileMappings) {
+		this.fileMappings = fileMappings;
+		if (this.fileMappings != null && !this.fileMappings.isEmpty()) {
+			List<String> ids = new ArrayList<>();
+			// set the attachment ids
+			for (FileMappingEntity fileMappingEntity : this.fileMappings) {
+				ids.add(fileMappingEntity.getAttachmentId());
+			}
+			// set the attachment ids
+			this.setAttachmentIds(ids);
+		}
+	}
 
 	/**
 	 * This method is used to get amount
@@ -178,8 +233,10 @@ public class ExpenseEntity extends BaseEntity {
 	 * 
 	 * @param status
 	 */
-	public void setStatus(ExpenseStatusType status) {
+	public void setStatus(ExpenseStatusType status) throws ValidationFailedException {
 		this.status = status;
+		this.statusString = this.status.toString();
+
 	}
 
 	/**
@@ -255,27 +312,6 @@ public class ExpenseEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get status string
-	 * 
-	 * @return
-	 */
-	public String getStatusString() {
-		return statusString;
-	}
-
-	/**
-	 * This method is used to set status string
-	 * 
-	 * @param statusString
-	 */
-	public void setStatusString(String statusString) {
-		this.statusString = statusString;
-		for (ExpenseStatusType status : ExpenseStatusType.values())
-			if (statusString.equalsIgnoreCase(String.valueOf(status)))
-				this.setStatus(status);
-	}
-
-	/**
 	 * @see BaseEntity.validate
 	 */
 	@Override
@@ -284,7 +320,7 @@ public class ExpenseEntity extends BaseEntity {
 		if (isNullOrEmpty(this.getTitle()) || isNullOrEmpty(this.getDescription()) || this.attachmentIds == null
 				|| this.attachmentIds.size() == 0 || this.getAmount() == 0)
 			throw new ValidationFailedException("ExpenseEntity", "One of the mandatory fields is missing", null);
-
+		
 		return true;
 	}
 

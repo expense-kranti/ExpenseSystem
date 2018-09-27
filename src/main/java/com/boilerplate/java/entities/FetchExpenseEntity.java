@@ -22,7 +22,8 @@ public class FetchExpenseEntity extends BaseEntity {
 	 * This is the type expenses to be fetched
 	 */
 	@ApiModelProperty(value = "This is the status of the expense", required = true, notes = "This is the status of the expense")
-	private ExpenseStatusType expenseType;
+	@JsonIgnore
+	private ExpenseStatusType expenseStatusType;
 
 	/**
 	 * This is the string for enum ExpenseStatusType
@@ -67,21 +68,41 @@ public class FetchExpenseEntity extends BaseEntity {
 	}
 
 	/**
-	 * This method is used to get expense type
+	 * This method is used to get status
 	 * 
 	 * @return
 	 */
-	public ExpenseStatusType getExpenseType() {
-		return expenseType;
+	public ExpenseStatusType getExpenseStatusType() {
+		return expenseStatusType;
 	}
 
 	/**
-	 * This method is used to set expense type
+	 * This method is used to set status
 	 * 
-	 * @param expenseType
+	 * @param expenseStatusType
 	 */
-	public void setExpenseType(ExpenseStatusType expenseType) {
-		this.expenseType = expenseType;
+	public void setExpenseStatusType(ExpenseStatusType expenseStatusType) {
+		this.expenseStatusType = expenseStatusType;
+	}
+
+	/**
+	 * This method is used to get status string
+	 * 
+	 * @return
+	 */
+	public String getStatusString() {
+		return statusString;
+	}
+
+	/**
+	 * This method is used to set the status string
+	 * 
+	 * @param statusString
+	 * @throws ValidationFailedException
+	 */
+	public void setStatusString(String statusString) throws ValidationFailedException {
+		this.statusString = statusString;
+
 	}
 
 	/**
@@ -107,16 +128,16 @@ public class FetchExpenseEntity extends BaseEntity {
 	public boolean validate() throws ValidationFailedException {
 		// check if start date is given then end date is mandatory and vice
 		// versa
-		if (isNullOrEmpty(this.getStartDate())) {
+		if (isNullOrEmpty(this.getStartDate()))
 			if (!isNullOrEmpty(this.getEndDate()))
 				throw new ValidationFailedException("FetchExpenseEntity",
 						"Either none or both the dates should be given", null);
-		}
-		if (isNullOrEmpty(this.getEndDate())) {
+		if (isNullOrEmpty(this.getEndDate()))
 			if (!isNullOrEmpty(this.getStartDate()))
 				throw new ValidationFailedException("FetchExpenseEntity",
 						"Either none or both the dates should be given", null);
-		}
+		if (this.getStartDate().isEmpty() || this.getEndDate().isEmpty())
+			throw new ValidationFailedException("FetchExpenseEntity", "Start date or end date cannot be empty", null);
 		return true;
 	}
 

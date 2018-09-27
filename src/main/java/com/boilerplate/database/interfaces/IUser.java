@@ -79,17 +79,6 @@ public interface IUser {
 	public ExternalFacingUser getUser(String id) throws BadRequestException;
 
 	/**
-	 * This method is used to get roles for the given user id
-	 * 
-	 * @param userId
-	 *            This is the user id
-	 * @return Return of user roles
-	 * @throws BadRequestException
-	 *             Throw this exception if user sends abad request
-	 */
-	public List<UserRoleEntity> getUserRoles(String userId) throws BadRequestException;
-
-	/**
 	 * This method is used to get all finance users
 	 * 
 	 * @return List of finance users

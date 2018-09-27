@@ -1,5 +1,6 @@
 package com.boilerplate.service.interfaces;
 
+import java.text.ParseException;
 import java.util.List;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
@@ -73,9 +74,11 @@ public interface IExpenseService {
 	 *             Throw this exception if user not found
 	 * @throws ValidationFailedException
 	 *             throw this exception if entity is invalid
+	 * @throws ParseException
+	 *             Throw this exception if exception occurs while parsing date
 	 */
 	public List<ExpenseEntity> getExpensesForUser(FetchExpenseEntity fetchExpenseEntity)
-			throws ValidationFailedException, NotFoundException, BadRequestException;
+			throws ValidationFailedException, NotFoundException, BadRequestException, ParseException;
 
 	/**
 	 * This method is used to get list of expenses filed under a given approver
