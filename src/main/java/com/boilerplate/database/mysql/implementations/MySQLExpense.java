@@ -220,17 +220,17 @@ public class MySQLExpense extends MySQLBaseDataAccessLayer implements IExpense {
 	}
 
 	/**
-	 * @see IExpense.getExpensesForFinance
+	 * @see IExpense.getUserAmountsForFinance
 	 */
 	@Override
-	public List<Map<String, Object>> getUserAmountsForFinance(ExpenseStatusType status) throws BadRequestException {
+	public List<Map<String, Object>> getUserAmountsForFinance(String status) throws BadRequestException {
 		// Get the SQL query from configurations to get user amounts for
 		// expenses with finance_approved status
 		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_USER_AMOUNTS");
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();
-		hSQLQuery = hSQLQuery.replaceAll("@Status", String.valueOf(status));
+		hSQLQuery = hSQLQuery.replaceAll("@Status", status);
 		// This variable is used to hold the query response
 		List<Map<String, Object>> expenseMap = new ArrayList<>();
 		try {

@@ -85,7 +85,7 @@ public interface IUser {
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 */
-	public List<Map<String, Object>> getFinanceUsers() throws BadRequestException;
+	public List<Map<String, Object>> getUsersByRole(String role) throws BadRequestException;
 
 	/**
 	 * This method is used to get all users

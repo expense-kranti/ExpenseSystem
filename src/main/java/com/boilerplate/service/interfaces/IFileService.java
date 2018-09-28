@@ -1,5 +1,6 @@
 package com.boilerplate.service.interfaces;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,9 +86,10 @@ public interface IFileService {
 	 * @throws UnauthorizedException
 	 *             Throw this exception if user is not authorized to download
 	 *             the file
+	 * @throws IOException
 	 */
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response, String fileName)
-			throws BadRequestException, NotFoundException, UnauthorizedException;
+			throws BadRequestException, NotFoundException, UnauthorizedException, IOException;
 
 	/**
 	 * This method is used to check if attachment ids procided in expense are

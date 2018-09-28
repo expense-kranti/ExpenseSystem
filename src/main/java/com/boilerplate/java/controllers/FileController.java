@@ -1,5 +1,7 @@
 package com.boilerplate.java.controllers;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,6 +79,7 @@ public class FileController extends BaseController {
 	 * @throws NotFoundException
 	 *             Throw this exception if file mapping or file is not found
 	 * @throws UnauthorizedException
+	 * @throws IOException
 	 */
 	@ApiOperation(value = "Donloads a file")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
@@ -84,7 +87,7 @@ public class FileController extends BaseController {
 	@RequestMapping(value = "/downoad/{fileName:.+}", method = RequestMethod.GET)
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("fileName") String fileName)
-			throws BadRequestException, NotFoundException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, UnauthorizedException, IOException {
 		fileService.downloadFile(request, response, fileName);
 	}
 }

@@ -154,13 +154,12 @@ public class FileService implements IFileService {
 		List<String> newAttachments = new ArrayList<>();
 		List<String> allAttachments = expenseEntity.getAttachmentIds();
 		// for each attachment in expense entity
-		for (String eachAttachmentId : allAttachments) {
+		for (String eachAttachmentId : allAttachments)
 			// check if this attachment already exists for the given user and
 			// expense
 			if (filePointer.getFileMapping(filePointer.getFileDetailsByAttachmentId(eachAttachmentId).getId()) == null)
 				// add it in new attachment list
 				newAttachments.add(eachAttachmentId);
-		}
 		// set new attachments in expense entity and save it
 		if (newAttachments.size() != 0) {
 			expenseEntity.setAttachmentIds(newAttachments);
@@ -170,12 +169,11 @@ public class FileService implements IFileService {
 		List<FileMappingEntity> fileMappings = filePointer.getFileMappingByExpenseId(expenseEntity.getId());
 		// if file mappings found
 		if (fileMappings.size() != 0) {
-			// get all file ids from fil mappings
+			// get all file ids from file mappings
 			List<String> fileIdsFromMapping = new ArrayList<>();
 			List<String> fileIdsFromAttachments = new ArrayList<>();
-			for (FileMappingEntity fileMapping : fileMappings) {
+			for (FileMappingEntity fileMapping : fileMappings)
 				fileIdsFromMapping.add(fileMapping.getFileId());
-			}
 			for (String attachmentId : allAttachments) {
 				// fetch file details for this attachment id
 				FileDetailsEntity fileDetailsEntity = filePointer.getFileDetailsByAttachmentId(attachmentId);
@@ -201,29 +199,27 @@ public class FileService implements IFileService {
 	 */
 	@Override
 	public void downloadFile(HttpServletRequest request, HttpServletResponse response, String fileName)
-			throws BadRequestException, NotFoundException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, UnauthorizedException, IOException {
 		// Fetch the file details for the given file
 		FileDetailsEntity fileDetailsEntity = filePointer.getFileDetailsByAttachmentId(fileName);
 		// check if fileDetailsEntity exists for the given file
 		if (fileDetailsEntity == null)
 			throw new NotFoundException("FileDetailsEntity", "File not found for the given file name", null);
-		// fetch the currenlty logged in user
+		// fetch the currently logged in user
 		ExternalFacingUser currentUser = RequestThreadLocal.getSession().getExternalFacingUser();
-		// check if current user if finance/super-approver
-		// if (!currentUser.getRoles().contains(UserRoleType.Super_Approver)
-		// && !currentUser.getRoles().contains(UserRoleType.Finance)) {
-		// // fetch the file owner
-		// ExternalFacingUser fileOwner =
-		// mySqlUser.getUser(fileDetailsEntity.getUserId());
-		// // check if current user is approver for the file owner
-		// if (fileOwner.getApproverId() != null &&
-		// !fileOwner.getApproverId().equals(currentUser.getId())
-		// && !fileOwner.getId().equals(currentUser.getId()))
-		// // check if current user is file owner
-		// throw new UnauthorizedException("FileMappingEntity", "User is not
-		// authorized to download this file",
-		// null);
-		// }
+		// check if current user is finance/super-approver
+		if (!currentUser.getRoleTypes().contains(UserRoleType.SUPER_APPROVER)
+				&& !currentUser.getRoleTypes().contains(UserRoleType.FINANCE)) {
+			// fetch the file owner
+			ExternalFacingUser fileOwner = mySqlUser.getUser(fileDetailsEntity.getUserId());
+			// check if current user is approver for the file owner
+			if (fileOwner.getApproverId() != null && !fileOwner.getApproverId().equals(currentUser.getId())
+					&& !fileOwner.getId().equals(currentUser.getId())) {
+				// return error code
+				response.sendError(401, "User is not authorized to download this file");
+				return;
+			}
+		}
 		// get the root file saving location
 		String fileLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");
 		Path file = Paths.get(fileLocation, fileName);
@@ -236,6 +232,7 @@ public class FileService implements IFileService {
 				response.getOutputStream().flush();
 			} catch (IOException ex) {
 				ex.printStackTrace();
+				response.sendError(500, "Some exception occurred while downloading file");
 			}
 		}
 	}

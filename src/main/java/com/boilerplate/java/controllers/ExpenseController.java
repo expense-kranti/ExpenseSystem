@@ -250,14 +250,19 @@ public class ExpenseController extends BaseController {
 	 * 
 	 * @return List of expense reports
 	 * @throws BadRequestException
+	 *             Throw this exception if user sends a bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if expenses not found
+	 * @throws ValidationFailedException
+	 *             Throw this exception if any validation fails
 	 */
 	@ApiOperation(value = "Gets expense reports for finance", notes = "The creation date and updated date are automatically filled.")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 400, message = "Bad request, If user sends invalid data"),
 			@ApiResponse(code = 404, message = "If entity does not exist") })
 	@RequestMapping(value = "/getExpenseReportsForFinance", method = RequestMethod.GET)
-	public @ResponseBody List<ExpenseReportEntity> getReportsForFinance(@RequestParam ExpenseStatusType status)
-			throws BadRequestException {
+	public @ResponseBody List<ExpenseReportEntity> getReportsForFinance(@RequestParam String status)
+			throws BadRequestException, NotFoundException, ValidationFailedException {
 		// call the business layer
 		return expenseService.getExpenseReportsForFinance(status);
 	}

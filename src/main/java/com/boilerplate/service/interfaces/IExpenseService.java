@@ -153,5 +153,19 @@ public interface IExpenseService {
 	public void expenseReviewByFinance(ExpenseReviewEntity expenseReviewEntity)
 			throws ValidationFailedException, BadRequestException, NotFoundException;
 
-	public List<ExpenseReportEntity> getExpenseReportsForFinance(ExpenseStatusType status) throws BadRequestException;
+	/**
+	 * This method is used to get expense reports for the given status
+	 * 
+	 * @param status
+	 *            This is the status in string format
+	 * @return List of reports for each the user
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 * @throws NotFoundException
+	 *             Throw this exception if no expenses are found
+	 * @throws ValidationFailedException
+	 *             throw this exception if user sends some invalid values
+	 */
+	public List<ExpenseReportEntity> getExpenseReportsForFinance(String status)
+			throws BadRequestException, NotFoundException, ValidationFailedException;
 }

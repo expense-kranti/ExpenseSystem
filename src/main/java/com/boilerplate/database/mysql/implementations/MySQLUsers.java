@@ -172,12 +172,14 @@ public class MySQLUsers extends MySQLBaseDataAccessLayer implements IUser {
 	}
 
 	/**
-	 * @see IUser.getFinanceUsers
+	 * @see IUser.getUsersByRole
 	 */
 	@Override
-	public List<Map<String, Object>> getFinanceUsers() throws BadRequestException {
+	public List<Map<String, Object>> getUsersByRole(String role) throws BadRequestException {
 		// Get the SQL query from configurations to get users
 		String hSQLQuery = configurationManager.get("SQL_QUERY_FOR_GETTING_FINANCE_USERS");
+		// replace role in query
+		hSQLQuery = hSQLQuery.replace("@Role", role);
 		// Make a new instance of BoilerplateMap ,used to define query
 		// parameters
 		Map<String, Object> queryParameterMap = new HashMap<String, Object>();

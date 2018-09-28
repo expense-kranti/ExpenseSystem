@@ -3,6 +3,7 @@ package com.boilerplate.service.implemetations;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -170,7 +171,10 @@ public class ExpenseService implements IExpenseService {
 		ExpenseEntity previousExpense = mySqlExpense.getExpense(expenseEntity.getId());
 		if (previousExpense == null)
 			throw new NotFoundException("ExpenseEntity", "Expense entity not found", null);
-
+		// check if expense is in rejected state
+		if (previousExpense.getStatus() != ExpenseStatusType.APPROVER_REJECTED
+				&& previousExpense.getStatus() != ExpenseStatusType.FINANCE_REJECTED)
+			throw new BadRequestException("ExpenseEntity", "User can only update rejected expenses", null);
 		// Check whether expense belongs to the logged in user
 		if (!previousExpense.getUserId().equals(RequestThreadLocal.getSession().getExternalFacingUser().getId()))
 			throw new BadRequestException("ExpenseEntity",
@@ -186,15 +190,9 @@ public class ExpenseService implements IExpenseService {
 		expenseHistoryEntity.setCreationDate(new Date());
 
 		// if expense status is rejected then change it to re-submitted
-		if (expenseEntity.getStatus() != null) {
-			if (expenseEntity.getStatus() == ExpenseStatusType.APPROVER_REJECTED
-					|| expenseEntity.getStatus() == ExpenseStatusType.FINANCE_REJECTED) {
-				expenseEntity.setStatus(ExpenseStatusType.RE_SUBMITTED);
-				// send email for re-submission of expense
-				sendEmailService.sendEmailOnSubmission(expenseEntity, true);
-			}
-		} else
-			throw new BadRequestException("ExpenseEntity", "Status should not be null", null);
+		expenseEntity.setStatus(ExpenseStatusType.RE_SUBMITTED);
+		// send email for re-submission of expense
+		sendEmailService.sendEmailOnSubmission(expenseEntity, true);
 		// set creation date and update date
 		expenseEntity.setCreationDate(previousExpense.getCreationDate());
 		expenseEntity.setUpdationDate(new Date());
@@ -289,8 +287,13 @@ public class ExpenseService implements IExpenseService {
 	@Override
 	public ExpenseEntity approveExpenseForApprover(ExpenseReviewEntity expenseReviewEntity) throws Exception {
 		// check if user id or role is not null or empty
-		if (expenseReviewEntity == null)
-			throw new ValidationFailedException("ExpenseReviewEntity", "ExpenseId should not be null or empty", null);
+		expenseReviewEntity.validate();
+		// check if status has only approved or rejected status
+		if (expenseReviewEntity.getStatus() != ExpenseStatusType.APPROVER_APPROVED
+				&& expenseReviewEntity.getStatus() != ExpenseStatusType.APPROVER_REJECTED)
+			throw new ValidationFailedException("ExpenseReviewEntity",
+					"Approver/Super_Approver can only assign Approver_approved or Approver_rejected status, any other status is not allowed",
+					null);
 		// check if expense is being rejected, comments are mandatory
 		if (expenseReviewEntity.getStatus().equals(ExpenseStatusType.APPROVER_REJECTED)
 				&& expenseReviewEntity.getApproverComments() == null)
@@ -319,7 +322,7 @@ public class ExpenseService implements IExpenseService {
 				.contains(UserRoleType.SUPER_APPROVER) && !approverId.equals(externalFacingUser.getApproverId()))
 			throw new UnauthorizedException("ExpenseEntity", "User is not authorized to approve/reject this expense",
 					null);
-		// check fthat approver cannot approve his own expense
+		// check that approver cannot approve his own expense
 		if (!RequestThreadLocal.getSession().getExternalFacingUser().getRoleTypes()
 				.contains(UserRoleType.SUPER_APPROVER) && approverId.equals(externalFacingUser.getId()))
 			throw new BadRequestException("ExternalFacingUser", "Approver is not allowed to approve his own expense",
@@ -415,15 +418,6 @@ public class ExpenseService implements IExpenseService {
 		// check if expense list is not null or empty
 		if (expenses == null || expenses.size() == 0)
 			throw new NotFoundException("ExpenseEntity", "No expense found in approver_approved state", null);
-		// for each expense, fetch attachments
-		for (ExpenseEntity expenseEntity : expenses) {
-			List<String> attachmentIds = new ArrayList<>();
-			List<FileMappingEntity> mappings = filePointer.getFileMappingByExpenseId(expenseEntity.getId());
-			for (FileMappingEntity fileMappingEntity : mappings) {
-				attachmentIds.add(fileMappingEntity.getAttachmentId());
-			}
-			expenseEntity.setAttachmentIds(attachmentIds);
-		}
 		// return list of expense
 		return expenses;
 	}
@@ -432,36 +426,46 @@ public class ExpenseService implements IExpenseService {
 	 * @see IExpenseService.getExpenseReportsForFinance
 	 */
 	@Override
-	public List<ExpenseReportEntity> getExpenseReportsForFinance(ExpenseStatusType status) throws BadRequestException {
+	public List<ExpenseReportEntity> getExpenseReportsForFinance(String status)
+			throws BadRequestException, NotFoundException, ValidationFailedException {
+		// check if status is not null or empty
+		if (status == null || status.isEmpty())
+			throw new ValidationFailedException("ExpenseStatusType", "Status should not be null or empty", null);
+		ExpenseStatusType statusType = ExpenseStatusType.convert(status);
+		// check if status is a vaid value for expense status
+		if (statusType == null)
+			throw new ValidationFailedException("ExpenseStatusType", "Invalid value for status passed in parameter",
+					null);
+		// check if all status type are not accessible to finance
+		if (!Arrays.asList(ExpenseStatusType.APPROVER_APPROVED, ExpenseStatusType.FINANCE_APPROVED,
+				ExpenseStatusType.READY_FOR_PAYMENT).contains(statusType))
+			throw new BadRequestException("ExpenseStatusType",
+					"Finance is not allowed to fetch expenses in status :" + statusType.toString(), null);
 		// fetch the list of user ids with there total amount
 		List<Map<String, Object>> userAmounts = mySqlExpense.getUserAmountsForFinance(status);
 		// fetch all expenses with finance approved status
-		List<ExpenseEntity> expenses = mySqlExpense.getExpensesByStatus(status);
-		// for each expense, fetch attachments
-		for (ExpenseEntity expenseEntity : expenses) {
-			List<String> attachmentIds = new ArrayList<>();
-			List<FileMappingEntity> mappings = filePointer.getFileMappingByExpenseId(expenseEntity.getId());
-			for (FileMappingEntity fileMappingEntity : mappings) {
-				attachmentIds.add(fileMappingEntity.getAttachmentId());
+		List<ExpenseEntity> expenses = mySqlExpense.getExpensesByStatus(statusType);
+		if (expenses != null && !expenses.isEmpty()) {
+			// list of reports
+			List<ExpenseReportEntity> reports = new ArrayList<>();
+			// for each expense, add it to expense report of that user
+			for (Map<String, Object> userAmount : userAmounts) {
+				List<ExpenseEntity> expenseList = new ArrayList<>();
+				for (ExpenseEntity expenseEntity : expenses) {
+					if (String.valueOf(userAmount.get("UserId")).equals(expenseEntity.getUserId()))
+						expenseList.add(expenseEntity);
+				}
+				ExpenseReportEntity expenseReportEntity = new ExpenseReportEntity(
+						String.valueOf(userAmount.get("Name")), String.valueOf(userAmount.get("UserId")),
+						Float.valueOf(String.valueOf(userAmount.get("TotalAmount"))), expenseList,
+						ExpenseStatusType.FINANCE_APPROVED);
+				reports.add(expenseReportEntity);
+
 			}
-			expenseEntity.setAttachmentIds(attachmentIds);
-		}
-		// list of reports
-		List<ExpenseReportEntity> reports = new ArrayList<>();
-		// fr each expense, add it to expense report of that user
-		for (Map<String, Object> userAmount : userAmounts) {
-			List<ExpenseEntity> expenseList = new ArrayList<>();
-			for (ExpenseEntity expenseEntity : expenses) {
-				if (userAmount.get("UserId").equals(expenseEntity.getUserId()))
-					expenseList.add(expenseEntity);
-			}
-			ExpenseReportEntity expenseReportEntity = new ExpenseReportEntity(String.valueOf(userAmount.get("Name")),
-					String.valueOf(userAmount.get("UserId")),
-					Float.valueOf(String.valueOf(userAmount.get("TotalAmount"))), expenses,
-					ExpenseStatusType.FINANCE_APPROVED);
-			reports.add(expenseReportEntity);
-		}
-		return reports;
+			return reports;
+		} else
+			throw new NotFoundException("ExpenseEntity",
+					"No expenses found for finance in status : " + statusType.toString(), null);
 	}
 
 }

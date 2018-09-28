@@ -590,9 +590,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for get expense reports for finance
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance(java.lang.String)");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance(com.boilerplate.java.entities.ExpenseStatusType)");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getReportsForFinance(java.lang.String)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -764,7 +764,8 @@ public class BaseRedisDataAccessLayer {
 		vAllEAll.put("SQL_QUERY_FOR_ALL_ROLE_TYPES", "FROM RoleEntity role");
 		vAllEAll.put("GET_ALL_ACTIVE_EXPENSES", "FROM ExpenseEntity expense");
 		vAllEAll.put("SQL_QUERY_FOR_GETTING_FINANCE_USERS",
-				"select user.Id as id, user.UserId as userId, user.EmailId as email, user.FirstName as firstName, user.LastName as lastName FROM User user join UserRole role on user.id = role.userId where role.role = 'Finance'");
+				"select user.Id as id, user.UserId as userId, user.EmailId as email, user.FirstName as firstName, user.LastName as lastName FROM User user join UserRoleMapping mapping on user.Id = mapping.UserId join Roles role on mapping.RoleId = role.Id where role.RoleName = '@Role'");
+
 		return vAllEAll;
 
 	}

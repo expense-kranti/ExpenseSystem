@@ -1,5 +1,8 @@
 package com.boilerplate.java.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.fasterxml.jackson.annotation.*;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -101,8 +104,8 @@ public class ExpenseReviewEntity extends BaseEntity {
 	 */
 	public void setStatusString(String statusString) throws ValidationFailedException {
 		this.statusString = statusString;
-		if (ExpenseStatusType.valueOf(statusString.toUpperCase()) != null)
-			this.status = ExpenseStatusType.valueOf(statusString.toUpperCase());
+		if (statusString != null)
+			this.status = ExpenseStatusType.convert(statusString);
 
 	}
 
@@ -111,12 +114,13 @@ public class ExpenseReviewEntity extends BaseEntity {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
+		// validate that none of the fields are null or empty
+		if (isNullOrEmpty(this.getExpenseId()) || isNullOrEmpty(this.statusString))
+			throw new ValidationFailedException("ExpenseReviewEntity",
+					"Either expense id or status string is null or empty", null);
 		// check if status is not null
 		if (this.getStatus() == null)
 			throw new ValidationFailedException("ExpenseReviewEntity", "Invalid value for status string", null);
-		// validate that none of the fields are null or empty
-		if (isNullOrEmpty(this.getExpenseId()))
-			throw new ValidationFailedException("ExpenseReviewEntity", "Either expense id is null or empty", null);
 
 		return true;
 	}

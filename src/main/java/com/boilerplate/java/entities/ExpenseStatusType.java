@@ -41,5 +41,20 @@ public enum ExpenseStatusType {
 	/**
 	 * This means that the expense has been submitted again
 	 */
-	RE_SUBMITTED
+	RE_SUBMITTED;
+
+	/**
+	 * This method is used to convert string to enum if it is valid
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static ExpenseStatusType convert(String str) {
+		for (ExpenseStatusType expenseStatusType : ExpenseStatusType.values()) {
+			if (expenseStatusType.toString().equals(str.toUpperCase())) {
+				return expenseStatusType;
+			}
+		}
+		return null;
+	}
 }

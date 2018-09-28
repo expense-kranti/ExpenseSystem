@@ -101,12 +101,13 @@ public interface IExpense {
 	/**
 	 * This method is used to get expenses for finance
 	 * 
-	 * @param financeId
-	 *            This is the id of the finance
+	 * @param status
+	 *            This is status
 	 * @return List<Map<String, Object>>
 	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
 	 */
-	public List<Map<String, Object>> getUserAmountsForFinance(ExpenseStatusType status) throws BadRequestException;
+	public List<Map<String, Object>> getUserAmountsForFinance(String status) throws BadRequestException;
 
 	/**
 	 * This method is used to save a list of expenses
@@ -136,5 +137,14 @@ public interface IExpense {
 	 */
 	public List<ExpenseEntity> getExpensesForSuper() throws BadRequestException;
 
+	/**
+	 * This method is used to get status by expense
+	 * 
+	 * @param status
+	 *            This is the status
+	 * @return List of expenses
+	 * @throws BadRequestException
+	 *             throw this exception if user sends bad request
+	 */
 	public List<ExpenseEntity> getExpensesByStatus(ExpenseStatusType status) throws BadRequestException;
 }
