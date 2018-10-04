@@ -31,6 +31,7 @@
 				<column name="ExpenseId" not-null="true" />
 			</key>
 			<one-to-many class="com.boilerplate.java.entities.FileMappingEntity" />
+			<filter name="activeFilter" condition="isActive =:activeStatus" />
 		</bag>
 	</class>
 </hibernate-mapping>

@@ -84,6 +84,12 @@ public class ExpenseReportEntity extends BaseEntity {
 	private String statusString;
 
 	/**
+	 * This is the approver comments
+	 */
+	@ApiModelProperty(value = "This is the approver comments", required = true, notes = "This is the approver comments")
+	private String approverComments;
+
+	/**
 	 * This method is used to get user name
 	 * 
 	 * @return
@@ -99,6 +105,24 @@ public class ExpenseReportEntity extends BaseEntity {
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	/**
+	 * This method is used to get approver comments
+	 * 
+	 * @return
+	 */
+	public String getApproverComments() {
+		return approverComments;
+	}
+
+	/**
+	 * This method is used to set approver comments
+	 * 
+	 * @param approverComments
+	 */
+	public void setApproverComments(String approverComments) {
+		this.approverComments = approverComments;
 	}
 
 	/**
@@ -189,9 +213,7 @@ public class ExpenseReportEntity extends BaseEntity {
 	 */
 	public void setStatusString(String statusString) {
 		this.statusString = statusString;
-		for (ExpenseStatusType status : ExpenseStatusType.values())
-			if (statusString.equalsIgnoreCase(String.valueOf(status)))
-				this.setStatus(status);
+		this.status = ExpenseStatusType.convert(statusString);
 	}
 
 	/**
@@ -199,6 +221,11 @@ public class ExpenseReportEntity extends BaseEntity {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
+		if (status == null)
+			throw new ValidationFailedException("ExpenseStatusType", "Invalid value for status string", null);
+		if (status.equals(ExpenseStatusType.FINANCE_REJECTED) && this.approverComments == null)
+			throw new ValidationFailedException("ExpenseReportEntity",
+					"Cooments are mandatory when expense is being rejected", null);
 		return true;
 	}
 

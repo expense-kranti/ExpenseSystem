@@ -563,6 +563,18 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
 
+		// method permission for getExpense list for approvers/super approvers
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenseListForApproval()");
+		methodPermission.setMethodName(
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpenseListForApproval()");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(true);
+		methodPermission.setIsFinanceRoleRequired(false);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
 		// method permission for approverExpense for approvers/super approvers
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
@@ -578,9 +590,9 @@ public class BaseRedisDataAccessLayer {
 		// method permission for get expenses for finance
 		methodPermission = new MethodPermissions();
 		methodPermission.setId(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance()");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance(java.lang.String)");
 		methodPermission.setMethodName(
-				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance()");
+				"public java.util.List com.boilerplate.java.controllers.ExpenseController.getExpensesForFinance(java.lang.String)");
 		methodPermission.setIsAuthenticationRequired(false);
 		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
@@ -642,11 +654,22 @@ public class BaseRedisDataAccessLayer {
 		methodPermission.setMethodName(
 				"public com.boilerplate.sessions.Session com.boilerplate.java.controllers.UserController.sSOauthenticate(java.lang.String)");
 		methodPermission.setIsAuthenticationRequired(false);
-		methodPermission.setIsLoggingRequired(false);
+		methodPermission.setIsLoggingRequired(true);
+		methodPermission.setIsApproverRoleRequired(false);
+		methodPermission.setIsFinanceRoleRequired(true);
+		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
+
+		// method permission for get expense by id
+		methodPermission = new MethodPermissions();
+		methodPermission.setId(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.getExpenseById(java.lang.String)");
+		methodPermission.setMethodName(
+				"public com.boilerplate.java.entities.ExpenseEntity com.boilerplate.java.controllers.ExpenseController.getExpenseById(java.lang.String)");
+		methodPermission.setIsAuthenticationRequired(false);
+		methodPermission.setIsLoggingRequired(true);
 		methodPermission.setIsApproverRoleRequired(false);
 		methodPermission.setIsFinanceRoleRequired(false);
 		methodPermissionMap.put(methodPermission.getMethodName(), methodPermission);
-
 		// save the method permission map in configuration
 		// in database
 		this.set("METHOD_PERMISSIONS", Base.toXML(methodPermissionMap));

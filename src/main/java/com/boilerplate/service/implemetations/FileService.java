@@ -212,13 +212,13 @@ public class FileService implements IFileService {
 				&& !currentUser.getRoleTypes().contains(UserRoleType.FINANCE)) {
 			// fetch the file owner
 			ExternalFacingUser fileOwner = mySqlUser.getUser(fileDetailsEntity.getUserId());
-			// check if current user is approver for the file owner
-			if (fileOwner.getApproverId() != null && !fileOwner.getApproverId().equals(currentUser.getId())
-					&& !fileOwner.getId().equals(currentUser.getId())) {
-				// return error code
-				response.sendError(401, "User is not authorized to download this file");
-				return;
-			}
+			// check if current user is approver for the file owner or is
+			// file owner
+			if (!fileOwner.getId().equals(currentUser.getId()))
+				if (fileOwner.getApproverId() == null || !fileOwner.getApproverId().equals(currentUser.getId())) {
+					throw new UnauthorizedException("ExpenseEntity", "User is not authorized to view this expense",
+							null);
+				}
 		}
 		// get the root file saving location
 		String fileLocation = configurationManager.get("DESTINATION_FOR_SAVING_FILE_ON_DISK");

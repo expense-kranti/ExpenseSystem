@@ -136,8 +136,8 @@ public class LogAndTraceExceptionAspect {
 		// Logged UnauthorizedException as Warning
 		catch (UnauthorizedException unauthorizedException) {
 			logger.logWarning(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
-					proceedingJoinPoint.getSignature().getName(), " UnauthorizedException ",
-					" Arguments List: " + Base.toJSON(proceedingJoinPoint.getArgs()) + " Throwable: "
+					proceedingJoinPoint.getSignature().getName(), " UnauthorizedException",
+					" Arguments List: " + Base.toJSON(proceedingJoinPoint.getArgs()) + "Throwable: "
 							+ unauthorizedException.toString());
 			throw unauthorizedException;
 		}
@@ -145,7 +145,7 @@ public class LogAndTraceExceptionAspect {
 		catch (ConflictException conflictException) {
 			logger.logWarning(proceedingJoinPoint.getSignature().getDeclaringTypeName(),
 					proceedingJoinPoint.getSignature().getName(), " ConflictException ",
-					" Arguments List: " + Base.toJSON(proceedingJoinPoint.getArgs()) + " Throwable: "
+					" Arguments List: " + Base.toJSON(proceedingJoinPoint.getArgs()) + "Throwable: "
 							+ conflictException.toString());
 			throw conflictException;
 		} catch (Throwable th) {

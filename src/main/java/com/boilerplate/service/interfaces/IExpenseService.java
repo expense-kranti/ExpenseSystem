@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
+import com.boilerplate.exceptions.rest.UnauthorizedException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
 import com.boilerplate.java.entities.ExpenseEntity;
+import com.boilerplate.java.entities.ExpenseListViewEntity;
 import com.boilerplate.java.entities.ExpenseReportEntity;
 import com.boilerplate.java.entities.ExpenseReviewEntity;
 import com.boilerplate.java.entities.ExpenseStatusType;
@@ -118,8 +120,10 @@ public interface IExpenseService {
 	 * @throws BadRequestException
 	 *             Throw this exception if user sends a bad request
 	 * @throws NotFoundException
+	 * @throws ValidationFailedException
 	 */
-	public List<ExpenseEntity> getExpensesForFinance() throws BadRequestException, NotFoundException;
+	public List<ExpenseEntity> getExpensesForFinance(String status)
+			throws BadRequestException, NotFoundException, ValidationFailedException;
 
 	/**
 	 * This method is used to approve/rejects/move to ready for payment state
@@ -168,4 +172,36 @@ public interface IExpenseService {
 	 */
 	public List<ExpenseReportEntity> getExpenseReportsForFinance(String status)
 			throws BadRequestException, NotFoundException, ValidationFailedException;
+
+	/**
+	 * This method is used to get expense list for approvers
+	 * 
+	 * @return List of expenses
+	 * @throws NotFoundException
+	 *             Throw this exception if no expenses are found
+	 * @throws ValidationFailedException
+	 *             Throw this exception if any validation fails
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 */
+	public List<ExpenseListViewEntity> getExpenseListForApprovers()
+			throws NotFoundException, ValidationFailedException, BadRequestException;
+
+	/**
+	 * This method is used to fetch expense entity by its id
+	 * 
+	 * @param id
+	 *            This is the id of the expense
+	 * @return Expense entity
+	 * @throws NotFoundException
+	 *             Throw this exception if no expenses are found
+	 * @throws ValidationFailedException
+	 *             Throw this exception if any validation fails
+	 * @throws BadRequestException
+	 *             Throw this exception if user sends bad request
+	 * @throws UnauthorizedException
+	 *             Throw this exception if user is not authorized
+	 */
+	public ExpenseEntity getExpenseById(String id)
+			throws ValidationFailedException, NotFoundException, BadRequestException, UnauthorizedException;
 }
