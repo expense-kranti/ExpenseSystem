@@ -1,10 +1,8 @@
 package com.boilerplate.java.entities;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.boilerplate.exceptions.rest.ValidationFailedException;
-import com.fasterxml.jackson.annotation.*;
+import com.boilerplate.java.Base;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 public class ExpenseReviewEntity extends BaseEntity {

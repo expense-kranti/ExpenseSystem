@@ -67,7 +67,7 @@ public class MySQLRole extends MySQLBaseDataAccessLayer implements IRole {
 			logger.logException("MySQLRole", "create", "try-catch block", ex.getMessage(), ex);
 			session.getTransaction().rollback();
 			throw new ValidationFailedException("UserRoleEntity",
-					"User cannot be assigned duplicate roles, please cheeck the list of role ids provided in the request",
+					"ConstraintViolationException occurred. Might be due to the following reasons: Either th role ids are incorrect or user is trying assign duplicate roles, please check the list of role ids provided in the request",
 					null);
 		} catch (Exception e) {
 			logger.logException("MySQLRole", "create", "try-catch block", e.getMessage(), e);

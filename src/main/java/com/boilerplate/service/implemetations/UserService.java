@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.configurations.ConfigurationManager;
 import com.boilerplate.database.interfaces.IRole;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.database.mysql.implementations.MySQLExpense;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.ValidationFailedException;
@@ -167,6 +166,7 @@ public class UserService implements IUserService {
 		// set active to false
 		user.setIsActive(false);
 		mySqlUser.updateUser(user);
+		// get all the sessions of this user from redis
 
 	}
 

@@ -221,11 +221,24 @@ public class ExpenseReportEntity extends BaseEntity {
 	 */
 	@Override
 	public boolean validate() throws ValidationFailedException {
+		// check if status is not null
 		if (status == null)
 			throw new ValidationFailedException("ExpenseStatusType", "Invalid value for status string", null);
+		// check if status is valid for finance
 		if (status.equals(ExpenseStatusType.FINANCE_REJECTED) && this.approverComments == null)
 			throw new ValidationFailedException("ExpenseReportEntity",
 					"Cooments are mandatory when expense is being rejected", null);
+		// check if list of expenses is not empty or null
+		if (this.expenses == null || this.expenses.isEmpty())
+			throw new ValidationFailedException("ExpenseReportEntity", "List of expenses cannot be empty", null);
+		// check if all expenses in list have id
+		for (ExpenseEntity expenseEntity : this.expenses) {
+			if (isNullOrEmpty(expenseEntity.getId()))
+				throw new ValidationFailedException("ExpenseReportEntity", "Each expense in list must have id", null);
+		}
+		// check if user id is not null or empty
+		if (isNullOrEmpty(this.userId))
+			throw new ValidationFailedException("ExpenseReportEntity", "User id is mandatory", null);
 		return true;
 	}
 

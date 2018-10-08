@@ -4,11 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.boilerplate.database.interfaces.IExpense;
 import com.boilerplate.database.interfaces.IFilePointer;
 import com.boilerplate.database.interfaces.IUser;
-import com.boilerplate.database.mysql.implementations.MySQLExpense;
 import com.boilerplate.exceptions.rest.BadRequestException;
 import com.boilerplate.exceptions.rest.NotFoundException;
 import com.boilerplate.exceptions.rest.UnauthorizedException;
@@ -32,7 +28,6 @@ import com.boilerplate.java.entities.ExpenseStatusType;
 import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.FetchExpenseEntity;
 import com.boilerplate.java.entities.FileMappingEntity;
-import com.boilerplate.java.entities.UserRoleEntity;
 import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IEmailService;
 import com.boilerplate.service.interfaces.IExpenseService;
@@ -378,12 +373,17 @@ public class ExpenseService implements IExpenseService {
 		for (ExpenseEntity expense : reportEntity.getExpenses()) {
 			// fetch the expense
 			ExpenseEntity expenseEntity = mySqlExpense.getExpense(expense.getId());
+			// check if expense exists or not
+			if (expenseEntity == null)
+				throw new NotFoundException("ExpenseEntity", "Expense with id :" + expense.getId() + " not found",
+						null);
 			// check if user in expense is same as report
 			if (!expenseEntity.getUserId().equals(reportEntity.getUserId()))
 				throw new ValidationFailedException("ExpenseReportEntity",
 						"One of the expense in expense list of the report does not belong to the user mentioned in report",
 						null);
-			// check if status of each expense is approver approved
+			// check if status of each expense is is appropriate for incoming
+			// status
 			if ((reportEntity.getStatus().equals(ExpenseStatusType.FINANCE_APPROVED)
 					&& !expenseEntity.getStatus().equals(ExpenseStatusType.APPROVER_APPROVED))
 					|| ((reportEntity.getStatus().equals(ExpenseStatusType.READY_FOR_PAYMENT)
@@ -411,6 +411,11 @@ public class ExpenseService implements IExpenseService {
 			throws ValidationFailedException, BadRequestException, NotFoundException {
 		// validate the expenseReviewEntity
 		expenseReviewEntity.validate();
+		// check if finance is not changing status to invalid status
+		if (!Arrays.asList(ExpenseStatusType.FINANCE_APPROVED, ExpenseStatusType.READY_FOR_PAYMENT,
+				ExpenseStatusType.FINANCE_REJECTED).contains(expenseReviewEntity.getStatus()))
+			throw new BadRequestException("ExpenseReviewEntity",
+					"Finance can only approver, reject or change status to ready for payment", null);
 		// check if status is rejected than approver comments should be present
 		if (expenseReviewEntity.getStatus() == ExpenseStatusType.FINANCE_REJECTED)
 			if (expenseReviewEntity.getApproverComments().equals(null))
@@ -418,14 +423,23 @@ public class ExpenseService implements IExpenseService {
 						"Approver comments are mandatory if expense is being rejected", null);
 		// check if expense is present in database or not
 		ExpenseEntity expenseEntity = mySqlExpense.getExpense(expenseReviewEntity.getExpenseId());
+		// check if expense is not null
 		if (expenseEntity == null)
-			throw new NotFoundException("ExpenseEntity", "Expense not found with given expense id", null);
-		// check if expense is in approver approved state
-		if (!expenseEntity.getStatus().equals(ExpenseStatusType.APPROVER_APPROVED))
-			throw new BadRequestException("ExpenseEntity", "Expense is not in desired state for finance to take action",
-					null);
+			throw new NotFoundException("ExpenseEntity",
+					"Expense not found with given expense id: " + expenseReviewEntity.getExpenseId(), null);
+		// check if status of each expense is is appropriate for incoming status
+		if ((expenseReviewEntity.getStatus().equals(ExpenseStatusType.FINANCE_APPROVED)
+				&& !expenseEntity.getStatus().equals(ExpenseStatusType.APPROVER_APPROVED))
+				|| ((expenseReviewEntity.getStatus().equals(ExpenseStatusType.READY_FOR_PAYMENT)
+						&& !expenseEntity.getStatus().equals(ExpenseStatusType.FINANCE_APPROVED)))
+				|| (expenseReviewEntity.getStatus().equals(ExpenseStatusType.FINANCE_REJECTED)
+						&& !expenseEntity.getStatus().equals(ExpenseStatusType.APPROVER_APPROVED)))
+			throw new ValidationFailedException("ExpenseReportEntity",
+					"One of the expense in expense list of the report is not in desired status", null);
 		// update the expense entity
 		expenseEntity.setStatus(expenseReviewEntity.getStatus());
+		// set comments
+		expenseEntity.setApproverComments(expenseReviewEntity.getApproverComments());
 		// update the expense entity in the system
 		mySqlExpense.updateExpense(expenseEntity);
 	}

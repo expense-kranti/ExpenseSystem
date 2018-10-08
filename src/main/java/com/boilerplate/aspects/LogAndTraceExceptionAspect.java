@@ -13,6 +13,7 @@ import com.boilerplate.framework.Logger;
 import com.boilerplate.framework.RequestThreadLocal;
 import com.boilerplate.java.Base;
 import com.boilerplate.java.Constants;
+import com.boilerplate.java.entities.ExternalFacingUser;
 import com.boilerplate.java.entities.MethodPermissions;
 import com.boilerplate.java.entities.UserRoleType;
 import com.boilerplate.service.interfaces.IMethodPermissionService;
@@ -80,19 +81,20 @@ public class LogAndTraceExceptionAspect {
 			Session session = RequestThreadLocal.getSession();
 			String methodExecuted = proceedingJoinPoint.getSignature().toLongString();
 			methodPermissions = this.methodPermissionService.getMethodPermissions().get(methodExecuted);
-
 			if (methodPermissions == null) {
 				throw new UnauthorizedException("Api Permissions", "Api do not have permissions", null);
 			}
 
 			if (methodPermissions != null) {
-
 				// changed by Ruchi for expense system
 				// check if user needs to be authenticated to execute the method
 				if (methodPermissions.getIsAuthenticationRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-
+					// check if user is not disabled
+					ExternalFacingUser user = userService.getUser(session.getExternalFacingUser().getId());
+					if (!user.getIsActive())
+						throw new UnauthorizedException("User", "This user has been disabled", null);
 					if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.ADMIN))
 						throw new UnauthorizedException("User", "User is not authorized", null);
 				}
@@ -101,7 +103,10 @@ public class LogAndTraceExceptionAspect {
 				if (methodPermissions.getIsApproverRoleRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-
+					// check if user is not disabled
+					ExternalFacingUser user = userService.getUser(session.getExternalFacingUser().getId());
+					if (!user.getIsActive())
+						throw new UnauthorizedException("User", "This user has been disabled", null);
 					if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.SUPER_APPROVER))
 						if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.APPROVER))
 							throw new UnauthorizedException("User", "User is not authorized", null);
@@ -110,9 +115,17 @@ public class LogAndTraceExceptionAspect {
 				if (methodPermissions.getIsFinanceRoleRequired()) {
 					if (session == null)
 						throw new UnauthorizedException("User", "User is not logged in", null);
-
+					// check if user is not disabled
+					ExternalFacingUser user = userService.getUser(session.getExternalFacingUser().getId());
+					if (!user.getIsActive())
+						throw new UnauthorizedException("User", "This user has been disabled", null);
 					if (!session.getExternalFacingUser().getRoleTypes().contains(UserRoleType.FINANCE))
 						throw new UnauthorizedException("User", "User is not authorized", null);
+				} else if (session != null) {
+					// check if user is not disabled
+					ExternalFacingUser user = userService.getUser(session.getExternalFacingUser().getId());
+					if (!user.getIsActive())
+						throw new UnauthorizedException("User", "This user has been disabled", null);
 				}
 			}
 

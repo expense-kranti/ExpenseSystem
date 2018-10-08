@@ -74,23 +74,33 @@ public class SendEmailService implements IEmailService {
 		ExternalFacingUser approver = mySqlUser.getUser(expenseUser.getApproverId());
 		// fetch super approvers
 		List<Map<String, Object>> superUserMap = mySqlUser.getUsersByRole(UserRoleType.SUPER_APPROVER.toString());
-		List<ExternalFacingUser> superUsers = new ArrayList<>();
-		for (Map<String, Object> externalFacingUser : superUserMap) {
-			ExternalFacingUser user = (new ObjectMapper()).convertValue(externalFacingUser, ExternalFacingUser.class);
-			superUsers.add(user);
-		}
+
 		// prepare tos list
 		BoilerplateList<String> tos = new BoilerplateList<>();
 		if (approver != null)
 			tos.add(approver.getEmail());
+		else
+			logger.logWarning("SendEmailService", "sendEmailOnSubmission", "exceptionSendEmailOnSubmission",
+					"Approver is not assigned to user with id :" + expenseEntity.getUserId());
 		// prepare ccs list
 		BoilerplateList<String> ccs = new BoilerplateList<>();
-		// check if list of finance is not null or empty
-		if (superUsers != null && superUsers.size() != 0)
-			// for each finance add it in tos list
-			for (ExternalFacingUser eachFinance : superUsers) {
-				ccs.add(eachFinance.getEmail());
+		if (superUserMap != null && !superUserMap.isEmpty()) {
+			List<ExternalFacingUser> superUsers = new ArrayList<>();
+			for (Map<String, Object> externalFacingUser : superUserMap) {
+				ExternalFacingUser user = (new ObjectMapper()).convertValue(externalFacingUser,
+						ExternalFacingUser.class);
+				superUsers.add(user);
 			}
+			// check if list of finance is not null or empty
+			if (superUsers != null && superUsers.size() != 0)
+				// for each finance add it in tos list
+				for (ExternalFacingUser eachFinance : superUsers) {
+					ccs.add(eachFinance.getEmail());
+				}
+		} else
+			logger.logWarning("SendEmailService", "sendEmailOnSubmission", "exceptionSendEmailOnSubmission",
+					"No super_approvers found");
+
 		// prepare bcc list
 		BoilerplateList<String> bccs = new BoilerplateList<>();
 		// employee name
@@ -144,21 +154,27 @@ public class SendEmailService implements IEmailService {
 	public void sendEmailOnApproval(ExpenseEntity expenseEntity) throws BadRequestException {
 		// fetch user from expense
 		ExternalFacingUser expenseUser = mySqlUser.getUser(expenseEntity.getUserId());
-		// fetch the finance email id
-		List<Map<String, Object>> financeUserMap = mySqlUser.getUsersByRole(UserRoleType.FINANCE.toString());
-		List<ExternalFacingUser> financeUsers = new ArrayList<>();
-		for (Map<String, Object> externalFacingUser : financeUserMap) {
-			ExternalFacingUser user = (new ObjectMapper()).convertValue(externalFacingUser, ExternalFacingUser.class);
-			financeUsers.add(user);
-		}
+
 		// prepare tos list
 		BoilerplateList<String> tos = new BoilerplateList<>();
-		// check if list of finance is not null or empty
-		if (financeUsers != null && financeUsers.size() != 0)
-			// for each finance add it in tos list
-			for (ExternalFacingUser eachFinance : financeUsers) {
-				tos.add(eachFinance.getEmail());
+		// fetch the finance email id
+		List<Map<String, Object>> financeUserMap = mySqlUser.getUsersByRole(UserRoleType.FINANCE.toString());
+		if (financeUserMap != null && !financeUserMap.isEmpty()) {
+			List<ExternalFacingUser> financeUsers = new ArrayList<>();
+			for (Map<String, Object> externalFacingUser : financeUserMap) {
+				ExternalFacingUser user = (new ObjectMapper()).convertValue(externalFacingUser,
+						ExternalFacingUser.class);
+				financeUsers.add(user);
 			}
+			// check if list of finance is not null or empty
+			if (financeUsers != null && financeUsers.size() != 0)
+				// for each finance add it in tos list
+				for (ExternalFacingUser eachFinance : financeUsers) {
+					tos.add(eachFinance.getEmail());
+				}
+		} else
+			logger.logWarning("SendEmailService", "sendEmailOnApproval", "exceptionSendEmailOnApproval",
+					"No finance users found");
 		// prepare ccs list
 		BoilerplateList<String> ccs = new BoilerplateList<>();
 		ccs.add(expenseUser.getEmail());
